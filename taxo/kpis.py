@@ -103,10 +103,15 @@ def table(rows: list[dict]) -> str:
         c = _ci(s, key)
         return f"{c['p']:.2f} [{c['lo']:.2f}-{c['hi']:.2f}] n={c['n']}"
 
-    def ext(sv: dict):
-        return f"{sv['p']:.2f} [{sv['lo']:.2f}-{sv['hi']:.2f}]" if sv and "lo" in sv else None
+    def ext(sv: dict):                              # taxo.validate: the extended exact rate, and its humans-only range
+        e = (sv or {}).get("exact")
+        if not e:
+            return None
+        h = e["human_only"]
+        return (f"{e['p']:.2f} [{e['lo']:.2f}-{e['hi']:.2f}] (humans only [{h['lo']:.2f}-{h['hi']:.2f}]), "
+                f"{sv['validator']} disagrees {e['disagreement']:.0%}")
     cols = ["ts", "data", "sample", "loop/round", "label", "vocab", "dev exact", "dev right+shallower", "dev harm",
-            "dev L1", "sealed exact", "human dev exact", "human sealed exact", "silver (extended)", "lattice", "to agent"]
+            "dev L1", "sealed exact", "human dev exact", "human sealed exact", "silver exact (extended)", "lattice", "to agent"]
     out = ["| " + " | ".join(cols) + " |", "|" + "---|" * len(cols)]
     for r in rows:
         d, s, sv = r.get("gold_dev") or {}, r.get("gold_sealed") or {}, r.get("silver") or {}

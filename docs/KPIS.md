@@ -98,6 +98,18 @@ Every pipeline run and every gate decision appends one row to `runs/<domain>/kpi
 - `silver`: the output of `metrics.extend(...)` for one frozen validator version: estimate, interval, human rows,
   validator rows, disagreement, the validator's bias, and the humans-only interval beside it for comparison.
 
+The silver row comes from running the validator (Codex CLI on the ChatGPT login, no API key; about 20 s a call):
+
+```bash
+uv run python -m taxo.validate fragrance --human 50 --fresh 300
+```
+
+It labels the human rows and the fresh rows blind, scores itself on the human rows (`runs/<d>/validator-v<k>.json`),
+and appends a loop B KPI row with the extended rates. If the validator disagrees with people more than the system errs,
+the extended range comes out **wider** than the humans-only one: that is the maths saying "don't trust it yet".
+The first run (10 human rows, 20 fresh) disagreed on 40%, mostly by naming sub-houses as brands (Lattafa Pride,
+Maison Alhambra), so it is not ready to extend anything.
+
 Print the history, every rate shown as `p [lo-hi] n=`:
 
 ```bash
