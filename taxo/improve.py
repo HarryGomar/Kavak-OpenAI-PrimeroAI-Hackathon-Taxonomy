@@ -31,6 +31,7 @@ from taxo.core.config import DOMAINS_DIR, ROOT, RUNS_DIR
 from taxo.lattice.vocab import tokens
 
 HARM = {"deeper", "wrong", "wrong_brand"}
+FIT_TARGET = 0.95   # fit until the training error is within 5%: closer than that only memorises the sample
 
 
 def _say(m: str) -> None:
@@ -206,7 +207,7 @@ def _write(d, name: str, labels: list[dict]) -> None:
     (d / name).write_text("".join(json.dumps(x, ensure_ascii=False) + "\n" for x in labels), encoding="utf-8")
 
 
-def fit(domain: str, rounds: int, n_train: int, n_test: int) -> dict:
+def fit(domain: str, rounds: int, n_train: int, n_test: int) -> dict:  # noqa: C901
     """Fit the validator to a fixed training sample of human rows (the improver works its misses round after round;
     a change is kept when the training sample's exact rises without harm or abstain rising), then ONE held-out check
     on fresh rows it never saw: the fitted version replaces the current one only if exact does not fall and harm and
@@ -229,8 +230,9 @@ def fit(domain: str, rounds: int, n_train: int, n_test: int) -> dict:
     hist = []
     for r in range(1, rounds + 1):
         misses = loop._misses(domain, F)
-        if not misses:
-            _say(f"  round {r}: no misses left on the training sample")
+        exact_now = sum(x["exact"] for x in cur_pi.values()) / max(len(cur_pi), 1)
+        if exact_now >= FIT_TARGET:
+            _say(f"  round {r}: training exact {exact_now:.3f} is within 5% error; fitting stops")
             break
         ch = loop.propose_change(domain, misses, d / f"{F}-r{r}-improver.json")
         rec = {"round": r, "misses": len(misses), "change": ch}
