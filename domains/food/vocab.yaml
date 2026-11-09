@@ -5,7 +5,8 @@ variant:
          family size, fun size, king size, share size, snack size, single serve, individually wrapped]
   claim: [sugar free, gluten free, non gmo, organic, kosher, keto, vegan, no sugar added, reduced fat, low fat]
 size_pattern: '^\d+([.,]\d+)?(oz|g|kg|lb|lbs|ml|l|ct|pk|count|fl)?$|^(oz|ounce|ounces|g|grams|lb|lbs|ml|fl)$'
-strip: [snack, snacks, candy, candies, food, product, products, net wt, value]
+strip: [snack, snacks, candy, candies, food, product, products, net wt, value, flavored, flavor, box, bag, drinks,
+        halloween, with]      # round 9 added flavored .. with (kept on sealed: flavour markers and buying words leave names)
 bind: [de, la, of, the, and, n, with, in]
 settings:
   shop_brand: true      # round 8, kept on sealed: shop names the brand's own store (looser brand_site)

@@ -20,6 +20,7 @@ from __future__ import annotations
 import argparse
 import copy
 import json
+import os
 import re
 import shutil
 import subprocess
@@ -135,7 +136,7 @@ class Bench:
         self.rule_dirs = [ROOT / "rules" / domain, ROOT / "rules" / "global"]
         self.out = RUNS_DIR / domain / "proposer"
         self.out.mkdir(parents=True, exist_ok=True)
-        self.tmp = self.out / "vocab-try.yaml"
+        self.tmp = self.out / f"vocab-try-{os.getpid()}.yaml"      # one per process: runs can share a domain
         self.dev_brands = {g.brand for g in self.dev}
         # phrase support: which brands' titles hold a phrase (the brand the gold gives, dev brands only)
         self.titles_by_brand: dict[str, list[str]] = defaultdict(list)
@@ -152,7 +153,9 @@ class Bench:
         self.tmp.write_text(yaml.safe_dump(doc, allow_unicode=True), encoding="utf-8")
         brands = Brands(self.names, tuple(doc.get("brand_drop_suffixes") or ()),
                         shop_brand=bool((doc.get("settings") or {}).get("shop_brand")))
-        run(self.items, brands, vocabmod.load(self.tmp), rules)
+        voc = vocabmod.load(self.tmp)
+        self.tmp.unlink(missing_ok=True)
+        run(self.items, brands, voc, rules)
         rep, judged = score_rows(self.dev, self.by_gold, self.score_brands)
         sh = shares(self.subset)
         return {"placed": {gid: {"brand": it.brand, "path": list(it.path)} for gid, it in self.by_gold.items()},
@@ -187,6 +190,25 @@ def shapes(b: Bench, ev: dict, limit: int = 10, per: int = 8) -> list[dict]:
                     "extra_words_in_ours": extra.most_common(8), "gold_words_we_miss": missing.most_common(8),
                     "examples": ex})
     return out
+
+
+def leaf_words(b: Bench, ev: dict, limit: int = 30) -> list[dict]:
+    """The words that make leaves wrong: for each word, the wrong/deeper rows where it is the ONLY extra leaf word
+    (dropping it would make the row right), all wrong/deeper rows that hold it as extra, the right leaves that hold it
+    (what dropping it would risk), the brands it is extra for, and its title spread over dev brands."""
+    only, some, right, brands = Counter(), Counter(), Counter(), defaultdict(set)
+    for g, it, j in ev["judged"]:
+        if j.cls in ("wrong", "deeper"):
+            for w in j.extra:
+                some[w] += 1
+                brands[w].add(g.brand)
+            if len(j.extra) == 1:
+                only[next(iter(j.extra))] += 1
+        elif j.cls in ("exact", "shallower") and len(it.path) > 1:
+            for w in set(tokens(it.path[-1])):
+                right[w] += 1
+    return [{"word": w, "only_extra_rows": n, "extra_rows": some[w], "in_right_leaves": right[w],
+             "brands_extra_for": len(brands[w]), "title_spread_brands": b.spread(w)} for w, n in only.most_common(limit)]
 
 
 def rules_text(rules: list[evaluator.Rule]) -> str:
@@ -227,6 +249,9 @@ def prompt(b: Bench, doc: dict, rules: list[evaluator.Rule], ev: dict, history: 
         json.dumps(history[-25:], ensure_ascii=False, indent=0) if history else "none yet",
         "", "DEV ERROR SHAPES (largest first; each with a brand-spread sample of examples):",
         json.dumps(shapes(b, ev), ensure_ascii=False, indent=0),
+        "", "LEAF WORDS THAT MAKE PLACEMENTS WRONG (a word with many only_extra_rows, few in_right_leaves and a wide "
+        "title spread is a strip candidate; a strip touches every title that holds the word):",
+        json.dumps(leaf_words(b, ev), ensure_ascii=False),
         "", f"Return up to {N_PROPOSALS} proposals, best first. Each is ONE change (one kind, one idea). In 'shape' "
         "name the error shape it targets; in 'why' say what pattern you saw and how many rows you expect it to fix "
         "and to break. 'patch' is YAML text for that kind.",
@@ -432,6 +457,10 @@ def apply(b: Bench, p: dict, doc: dict, rules: list[evaluator.Rule]) -> tuple[di
 
 def write(b: Bench, change: dict, rnd: int, label: str, record: dict) -> None:
     """Persist a kept change. The loader must then reproduce the same state (checked by the caller)."""
+    if "bundle" in change:
+        for ch in change["bundle"]:
+            write(b, ch, rnd, label, record)
+        return
     if "vocab" in change:
         old = b.vocab_path.read_text(encoding="utf-8")
         (b.out / f"vocab-before-r{rnd}.yaml").write_text(old, encoding="utf-8")       # comments kept here
@@ -490,7 +519,7 @@ def round_(b: Bench, rnd: int, doc: dict, rules: list, cur: dict, history: list[
     props, meta = ask(b, text, f"r{rnd:03d}")
     _say(f"  {len(props)} proposals, {meta['tokens']} tokens, {meta['secs']}s")
     rec = {"round": rnd, "codex": meta, "dev_before": cur["dev"], "agent_before": cur["to_agent"], "proposals": []}
-    best = None
+    best, passed = None, []
     for p in props:
         entry = {k: p.get(k) for k in ("kind", "label", "shape", "why", "patch")}
         try:
@@ -503,6 +532,8 @@ def round_(b: Bench, rnd: int, doc: dict, rules: list, cur: dict, history: list[
             continue
         ev = b.evaluate(d2, r2)
         ok, info = dev_gate(cur, ev)
+        if ok:
+            passed.append((p, info))
         entry["dev"] = info
         rec["proposals"].append(entry)
         _say(f"  dev {'PASS' if ok else 'fail'}  {p.get('label')}: better {info['better']} worse {info['worse']} "
@@ -522,6 +553,27 @@ def round_(b: Bench, rnd: int, doc: dict, rules: list, cur: dict, history: list[
         else:
             history.append({"round": rnd, "label": p.get("label"), "kind": p.get("kind"),
                             "result": "dev pass, but another proposal this round did better on dev; not sealed"})
+    if len(passed) >= 2:          # small dev wins may each touch too few sealed rows; together they may clear the gate
+        d_c, r_c, changes, labels = doc, rules, [], []
+        for p, _ in sorted(passed, key=lambda x: -(x[1]["better"] - x[1]["worse"])):
+            try:
+                d_c, r_c, ch = apply(b, p, d_c, r_c)
+            except Refused:
+                continue
+            changes.append(ch)
+            labels.append(p.get("label") or "proposal")
+        if len(changes) >= 2:
+            ev_c = b.evaluate(d_c, r_c)
+            ok, info = dev_gate(cur, ev_c)
+            label = "bundle: " + " + ".join(labels)
+            rec["proposals"].append({"kind": "bundle", "label": label, "dev": info})
+            _say(f"  dev {'PASS' if ok else 'fail'}  {label}: better {info['better']} worse {info['worse']} "
+                 f"exact {info['exact'][0]}->{info['exact'][1]} agent {info['to_agent'][0]}->{info['to_agent'][1]} "
+                 f"{'; '.join(info['fails'])}")
+            if ok and (info["better"] - info["worse"]) > (best[3]["better"] - best[3]["worse"]):
+                history.append({"round": rnd, "label": best[0].get("label"), "kind": best[0].get("kind"),
+                                "result": "dev pass; sent to sealed inside this round's bundle"})
+                best = ({"label": label, "kind": "bundle"}, d_c, r_c, info, ev_c, {"bundle": changes})
     kept = False
     if best and sealed_left > 0:
         p, d2, r2, info, ev, change = best

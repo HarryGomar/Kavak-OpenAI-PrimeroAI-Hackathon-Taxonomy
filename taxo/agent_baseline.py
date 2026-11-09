@@ -8,6 +8,10 @@ sample of DEV gold rows we score three solvers side by side, against the same go
 and measure what the agent costs: tokens and seconds per listing (codex exec, batches of BATCH).
 
     uv run python -m taxo.agent_baseline fragrance --n 200 --seed 11
+    uv run python -m taxo.agent_baseline fragrance --split sealed --n 400 --seed 11     # one logged sealed read
+
+On dev the rules were tuned on the same brands, so the rules columns there are optimistic; the sealed split is the
+fair comparison (the agent sees no gold either way).
 
 Answers are cached per listing in runs/<d>/agent_baseline/answers.jsonl, so a rerun only asks for new listings.
 """
@@ -80,13 +84,15 @@ def main() -> None:
     ap.add_argument("domain", choices=["fragrance", "food"])
     ap.add_argument("--n", type=int, default=200)
     ap.add_argument("--seed", type=int, default=11)
+    ap.add_argument("--split", choices=["dev", "sealed"], default="dev")
     a = ap.parse_args()
     b = Bench(a.domain)
     out = RUNS_DIR / a.domain / "agent_baseline"
     out.mkdir(parents=True, exist_ok=True)
     doc = yaml.safe_load(b.vocab_path.read_text(encoding="utf-8"))
     ev = b.evaluate(doc, evaluator.load(*b.rule_dirs))        # the pipeline as it stands: placements and routes
-    pool = [g for g in b.dev if b.by_gold[g.id].title and not b.by_gold[g.id].id.startswith("gold:")]
+    rows = b.dev if a.split == "dev" else b.gold.sealed(f"taxo.agent_baseline: agent alone vs rules on {a.n} sealed rows")
+    pool = [g for g in rows if b.by_gold[g.id].title and not b.by_gold[g.id].id.startswith("gold:")]
     sample = random.Random(a.seed).sample(pool, min(a.n, len(pool)))
     cache_p = out / "answers.jsonl"
     cache = {json.loads(x)["id"]: json.loads(x) for x in open(cache_p, encoding="utf-8")} if cache_p.exists() else {}
@@ -133,7 +139,7 @@ def main() -> None:
     per_tok = sum(tok) / sum(c["n"] for c in calls if c.get("tokens")) if tok else None
     per_sec = sum(c["secs"] for c in calls) / sum(c["n"] for c in calls) if calls else None
     share = ev["to_agent"]
-    res = {"domain": a.domain, "n": len(sample), "seed": a.seed, "unanswered": unanswered,
+    res = {"domain": a.domain, "split": a.split, "n": len(sample), "seed": a.seed, "unanswered": unanswered,
            "sample_routed_to_agent": round(routed / len(sample), 3), "agent_share_all_listings": share,
            "model": calls[-1]["model"] if calls else None,
            "brand_match": "exact or lead alias, or one name the start of the other (lenient to the agent)", "calls": len(calls),
@@ -144,7 +150,8 @@ def main() -> None:
            "scores": {k: {m: r.summary()[m] for m in ("accept_rows", "exact", "shallower", "deeper", "wrong",
                                                        "wrong_brand", "no_brand", "exact_rate", "right_or_shallower",
                                                        "harm_rate")} for k, r in reps.items()}}
-    (out / f"baseline-n{a.n}-s{a.seed}.json").write_text(json.dumps(res, indent=1), encoding="utf-8")
+    name = f"baseline-n{a.n}-s{a.seed}.json" if a.split == "dev" else f"baseline-sealed-n{a.n}-s{a.seed}.json"
+    (out / name).write_text(json.dumps(res, indent=1), encoding="utf-8")
     print(json.dumps(res, indent=1))
 
 
