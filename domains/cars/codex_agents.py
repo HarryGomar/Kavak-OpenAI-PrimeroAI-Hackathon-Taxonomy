@@ -376,8 +376,9 @@ def compare(label: dict, path: list[str]) -> dict:
         elif lvl == "year":
             res = str(vm[i]) == str(pm[i])
         elif lvl == "model":
-            a, b = words(vm[i]), words(pm[i])
-            res = bool(a) and bool(b) and (a <= b or b <= a)
+            a, b = words(vm[i]) - {"clase", "serie"}, words(pm[i]) - {"clase", "serie"}
+            res = (bool(a) and bool(b) and (a <= b or b <= a)) or "".join(sorted(a)) == "".join(sorted(b)) \
+                or "".join(resolve.key(vm[i]).split()) == "".join(resolve.key(pm[i]).split())
         else:
             a = (words(vm[1]) | words(vm[3])) - words(pm[1])
             b = (words(pm[1]) | words(pm[3])) - words(vm[1]) if vm[1] else words(pm[3])

@@ -1,6 +1,6 @@
 """Cars eval on gold with the cars judge (domains/cars/judge.py), per system version, with 95% Wilson intervals.
 
-    uv run python -m domains.cars.eval [--set round-01] [--old-preview <Taxonomy repo>/outputs/cars-preview]
+    uv run python -m domains.cars.eval --set round-01 --set round-02 [--old-preview LABEL=<Taxonomy repo>/outputs/cars-preview]
 
 Systems (each a path per listing):
   rules 0.1.0 / 0.2.0 (rules only) the Taxonomy repo's cars previews (--old-preview): 0.1.0 = first rules (version only
@@ -77,12 +77,13 @@ def score(paths: dict, gold: list[dict]) -> dict:
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--set", default="round-01", help="gold file stem in TAXO_DATA_DIR/cars/gold")
+    ap.add_argument("--set", action="append", default=[], help="gold file stem(s) in TAXO_DATA_DIR/cars/gold; repeatable")
     ap.add_argument("--old-preview", action="append", default=[],
                     help="LABEL=PATH to an earlier Taxonomy-repo cars preview folder (placements.jsonl); repeatable")
     a = ap.parse_args()
     d = config.data_dir() / "cars"
-    gold = yaml.safe_load((d / "gold" / f"{a.set}.yaml").read_text(encoding="utf-8"))
+    sets = a.set or ["round-01"]
+    gold = [dict(g, _set=st) for st in sets for g in yaml.safe_load((d / "gold" / f"{st}.yaml").read_text(encoding="utf-8"))]
     records = list(read_jsonl(d / "listings.jsonl"))
     lid_by_row = [listing_id(r) for r in records]
     systems = {}
@@ -106,14 +107,17 @@ def main() -> None:
     pipe_now = {p["listing_id"]: p for p in read_jsonl(OUT / "placements.jsonl")}
     vals = {}
     for k in (1, 2):
-        f = OUT / "loop-r01" / f"validator-v{k}.jsonl"
-        if f.exists():
-            vals[k] = {r["listing_id"]: r["validator"] for r in read_jsonl(f) if r.get("validator")}
+        for f in sorted(OUT.glob(f"loop-r*/validator-v{k}.jsonl")):     # labels from every loop round
+            vals.setdefault(k, {}).update({r["listing_id"]: r["validator"] for r in read_jsonl(f) if r.get("validator")})
+        if k in vals:
             systems[f"validator v{k}"] = {lid: val_path(v) for lid, v in vals[k].items()}
-    report = {"gold": a.set, "current_rules": cur, "rules_sha256": resolve.pack_sha256(), "rows": len(gold), "provenance": dict(Counter(g.get("provenance") for g in gold)),
+    report = {"gold": "+".join(sets), "current_rules": cur, "rules_sha256": resolve.pack_sha256(), "rows": len(gold), "provenance": dict(Counter(g.get("provenance") for g in gold)),
               "compare": dict(Counter(g.get("compare") for g in gold)), "systems": {}}
     for name, paths in systems.items():
         report["systems"][name] = score(paths, gold)
+        if len(sets) > 1:
+            report["systems"][name]["by_set"] = {st: {k: v for k, v in score(paths, [g for g in gold if g["_set"] == st]).items()
+                                                      if k in ("n", "right", "right_ci95", "not_harmful")} for st in sets}
     for k, v in vals.items():
         flags = right = 0
         for g in gold:
@@ -128,7 +132,7 @@ def main() -> None:
                                                         "ci95": wilson(right, flags)}
     out = OUT / "eval"
     out.mkdir(parents=True, exist_ok=True)
-    (out / f"eval-{a.set}.json").write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
+    (out / f"eval-{'+'.join(sets)}.json").write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(report, indent=1))
 
 

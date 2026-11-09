@@ -23,6 +23,7 @@ from pathlib import Path
 from taxo.core import config
 from taxo.core.config import RUNS_DIR
 from taxo.core.io import read_jsonl
+import yaml
 
 from domains.cars.adapter import listing_id
 
@@ -180,7 +181,7 @@ header h1{font-size:16px;margin:0 8px 0 0}.meta{color:var(--muted);font-size:12p
 button{font:inherit;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:6px;padding:5px 10px;cursor:pointer}
 button.primary{background:var(--accent);border-color:var(--accent);color:#fff}main{max-width:900px;margin:0 auto;padding:16px}
 .case{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin-bottom:10px}.case.done{border-left:4px solid var(--ok)}
-.case.hidden{display:none}.title{font-weight:600;overflow-wrap:anywhere}.opts{display:flex;flex-direction:column;gap:4px;margin-top:8px}
+.case.hidden{display:none}.pre{font-size:11px;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:0 6px;margin-left:6px}.title{font-weight:600;overflow-wrap:anywhere}.opts{display:flex;flex-direction:column;gap:4px;margin-top:8px}
 .opts label{border:1px solid var(--line);border-radius:6px;padding:5px 9px;cursor:pointer;font-size:14px}
 .opts label:has(input:checked){border-color:var(--accent);background:color-mix(in srgb,var(--accent) 14%,transparent)}
 input[type=text]{font:inherit;width:100%;padding:5px 7px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);margin-top:4px}
@@ -189,12 +190,12 @@ details{font-size:12px;color:var(--muted);margin-top:4px}pre{white-space:pre-wra
 <header><h1>Cars gold: one click each</h1><span id="prog" class="meta"></span>
 <label class="meta"><input type="checkbox" id="second"> second labeller (rows 1-25)</label><span style="flex:1"></span>
 <label class="meta">Name <input id="who" type="text" style="width:100px;margin:0"></label><button id="export" class="primary">Export gold YAML</button></header>
-<main><p class="meta">Random listings (seed __SEED__, 10 per source). Click the path that matches the car the listing sells, as deep as
+<main><p class="meta" id="preinfo"></p><p class="meta">Random listings (seed __SEED__, 10 per source). Click the path that matches the car the listing sells, as deep as
 its own words support: Make › Model › Year › Version. Options come from several sources in a shuffled order; none is
 marked as the answer. If none fits, pick "Other" and type the path with › or &gt; between levels.</p><div id="cases"></div></main>
 <script id="data" type="application/json">__DATA__</script>
 <script>
-const D=JSON.parse(document.getElementById('data').textContent);const KEY='quickgold:cars:r'+D.round;let S={};try{S=JSON.parse(localStorage.getItem(KEY)||'{}')||{}}catch(e){}
+const D=JSON.parse(document.getElementById('data').textContent);const KEY='quickgold:cars:r'+D.round+(D.prelabelled?':pre':'');let S={};try{S=JSON.parse(localStorage.getItem(KEY)||'{}')||{}}catch(e){}
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}prog()};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const sec=document.getElementById('second'),who=document.getElementById('who');sec.checked=!!S._second;who.value=S._who||'';
@@ -203,22 +204,26 @@ function prog(){const rs=rows();document.getElementById('prog').textContent=rs.f
  D.cases.forEach((c,i)=>{const el=document.getElementById('c'+i);el.classList.toggle('done',(S[c.gid]||{}).v!=null);el.classList.toggle('hidden',sec.checked&&i>=25)})}
 sec.onchange=()=>{S._second=sec.checked;save()};who.oninput=()=>{S._who=who.value;save()};
 D.cases.forEach((c,i)=>{const el=document.createElement('section');el.className='case';el.id='c'+i;
- const opts=c.options.map((o,j)=>`<label><input type="radio" name="o${i}" value="${j}"> ${esc(o.join(' › '))}</label>`).join('')+
+ const opts=c.options.map((o,j)=>`<label><input type="radio" name="o${i}" value="${j}"> ${esc(o.join(' › '))}${j===c.pre?` <span class="pre">pre-selected · confidence ${c.conf}</span>`:''}</label>`).join('')+
   `<label><input type="radio" name="o${i}" value="cant"> Can't tell</label><label><input type="radio" name="o${i}" value="ood"> Not a car listing</label>`+
   `<label><input type="radio" name="o${i}" value="other"> Other: <input type="text" class="oth" placeholder="Make › Model › Year › Version"></label>`;
  el.innerHTML=`<div class="meta">${i+1}. ${esc(c.source)}${i<25?' · second-labeller set':''} · ${c.url?`<a href="${esc(c.url)}" target="_blank" rel="noopener">open</a>`:''}</div>
  <div class="title">${esc(c.title)}</div><details><summary>all listing fields</summary><pre>${esc(JSON.stringify(c.fields,null,1))}</pre></details><div class="opts">${opts}</div>`;
  document.getElementById('cases').appendChild(el);
+ if(D.prelabelled&&c.pre!=null&&!S[c.gid]){S[c.gid]={v:String(c.pre),pre:true}}
  const st=S[c.gid]||{};if(st.v!=null){const r=el.querySelector(`input[value="${st.v}"]`);if(r)r.checked=true}el.querySelector('.oth').value=st.t||'';
- el.addEventListener('input',e=>{const x=(S[c.gid]||={});if(e.target.type==='radio')x.v=e.target.value;if(e.target.classList.contains('oth')){x.t=e.target.value;x.v='other';el.querySelector('input[value=other]').checked=true}save()})});
+ el.addEventListener('input',e=>{const x=(S[c.gid]||={});x.pre=false;x.touched=true;if(e.target.type==='radio')x.v=e.target.value;if(e.target.classList.contains('oth')){x.t=e.target.value;x.v='other';el.querySelector('input[value=other]').checked=true}save()})});
 prog();
+if(D.prelabelled)document.getElementById('preinfo').innerHTML='<b>Pre-filled:</b> each listing starts on a pre-label ('+esc(D.prelabel_by)+') with its confidence. Check it; click another option only when it is wrong. Low confidence = look closer. Export records which ones you changed.';
 const q=s=>JSON.stringify(String(s));
 document.getElementById('export').onclick=()=>{const name=who.value.trim();if(!name){alert('Write your name first.');return}
  const today=new Date().toISOString().slice(0,10);let y=`# Cars gold round ${D.round}${sec.checked?' (second labeller)':''}: one-click blind choices by ${name}. Written by a person.\n# sample ${D.sample_file} sha256 ${D.sample_sha}; options shuffled, sources hidden.\n`,n=0,cant=0;
  for(const c of rows()){const x=S[c.gid];if(!x||x.v==null)continue;let path,cmp='prefix';
   if(x.v==='cant'){cant++;continue}else if(x.v==='ood')path=[];else if(x.v==='other')path=(x.t||'').split(/[›>]/).map(s=>s.trim()).filter(Boolean);else path=c.options[+x.v];
   if(x.v==='other'&&!path.length)continue;n++;
-  y+=`\n- id: ${c.gid}\n  listing_id: ${q(c.listing_id)}\n  title: ${q(c.title)}\n  source: ${c.source}\n  brand: ${q(path.length?path[0].toLowerCase():'none')}\n  expected_path: [${path.map(q).join(', ')}]\n  compare: ${cmp}\n  expect: accept\n  why: ${q(x.v==='ood'?'out of domain':x.v==='other'?'typed by the labeller':'one-click choice')}\n  labelled_by: ${q(name)}\n  labelled_at: ${today}\n  provenance: blind_random_choice\n`}
+  const changed=D.prelabelled?(String(x.v)!==String(c.pre)):null;
+  const extra=D.prelabelled?`  changed_by_person: ${changed}\n  ai_confidence: ${c.conf}\n  prelabeled_by: ${q(D.prelabel_by)}\n`:'';
+  y+=`\n- id: ${c.gid}\n  listing_id: ${q(c.listing_id)}\n  title: ${q(c.title)}\n  source: ${c.source}\n  brand: ${q(path.length?path[0].toLowerCase():'none')}\n  expected_path: [${path.map(q).join(', ')}]\n  compare: ${cmp}\n  expect: accept\n  why: ${q(x.v==='ood'?'out of domain':x.v==='other'?'typed by the labeller':D.prelabelled&&!changed?'pre-label confirmed':'one-click choice')}\n${extra}  labelled_by: ${q(name)}\n  labelled_at: ${today}\n  provenance: ${D.prelabelled?'ai_prelabel_checked':'blind_random_choice'}\n`}
  y+=`\n# can't tell: ${cant} listings (not written as gold)\n`;
  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([y],{type:'text/yaml'}));a.download=`round-${String(D.round).padStart(2,'0')}${sec.checked?'-second':''}.yaml`;a.click();
  setTimeout(()=>URL.revokeObjectURL(a.href),1000);alert(n+' rows exported. Save the file in data/taxo-data/cars/gold/.')};
@@ -239,6 +244,8 @@ def quick_page(rnd: int) -> Path:
     vfile = RUNS_DIR / DOMAIN / f"loop-r{rnd:02d}" / "validator.jsonl"
     val = {json.loads(l)["listing_id"]: json.loads(l) for l in vfile.read_text(encoding="utf-8").splitlines()} if vfile.exists() else {}
     tree = catalogue_tree(config.data_dir() / DOMAIN / "taxonomy.jsonl")
+    pfile = out / "prelabels.json"     # optional pre-labels (independent of the pipeline and validator), pre-selected
+    pres = json.loads(pfile.read_text(encoding="utf-8")) if pfile.exists() else {}
     tkey = {re.sub(r"[^a-z0-9]", "", m.lower()): m for m in tree}
     cases = []
     for i, x in enumerate(drawn, 1):
@@ -262,6 +269,9 @@ def quick_page(rnd: int) -> Path:
                 opts += [[mk, md, year, v] for v in ys[year][:3]]
             opts += [[mk, md, y] for y in sorted(ys) if y and y != year][:2]
             break
+        pre = pres.get(lid)
+        if pre:
+            opts.insert(0, pre["path"])      # the pre-label is always one of the options
         seen, uniq = set(), []
         for o in opts:
             k = _norm(o)
@@ -270,11 +280,14 @@ def quick_page(rnd: int) -> Path:
                 uniq.append([str(s) for s in o])
         uniq = uniq[:6]
         uniq.sort(key=lambda o: hashlib.sha256(f"opt|{lid}|{'/'.join(o)}".encode()).hexdigest())
+        pre_idx = next((j for j, o in enumerate(uniq) if pre and _norm(o) == _norm(pre["path"])), None)
         title = build_title(r) + (f" · {r['subtitle']}" if r.get("subtitle") else "")
         cases.append({"gid": x["gold_id"], "listing_id": lid, "source": r["_source"], "title": title,
-                      "url": r.get("url"), "fields": shown_fields(r), "options": uniq})
+                      "url": r.get("url"), "fields": shown_fields(r), "options": uniq,
+                      "pre": pre_idx, "conf": pre["confidence"] if pre else None})
     data = {"round": rnd, "sample_file": sample_file.name, "sample_sha": hashlib.sha256(sample_file.read_bytes()).hexdigest(),
-            "cases": cases}
+            "cases": cases, "prelabelled": bool(pres),
+            "prelabel_by": next(iter(pres.values()))["by"] if pres else None}
     seed = re.search(r"seed (\d+)", (out / f"SOURCE-r{rnd:02d}.md").read_text()).group(1)
     path = out / "labeling-quick.html"
     path.write_text(QUICK.replace("__DATA__", json.dumps(data, ensure_ascii=False).replace("</", "<\\/")).replace("__SEED__", seed),
@@ -304,9 +317,17 @@ def main() -> None:
     by_id = {}
     for r in read_jsonl(d / "listings.jsonl"):
         by_id.setdefault(listing_id(r), r)       # one row per listing id (5 Kavak cars appear twice)
+    excluded = set()   # never re-draw a listing that is already gold or in an earlier sample
+    for f in (RUNS_DIR / DOMAIN).glob("gold-r*/sample-r*.jsonl"):
+        if f != sample_file:
+            excluded |= {json.loads(l)["listing_id"] for l in f.read_text(encoding="utf-8").splitlines() if l.strip()}
+    gdir = config.data_dir() / DOMAIN / "gold"
+    for f in gdir.glob("*.yaml") if gdir.exists() else []:
+        excluded |= {g.get("listing_id") for g in (yaml.safe_load(f.read_text(encoding="utf-8")) or [])}
     by_source = defaultdict(list)
     for lid in sorted(by_id):
-        by_source[by_id[lid]["_source"]].append(lid)
+        if lid not in excluded or sample_file.exists():
+            by_source[by_id[lid]["_source"]].append(lid)
     if sample_file.exists():
         if not a.page_only:
             raise SystemExit(f"{sample_file} exists; a drawn sample is never redrawn. Use a new --round (or --page-only).")

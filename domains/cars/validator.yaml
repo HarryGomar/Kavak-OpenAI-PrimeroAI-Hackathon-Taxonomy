@@ -24,3 +24,14 @@ history:
     version.
   dev_hold_rate: 0.879
   was: 0.869
+- version: 3
+  kept: false
+  round: 3
+  lines:
+  - Resolve conflicting brand fields using the model’s identity in the target Mexican taxonomy before rejecting a listing.
+  - Match versions to the target make–model–year taxonomy, applying established aliases for trim, engine, drivetrain, and
+    transmission.
+  - Retain all explicit version qualifiers across title, model, and version fields, including body style, cab configuration,
+    and “Estándar.”
+  dev_hold_rate: 0.937
+  was: 0.897

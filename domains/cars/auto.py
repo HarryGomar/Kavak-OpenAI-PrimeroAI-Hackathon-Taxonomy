@@ -171,7 +171,12 @@ def cmd_rules(rnd: int, max_props: int, patience: int) -> dict:
     ledger.append("auto_rules_start", domain="cars", round=rnd, dev_rows=len(dev), gold_files=[f.name for f in files], **cur)
     log, tried, drops, n = [{"step": "baseline", **cur}], [], 0, 0
     sealed_base = None
-    queue = list(QUEUED)
+    learned_ids = {c.get("id") for c in (yaml.safe_load(LEARNED.read_text(encoding="utf-8")) or [])} if LEARNED.exists() else set()
+    dropped_before = set()
+    for e in read_jsonl(OUT / "ledger.jsonl"):     # queued proposals already kept or already dropped are not re-run
+        if e.get("kind") == "auto_rules_decision" and e.get("origin", "").startswith("queued") and not str(e.get("verdict", "")).startswith("untestable"):
+            dropped_before.add(e.get("step"))
+    queue = [q for q in QUEUED if q["name"] not in learned_ids and q["name"] not in dropped_before]
     while n < max_props and drops < patience:
         if queue:
             prop, origin = queue.pop(0), "queued (human review)"
@@ -198,7 +203,7 @@ def cmd_rules(rnd: int, max_props: int, patience: int) -> dict:
             for op in prop["ops"]:
                 resolve.apply_op(cand["rules"], op)
         except (ValueError, KeyError, TypeError) as e:
-            drops += 1
+            drops += origin.startswith("codex")
             entry = {"step": prop["name"], "origin": origin, "verdict": f"invalid: {e}", "ops": prop["ops"]}
             log.append(entry)
             ledger.append("auto_rules_decision", domain="cars", round=rnd, **entry)
@@ -232,8 +237,8 @@ def cmd_rules(rnd: int, max_props: int, patience: int) -> dict:
             doc, cur, cur_paths, drops = cand, sc, paths, 0
             if sealed_base is not None:
                 sealed_base = None          # re-baseline sealed on the new rules at the next read
-        else:
-            drops += 1
+        elif origin.startswith("codex"):
+            drops += 1                       # patience counts the proposer's drops only
     out = {"round": rnd, "log": log, "kept": [e["step"] for e in log if e.get("verdict") == "kept"],
            "final_dev": cur, "sealed_reads_total": gold.reads(), "secs": round(time.time() - t0, 1)}
     (OUT / f"loop-r{rnd:02d}").mkdir(parents=True, exist_ok=True)

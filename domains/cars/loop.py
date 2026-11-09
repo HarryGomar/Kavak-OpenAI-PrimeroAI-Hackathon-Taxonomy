@@ -158,9 +158,14 @@ def cmd_validate(rnd: int, fresh: int, effort: str, vver: int = 2) -> None:
     from domains.cars.gold_sample import build_title, shown_fields
     raw = load_raw()
     pl = {p["listing_id"]: p for p in read_jsonl(OUT / "placements.jsonl")}
-    sample = [json.loads(l)["listing_id"] for l in (OUT / "gold-r01" / "sample-r01.jsonl").read_text().splitlines() if l.strip()]
+    sample = [json.loads(l)["listing_id"] for l in (OUT / f"gold-r{rnd:02d}" / f"sample-r{rnd:02d}.jsonl").read_text().splitlines() if l.strip()]
     _, gold = gold_rows()
     earlier = {g.get("listing_id") for g in gold.values()} | set(sample)
+    for f in OUT.glob("gold-r*/sample-r*.jsonl"):        # every drawn gold sample, labelled or not
+        earlier |= {json.loads(l)["listing_id"] for l in f.read_text(encoding="utf-8").splitlines() if l.strip()}
+    for f in OUT.glob("loop-r*/validator.jsonl"):       # and every listing an earlier round already reviewed
+        if f.parent.name != f"loop-r{rnd:02d}":
+            earlier |= {r["listing_id"] for r in read_jsonl(f)}
     pool = sorted(l for l in pl if l not in earlier and pl[l]["step"] != "parse")   # parse = not car listings
     fresh_ids = random.Random(f"cars-loop-r{rnd}").sample(pool, fresh)
     imported = sorted({g.get("listing_id") for g in gold.values() if g.get("listing_id") in pl})
