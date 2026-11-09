@@ -5,11 +5,13 @@
   origin: current footwear RAW titles and identity convention
   evidence: Unvalidated starting proposal.
 - id: ft-attributes
-  text: Keep size, width and colour as listing attributes unless maker evidence establishes
-    a distinct product; a pair is not an outer multipack.
+  text: Keep size, width, colour and explicit audience words as listing attributes unless
+    maker evidence establishes a distinct product; preserve model identity and uncertainty
+    about gender-specific models; a pair is not an outer multipack.
   status: proposal
   origin: footwear starting convention
-  evidence: Requires reviewed labels.
+  evidence: One isolated audience-vocabulary experiment was neutral against frozen CLI
+    silver; no reviewed human labels. This instruction remains an unadmitted proposal.
 - id: ft-brand-accessory
   text: Distinguish maker from seller and compatibility target, and keep standalone
     footwear accessories separate from complete footwear.
