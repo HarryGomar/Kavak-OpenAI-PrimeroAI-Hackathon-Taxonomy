@@ -55,8 +55,9 @@ def sample(domain: str, version: str, seed: int | None = None, pool: str = "unla
     rnd = random.Random(7 if seed is None and version == "V1" else seed if seed is not None else version)
     placed = [p for p in fresh if p["level"] == "product"]
     agent = [p for p in fresh if p["route"] == "agent_title"]
-    n_placed = round(n * N_PLACED / (N_PLACED + N_AGENT))
-    pick = rnd.sample(placed, min(n_placed, len(placed))) + rnd.sample(agent, min(n - n_placed, len(agent)))
+    n_agent = min(n - round(n * N_PLACED / (N_PLACED + N_AGENT)), len(agent))
+    n_placed = min(n - n_agent, len(placed))   # when one pool runs short, the other fills the sample up to n
+    pick = rnd.sample(placed, n_placed) + rnd.sample(agent, n_agent)
     rnd.shuffle(pick)
     out = _dir(domain) / f"{version}-blind.jsonl"
     with open(out, "w", encoding="utf-8") as f:

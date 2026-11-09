@@ -234,7 +234,12 @@ def fit(domain: str, rounds: int, n_train: int, n_test: int) -> dict:  # noqa: C
         if exact_now >= FIT_TARGET:
             _say(f"  round {r}: training exact {exact_now:.3f} is within 5% error; fitting stops")
             break
-        ch = loop.propose_change(domain, misses, d / f"{F}-r{r}-improver.json")
+        tried = [{"change": (h.get("change") or {}).get("text"), "question": (h.get("change") or {}).get("question_id"),
+                  "outcome": ("kept" if h.get("kept") else h.get("outcome") or
+                              f"dropped: training exact delta {h['train']['exact']['delta']}, harm delta "
+                              f"{h['train']['harm']['delta']}, abstain delta {h['train']['abstain']['delta']}")}
+                 for h in hist]
+        ch = loop.propose_change(domain, misses, d / f"{F}-r{r}-improver.json", setup=s, history=tried)
         rec = {"round": r, "misses": len(misses), "change": ch}
         tool_src = None
         if ch and ch.get("kind") == "tool":

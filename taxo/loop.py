@@ -69,10 +69,12 @@ def _misses(domain: str, version: str, suffix: str = "") -> list[dict]:
     return out
 
 
-def propose_change(domain: str, misses: list[dict], log: Path) -> dict | None:
+def propose_change(domain: str, misses: list[dict], log: Path, setup: dict | None = None,
+                   history: list[dict] | None = None) -> dict | None:
     """The improver agent (taxo/roles/improver.py) on the Codex runner: ONE SetupChange from the validator's mistakes
-    and their traces. Returns the change as a dict, or None."""
-    s = validator.card(domain)
+    and their traces. `setup`: the version being improved (default validator.yaml); `history`: its earlier attempts in
+    this run and what happened to them. Returns the change as a dict, or None."""
+    s = setup or validator.card(domain)
     qs = [{k: q.get(k) for k in ("id", "ask", "tools", "then")} for q in s.get("questions") or []
           if q.get("status") in ("admitted", "shadow")]
     closed = closed_questions(domain)
@@ -85,6 +87,9 @@ def propose_change(domain: str, misses: list[dict], log: Path) -> dict | None:
               "(brand -> its known product names)). `fires_on` and `quiet_on` are JSON objects of the function's "
               "arguments; code runs both and keeps the tool only if both run and give different results. Say in "
               "`ask` which question uses it."
+            + ("\n\nYour earlier changes in this run and what happened to them. Do not resubmit one; a rewording of a "
+               "question that already failed is unlikely to help, so try a different question, a new question or a "
+               "tool:\n" + json.dumps(history, ensure_ascii=False) if history else "")
             + "\n\nMistakes (listing, the validator's answer and trace, the person's answer):\n"
             + json.dumps(misses[:30], ensure_ascii=False, indent=0))
     try:
