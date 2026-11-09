@@ -25,7 +25,7 @@ def data_dir() -> Path:
 
 
 def model(role: str) -> str:
-    """role: placer | judge_fast | judge_strong | proposer"""
+    """role: placer | validator | improver | proposer | judge_fast | judge_strong"""
     return os.environ.get(f"TAXO_MODEL_{role.upper()}", "gpt-6-luna")
 
 
