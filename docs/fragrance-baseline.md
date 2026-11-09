@@ -220,3 +220,28 @@ card v2: `cards/validator-fragrance.md`.
 | 6 | `settle/single-name`: a short name under the floor (3 words or fewer) gets its own product node instead of going to the agent (found by V1) | 65.7% | **68.9%** | 14.2% | 50.3% | **11.1%** | **kept** (93 better, 33 worse) |
 
 **Sealed reads:** 7 in total.
+
+### Loop B V2 (validator card v2), then rounds 7 and 8
+
+**V2 sample:** 40 new Pedia-labelled dev listings, none from V1 (the sampler skips listings an earlier round used). I
+labelled them blind with card v2, and Pedia settled the disagreements.
+
+| | V1 (card v1) | V2 (card v2) |
+|---|---:|---:|
+| Validator agrees with the pipeline | 21 of 40 | 18 of 40 |
+| Validator right when it disagrees | 15 of 19 (79%) | **21 of 22 (95%)** |
+| Spot checks of agreed rows that held | 5 of 6 | **6 of 6** |
+| Pipeline errors found | 16 | 21 |
+
+**What V2's pipeline errors show:**
+- The concentration veto blocks right answers ("Yeah EDP", "Gala Premiere EDP"). Pedia doesn't split by concentration.
+- "for Everyone N/A" (Target's audience text) became a product name.
+- Junk clusters remain: "Pack", "Scents", "Hair Mist".
+
+| Round | Change | Dev exact | Sealed exact | Gate |
+|---|---|---:|---:|---|
+| 7 | concentration veto to shadow | 66.0% | 69.1% | **dropped** (8 better, 5 worse on sealed: bound 0.36) |
+| 8 | `audience += for everyone, everyone, n a` | 66.3% (77 better, 6 worse on dev) | 69.0% | **dropped**: it touches 1 sealed row, so sealed cannot test it. Re-test on a larger or fresh sealed set |
+
+**State after round 8:** the pipeline stays at round 6. Sealed exact is 68.9%, and 11.1% of listings go to the agent.
+Sealed has been read 9 times.

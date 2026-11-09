@@ -36,7 +36,7 @@ def _placements(domain: str) -> list[dict]:
     return [json.loads(x) for x in open(RUNS_DIR / domain / "placements.jsonl", encoding="utf-8")]
 
 
-def sample(domain: str, version: str, seed: int = 7, pool: str = "unlabelled") -> Path:
+def sample(domain: str, version: str, seed: int | None = None, pool: str = "unlabelled") -> Path:
     """Some listings the lattice placed, some it sent to the agent. pool "unlabelled": no gold row (where gold is thin);
     "pedia-dev": a Pedia label, dev brands only (Pedia reviews them; sealed stays unread)."""
     P = _placements(domain)
@@ -49,7 +49,10 @@ def sample(domain: str, version: str, seed: int = 7, pool: str = "unlabelled") -
                  and any(g.startswith("pedia:") for g in p["gold"])]
     else:
         fresh = [p for p in P if not p["gold"] and p["brand"] and p["title"]]
-    rnd = random.Random(seed)
+    seen = {json.loads(x)["id"] for f in _dir(domain).glob("V*-blind.jsonl") if f.name != f"{version}-blind.jsonl"
+            for x in open(f, encoding="utf-8")}          # a listing is sampled in one round only
+    fresh = [p for p in fresh if p["id"] not in seen]
+    rnd = random.Random(7 if seed is None and version == "V1" else seed if seed is not None else version)
     placed = [p for p in fresh if p["level"] == "product"]
     agent = [p for p in fresh if p["route"] == "agent_title"]
     pick = rnd.sample(placed, min(N_PLACED, len(placed))) + rnd.sample(agent, min(N_AGENT, len(agent)))
@@ -143,7 +146,8 @@ def settle(domain: str, version: str, verdicts: Path) -> dict:
     flags_right = sum(V[it["id"]]["verdict"] in ("validator_right", "both_wrong") for it in flagged)
     pipe_wrong = sum(V[it["id"]]["verdict"] in ("validator_right", "both_wrong") for it in review["items"] if it["id"] in V)
     by = {v.get("by", "person") for v in V.values()}
-    silver = {"version": version, "validator": "claude-session-v1", "reviewer": "/".join(sorted(by)),
+    cards = {json.loads(x).get("card", "v1") for x in open(d / f"{version}-validator.jsonl", encoding="utf-8")}
+    silver = {"version": version, "validator": "claude-session/card-" + "+".join(sorted(cards)), "reviewer": "/".join(sorted(by)),
               "reviewed": sum(c[k] for k in ("pipeline_right", "validator_right", "both_wrong", "unclear")),
               "agreement": round(review["agree"] / max(review["agree"] + review["disagree"], 1), 3),
               "flag_precision": round(flags_right / max(len(flagged), 1), 3),
