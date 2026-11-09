@@ -47,3 +47,14 @@ rows. Validator judgments are model silver; imported annotations and synthetic
 examples are not human gold. No reviewed human outcomes were available. Accuracy,
 rule admission and readiness for scaling remain **blocked**. Neither this domain
 proposal nor the shared dependency is authorized to merge to main.
+
+### Post-run shared transport delivery
+
+After freezing both measured runs, this branch consumed coordinator commit
+`ff5a42b7fd9e063afd462161f27a3b6038a02e2a` from PR #8 with `git cherry-pick -x`
+and completed `uv sync --frozen`. The delivered worktree now uses universal CLI
+runtime/lock v2, with the same pinned CLI version, model, reasoning effort and FAST
+tier. The archived baseline and single experiment remain v1 measurements from
+`21c65f8` and `88c59de`, respectively. No observations, judgments or metrics were
+reselected, relabeled or rerun after consumption. The local post-run delivery note
+and status distinguish measured run revisions from the delivery head.
