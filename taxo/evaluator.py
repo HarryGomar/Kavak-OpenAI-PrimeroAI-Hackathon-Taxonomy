@@ -8,6 +8,7 @@ all of which must hold, and one `then` dict the pipeline acts on.
       - {check: concentration_conflict}            # a check from taxo/tools/checks.py fires on (listing, node)
     then: {veto: true, route: agent_title}
     status: active                                 # active | shadow | proposal | retired
+    # ops: eq ne in not_in ge gt le lt missing present has_any (listing.title holds one of the phrases)
     why: "..."
 
 Only ACTIVE rules decide, first match in file order. SHADOW rules are evaluated after and logged only when their
@@ -46,12 +47,17 @@ class Outcome:
 
 
 def load(*dirs: Path) -> list[Rule]:
-    """Every *.yaml under the given dirs, in dir order then file name order. A file holds one rule or a list."""
+    """Every *.yaml under the given dirs, in dir order then file name order. A file holds one rule or a list.
+    A rule id seen in an earlier dir wins: a domain file overrides the global rule of the same id (scoped down)."""
     out: list[Rule] = []
+    seen: set[str] = set()
     for d in dirs:
         for p in sorted(Path(d).glob("*.yaml")):
             doc = yaml.safe_load(p.read_text(encoding="utf-8")) or []
             for r in doc if isinstance(doc, list) else [doc]:
+                if r["id"] in seen:
+                    continue
+                seen.add(r["id"])
                 out.append(Rule(id=r["id"], when=r.get("when") or [], then=r.get("then") or {},
                                 status=r.get("status", "proposal"), stage=r.get("stage", "place"),
                                 why=r.get("why", ""), path=str(p)))
@@ -69,7 +75,9 @@ def fact(facts: dict, name: str) -> Any:
 
 _OPS = {"eq": lambda v, w: v == w, "ne": lambda v, w: v != w, "in": lambda v, w: v in w,
         "not_in": lambda v, w: v not in w, "ge": lambda v, w: v >= w, "gt": lambda v, w: v > w,
-        "le": lambda v, w: v <= w, "lt": lambda v, w: v < w}
+        "le": lambda v, w: v <= w, "lt": lambda v, w: v < w,
+        # a token string (listing.title) holds one of these phrases, whole words only (phrases written lower-case, tokenised)
+        "has_any": lambda v, w: isinstance(v, str) and any(f" {p} " in f" {v} " for p in w)}
 
 
 def _cond(c: dict, facts: dict, ctx: dict) -> tuple[bool, str]:

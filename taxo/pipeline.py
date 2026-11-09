@@ -68,10 +68,18 @@ class Item:
     rule: str | None = None
     route: str | None = None
     shadow: list = field(default_factory=list)
+    cluster_n: int = 0                # listings in the cluster the title joined (0: none)
+    variant_field: str | None = None  # the shop's variant label, if the data has one
 
     def reset(self) -> None:
         self.brand, self.brand_how, self.key, self.cluster = None, "", "", None
         self.path, self.level, self.step, self.reason, self.rule, self.route, self.shadow = [], "none", "", "", None, None, []
+        self.cluster_n = 0
+
+    def title_facts(self) -> dict:
+        """Facts about the title any stage can read: its tokens (for has_any) and how many there are."""
+        t = _tkey(self.title)
+        return {"title": " ".join(t), "title_words": len(t)}
 
 
 def _title(units: str) -> str:
@@ -89,27 +97,30 @@ def _edu_raw() -> list[dict]:
             for r in read_jsonl(EDU_DIR / "fragrance" / "listings.jsonl")]
 
 
-def load_gold(data: str) -> tuple[list[goldmod.GoldRow], list[goldmod.GoldRow], dict[str, str]]:
+def load_gold(data: str, domain: str = "fragrance") -> tuple[list[goldmod.GoldRow], list[goldmod.GoldRow], dict[str, str]]:
     """(primary gold, human gold, brand names). drive: Pedia's labels are the primary gold (the project's choice) and
     Harry's labels the human check; edu: Harry's labels are both."""
-    names = brand_names() if (EDU_DIR / "fragrance" / "taxonomy.jsonl").exists() else {}
+    names = brand_names() if domain == "fragrance" and (EDU_DIR / "fragrance" / "taxonomy.jsonl").exists() else {}
     prim: list[goldmod.GoldRow] = []
     if data == "drive":
-        prim, dnames = drive.pedia_gold()
+        prim, dnames = drive.pedia_gold(domain)
         names = {**names, **dnames}
+    if domain != "fragrance":            # no human labels outside fragrance yet: Pedia is the only gold
+        return prim, [], names
     human = goldmod.dedupe(goldmod.read_fixtures([GOLD_DIR / f for f in FIXTURES], set(names))
                            + goldmod.read_owner_git(PEDIA_REPO, OWNER_REF, OWNER_PATH, set(names)))
     return prim or human, human, names
 
 
-def load_items(data: str, prim: list[goldmod.GoldRow], human: list[goldmod.GoldRow]) -> list[Item]:
+def load_items(data: str, prim: list[goldmod.GoldRow], human: list[goldmod.GoldRow], domain: str = "fragrance") -> list[Item]:
     by_listing = {g.extra["listing"]: g for g in prim if "listing" in g.extra}
-    raw = drive.listings() if data == "drive" else _edu_raw()
+    raw = drive.listings(domain) if data == "drive" else _edu_raw()
     items, by_title = [], {}
     for r in raw:
         g = by_listing.get(r["id"])
         it = Item(id=r["id"], title=r["title"], source=r["source"], brand_field=r["brand_name"],
-                  maker_field=r["manufacturer_name"], url=r.get("url"), pedia_brand=g.brand if g else r.get("pedia_brand"),
+                  maker_field=r["manufacturer_name"], url=r.get("url"), variant_field=r.get("variant"),
+                  pedia_brand=g.brand if g else r.get("pedia_brand"),
                   pedia_path=g.expected_path if g else r.get("pedia_path") or [])
         if g:
             it.gold.append(g.id)
@@ -160,7 +171,8 @@ def run(items: list[Item], brands: Brands, vocab, rules: list[evaluator.Rule], o
     for slug, its in by_brand.items():
         name = brands.names[slug]
         recs = [NameRecord(rid=it.id, key=it.key, family=it.source or "listing") for it in its if it.key]
-        bc = count_brand(slug, recs, vocab, brand_words=[name, slug.replace("_", " ")], **(lattice or {}))
+        opts = {k: bool(vocab.s[k]) for k in ("whole_name", "bind_end", "attr_root") if k in vocab.s}
+        bc = count_brand(slug, recs, vocab, brand_words=[name, slug.replace("_", " ")], **(opts | (lattice or {})))
         stats["clusters"] += len(bc.clusters)
         stats["supported"] += sum(c.supported for c in bc.clusters.values())
         stats["families"] += len(bc.families)
@@ -177,7 +189,7 @@ def run(items: list[Item], brands: Brands, vocab, rules: list[evaluator.Rule], o
                 it.reason = "no_name"
                 continue
             c = bc.clusters[ck]
-            it.cluster = ck
+            it.cluster, it.cluster_n = ck, c.n
             if not c.supported or ck in unclear:
                 it.reason = unclear.get(ck, "under_floor")
                 continue
@@ -185,7 +197,8 @@ def run(items: list[Item], brands: Brands, vocab, rules: list[evaluator.Rule], o
             if ck not in tax:
                 tax[ck] = Node(id=f"{slug}/{ck}", domain="fragrance", name=_title(ck),
                                path=[name] + fam + [_node_text(ck, c.variants, c.n)])
-            facts = {"placement": {"step": "lattice", "level": "product", "cluster_n": c.n}, "brand": {"slug": slug}}
+            facts = {"placement": {"step": "lattice", "level": "product", "cluster_n": c.n},
+                     "brand": {"slug": slug, "how": it.brand_how}, "listing": it.title_facts()}
             ctx = {"listing": Listing(id=it.id, domain="fragrance", title=it.title, brand=name), "node": tax[ck], "tax": tax}
             out = evaluator.evaluate(rules, "place", facts, ctx)
             it.shadow += [(r, d) for r, _, d in out.shadow]
@@ -194,7 +207,7 @@ def run(items: list[Item], brands: Brands, vocab, rules: list[evaluator.Rule], o
                 continue
             it.path, it.level, it.step, it.reason = [name] + fam + [_title(ck)], "product", "lattice", "placed"
             form = checks._phrase(it.title, fragrance.FORMS)
-            facts["listing"] = {"form": form}
+            facts["listing"] = {**facts["listing"], "form": form}
             child = evaluator.evaluate(rules, "child", facts, ctx)
             it.shadow += [(r, d) for r, _, d in child.shadow]
             if child.then.get("child") == "form" and form:
@@ -202,8 +215,9 @@ def run(items: list[Item], brands: Brands, vocab, rules: list[evaluator.Rule], o
     for it in items:
         if only is not None and it.brand not in only:
             continue
-        facts = {"brand": {"slug": it.brand}, "placement": {"level": it.level, "reason": it.reason, "step": it.step,
-                                                            "cluster_units": len(it.cluster.split()) if it.cluster else 0}}
+        facts = {"brand": {"slug": it.brand, "how": it.brand_how}, "listing": it.title_facts(),
+                 "placement": {"level": it.level, "reason": it.reason, "step": it.step, "cluster_n": it.cluster_n,
+                               "cluster_units": len(it.cluster.split()) if it.cluster else 0}}
         out = evaluator.evaluate(rules, "route", facts)
         it.shadow += [(r, d) for r, _, d in out.shadow]
         if out.then.get("place") == "cluster" and it.cluster and it.brand:
@@ -212,7 +226,39 @@ def run(items: list[Item], brands: Brands, vocab, rules: list[evaluator.Rule], o
             it.step, it.rule = "rule", out.rule
         elif out.then.get("route"):
             it.route, it.rule = out.then["route"], it.rule or out.rule
+    if vocab.s.get("variant_field"):          # variant step: the shop's own variant label names the child node
+        for it in items:
+            if (only is None or it.brand in only) and it.level == "product" and it.variant_field:
+                v = variant_name(it.variant_field, vocab, it.path)
+                if v:
+                    it.path, it.reason = it.path + [v], (it.reason or "placed") + "+variant"
+                    stats["variant_children"] += 1
     return dict(stats)
+
+
+_NOT_A_VARIANT = {"default title", "default", "title", "n a", "na", "none", "standard", "regular", "one size"}
+# Buying choices are never nodes (SPEC §4): a label holding a number or one of these words is a pack or a size.
+_BUYING = set("box boxes bag bags bar bars bottle bottles pack packs packet packets count ct pk pound pounds lb lbs oz ounce ounces fl gram grams g kg ml l liter liters litre supply case cases trial sample samples bundle week weeks pcs pc piece pieces can cans jar jars tub tubs pouch pouches single double family size small medium large xl standard mini minis serving servings sleeve tray carton multipack variety".split())
+
+
+def variant_name(raw: str, vocab, path: list[str]) -> str | None:
+    """A shop variant label that names a variant: not a placeholder ("Default Title"), not only size / pack / count
+    words, not a multi-option string ("RED/LARGE/ROUND"), at most 6 words, and not already in the product's name."""
+    if not raw or "/" in raw or "|" in raw:
+        return None
+    toks = vocabmod.tokens(raw)
+    if not toks or len(toks) > 6 or " ".join(toks) in _NOT_A_VARIANT:
+        return None
+    if any(any(ch.isdigit() for ch in t) or t in _BUYING for t in toks):
+        return None
+    tag = vocab.tag(toks)
+    named = [t for i, t in enumerate(toks) if tag.var[i] is None and not t.isdigit()]
+    if not named:
+        return None
+    have = {t for seg in path for t in vocabmod.tokens(seg)}
+    if set(named) <= have:
+        return None
+    return " ".join(raw.split())
 
 
 class NodePick(BaseModel):
@@ -421,7 +467,7 @@ def try_vocab(label: str, doc: dict, items, brands, rules, rows, by_gold, only: 
 # ---------------------------------------------------------------- main
 def main() -> None:
     ap = argparse.ArgumentParser(prog="taxo.pipeline")
-    ap.add_argument("domain", choices=["fragrance"])
+    ap.add_argument("domain", choices=["fragrance", "food"])
     ap.add_argument("--data", choices=["drive", "edu"], default="drive",
                     help="drive: the hackathon's 3x5,000 listings, Pedia labels as gold; edu: Edu's subset, human gold")
     ap.add_argument("--sealed", action="store_true", help="read sealed gold once at the end (logged)")
@@ -437,11 +483,13 @@ def main() -> None:
     out_dir = RUNS_DIR / a.domain
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    rows, human_rows, names = load_gold(a.data)
-    brands = Brands(names)
+    rows, human_rows, names = load_gold(a.data, a.domain)
+    vdoc = yaml.safe_load((DOMAINS_DIR / a.domain / "vocab.yaml").read_text(encoding="utf-8")) or {}
+    brands = Brands(names, tuple(vdoc.get("brand_drop_suffixes") or ()),
+                    shop_brand=bool((vdoc.get("settings") or {}).get("shop_brand")))
     gold = goldmod.Gold(rows, out_dir / "sealed_reads.jsonl")
     human = goldmod.Gold(human_rows, out_dir / "sealed_reads.jsonl")
-    items = load_items(a.data, rows if rows is not human_rows else [], human_rows)
+    items = load_items(a.data, rows if rows is not human_rows else [], human_rows, a.domain)
     by_gold = {gid: it for it in items for gid in it.gold}
     vocab_path = DOMAINS_DIR / a.domain / "vocab.yaml"
     vocab = vocabmod.load(vocab_path)

@@ -73,7 +73,7 @@ def decide(c: dict, agent_before: float, agent_after: float) -> tuple[bool, list
 
 def main() -> None:
     ap = argparse.ArgumentParser(prog="taxo.gate")
-    ap.add_argument("domain", choices=["fragrance"])
+    ap.add_argument("domain", choices=["fragrance", "food"])
     ap.add_argument("before", type=Path)
     ap.add_argument("after", type=Path)
     ap.add_argument("--round", type=int, required=True)
@@ -81,7 +81,7 @@ def main() -> None:
     ap.add_argument("--data", choices=["drive", "edu"], default="drive")
     ap.add_argument("--dev", action="store_true", help="diff on dev gold only: no sealed read, no KPI row, no decision")
     a = ap.parse_args()
-    rows, human, names = load_gold(a.data)
+    rows, human, names = load_gold(a.data, a.domain)
     brands = Brands(names)
     g = goldmod.Gold(rows, RUNS_DIR / a.domain / "sealed_reads.jsonl")
     if a.dev:

@@ -77,14 +77,20 @@ class Brands:
 
     SUFFIXES = ("perfumes", "perfume", "parfums", "parfum", "paris", "fragrances", "beauty")
 
-    def __init__(self, names: dict[str, str]):
+    def __init__(self, names: dict[str, str], drop_suffixes: tuple[str, ...] = (), shop_brand: bool = False):
+        """`drop_suffixes`: generic last words a brand is also named without ("candy" in "Pure Sugar Candy").
+        `shop_brand`: brand_site also matches a shop that holds a brand's name ("flavoritosshop_us" -> Flavoritos,
+        "drinkolipop_us" -> Olipop) or starts it ("bonescoffee_us" -> Bones Coffee Company), when one brand fits."""
         self.names = names
+        self.shop_brand = shop_brand
         self.alias: dict[tuple[str, ...], str] = {}
         for slug, name in names.items():
             for base in {tokens(name), tuple(slug.split("_"))}:
                 if not base:
                     continue
                 self.alias.setdefault(base, slug)
+                if len(base) > 1 and base[-1] in drop_suffixes:
+                    self.alias.setdefault(base[:-1], slug)
                 for s in self.SUFFIXES:
                     self.alias.setdefault(base + (s,), slug)
         self._by_len = sorted(self.alias, key=len, reverse=True)
@@ -116,7 +122,20 @@ class Brands:
                 for c in {_compact(slug), _compact(name)}:
                     if len(c) >= 3:
                         self._compact.setdefault(c, slug)
-        return self._compact.get(_compact(_SHOP_SUFFIX.sub("", shop.lower())))
+        s = _compact(_SHOP_SUFFIX.sub("", shop.lower()))
+        hit = self._compact.get(s)
+        if hit or not self.shop_brand or len(s) < 5:
+            return hit
+        # the longest brand name inside the shop name, or the brand the shop name starts; only when exactly one fits
+        found: dict[str, int] = {}
+        for c, slug in self._compact.items():
+            if len(c) >= 5 and (c in s or (len(s) >= 6 and c.startswith(s))):
+                found[slug] = max(found.get(slug, 0), len(c))
+        if not found:
+            return None
+        best = max(found.values())
+        top = [slug for slug, n in found.items() if n == best]
+        return top[0] if len(top) == 1 else None
 
     def url(self, url: str | None) -> str | None:
         """The brand a catalog or shop URL names: /Perfumes/<Brand>/..., or a slug "...-by-<brand>-for-...". """
