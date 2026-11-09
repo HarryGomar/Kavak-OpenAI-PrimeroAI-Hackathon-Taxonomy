@@ -9,10 +9,10 @@
 - id: cl-garment-type-conflict
   check: clothing_type_conflict
   decision: abstain
-  description: Explicit incompatible garment types require review; shared department is insufficient.
+  description: Audience-only product names or explicit incompatible garment types require review.
   domains: [clothing]
   origin: clothing scope inspection
-  evidence: 'RAW contains shirts, dresses, shorts and trousers; not evaluated on gold.'
+  evidence: 'Bounded raw construction grouped distinct garment types under an audience-only product; independent model silver disagrees, but reviewed human labels are absent.'
   status: proposal
 - id: cl-set-composition
   check: clothing_set_conflict

@@ -57,6 +57,13 @@ def _types(text):
 
 
 def clothing_type_conflict(listing, node, tax, **params):
+    # Audience alone is not product identity. Any additional name/code stays eligible.
+    audience = {"woman", "women", "womens", "man", "men", "mens", "boy", "boys", "girl", "girls",
+                "kid", "kids", "child", "children", "baby", "babies", "toddler", "toddlers",
+                "adult", "adults", "unisex"}
+    words = set(re.findall(r"[a-z0-9]+", node.name.casefold().replace("'", "").replace("\u2019", "")))
+    if words & audience and words <= audience | {"for", "and"}:
+        return "audience-only candidate lacks garment or product identity"
     a, b = _types(listing.title), _types(node.name)
     if len(a) == len(b) == 1 and a.isdisjoint(b):
         return f"garment types conflict: {sorted(a)} vs {sorted(b)}"
