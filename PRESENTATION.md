@@ -123,19 +123,21 @@ Khamrah Qahwa; Dukhan and Yara left unclear.
 
 ## 10. Loop 2, validation: improve the eval itself (55 s)
 
-**Show:** the loop drawn as a circle, clockwise: a validator (checks listings nobody labelled) → flags (errors, and
-doubts) → a person labels (what counts as right sharpens) → a new rule and a stricter check → back to the validator. In
-the middle: each round, a stricter eval. Under it, one example from the run. Beside it, Figure B: F1 of the solver as
-the checks get stricter (gold, then checks 1 and 2), for rule set 1 and rule set 2.
+**Show:** the loop drawn as a circle, clockwise: a validator (labels fresh listings, blind) → flags (where it and the
+solver disagree) → a person settles them (silver: their labels, kept) → new rules and new checks → back to the
+validator. In the middle: each round, the silver grows. Under it, what gold and silver are, and one example from the
+run. Beside it, Figure B: F1 of the solver scored on gold, then gold + silver 1, then gold + silver 2, for rule set 1
+and rule set 2. Under each point, the set it is scored on as squares: one gold row, then a silver stack that grows.
 
 **Say:**
 - A small gold set doesn't cover everything, so loop 2 improves the eval itself. Going round the loop:
-- A validator agent checks listings nobody labelled. It flags errors, and cases it isn't confident about.
-- A person labels them, and what counts as right gets sharper.
-- Then it asks what is going on, and that becomes a new rule and a stricter check. For example, [confirm from the run:
-  small houses with no barcode name the product only in the description].
-- On the graph: as the checks get stricter, rule set 1 falls from [x] to [z]; after refining, rule set 2 gets back to
-  [w]. We improve the definition of right, the way we check it, and the solver underneath.
+- A validator agent labels fresh listings without seeing the solver's answer, and flags where the two disagree.
+- A person settles every disagreement, and those labels are kept as silver. Gold, what we labelled by hand, stays
+  small; silver grows every round, so the eval covers more and gets stricter.
+- Then it asks what is going on, and that becomes new rules and new checks. For example, [confirm from the run: small
+  houses with no barcode name the product only in the description].
+- On the graph: as the silver grows, rule set 1 falls from [x] to [z]; after refining, rule set 2 gets back to [w]. We
+  improve the definition of right, the way we check it, and the solver underneath.
 
 ## 11. Loop 3, meta: the next domain starts ahead (35 s)
 
@@ -177,7 +179,7 @@ chain going down: a person's labels → a better eval → better rules → a bet
 |---|---|---|---|---|
 | Agent alone | 4 | F1 on gold, dollars and hours for all 2M listings with an agent on everything | the agent-only baseline | to run |
 | **A** | 9 | F1 on gold, round by round, each point labelled with the rule kept | induction runs on fragrance | to run |
-| **B** | 10 | F1 of rule set 1 and rule set 2 on gold, checks 1 and checks 2 | validation rounds 1–2 | to run |
+| **B** | 10 | F1 of rule set 1 and rule set 2 on gold, gold + silver 1, gold + silver 2 | validation rounds 1–2 | to run |
 | **C** | 11 | Rounds saved to reach the target F1, warm start against cold | food ↔ fragrance; fragrance → cars | to run |
 | **Results** | 12 | F1 on fresh listings and cost per 1,000 listings: agent alone, after loops 1, 2 and 3, by domain | all runs | to run |
 | Own eval vs human check | 2 | The LLM judge's score by round, against our labels at the start and after round 4 | Pedia replay `pe2` (`C:\Work\RSI\hackathon\runs\`), mean of 6 runs, 245 held-out listings | in the deck |

@@ -135,7 +135,7 @@
 
   /* ---------- 9 · loop 2 ---------- */
   .vgrid { display: grid; grid-template-columns: 700px 1fr; gap: 110px; flex: 1; min-height: 0; }
-  .ex { font: 400 24px var(--sans); color: var(--mute); margin: 18px 0 0; }
+  .ex { font: 400 24px/1.4 var(--sans); color: var(--mute); margin: 14px 0 0; }
 
   /* ---------- 10 · loop 3 ---------- */
   .xfer { display: flex; flex-direction: column; }
@@ -330,10 +330,10 @@ then: {route: agent_evidence}</pre></div>
 <section class="slide" data-n="10">
   <h2><span style="color:var(--val)">Loop 2, validation:</span> improve the eval itself.</h2>
   <div class="vgrid" style="grid-template-columns:780px 1fr;gap:90px">
-    <div class="chart"><div class="plot"><svg class="ch" id="loop2"></svg></div><p class="ex">For example: <span class="ph">[the check the person added, from the run]</span></p></div>
-    <div class="chart"><h3>F1 of the solver as the checks get stricter</h3><div class="plot"><svg class="ch" id="figB"></svg></div></div>
+    <div class="chart"><div class="plot"><svg class="ch" id="loop2"></svg></div><p class="ex"><b style="color:#B07F0C">Gold</b>: listings we labelled by hand. <b style="color:#7C8390">Silver</b>: listings the validator labelled, every disagreement settled by a person. Gold stays small; silver grows each round.</p><p class="ex">For example: <span class="ph">[the check the person added, from the run]</span></p></div>
+    <div class="chart"><h3>F1 of the solver, scored on gold and a growing silver</h3><div class="plot"><svg class="ch" id="figB"></svg></div></div>
   </div>
-  <aside class="notes">A small gold set doesn't cover everything, so loop 2 improves the eval itself. Going round the loop: a validator agent checks listings nobody labelled. It flags errors, and cases it isn't confident about. A person labels them, and what counts as right gets sharper. Then it asks what is going on: for example [confirm from the run: small houses with no barcode name the product only in the description]. That goes back into the rules, and into a stricter check, so confidence goes up. On the graph: as the checks get stricter, rule set 1 falls from [x] to [z]; after refining, rule set 2 gets back to [w]. We improve two things at once: the validation, and the solver underneath it.</aside>
+  <aside class="notes">A small gold set doesn't cover everything, so loop 2 improves the eval itself. Going round the loop: a validator agent checks listings nobody labelled. It flags errors, and cases it isn't confident about. A person settles them, and those labels are kept as silver. Gold, what we labelled by hand, stays small; silver grows every round, so the eval covers more and gets stricter. Then it asks what is going on: for example [confirm from the run: small houses with no barcode name the product only in the description]. That goes back into the rules, and into a stricter check, so confidence goes up. On the graph: as the checks get stricter, rule set 1 falls from [x] to [z]; after refining, rule set 2 gets back to [w]. We improve two things at once: the validation, and the solver underneath it.</aside>
 </section>
 
 <!-- 10 · Loop 3: meta -->
@@ -593,16 +593,17 @@ claim:  Strip size, pack and
   })();
 
   // ---------- 10 · loop 2, drawn as a loop ----------
+  const GOLD = '#E3AC2A', GOLD_T = '#B07F0C', SILV = '#C3C8D0', SILV_T = '#7C8390';
   (() => {
     let s = '';
     const cx = 400, cy = 330, r = 175;
     [[-76, -14], [14, 76], [104, 166], [194, 256]].forEach(([a, b]) => { s += arc(cx, cy, r, a, b, C.val, 5); });
     [[cx, cy - r], [cx + r, cy], [cx, cy + r], [cx - r, cy]].forEach(([x, y]) => { s += `<circle cx="${x}" cy="${y}" r="11" fill="${C.val}"/>`; });
-    s += Nd(cx, cy - r - 70, 'A validator', ['checks listings nobody labelled'], { fs: 34, sfs: 22 });
-    s += Nd(cx + r + 34, cy - 4, 'Flags', ['errors, and doubts'], { fs: 34, sfs: 22, a: 'start' });
-    s += Nd(cx, cy + r + 64, 'A person labels', ['what counts as right sharpens'], { fs: 34, sfs: 22 });
-    s += Nd(cx - r - 34, cy - 4, 'New rule', ['and a stricter check'], { fs: 34, sfs: 22, a: 'end' });
-    s += Tx(cx, cy - 4, 'each round,', { a: 'middle', fs: 24, c: C.mute }) + Tx(cx, cy + 32, 'a stricter eval', { a: 'middle', fs: 30, fw: 600, c: C.val });
+    s += Nd(cx, cy - r - 70, 'A validator', ['labels fresh listings, blind'], { fs: 34, sfs: 22 });
+    s += Nd(cx + r + 34, cy - 16, 'Flags', ['where it and the', 'solver disagree'], { fs: 34, sfs: 22, a: 'start' });
+    s += Nd(cx, cy + r + 64, 'A person settles them', [`<tspan style="fill:${SILV_T};font-weight:600">silver</tspan>: their labels, kept`], { fs: 34, sfs: 22 });
+    s += Nd(cx - r - 34, cy - 16, 'New rules', ['and new checks'], { fs: 34, sfs: 22, a: 'end' });
+    s += Tx(cx, cy - 4, 'each round,', { a: 'middle', fs: 24, c: C.mute }) + Tx(cx, cy + 34, 'the silver grows', { a: 'middle', fs: 32, fw: 600, c: SILV_T });
     put('loop2', '0 40 800 640', s);
   })();
 
@@ -638,8 +639,10 @@ claim:  Strip size, pack and
         if (sr.notes) sr.notes.forEach((t, i) => { if (t && pts[i]) s += Tx(pts[i][0], pts[i][1] - 22, esc(t), { a: 'middle', fs: 20, c: C.mute }); });
       });
     }
-    o.xs.forEach((t, i) => { s += Tx(x(i), h - Bm + 42, t, { a: 'middle', fs: 22, c: C.mute }); });
-    put(id, `0 0 ${w} ${h}`, s);
+    const fh = o.foot ? o.footH : 0;
+    if (o.foot) s += o.foot(x, h);
+    o.xs.forEach((t, i) => { s += Tx(x(i), h - Bm + 42 + fh, t, { a: 'middle', fs: 22, fw: o.xc ? 600 : 400, c: (o.xc && o.xc[i]) || C.mute }); });
+    put(id, `0 0 ${w} ${h + fh}`, s);
   }
   const ticks01 = lo => [lo, (lo + 1) / 2, 1].map(v => +v.toFixed(2));
 
@@ -652,13 +655,19 @@ claim:  Strip size, pack and
   } else chart('figA', { r: 40, xs: ['start', 'rule 1', 'rule 2', 'rule 3', '…'], ph: "waiting for today's run" });
 
   // 9 · Figure B
-  const sets = ['gold', 'checks 1', 'checks 2'];
+  const sets = ['gold', '+ silver 1', '+ silver 2'];
+  const grows = { xc: [GOLD_T, SILV_T, SILV_T], footH: 150, foot: (x, h) => {
+    let s = ''; const z = 18, g = 5, nx = 6, base = h + 96;
+    [0, 2, 4].forEach((sr, i) => [GOLD, ...Array(sr).fill(SILV)].forEach((c, r) => {
+      for (let k = 0; k < nx; k++) s += `<rect x="${x(i) - (nx * (z + g) - g) / 2 + k * (z + g)}" y="${base - (r + 1) * (z + g)}" width="${z}" height="${z}" rx="3" fill="${c}"/>`;
+    }));
+    return s; } };
   if (R.B && R.B.R1) {
     const g = rs => ['gold', 'V1', 'V2'].map(k => rs[k] ?? null), r1 = g(R.B.R1), r2 = R.B.R2 ? g(R.B.R2) : null;
     const all = [...r1, ...(r2 || [])].filter(v => v != null), lo = Math.max(0, Math.floor(Math.min(...all) * 10) / 10 - .1);
-    chart('figB', { w: 900, h: 560, r: 210, xs: sets, ymin: lo, ymax: 1, ticks: ticks01(lo), fmt: f1,
+    chart('figB', { ...grows, w: 900, h: 560, r: 210, xs: sets, ymin: lo, ymax: 1, ticks: ticks01(lo), fmt: f1,
       series: [{ v: r1, c: C.ink, label: 'rule set 1' }, ...(r2 ? [{ v: r2, c: C.val, label: 'rule set 2' }] : [])] });
-  } else chart('figB', { w: 900, h: 560, r: 40, xs: sets, ph: "waiting for today's run" });
+  } else chart('figB', { ...grows, w: 900, h: 560, r: 40, xs: sets, ph: "waiting for today's run" });
 
   // 11 · results table
   (() => {
