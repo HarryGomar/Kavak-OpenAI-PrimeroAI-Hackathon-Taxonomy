@@ -1,0 +1,11 @@
+id: child/typed-form
+stage: child
+when:
+  - {fact: placement.step, eq: lattice}
+  - {fact: listing.form, in: [body mist, hair mist, body spray, oil, deodorant, body lotion, shower gel, aftershave]}
+  - {check: form_conflict}
+then: {child: form}
+status: shadow
+why: "A body mist, oil or lotion of a scent most of whose listings are another form is a typed child of that scent
+  (Coral Coast > Coral Coast Body Mist). When the scent itself is mostly sold in that form, it stays on the scent."
+origin: agentic rule fr-forms-typed-child; taxo/tools/checks.py form_conflict

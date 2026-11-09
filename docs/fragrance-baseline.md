@@ -160,3 +160,14 @@ will be needed before long.
 - Pedia names typed products with their form word ("Coral Coast Body Mist"), while our vocab strips forms.
 - Catalog rows have no brand.
 - Single listings fall under the lattice's floor.
+
+### Rounds 4 and 5
+
+| Round | Change | Dev exact | Sealed exact | Sealed harm | Human sealed | To agent | Gate |
+|---|---|---:|---:|---:|---:|---:|---|
+| 4 | typed child when the listing's form differs from its product's usual form (`child/typed-form`) | 60.9% | n/a | n/a | n/a | 18.8% | **dropped on dev** (171 better, 295 worse; sealed not read). Pedia keeps most mists and oils on the scent itself, so the rule stays in shadow |
+| 5 | brand rung `url`: Parfumo and Fragrantica `/Perfumes/<Brand>/` and shop slugs `…-by-<brand>-…` | 62.8% | **66.0%** | 12.8% | 48.4% | **18.1%** | **kept** (32 better, 6 worse) |
+
+**Sealed reads:** 6 in total.
+
+**Rule for future rounds:** a change that loses on dev is dropped without reading sealed.

@@ -29,6 +29,7 @@ from taxo.core.schemas import Listing, Node
 from taxo.lattice import vocab as vocabmod
 from taxo.lattice.count import NameRecord, count_brand
 from taxo.parse import _BRACKET, Brands, parse, strip_seq
+from taxo.tools import checks
 from taxo.tools.pedia import fragrance
 
 EDU_DIR = Path(os.environ.get("TAXO_EDU_DIR", r"C:\Work\meta-pedia-data\edu-subsets-2026-11-09"))
@@ -49,6 +50,7 @@ class Item:
     source: str = ""
     brand_field: str | None = None
     maker_field: str | None = None
+    url: str | None = None
     gold: list[str] = field(default_factory=list)        # gold row ids that point here
     pedia_brand: str | None = None
     pedia_path: list[str] = field(default_factory=list)
@@ -105,7 +107,7 @@ def load_items(data: str, prim: list[goldmod.GoldRow], human: list[goldmod.GoldR
     for r in raw:
         g = by_listing.get(r["id"])
         it = Item(id=r["id"], title=r["title"], source=r["source"], brand_field=r["brand_name"],
-                  maker_field=r["manufacturer_name"], pedia_brand=g.brand if g else r.get("pedia_brand"),
+                  maker_field=r["manufacturer_name"], url=r.get("url"), pedia_brand=g.brand if g else r.get("pedia_brand"),
                   pedia_path=g.expected_path if g else r.get("pedia_path") or [])
         if g:
             it.gold.append(g.id)
@@ -146,7 +148,7 @@ def run(items: list[Item], brands: Brands, vocab, rules: list[evaluator.Rule], o
     for it in items:
         it.reset()
         p = parse(it.title, vocab)
-        it.brand, it.brand_how = brands.find(p, it.brand_field, it.maker_field, it.source)
+        it.brand, it.brand_how = brands.find(p, it.brand_field, it.maker_field, it.source, it.url)
         if it.brand:
             it.path, it.level, it.step = [brands.names[it.brand]], "brand", "brand"
             it.key = " ".join(strip_seq(p.head, brands.runs(it.brand)))
@@ -189,6 +191,12 @@ def run(items: list[Item], brands: Brands, vocab, rules: list[evaluator.Rule], o
                 it.reason, it.rule = f"vetoed:{out.rule}", out.rule
                 continue
             it.path, it.level, it.step, it.reason = [name] + fam + [_title(ck)], "product", "lattice", "placed"
+            form = checks._phrase(it.title, fragrance.FORMS)
+            facts["listing"] = {"form": form}
+            child = evaluator.evaluate(rules, "child", facts, ctx)
+            it.shadow += [(r, d) for r, _, d in child.shadow]
+            if child.then.get("child") == "form" and form:
+                it.path, it.reason, it.rule = it.path + [f"{_title(ck)} {form.title()}"], "placed_typed", child.rule
     for it in items:
         if only is not None and it.brand not in only:
             continue
