@@ -1,6 +1,6 @@
 # Taxo: presentation script
 
-*About 7 minutes, 12 slides. **Show** is what is on screen; **Say** is what you say. Numbers in [brackets] come from
+*About 8 minutes, 13 slides. **Show** is what is on screen; **Say** is what you say. Numbers in [brackets] come from
 today's runs: fill them in or cut the line, and never present a placeholder as a result. The system is in
 [SPEC.md](SPEC.md); the deck is [slides/index.html](slides/index.html).*
 
@@ -80,20 +80,36 @@ by lessons.
 - Three loops improve it. Loop 1 learns rules from a small gold set. Loop 2 improves the eval itself. Loop 3 carries what
   worked to the next domain. We'll go through each with an example.
 
-## 7. Loop 1, induction: a few labelled cases become rules (45 s)
+## 7. Loop 1, induction: a few labelled cases become rules (50 s)
 
 **Show:** one Walmart title, "Lattafa Khamrah Qahwa Eau De Parfum 3.4 Oz Unisex Fragrance Lattafa", going down the
-rules: the vocabulary strips the variants; the registry places it as Lattafa › Khamrah › Khamrah Qahwa with no agent
-call; the lattice and the agent, greyed out, are what would have run if it hadn't.
+rules. Each step shows what it decided, and beside it the rule file that decided it: the vocabulary (variants),
+the registry (Lattafa's official lines), the lattice counts and a route. The registry places it as Lattafa › Khamrah ›
+Khamrah Qahwa with no agent call; the lattice and the route are greyed out, as the steps that would run if it hadn't.
 
 **Say:**
-- Loop 1 starts from cases we labelled by hand, and induction turns them into a decision tree of rules.
-- Here is one title. The vocabulary strips "Eau De Parfum 3.4 Oz Unisex". The registry knows Lattafa makes Khamrah
-  Qahwa, so it's placed with no agent call.
-- If it hadn't, the lattice checks whether the name appears across the brand's listings, and only what's left goes to an
-  agent. Each rule is a file you can read.
+- Loop 1 starts from cases we labelled by hand, and induction turns them into rules. Each rule is a file you can read.
+- Here is one title. The vocabulary file says which words are variants, so "Eau De Parfum 3.4 Oz Unisex" is stripped.
+- The registry file holds Lattafa's official lines, found once by an agent with web search and written down by code.
+  Khamrah Qahwa is in it, so the listing is placed with no agent call.
+- If it hadn't been, the lattice counts names across the brand's listings, and a route file sends whatever is still
+  unclear to the cheapest agent that can settle it.
 
-## 8. Loop 1: F1 on the gold set as each rule is added (30 s)
+## 8. Loop 1: the lattice finds products by counting (40 s)
+
+**Show:** six Lattafa titles. 1, strip the brand and the variants. 2, count every run of words: khamrah 5, khamrah qahwa
+2, khamrah dukhan 1, yara 1, with a floor at two titles. 3, the tree it builds: Lattafa › Khamrah (family) › Khamrah,
+Khamrah Qahwa; Dukhan and Yara left unclear.
+
+**Say:**
+- This is how the lattice works. Strip the brand and the variant words, then count every run of words across the
+  brand's titles.
+- Each title joins its longest run seen at least twice. That gives two products, Khamrah and Khamrah Qahwa, and
+  because they share "khamrah", Khamrah is a family.
+- Dukhan and Yara are below the floor: the registry settles them if it knows them, otherwise an agent does.
+- No word lists: add a word to the vocabulary and the count changes on the next run.
+
+## 9. Loop 1: F1 on the gold set as each rule is added (30 s)
 
 **Show:** Figure A: F1 on gold, round by round, each point labelled with the rule kept.
 
@@ -101,7 +117,7 @@ call; the lattice and the agent, greyed out, are what would have run if it hadn'
 - Each round an agent proposes one rule, and a gate in code keeps it only if F1 on gold rises.
 - F1 on gold goes from [x] to [y] as the rules are built.
 
-## 9. Loop 2, validation: improve the eval itself (55 s)
+## 10. Loop 2, validation: improve the eval itself (55 s)
 
 **Show:** the loop in four steps. Beside it, Figure B: F1 of the solver as the checks get stricter (gold, then checks 1
 and 2), for rule set 1 and rule set 2.
@@ -115,7 +131,7 @@ and 2), for rule set 1 and rule set 2.
 - On the graph: as the checks get stricter, rule set 1 falls from [x] to [z]; after refining, rule set 2 gets back to
   [w]. We improve the definition of right, the way we check it, and the solver underneath.
 
-## 10. Loop 3, meta: the next domain starts ahead (35 s)
+## 11. Loop 3, meta: the next domain starts ahead (35 s)
 
 **Show:** a lesson as YAML (strip variants before counting, scope global), and rounds saved against a cold start: food →
 fragrance [n], fragrance → food [m], fragrance → cars [k].
@@ -125,7 +141,7 @@ fragrance [n], fragrance → food [m], fragrance → cars [k].
 - A domain that starts from those lessons gets there in fewer rounds. Food to fragrance carried; fragrance to food, not
   much. Cars have a published catalogue, so there the registry does the work.
 
-## 11. Results: what each loop adds, in each domain (35 s)
+## 12. Results: what each loop adds, in each domain (35 s)
 
 **Show:** a table, fragrance, food and cars: F1 on fresh listings and cost per 1,000 listings for an agent on everything,
 after loop 1, after loop 2, and with loop 3's head start.
@@ -135,7 +151,7 @@ after loop 1, after loop 2, and with loop 3's head start.
   architecture now.
 - Here is what each loop adds in each domain. [Read the one row that matters most once the numbers are in.]
 
-## 12. Everything is in the evals (30 s)
+## 13. Everything is in the evals (30 s)
 
 **Show:** Everything is in the evals. We improved a task that isn't directly verifiable by improving how we check it,
 with feedback. Next: customer-feedback models, and any task without a ground truth.
@@ -153,10 +169,10 @@ with feedback. Next: customer-feedback models, and any task without a ground tru
 | Figure | Slide | What it shows | From | Status |
 |---|---|---|---|---|
 | Agent alone | 4 | F1 on gold, dollars and hours for all 2M listings with an agent on everything | the agent-only baseline | to run |
-| **A** | 8 | F1 on gold, round by round, each point labelled with the rule kept | induction runs on fragrance | to run |
-| **B** | 9 | F1 of rule set 1 and rule set 2 on gold, checks 1 and checks 2 | validation rounds 1–2 | to run |
-| **C** | 10 | Rounds saved to reach the target F1, warm start against cold | food ↔ fragrance; fragrance → cars | to run |
-| **Results** | 11 | F1 on fresh listings and cost per 1,000 listings: agent alone, after loops 1, 2 and 3, by domain | all runs | to run |
+| **A** | 9 | F1 on gold, round by round, each point labelled with the rule kept | induction runs on fragrance | to run |
+| **B** | 10 | F1 of rule set 1 and rule set 2 on gold, checks 1 and checks 2 | validation rounds 1–2 | to run |
+| **C** | 11 | Rounds saved to reach the target F1, warm start against cold | food ↔ fragrance; fragrance → cars | to run |
+| **Results** | 12 | F1 on fresh listings and cost per 1,000 listings: agent alone, after loops 1, 2 and 3, by domain | all runs | to run |
 | Own eval vs human check | 2 | The LLM judge's score by round, against our labels at the start and after round 4 | Pedia replay `pe2` (`C:\Work\RSI\hackathon\runs\`), mean of 6 runs, 245 held-out listings | in the deck |
 
 ## Questions to expect
