@@ -6,6 +6,7 @@ import csv
 import hashlib
 import importlib.util
 import json
+import inspect
 import re
 import subprocess
 import time
@@ -14,6 +15,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import asdict
 from datetime import datetime, timezone
 from pathlib import Path
+from types import SimpleNamespace
 
 import pyarrow.parquet as pq
 import yaml
@@ -23,7 +25,7 @@ from taxo.codex_cli import invoke, fingerprint, write, load_pin
 from taxo.core.schemas import Listing, Node
 from taxo.core.rules import run_rules
 from taxo.memory import rules_for
-from taxo.roles.runtime import strict_schema
+from taxo.roles.runtime import strict_schema, CliAgent, run_sync
 
 
 class Citation(BaseModel):
@@ -178,7 +180,58 @@ def score(root, folder, placements, previous):
     return metrics
 
 
-def execute(root, name, card=None, previous=None):
+def normalize_plan(listings, fixed_placements=None, routed_ids=None):
+    """Validate one disjoint, complete source-only routing plan without filling missing answers."""
+    ids = [r['id'] for r in listings]
+    if not ids or len(set(ids)) != len(ids):
+        raise ValueError('Expected nonempty unique source IDs')
+    if isinstance(fixed_placements, dict):
+        fixed = {}
+        for lid, value in fixed_placements.items():
+            if not isinstance(value, dict) or value.get('id', lid) != lid:
+                raise ValueError('Fixed placement mapping key/id mismatch')
+            fixed[lid] = {**value, 'id': lid}
+    else:
+        values = [] if fixed_placements is None else list(fixed_placements)
+        if any(not isinstance(v, dict) or 'id' not in v for v in values):
+            raise ValueError('Fixed placements require explicit source IDs')
+        fixed = {v['id']: dict(v) for v in values}
+        if len(fixed) != len(values):
+            raise ValueError('Duplicate fixed placement IDs')
+    routed = [lid for lid in ids if lid not in fixed] if routed_ids is None else list(routed_ids)
+    if len(set(routed)) != len(routed) or any(not isinstance(lid, str) for lid in routed):
+        raise ValueError('Routed IDs must be unique original strings')
+    if set(fixed) & set(routed) or set(fixed) | set(routed) != set(ids):
+        raise ValueError('Fixed and routed IDs must be disjoint and cover exactly the frozen source')
+    for value in fixed.values():
+        if str(value.get('route', '')).startswith('agent') or value.get('execution_status') == 'failed_batch':
+            raise ValueError('Fixed free placements cannot be cached agent fallbacks or failed CLI answers')
+        if not isinstance(value.get('path'), list) or not value['path'] or any(
+            not isinstance(s, str) or not s.strip() for s in value['path']):
+            raise ValueError('Fixed free placement requires a nonempty explicit source-supported path')
+    return fixed, [r for r in listings if r['id'] in set(routed)]
+
+
+def materialize_fixed(value, source, rules):
+    """Re-ground deterministic free paths through the same node/rule checks as CLI proposals."""
+    parts = []
+    permitted = evidence(source)
+    if len(value['path']) > 3:
+        raise ValueError('Free placement exceeds Food brand/model/variant hierarchy')
+    for level, name in zip(('brand', 'model', 'variant'), value['path']):
+        citations = [Citation(field=key, quote=text) for key, text in permitted.items()
+                     if isinstance(text, str) and key != 'listing_id' and tokens(name) & tokens(text)]
+        parts.append(Part(level=level, name=name, evidence=citations))
+    answer = Proposal(listing_id=source['id'], action='new_variant' if len(parts) == 3 else 'new_product' if len(parts) == 2 else 'place',
+                      nodes=parts, confidence=value.get('confidence') or 0,
+                      reason=value.get('reason') or 'Source-only deterministic placement')
+    path, nodes, findings = materialize(answer, source, rules)
+    if path != [s.strip() for s in value['path']]:
+        raise ValueError(f"Deterministic free placement failed source grounding/rules for {source['id']}")
+    return answer, path, nodes, findings
+
+
+def execute(root, name, card=None, previous=None, *, fixed_placements=None, routed_ids=None, placer_tools=None):
     card = resolve_card(card)
     folder = root / name
     folder.mkdir(exist_ok=False)
@@ -196,15 +249,26 @@ def execute(root, name, card=None, previous=None):
     listings = rows(source)
     if not listings or len({r['id'] for r in listings}) != len(listings):
         raise ValueError('Expected nonempty source snapshot with unique IDs')
+    fixed, routed = normalize_plan(listings, fixed_placements, routed_ids)
+    integrated = fixed_placements is not None or routed_ids is not None or bool(placer_tools)
+    if placer_tools and batch_size != 1:
+        raise ValueError('Tool-enabled placer requires protocol batch_size=1 for per-row source context')
     write(folder / "hypothesis.json", read(card))
     hypothesis = read(card)
     rules = rules_for("food", ("consumer_packaged",))
+    fixed_results = {r['id']: materialize_fixed(fixed[r['id']], r, rules) for r in listings if r['id'] in fixed}
+    routing_config = {'fixed_placements': list(fixed.values()), 'routed_ids': [r['id'] for r in routed],
+                      'tools': [{'name': t.__name__, 'signature': str(inspect.signature(t)),
+                                 'description': inspect.getdoc(t)} for t in placer_tools or []]}
+    write(folder/'routing-config.json', routing_config)
     manifest = {"status": "running", "started_utc": datetime.now(timezone.utc).isoformat(), "pin": load_pin(),
                 "code": fingerprint(Path(__file__)), "card": fingerprint(card), "source": fingerprint(source),
                 "previous": str(previous) if previous else None, "production_status": "unadmitted_experiment"}
     manifest.update(git_head=subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip(),
                     rows=len(listings), batch_size=batch_size, parallel_batches=parallel_batches,
-                    planned_calls=(len(listings)+batch_size-1)//batch_size,
+                    planned_calls=(len(routed)+batch_size-1)//batch_size,
+                    routed_rows=len(routed), free_rows=len(fixed), routing_config=fingerprint(folder/'routing-config.json'),
+                    tools_enabled=bool(placer_tools), tool_turn_limit=4 if placer_tools else 1,
                     rules=[r.model_dump(mode='json') for r in rules])
     write(folder / "manifest.json", manifest)
     schema = strict_schema(Batch.model_json_schema())
@@ -232,38 +296,60 @@ CARD:
     dump_rows(folder / "source-evidence.jsonl", [evidence(r) for r in listings])
     try:
         def call(offset):
-            batch = listings[offset:offset + batch_size]
-            answer = invoke(prompt + "\nSOURCE OBSERVATIONS:\n" + json.dumps([evidence(r) for r in batch], ensure_ascii=False),
-                            schema, folder / f"batch-{offset//batch_size:03d}", web=False)
+            batch = routed[offset:offset + batch_size]
+            if placer_tools:
+                row, ev = batch[0], evidence(batch[0])
+                safe_raw = {k: v for k, v in ev.items() if k not in ('listing_id', 'source', 'title', 'source_reported_brand')}
+                safe_listing = Listing(id=row['id'], domain='food', title=row['title'], source=row.get('source'),
+                                       brand=row.get('brand'), fields={'raw_source': safe_raw})
+                context = SimpleNamespace(domain='food', listing_id=row['id'], listing=safe_listing,
+                                          source_evidence=ev, brands=[])
+                tool_prompt = prompt.replace('Do not use tools, web, files or outside knowledge.',
+                    'Use only the registered source-only Python tools when useful. Do not use web, files, or outside knowledge.')
+                agent = CliAgent(name='food-source-path-placer-tools', domain='food', output_type=Batch,
+                                 instructions=tool_prompt, tools=list(placer_tools), web=False)
+                answer = run_sync(agent, json.dumps([ev], ensure_ascii=False), context=context,
+                                  output=folder/f'batch-{offset//batch_size:03d}', max_turns=4).final_output.model_dump(mode='json')
+            else:
+                answer = invoke(prompt + "\nSOURCE OBSERVATIONS:\n" + json.dumps([evidence(r) for r in batch], ensure_ascii=False),
+                                schema, folder / f"batch-{offset//batch_size:03d}", web=False)
             parsed = Batch.model_validate(answer).proposals
             if len(parsed) != len(batch) or {p.listing_id for p in parsed} != {r["id"] for r in batch}:
                 raise ValueError("Missing/duplicate/foreign placement IDs")
             return parsed
         with ThreadPoolExecutor(max_workers=parallel_batches) as pool:
-            jobs = {pool.submit(call, offset): offset for offset in range(0, len(listings), batch_size)}
+            jobs = {pool.submit(call, offset): offset for offset in range(0, len(routed), batch_size)}
             for job in as_completed(jobs):
                 try:
                     for answer in job.result():
                         answers[answer.listing_id] = answer
                 except Exception as error:
                     errors.append({"batch_offset": jobs[job], "type": type(error).__name__, "error": str(error)})
-                write(folder / "batch-progress.json", {"completed_rows": len(answers), "errors": errors})
+                write(folder / "batch-progress.json", {"completed_rows": len(answers)+len(fixed),
+                    'completed_routed_rows': len(answers), 'free_rows': len(fixed), "errors": errors})
                 with (folder / 'progress.jsonl').open('a', encoding='utf-8') as stream:
                     stream.write(json.dumps({'ts': datetime.now(timezone.utc).isoformat(),
                         'batch_offset': jobs[job], 'completed_rows': len(answers),
                         'failed_batches': len(errors), 'elapsed_seconds': round(time.monotonic()-started, 3)})+'\n')
+        if integrated and len(answers) != len(routed):
+            raise RuntimeError('Incomplete actual routed CLI answers; missing rows cannot become synthetic abstentions')
         placements, nodes, events = [], {}, []
         for source_row in listings:
             lid = source_row["id"]
             answer = answers.get(lid)
-            path, proposed, findings = materialize(answer, source_row, rules) if answer else ([], [], [{"rejected": "failed_batch"}])
+            if lid in fixed_results:
+                answer, path, proposed, findings = fixed_results[lid]
+            else:
+                path, proposed, findings = materialize(answer, source_row, rules) if answer else ([], [], [{"rejected": "failed_batch"}])
             nodes.update({n["id"]: n for n in proposed})
-            placements.append({"id": lid, "path": path, "route": "agent_evidence", "by": "food_source_path_placer",
+            route = fixed[lid].get('route', 'deterministic') if lid in fixed else 'agent_evidence'
+            placements.append({"id": lid, "path": path, "route": route,
+                               "by": 'food_source_only_deterministic' if lid in fixed else "food_source_path_placer",
                                "node_id": proposed[-1]["id"] if proposed else None,
                                "confidence": answer.confidence if answer else 0, "reason": answer.reason if answer else "CLI batch failed",
                                "action": answer.action if answer else "park", "status": "proposal",
                                "execution_status": "completed" if answer else "failed_batch"})
-            events.append({"id": lid, "route": "agent_evidence", "node_checks": findings, "abstained": not path})
+            events.append({"id": lid, "route": route, "node_checks": findings, "abstained": not path})
         for node in nodes.values():
             node["children"] = [n["id"] for n in nodes.values() if n["parent_id"] == node["id"]]
         dump_rows(folder / "placements.jsonl", placements)
@@ -271,18 +357,19 @@ CARD:
         dump_rows(folder / "rule-events.jsonl", events)
         write(folder / "errors.json", errors)
         write(folder / 'diagnostics.json', {
-            'failed_rows': len(listings)-len(answers),
+            'failed_rows': len(routed)-len(answers), 'free_rows': len(fixed), 'routed_rows': len(routed),
             'intentional_parks': sum(a.action == 'park' for a in answers.values()),
             'grounding_rejections': dict(Counter(c['rejected'] for e in events for c in e['node_checks'] if 'rejected' in c)),
             'rules_fingerprint': hashlib.sha256(json.dumps(manifest['rules'], sort_keys=True).encode()).hexdigest()})
         metrics = score(root, folder, placements, previous)
         usage = Counter()
-        for p in folder.glob("batch-*/manifest.json"):
+        transports = [p for p in folder.rglob('manifest.json') if 'transport' in read(p)]
+        for p in transports:
             for u in read(p).get("usage", []):
                 usage.update({k: v for k, v in (u or {}).items() if isinstance(v, (int, float))})
         manifest.update(status="completed_with_batch_errors" if errors else "completed", metrics=metrics,
                         elapsed_seconds=round(time.monotonic() - started, 3), usage=dict(usage), cost=None,
-                        actual_served_tier=None, model_calls=len(list(folder.glob('batch-*/manifest.json'))), scorer_model_calls=0,
+                        actual_served_tier=None, model_calls=len(transports), scorer_model_calls=0,
                         metric_model_calls_scope="Transport attempts including failures; scorer model_calls=0 means scoring only")
         with (root / "score-history.jsonl").open("a", encoding="utf-8") as stream:
             stream.write(json.dumps({"run": name, **manifest}) + "\n")
@@ -294,6 +381,7 @@ CARD:
         write(folder / "errors.json", errors + [{"type": type(error).__name__, "error": str(error)}])
         raise
     finally:
+        manifest['model_calls'] = sum('transport' in read(p) for p in folder.rglob('manifest.json'))
         write(folder / "manifest.json", manifest)
         write(folder / 'artifact-index.json', [fingerprint(p) for p in sorted(folder.rglob('*'))
                                                if p.is_file() and p.name != 'artifact-index.json'])

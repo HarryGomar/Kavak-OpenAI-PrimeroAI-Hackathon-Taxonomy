@@ -16,7 +16,7 @@ from jsonschema import Draft202012Validator
 from taxo.core.config import ROOT
 
 LOCK = Path(__file__).with_name("validator_cli.lock.json")  # Historical name; shared by every role.
-CLI_SLOTS = BoundedSemaphore(50)
+CLI_SLOTS = BoundedSemaphore(20)
 
 
 def bounded_cli(fn):
@@ -40,6 +40,34 @@ def fingerprint(path):
 
 def load_pin():
     return json.loads(LOCK.read_text(encoding="utf-8"))
+
+
+def filtered_events(lines, *, web=False):
+    """Separate transport diagnostics from executable tool items; never retain reasoning."""
+    events, forbidden, diagnostics = [], [], []
+    for line in lines:
+        try:
+            event = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        kind, item = event.get('type'), event.get('item') or {}
+        item_type = item.get('type')
+        if item_type and item_type not in ('reasoning', 'agent_message', 'web_search', 'error'):
+            forbidden.append(item_type)
+        if kind == 'error' or item_type == 'error':
+            # Retain only the diagnostic message, not arbitrary item payload or reasoning fields.
+            diagnostic = {'type': 'error', 'source': 'item' if item_type == 'error' else 'event',
+                          'message': str(item.get('message', event.get('message', '')))}
+            events.append(diagnostic)
+            diagnostics.append(diagnostic)
+        if item_type == 'web_search':
+            if web:
+                events.append(event)
+            else:
+                forbidden.append(item_type)
+        if kind in ('thread.started', 'turn.started', 'turn.completed', 'turn.failed'):
+            events.append(event)
+    return events, forbidden, diagnostics
 
 
 @bounded_cli
@@ -74,31 +102,24 @@ def invoke(prompt: str, schema: dict, output: Path, *, web: bool = False) -> dic
             write(output / "command.json", command)
             result = subprocess.run(command, input=prompt, text=True, encoding="utf-8", errors="replace",
                                     capture_output=True, timeout=pin["timeout_seconds"])
-        events, forbidden = [], []
-        for line in result.stdout.splitlines():
-            try:
-                event = json.loads(line)
-            except json.JSONDecodeError:
-                continue
-            kind, item = event.get("type"), event.get("item") or {}
-            item_type = item.get("type")
-            if item_type and item_type not in ("reasoning", "agent_message", "web_search"):
-                forbidden.append(item_type)
-            if item_type == "web_search":
-                if not web:
-                    forbidden.append(item_type)
-                else:
-                    events.append(event)
-            if kind in ("thread.started", "turn.started", "turn.completed", "turn.failed", "error"):
-                events.append(event)
-            if kind == "turn.completed":
-                manifest["usage"].append(event.get("usage"))
+        events, forbidden, diagnostics = filtered_events(result.stdout.splitlines(), web=web)
+        for event in events:
+            if event['type'] == 'turn.completed':
+                manifest['usage'].append(event.get('usage'))
         write(output / "events.json", events)
-        manifest.update(returncode=result.returncode, forbidden_tool_types=forbidden, stderr_retained=False)
+        completed = any(event['type'] == 'turn.completed' for event in events)
+        terminal = [event['type'] for event in events if event['type'] in ('turn.completed', 'turn.failed')]
+        manifest.update(returncode=result.returncode, forbidden_tool_types=forbidden, stderr_retained=False,
+                        diagnostic_error_count=len(diagnostics),
+                        cli_internal_reconnect_events=sum('reconnect' in d['message'].casefold() for d in diagnostics),
+                        turn_completed=completed)
         if result.returncode or forbidden:
             raise RuntimeError(f"CLI call failed: exit={result.returncode}, forbidden tools={forbidden}; see events.json")
+        if diagnostics and (not completed or terminal[-1] != 'turn.completed'):
+            raise RuntimeError('CLI diagnostic errors without a successfully completed turn; see events.json')
         answer = json.loads((output / "final.json").read_text(encoding="utf-8"))
         Draft202012Validator(schema).validate(answer)
+        manifest['recovered_diagnostic_warnings'] = bool(diagnostics)
         manifest["status"] = "completed"
         return answer
     except Exception as error:

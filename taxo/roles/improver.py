@@ -20,6 +20,22 @@ class SetupChange(BaseModel):
     rationale: str = Field(description="which of the mistakes it fixes, and what it might break")
 
 
+class ExecutableSetupChange(BaseModel):
+    """Repository question/tool proposal contract, using the installed CLI runtime."""
+    kind: str = Field(description='question | tool | web | inputs | model')
+    question_id: str | None = None
+    ask: str | None = None
+    tools: list[str] = Field(default_factory=list)
+    then: str | None = None
+    after: str | None = None
+    tool_name: str | None = None
+    code: str | None = Field(default=None, description='General source-only Python tool; never reads labels or files')
+    fires_on: str | None = Field(default=None, description='JSON input case that must fire')
+    quiet_on: str | None = Field(default=None, description='JSON known-good input case that must stay quiet')
+    text: str
+    rationale: str
+
+
 INSTRUCTIONS = """You improve the {domain} validator. You get its current setup and a list of its mistakes: each
 with the listing, what the validator said, and why a person says it was wrong.
 Propose ONE change that would have prevented several of these mistakes. Prefer a concrete investigation step the
@@ -28,6 +44,22 @@ lines, compare the stated size with the product's sizes) over general advice. Ne
 step: the step must work on listings you have not seen."""
 
 
-def make_improver(domain: str) -> CliAgent:
-    return CliAgent(name=f"improver-{domain}", instructions=INSTRUCTIONS.format(domain=domain),
-                    domain=domain, output_type=SetupChange)
+def make_improver(domain: str, *, executable: bool = False) -> CliAgent:
+    instructions = INSTRUCTIONS.format(domain=domain)
+    if executable:
+        instructions += ("\nThe executable contract supports question and tool changes. A question can be added, "
+            "reworded, reordered with after, or branched with then, and names only available tools. "
+            "A new tool requires tool_name, complete Python function code taking ctx and explicit source arguments, "
+            "plus fires_on and quiet_on JSON inputs. Its positive and quiet cases are qualification checks, not gold "
+            "evaluation. The two JSON input argument objects must differ. Return bool or {'flagged':bool} so the "
+            "positive case is true and the known-good case is false. Use only source-analysis standard library "
+            "re,json,math,unicodedata,collections. No filesystem, "
+            "network, shell, imports outside that allowlist, global lookup tables, or model calls. "
+            "Tools and questions must generalize; never embed particular gold names or answers. "
+            "Only source evidence may reach a tool. It cannot read gold, pipeline predictions, or feedback verdicts. "
+            "Changing model/web is unavailable in this pinned source-only trial. Honor current owner conventions, "
+            "including explicitly offered shop variants and title priority in conflicts. A missing brand field does "
+            "not prove a shop owns the label. Code qualifies the tool and evaluates the resulting validator on gold; "
+            "no proposal is a production admission. Return ONE supported question or tool change.")
+    return CliAgent(name=f"improver-{domain}", instructions=instructions,
+                    domain=domain, output_type=ExecutableSetupChange if executable else SetupChange)

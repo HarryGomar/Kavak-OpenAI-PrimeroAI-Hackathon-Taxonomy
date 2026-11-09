@@ -13,7 +13,7 @@ from pydantic import BaseModel, Field
 import yaml
 
 from taxo.codex_cli import invoke, write, fingerprint
-from taxo.roles.validator import make_validator
+from taxo.roles.validator import make_validator, ValidateContext, similar_brands
 from taxo.roles.runtime import run_sync
 from domains.food.place_paths import read, rows, score, dump_rows, evidence
 
@@ -38,7 +38,16 @@ def execute(root, setup_path, name=None):
     out = root / (name or f"independent-validator-v{version}")
     out.mkdir(exist_ok=False)
     started = time.monotonic()
-    agent = replace(make_validator('food', setup), tools=[], web=False, output_type=Judgments)
+    tools = []
+    reports = setup.get('tool_reports', [])
+    if setup.get('candidate_tool_report'):
+        reports = [*reports, setup['candidate_tool_report']]
+    if reports:
+        from domains.food.tool_trials import load_tool
+        tools = [load_tool(Path(p)) for p in reports]
+    if any('similar_brands' in q.get('tools', []) for q in setup.get('questions', [])):
+        tools.append(similar_brands)
+    agent = replace(make_validator('food', setup), tools=tools, web=False, output_type=Judgments)
     source = rows(root / "source-snapshot.jsonl")
     protocol = read(root/'protocol.json')
     batch_size = protocol.get('batch_size', 10)
@@ -47,6 +56,8 @@ def execute(root, setup_path, name=None):
         raise ValueError('Protocol batch_size must be an integer from 1 to 10')
     if type(parallel_batches) is not int or not 1 <= parallel_batches <= 50:
         raise ValueError('Protocol parallel_batches must be an integer from 1 to 50')
+    if tools and batch_size != 1:
+        raise ValueError('Candidate tools require one source observation per context')
     batch_manifest = {'batch_size': batch_size, 'parallel_batches': parallel_batches,
                       'planned_calls': (len(source)+batch_size-1)//batch_size, 'rows': len(source)}
     write(out/'role-manifest.json', {'role': 'independent_validator', 'status': 'running', **batch_manifest})
@@ -63,11 +74,17 @@ These are model silver, not human gold. Do not provide private reasoning. Preser
 Decision place MUST have a nonempty path; decision abstain MUST have empty path. If only brand/model is
 supported, place on that shallow path. Excluded/uncertain scope MUST abstain with empty path.
 """
+    if tools:
+        instruction = instruction.replace('Never use tools, web, files, other predictions, labels or outside knowledge.',
+            'Use only the named source-only Python tools through structured tool_calls. No web, files, other predictions, labels or outside knowledge.')
     def call(offset):
         batch = source[offset:offset + batch_size]
         batch_agent = replace(agent, instructions=instruction)
+        context = ValidateContext('food', brands=sorted({r['brand'] for r in source if r.get('brand')}),
+                                  source_evidence=evidence(batch[0])) if tools else None
         answer = run_sync(batch_agent, json.dumps([evidence(r) for r in batch], ensure_ascii=False),
-                          output=out / f'batch-{offset//batch_size:03d}', max_turns=1).final_output.model_dump()['judgments']
+                          output=out / f'batch-{offset//batch_size:03d}', context=context,
+                          max_turns=4 if tools else 1).final_output.model_dump()['judgments']
         if len(answer) != len(batch) or {x["listing_id"] for x in answer} != {x["id"] for x in batch}:
             raise ValueError("Independent validator missing/duplicate/foreign IDs")
         if any((j["decision"] == "abstain") != (not j["path"]) or

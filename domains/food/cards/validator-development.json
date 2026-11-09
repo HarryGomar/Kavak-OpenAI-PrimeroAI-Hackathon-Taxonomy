@@ -1,0 +1,26 @@
+{
+  "version": 2,
+  "model": "gpt-6.1-sol",
+  "web": false,
+  "use_proposals": true,
+  "inputs": [
+    "title",
+    "brand_field",
+    "seller",
+    "size",
+    "pack"
+  ],
+  "checklist": [],
+  "questions": [
+    {
+      "id": "audit_embedded_flavour_colour",
+      "ask": "Before placement, compare the provisional product name with the title, description, and explicitly offered or selected shop variant_name/variant_options. Which words describe flavour or colour rather than the stable marketed product or its form? Quote the supporting source phrases, then represent supported flavour/colour modifiers together at variant level instead of absorbing them into the product name. Preserve genuine named lines and distinct forms; do not split words merely because they resemble flavour names. Ignore Default Title and unspecified options, retain compatible explicit shop variants, and let conflicting title evidence win. Do not invent unmentioned default flavours or colours.",
+      "tools": [],
+      "then": null,
+      "status": "proposal"
+    }
+  ],
+  "production_admission": false,
+  "status": "retained_development_only",
+  "evidence": "full-loop-012-executable paired dev50: exact8to9, one gain, zero regressions; no brand-sealed gate"
+}

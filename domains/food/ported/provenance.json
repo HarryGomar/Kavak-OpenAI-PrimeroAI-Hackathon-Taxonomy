@@ -1,0 +1,27 @@
+{
+  "source_commit": "5845e1fb930b4a1dfbb5d26d45b2ebbefd880c5c",
+  "food_port_commit": "c03ee9f1008dbfc19a84c14757889c8791026532",
+  "files": [
+    {
+      "file": "parse.py",
+      "source": "taxo/parse.py",
+      "sha256": "f53a3828b22567adf5c3d26c2489114eab95a38c8102fa3bd140be894f43a2f9"
+    },
+    {
+      "file": "pipeline.py",
+      "source": "taxo/pipeline.py",
+      "sha256": "f240118633b1c5b18f1477d509b7af97deb25bd47c825bd85e78f8b718b55f60"
+    },
+    {
+      "file": "evaluator.py",
+      "source": "taxo/evaluator.py",
+      "sha256": "1c5c32e8a23ed0101b889e5f49260d4366d6f313a6275d189912aab08bc0a8fd"
+    },
+    {
+      "file": "propose.py",
+      "source": "taxo/propose.py",
+      "sha256": "77a8dc20405f3541910047761eeda11c246fee8b87b01fe370669c7b8f61d3c4"
+    }
+  ],
+  "policy": "Exact source modules; transport, Bench gold loading and production writes are not invoked"
+}

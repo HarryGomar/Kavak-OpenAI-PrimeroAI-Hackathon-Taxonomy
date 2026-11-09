@@ -14,13 +14,14 @@ from domains.food.place_paths import dump_rows, read
 from taxo.codex_cli import fingerprint, write
 
 
-def prepare(reference, output, labeled, size):
+def prepare(reference, output, labeled, size, seed=None, exclude_reference=False):
     if size < 1:
         raise ValueError('Sample size must be positive')
     output.mkdir(parents=True, exist_ok=False)
     old = read(reference/'protocol.json')
     source = Path(old['source']['path'])
     first = json.loads(source.read_text(encoding='utf-8').splitlines()[0])
+    original = {json.loads(line)['id'] for line in source.read_text(encoding='utf-8').splitlines()}
     raw_path = Path(first['fields']['source_path'])
     os.environ['TAXO_FOOD_LISTINGS'] = str(raw_path)
     observations = [r.model_dump(mode='json') for r in load_listings()]
@@ -68,7 +69,10 @@ def prepare(reference, output, labeled, size):
         else:
             valid.append((row, gs[0]))
     # Uniform, repeatable rank over gold-eligible observations; selection uses no label values.
-    valid.sort(key=lambda pair: hashlib.sha256(('food-scale-v1|'+pair[0]['id']).encode()).hexdigest())
+    if exclude_reference:
+        valid = [pair for pair in valid if pair[0]['id'] not in original]
+    salt = 'food-scale-v1|' if seed is None else f'food-random-v1|{seed}|'
+    valid.sort(key=lambda pair: hashlib.sha256((salt+pair[0]['id']).encode()).hexdigest())
     if len(valid) < size:
         raise ValueError(f'Only {len(valid)} verified gold rows available for requested {size}')
     chosen = valid[:size]
@@ -78,17 +82,18 @@ def prepare(reference, output, labeled, size):
     for name in ('frozen_scorer.py', 'frozen-aliases.tsv', 'frozen-brands.parquet', 'scorer-reference-inputs.json'):
         shutil.copyfile(reference/name, output/name)
     ids = [r['id'] for r, _ in chosen]
+    feedback_n = min(20 if size <= 100 else 100, size)
     old.update(source=fingerprint(output/'source-snapshot.jsonl'),
                gold_rulings=fingerprint(output/'gold-rulings.json'), primary_denominator=size,
-               partition={'feedback_ids': ids[:min(100, size)], 'withheld_feedback_ids': ids[min(100, size):],
-                          'method': 'fixed hash rank; first100 feedback',
+               partition={'feedback_ids': ids[:feedback_n], 'withheld_feedback_ids': ids[feedback_n:],
+                          'method': f'fixed hash rank; first{feedback_n} feedback',
                           'caveat': 'Development sample, not brand-sealed gold; overlap recorded'},
                parallel_batches=5, calls_per_cycle_max=(size+9)//10,
-               selection='sha256(food-scale-v1|id) rank among verified gold observations',
+               selection=f'sha256({salt}id) rank among verified gold observations',
                deadline_utc=None, stop_policy='one expanded-sample reference run, then reassess')
     write(output/'protocol.json', old)
-    original = {json.loads(line)['id'] for line in source.read_text(encoding='utf-8').splitlines()}
     write(output/'selection.json', {'size': size, 'eligible': len(valid), 'excluded': len(excluded),
+        'seed': seed, 'exclude_reference': exclude_reference,
         'overlap_original50': [lid for lid in ids if lid in original], 'source': fingerprint(raw_path),
         'gold': fingerprint(gold_path), 'selection': fingerprint(selection_path),
         'owner_authority': old['owner_authority'], 'sealed': False})
@@ -102,5 +107,7 @@ if __name__ == '__main__':
     ap.add_argument('--output', type=Path, required=True)
     ap.add_argument('--labeled', type=Path, required=True)
     ap.add_argument('--size', type=int, default=500)
+    ap.add_argument('--seed', type=int)
+    ap.add_argument('--exclude-reference', action='store_true')
     a = ap.parse_args()
-    prepare(a.reference, a.output, a.labeled, a.size)
+    prepare(a.reference, a.output, a.labeled, a.size, a.seed, a.exclude_reference)

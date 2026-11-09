@@ -28,6 +28,7 @@ class ValidateContext:
     """What the validator's tools can see: the domain's brand names. Never labels, never the pipeline's answer."""
     domain: str
     brands: list[str] = field(default_factory=list)
+    source_evidence: dict = field(default_factory=dict)
 
 
 class ValidatorOut(BaseModel):
@@ -66,6 +67,10 @@ def make_validator(domain: str, setup: dict | None = None) -> CliAgent[ValidateC
     s = setup or load_setup(domain)
     steps = [c for c in s.get("checklist") or [] if c.get("status") in (Status.ADMITTED.value, Status.SHADOW.value)
              or s.get("use_proposals")]
+    questions = [q for q in s.get('questions', []) if q.get('status') in ('admitted', 'shadow') or s.get('use_proposals')]
+    steps = steps + [{'id': q['id'], 'text': q['ask'] +
+                     (f" Tools: {', '.join(q.get('tools') or [])}." if q.get('tools') else '') +
+                     (f" Then: {q['then']}" if q.get('then') else '')} for q in questions]
     return CliAgent[ValidateContext](
         name=f"validator-{domain}-v{s.get('version', 0)}",
         instructions=INSTRUCTIONS.format(domain=domain,
