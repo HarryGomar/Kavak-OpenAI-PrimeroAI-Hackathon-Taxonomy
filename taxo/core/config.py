@@ -25,8 +25,13 @@ def data_dir() -> Path:
 
 
 def model(role: str) -> str:
-    """role: placer | judge_fast | judge_strong | proposer"""
-    return os.environ.get(f"TAXO_MODEL_{role.upper()}", "gpt-6-luna")
+    """Every role uses the shared installed CLI model pin; no silent model fallback."""
+    from taxo.codex_cli import load_pin
+    pinned = load_pin()["model"]
+    requested = os.environ.get(f"TAXO_MODEL_{role.upper()}", pinned)
+    if requested != pinned:
+        raise ValueError(f"{role} model {requested!r} conflicts with shared CLI pin {pinned!r}")
+    return pinned
 
 
 RUNS_DIR = ROOT / "runs"

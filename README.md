@@ -16,3 +16,9 @@ Built on what worked in Pedia ([Mantis4Real/pedia-harness](https://github.com/Ma
 `C:\Work\Pedia-Harness\repo`). The original notes are in `C:\Work\Kavak-OpenAI-Primero-Hackathon\Taxo.md`.
 
 Data stays in the home that owns it: this repo keeps pointers and toy samples only.
+
+
+All model roles run through the installed, authenticated **Codex CLI FAST**;
+Python has no OpenAI SDK/API dependency. Run `uv sync --frozen`, then follow
+[universal CLI execution](docs/codex-cli-validator.md) for role commands, shared
+version/model pins, bounded validation and audit artifacts.
