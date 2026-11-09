@@ -125,6 +125,9 @@ class Runner:
             args = [codex, "exec", "--json", "--ignore-user-config", "--skip-git-repo-check", "--ephemeral",
                     "-s", "read-only", "-C", str(d), "-c", 'approval_policy="never"', "-o", str(d / "out.txt")]
             args += [a for f in DISABLED for a in ("--disable", f)]
+            tier = os.environ.get("TAXO_CODEX_TIER", "fast")   # Codex fast mode; "default" to turn it off
+            if tier:
+                args += ["-c", f'service_tier="{tier}"']
             if isinstance(agent.model, str) and agent.model:
                 args += ["-m", agent.model]
             schema = None

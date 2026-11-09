@@ -38,7 +38,7 @@ GOLD_DIR = Path(os.environ.get("TAXO_GOLD_DIR", r"C:\Work\Pedia-Harness\repo\tes
 PEDIA_REPO = Path(os.environ.get("TAXO_PEDIA_REPO", r"C:\Work\Pedia-Harness\repo"))
 OWNER_REF, OWNER_PATH = "0cd4be60", "tests/fixtures/owner-structure.jsonl"
 FIXTURES = ["fresh150-harry.yaml", "exp01-harry-correct.yaml"]
-CONCURRENCY = 10       # agent calls in flight at once (Codex runner)
+CONCURRENCY = int(os.environ.get("TAXO_CODEX_PARALLEL", "30"))   # agent calls in flight at once (Codex runner)
 DOMINANT = 0.6          # a variant value on >= this share of a cluster's records is written on its node (for checks)
 AUDIENCE_WORDS = {"women": "for women", "womens": "for women", "for her": "for women", "pour femme": "for women",
                   "men": "for men", "mens": "for men", "for him": "for men", "pour homme": "for men"}

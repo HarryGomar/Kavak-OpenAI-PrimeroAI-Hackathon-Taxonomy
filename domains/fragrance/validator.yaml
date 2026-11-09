@@ -1,31 +1,9 @@
 # Validator setup v1 (fragrance). The validator works a LINE OF QUESTIONS, in order; each names the tools that answer
 # it (taxo/roles/validator.py: similar_brands, ask_person, web_search, and domains/<d>/validator_tools.py). Questions
 # are proposals until the validator scores better on gold with them. The improver proposes questions and tools.
-version: 1
-model: gpt-6-luna
-web: true
-use_proposals: false        # true = also run proposed questions, to score them on dev gold before admitting
-inputs: [title, brand_field, seller, concentration, volume_ml, gender]
 # v1 is seeded with two questions translated from the prompt-only card (taxo/validator.py before the merge), which
 # scored 82.5% exact vs the reviewer on Loop B V3. With no questions the agent named no tools and answered generic
 # paths. The improver adds, rewords or branches questions from here, each kept only if it wins an A/B on human labels.
-questions:
-  - id: who_makes_it
-    ask: Which house makes this? Start from the brand given; check that the title, the shop and the URL agree with it.
-    tools: [similar_brands]
-    then: Keep the brand given unless the title clearly names another known house. Put the brand first in the path.
-    status: admitted
-    origin: seeded from the prompt-only card (Loop B V3, 82.5% exact)
-  - id: product_name
-    ask: What is the product's own name? Look at the names this brand already has, then at the title.
-    tools: [brand_products]
-    then: Reuse an existing name only when it is the same product (put it under its line if the line is listed and
-      the title names the line). Otherwise write the product's own name from the title. Size, concentration (EDP, EDT,
-      parfum), audience (men, women, unisex) and pack count are never part of a name. If the listing names no product
-      or is not a fragrance, the path is the brand only.
-    status: admitted
-    origin: seeded from the prompt-only card (Loop B V3, 82.5% exact)
-
 # EXAMPLES of questions the improver might induce (not active):
 #   - id: who_makes_it
 #     ask: Which house makes this? Is the brand field a seller, a store label or an "inspired by" house?
@@ -49,3 +27,32 @@ questions:
 #     then: If so, place it on that set or form child, not on the scent.
 #     status: proposal
 #     origin: Pedia SET_PIECES_UNNAMED; Harry v6 forms 38:1
+version: 2
+model: gpt-6-luna
+web: true
+use_proposals: false
+inputs:
+- title
+- brand_field
+- seller
+- concentration
+- volume_ml
+- gender
+questions:
+- id: who_makes_it
+  ask: Which house makes this? Start from the brand given; check that the title, the shop and the URL agree with it.
+  tools:
+  - similar_brands
+  then: Keep the brand given unless the title clearly names another known house. Put the brand first in the path.
+  status: admitted
+  origin: seeded from the prompt-only card (Loop B V3, 82.5% exact)
+- id: product_name
+  ask: What is the listing’s own product name? Use the title and the brand’s product list to identify it, keeping all words
+    that distinguish the named product or set. Exclude only size, concentration, audience, and pack count. A non-fragrance
+    item can still have a product name; use the brand alone only when the listing names no product.
+  tools:
+  - brand_products
+  then: null
+  status: admitted
+  origin: 'improver V5: The traces for French Flower and Cowboy Kush Take It or Leave It wrongly collapse a named body product
+    and a named set to the brand; the AlfaMarker Soul No 2101 Aqua Giola trace also drops a distingui'

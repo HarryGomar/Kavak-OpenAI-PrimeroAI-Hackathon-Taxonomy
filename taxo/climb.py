@@ -33,7 +33,7 @@ from taxo.parse import Brands
 from taxo.tools.checks import CHECKS
 from taxo.pipeline import Item, brand_spread, load_gold, load_items, run, score_rows, shares, vocab_candidates
 
-N_SILVER, BATCH, MIN_TOUCHED, BAR = 200, 40, 5, 0.5
+N_SILVER, BATCH, MIN_TOUCHED, BAR = 200, 200, 5, 0.5   # BATCH: listings handed to the validator at once
 AGENT_CALLS = 40   # placer calls per checkpoint run
 WORKERS = max(1, min(24, (os.cpu_count() or 2) - 2))   # candidates of a round run in parallel
 TOGGLE = ("veto/", "child/", "settle/single-name")    # rules whose on/off changes a placement
@@ -165,11 +165,14 @@ def clusters(sets: dict[str, list], limit: int = 6, examples: int = 4) -> list[d
     return out
 
 
-def ask_proposer(domain: str, cl: list[dict], doc: dict, log: Path) -> dict | None:
+def ask_proposer(domain: str, cl: list[dict], doc: dict, log: Path, history: list[dict] | None = None) -> dict | None:
     from taxo.core.codex import Runner
     from taxo.roles.proposer import make_proposer
     text = (PAYLOAD_HELP + "\n\nCurrent vocabulary (variant axes and strip words):\n"
             + json.dumps({"variant": doc.get("variant"), "strip": doc.get("strip")}, ensure_ascii=False)
+            + ("\n\nYour earlier proposals this phase and what happened to them. Do not repeat one. A kind that is "
+               "not testable this round changes nothing now, so prefer a vocab edit or a code_rule:\n"
+               + json.dumps(history, ensure_ascii=False) if history else "")
             + "\n\nDisagreement clusters (pipeline vs the frozen validator's silver, and vs dev human labels):\n"
             + json.dumps(cl, ensure_ascii=False, indent=0))
     try:
@@ -228,7 +231,9 @@ def phase(domain: str, name: str, ph: int, rounds: int) -> list[dict]:
     cur, summ, judged = _judge(srows, by_gold, brands)
     spread = brand_spread(items)
     kept = []
-    print(f"phase {ph} start: silver exact {summ['exact_rate']} harm {summ['harm_rate']} ({len(srows)} rows)", flush=True)
+    msg = f"phase {ph} start: silver exact {summ['exact_rate']} harm {summ['harm_rate']} ({len(srows)} rows)"
+    print(msg, flush=True)
+    (_sdir(domain) / f"phase{ph}-start.txt").write_text(msg, encoding="utf-8")
     gold_by = {gid: it for it in items for gid in it.gold}
     dev_rows = [g for g in rows if g.brand in only and not goldmod.is_sealed(g.brand) and g.id in gold_by]
     record = []
@@ -236,7 +241,12 @@ def phase(domain: str, name: str, ph: int, rounds: int) -> list[dict]:
         # 1. the proposer agent reads the disagreement clusters and proposes ONE change
         _, dev_judged = score_rows(dev_rows, gold_by, brands)
         cl = clusters({"silver (validator)": judged, "dev gold (human)": dev_judged})
-        prop = ask_proposer(domain, cl, doc, _sdir(domain) / f"phase{ph}-round{rnd}-proposer.json")
+        hist = [{"kind": (r.get("proposal") or {}).get("kind"), "id": (r.get("proposal") or {}).get("id"),
+                 "what": (r.get("proposal") or {}).get("description", "")[:200],
+                 "outcome": ("kept" if r.get("proposed_by") == "proposer-agent" else
+                             "dropped by the silver gate" if r.get("proposal_gate") else "not testable (recorded only)")}
+                for r in record]
+        prop = ask_proposer(domain, cl, doc, _sdir(domain) / f"phase{ph}-round{rnd}-proposer.json", hist)
         pc = proposal_candidate(domain, prop, doc, rules) if prop else None
         cands = [(pc[0], pc[1], pc[2], "proposer-agent")] if pc else []
         # 2. code search adds its own candidates
@@ -262,8 +272,12 @@ def phase(domain: str, name: str, ph: int, rounds: int) -> list[dict]:
               f"{'tested ' + str(prop_info) if pc else 'not testable this round (recorded)'}", flush=True)
         if best is None:
             record.append(rec | {"kept": None})
-            print(f"  round {rnd}: none of {len(cands)} candidates passes the silver gate; phase ends", flush=True)
-            break
+            empty = len(record) >= 2 and all(r.get("kept") is None for r in record[-2:])
+            print(f"  round {rnd}: none of {len(cands)} candidates passes the silver gate"
+                  + ("; two empty rounds in a row, phase ends" if empty else "; next round"), flush=True)
+            if empty:
+                break
+            continue
         lbl, doc, rules, info, cur, _, src = best
         run(items, brands, _vocab_of(doc, tmp), rules, only=only)
         _, summ, judged = _judge(srows, by_gold, brands)

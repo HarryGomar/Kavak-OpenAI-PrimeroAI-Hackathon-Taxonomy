@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
@@ -21,7 +22,7 @@ from taxo.lattice.vocab import tokens
 from taxo.pipeline import brand_names
 from taxo.roles.validator import ValidateContext, load_setup, make_validator
 
-CONCURRENCY = 10
+CONCURRENCY = int(os.environ.get("TAXO_CODEX_PARALLEL", "30"))   # parallel Codex calls; lower it if rate-limited
 INPUT = """Listing title: {title}
 Brand given: {brand}
 Shop: {source}
