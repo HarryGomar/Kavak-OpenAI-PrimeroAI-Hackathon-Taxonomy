@@ -27,7 +27,7 @@
 #     then: If so, place it on that set or form child, not on the scent.
 #     status: proposal
 #     origin: Pedia SET_PIECES_UNNAMED; Harry v6 forms 38:1
-version: 2
+version: 3
 model: gpt-6-luna
 web: true
 use_proposals: false
@@ -47,12 +47,13 @@ questions:
   status: admitted
   origin: seeded from the prompt-only card (Loop B V3, 82.5% exact)
 - id: product_name
-  ask: What is the listing’s own product name? Use the title and the brand’s product list to identify it, keeping all words
-    that distinguish the named product or set. Exclude only size, concentration, audience, and pack count. A non-fragrance
-    item can still have a product name; use the brand alone only when the listing names no product.
+  ask: What named fragrance or set does the listing identify? Use the title to identify the complete named item, and use the
+    brand’s product list to check its name and parent line. Do not treat a catalog match for a shorter phrase as proof that
+    the listing names that phrase as a separate product or line; when the title and catalog do not establish a hierarchy,
+    use the most specific name the title supports without inventing a parent.
   tools:
   - brand_products
   then: null
   status: admitted
-  origin: 'improver V5: The traces for French Flower and Cowboy Kush Take It or Leave It wrongly collapse a named body product
-    and a named set to the brand; the AlfaMarker Soul No 2101 Aqua Giola trace also drops a distingui'
+  origin: 'improver fit F2 round 5: The product_name traces went wrong when a catalog match or web result was treated as establishing
+    a deeper product hierarchy than the title supports, including '
