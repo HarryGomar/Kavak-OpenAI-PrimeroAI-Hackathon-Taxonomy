@@ -109,7 +109,23 @@ necessary. No population estimate follows from this nonrandom prefix. The
 existing `taxo.score` drops fragrance-oriented words and the existing admission
 gate supports fragrance only; neither is used for this Food evaluation.
 
-## Experimental source-only placement loop
+## Food default source-only placement
+
+`pack.yaml` selects `cards/baseline-pedia.json` when `--card` is omitted. The owner
+selected this Pedia-inspired starting convention; it is not learned-rule
+admission. Its instruction text matches measured run-005 exactly. The common
+wrapper and pack conventions now consistently accept explicitly offered/selected
+original shop variant names/options, excluding default/unspecified options, with
+title conflict priority. This newly aligned configuration has **no new measured
+run**: run-005 remains historical (9/50 identity, 5/50 strict, 44/50 brand), was
+not repeated, and had no subsequent warm-baseline optimization cycle.
+
+Explicit `--card` still selects the saved instruction for an experiment. Exact
+historical whole-prompt reproduction requires the archived per-run implementation
+and prompt; selecting the old card with today's wrapper is not byte-identical
+pipeline reproduction. The generic `taxo.cli place food` path already passes
+Food's pack conventions to `make_placer`; those conventions are aligned here.
+It still requires an existing taxonomy; new-path creation uses `place_paths`.
 
 `domains.food.place_paths` actually executes the evidence route through the shared
 installed CLI, in batches of ten. It proposes new brand/model/variant nodes when
@@ -133,7 +149,8 @@ on source evidence, preserving v1. Invalid batches are explicitly refused.
 The curator is deterministic code using paired gold metrics, never another model.
 
 ```powershell
-uv run python -m domains.food.place_paths --root <frozen-loop-root> --name run-NNN --card <source-only-card.json> --previous <previous-run>
+uv run python -m domains.food.place_paths --root <frozen-loop-root> --name run-NNN --previous <previous-run>
+uv run python -m domains.food.place_paths --root <frozen-loop-root> --name run-NNN --card <explicit-source-only-card.json> --previous <previous-run>
 uv run python -m domains.food.loop_roles --root <frozen-loop-root> --run run-NNN --validator <independent-judgments.json>
 uv run python -m domains.food.validate_paths --root <frozen-loop-root> --setup <experimental-validator-setup.json>
 ```
@@ -152,3 +169,36 @@ inspire isolated experiments. The old Food scope YAML engine is not its current
 runtime. Do not copy brand examples or gold target nodes, import old model
 settings, alter the fixed scorer, or treat a local experimental decision as
 production admission.
+
+Committed machine-readable evidence is in
+`docs/evidence/food-improvement-20261109.json`,
+`food-role-log-20261109.json` and `food-lessons-20261109.json`: aggregate trials,
+actual role calls/usage, failures, rejections, paired regressions, provenance and
+reproducibility limits. They contain no listing/gold rows or identifiers, full
+data-bearing prompts/answers/citations or private reasoning. Full data-heavy logs
+stay external. The old title-only and missing-maker-own-label instructions are
+explicitly retired with their original text/evidence retained. Other learned
+proposals remain unadmitted; new nodes remain source-supported proposals.
+
+The lifecycle is governed by `SPEC.md` §5.1 and `Status`/`RuleSpec`/`AgenticRule`
+in `taxo/core/schemas.py`, with admitted-only prompt selection in `taxo/memory.py`.
+The scoped Food route stays shadow. Owner-selected baseline conventions do not
+constitute a learned-rule admission, and no Food sealed gate ran.
+
+Nine aggregate records in `memory/rounds/food/` use the exact
+`taxo.distill.record` contract inspected on `origin/distill/rounds` at `8c085cd`.
+They were exported from saved logs with that helper, without importing its branch
+or changing shared code. Every record has `gate`, `keep`, and `decided_on` null;
+sealed scores/reads are null. The repeatedly inspected nonrandom sample does not
+provide a whole-brand sealed evaluation. Descriptive full-sample metrics live in
+KPI metadata rather than masquerading as standard sealed rates, F1 or population
+intervals. `taxo/kpis.py` and current `origin/main` `docs/KPIS.md` (`ca39c78`)
+govern the KPI fields and interpretation. No population extension was computed.
+
+The distill branch's collector discovers these pending records across origin
+branches; its `lessons()` ignores `keep=null`, so none become active lessons.
+That distiller is not present in this worktree and was not cherry-picked or run.
+The supplemental lesson log uses SPEC §5.3's `id/kind/scope/claim/record/status`
+fields with proposal state, plus the `taxo.memory.record` entry shape. Its role log
+includes native hash-chained `taxo.core.ledger.Ledger` publication events. No
+shared memory log or active `lessons/*.yaml` was edited/generated.

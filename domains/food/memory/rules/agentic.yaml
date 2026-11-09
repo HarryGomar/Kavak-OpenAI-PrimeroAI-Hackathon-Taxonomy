@@ -1,4 +1,6 @@
-# Agentic rules = lines in the Matcher's prompt. All PROPOSALS until tested in phase 2 (frozen validator, silver).
+# Historical agentic candidates: only admitted entries enter generic production prompts.
+# Retired entries retain original text/evidence. Owner-selected starting conventions live in pack.yaml;
+# learned-rule admission requires the gold gate in SPEC §5.1, which has not run for Food.
 # Source: Pedia food work (Primero-Hackathon repo docs/pedia-log-mining/FOOD.md) + Edu's export rule ids/flags.
 # Evidence is mostly LLM-judged blind A/B (Luna+Sol, ours/Harry); HUMAN where marked.
 
