@@ -10,8 +10,8 @@ from datetime import datetime, timezone
 
 import yaml
 
-from taxo.core.config import MEMORY_DIR, DOMAINS_DIR, ROOT
-from taxo.core.schemas import AgenticRule, RuleSpec, Scope, Status
+from taxo.core.config import MEMORY_DIR
+from taxo.core.schemas import RuleSpec, Scope
 
 
 def all_rules() -> list[RuleSpec]:
@@ -31,28 +31,7 @@ def rules_for(domain: str, families: tuple[str, ...] = ()) -> list[RuleSpec]:
             out.append(r)
         elif r.scope == Scope.DOMAIN and domain in r.domains:
             out.append(r)
-    paths = sorted((ROOT / "rules" / domain).glob("*.yaml"))
-    paths += [p for p in sorted((DOMAINS_DIR / domain / "memory" / "rules").glob("*.yaml")) if p.name != "agentic.yaml"]
-    for path in paths:
-        doc = yaml.safe_load(path.read_text(encoding="utf-8")) or []
-        for r in doc if isinstance(doc, list) else [doc]:
-            if "check" in r:
-                rule = RuleSpec(**r)
-                if not rule.domains or domain in rule.domains:
-                    out.append(rule)
-    if len({r.id for r in out}) != len(out):
-        raise ValueError(f"duplicate RuleSpec id for {domain}")
     return out
-
-
-def agentic_for(domain: str, *, include_proposals: bool = False) -> list[AgenticRule]:
-    """Only admitted instructions affect production prompts. Experiments must opt in explicitly."""
-    path = DOMAINS_DIR / domain / "memory" / "rules" / "agentic.yaml"
-    if not path.exists():
-        return []
-    rules = [AgenticRule(**r) for r in yaml.safe_load(path.read_text(encoding="utf-8")) or []]
-    allowed = {Status.ADMITTED} | ({Status.PROPOSAL, Status.SHADOW} if include_proposals else set())
-    return [r for r in rules if r.status in allowed]
 
 
 def record(rule_id: str, domain: str, **outcome) -> None:

@@ -52,12 +52,6 @@ def load(*dirs: Path) -> list[Rule]:
         for p in sorted(Path(d).glob("*.yaml")):
             doc = yaml.safe_load(p.read_text(encoding="utf-8")) or []
             for r in doc if isinstance(doc, list) else [doc]:
-                if "check" in r:  # RuleSpec: a different engine, loaded by memory.rules_for
-                    continue
-                if "when" not in r or "then" not in r:
-                    raise ValueError(f"{p}: evaluator rules require when and then")
-                if r.get("status", "proposal") not in {"active", "shadow", "proposal", "retired"}:
-                    raise ValueError(f"{p}: invalid evaluator status")
                 out.append(Rule(id=r["id"], when=r.get("when") or [], then=r.get("then") or {},
                                 status=r.get("status", "proposal"), stage=r.get("stage", "place"),
                                 why=r.get("why", ""), path=str(p)))

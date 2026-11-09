@@ -1,8 +1,0 @@
-id: games/scope-hold
-stage: route
-when: [{fact: games.scope_status, not_in: [accept]}]
-then: {route: agent_evidence}
-status: shadow
-origin: deterministic games source-evidence screen
-why: Review unsupported or contradictory scope evidence; adapter admits only supported games.
-evidence: docs/games.md; scope screen is an ingestion policy, not learned placement truth

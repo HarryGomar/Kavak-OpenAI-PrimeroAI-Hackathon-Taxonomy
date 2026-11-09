@@ -26,10 +26,8 @@ def tokens(text: str | None) -> tuple[str, ...]:
     return tuple(re.findall(r"\d+(?:[.,]\d+)?[a-z]*|[a-z0-9]+", s))
 
 
-def load(path: Path, *, preserve_identity_tokens: bool | None = None) -> CountVocab:
+def load(path: Path) -> CountVocab:
     v = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
-    if preserve_identity_tokens is not None:
-        v["preserve_identity_tokens"] = preserve_identity_tokens
     phrases: list[tuple[tuple[str, ...], str, str]] = []  # (tokens, axis, canonical)
     for axis, items in (v.get("variant") or {}).items():
         for p in items:
@@ -55,8 +53,7 @@ def load(path: Path, *, preserve_identity_tokens: bool | None = None) -> CountVo
                 if size.match(toks[i]):
                     var[i] = ("size", toks[i])
             i += 1
-        frag = tuple(var[i] is None and (len(t) <= nchars or t.isdigit()) and t not in bind
-                     and not v.get("preserve_identity_tokens", False) for i, t in enumerate(toks))
+        frag = tuple(var[i] is None and (len(t) <= nchars or t.isdigit()) and t not in bind for i, t in enumerate(toks))
         n = len(toks)
         return Tagged(toks=toks, var=tuple(var), bind=tuple(t in bind for t in toks), frag=frag,
                       desc=(False,) * n, attr=(False,) * n, glue=(False,) * max(n - 1, 0), veto=(False,) * n,

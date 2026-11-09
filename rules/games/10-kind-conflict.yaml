@@ -1,8 +1,0 @@
-id: games/kind-conflict
-stage: place
-when: [{fact: games.kind_conflict, eq: true}]
-then: {veto: true, route: agent_evidence}
-status: shadow
-origin: games RAW inspection and explicit games/toys ownership boundary
-why: Product kinds are separate identities; candidate_facts must provide kind evidence.
-evidence: domains/games/e2e/FAILURE-MODES.md; docs/games.md

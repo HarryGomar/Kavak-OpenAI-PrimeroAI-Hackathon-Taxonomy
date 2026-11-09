@@ -1,6 +1,0 @@
-version: 1
-model: gpt-6-luna
-web: false
-use_proposals: false
-inputs: [title, brand_field, seller, description, aplus_content, identifiers_json, identity_hints, scope]
-checklist: []

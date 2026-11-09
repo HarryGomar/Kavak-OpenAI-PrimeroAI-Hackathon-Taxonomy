@@ -1,8 +1,0 @@
-id: games/identity-conflict
-stage: place
-when: [{fact: games.identity_conflict, eq: true}]
-then: {veto: true, route: agent_evidence}
-status: shadow
-origin: games RAW platform, expansion, edition and puzzle patterns
-why: Preserve platform generation, distribution, edition, language, expansion role and puzzle piece count when stated.
-evidence: docs/games.md; engineering examples, not gold
