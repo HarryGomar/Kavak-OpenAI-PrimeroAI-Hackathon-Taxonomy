@@ -24,13 +24,17 @@
   text: Move a listing to a variant only if its title names that variant. A marketplace flavour field or selected option alone is not enough.
   origin: parent_to_child step
   evidence: "28/17 -> 38/4 once added; 1,444 variant targets lifted back to the product (LLM A/B)"
-  status: proposal
+  status: retired
+  superseded_by: food pack owner-selected Pedia baseline naming-evidence convention
+  retired_reason: Explicitly offered original shop variant names/options also count; conflicting title wins. Original text and evidence retained as history.
 
 - id: fd-shop-not-brand
   text: A shop or seller is not a brand. A listing with no maker in a shop is the shop's own label.
   origin: shop step; Pedia flags SELLER_CONNECTION, brand_field_seller
   evidence: "71/2 (LLM A/B); 992 seller pages confirmed by two checks"
-  status: proposal
+  status: retired
+  superseded_by: food pack owner-selected consumer-mark convention
+  retired_reason: Missing maker is unknown, not proof of shop own-label. Original unsafe assumption and historical evidence retained without activation.
 
 - id: fd-licensed-brand
   text: A licensed product sits on the brand printed on the pack; the licensor is never the brand.

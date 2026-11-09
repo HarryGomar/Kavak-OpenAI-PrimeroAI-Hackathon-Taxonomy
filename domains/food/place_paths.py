@@ -7,6 +7,7 @@ import hashlib
 import importlib.util
 import json
 import re
+import subprocess
 import time
 from collections import Counter
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -15,6 +16,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 import pyarrow.parquet as pq
+import yaml
 from pydantic import BaseModel, Field
 
 from taxo.codex_cli import invoke, fingerprint, write, load_pin
@@ -53,6 +55,15 @@ def read(path):
 
 def rows(path):
     return [json.loads(x) for x in path.read_text(encoding="utf-8").splitlines() if x.strip()]
+
+
+def resolve_card(card: Path | None = None) -> Path:
+    """Explicit historical card, or the owner-selected Food pack baseline."""
+    if card is not None:
+        return card
+    domain = Path(__file__).parent
+    pack = yaml.safe_load((domain / "pack.yaml").read_text(encoding="utf-8"))
+    return domain / pack["baseline_card"]
 
 
 def dump_rows(path, values):
@@ -121,8 +132,6 @@ def score(root, folder, placements, previous):
     old = read(Path(protocol["gold_rulings"]["path"]))
     if fingerprint(Path(protocol["gold_rulings"]["path"]))["sha256"] != protocol["gold_rulings"]["sha256"]:
         raise ValueError("Frozen gold rulings drift")
-    gold_inputs = read(root.parent / "gold-evaluation-01/scoring/gold-inputs.json")
-    graph = Path("C:/Users/eduar/Desktop/HACKATON/data/pedia") / gold_inputs["current_food_release"]["layers"]["graph"]["path"]
     references = read(root / "scorer-reference-inputs.json")
     for reference in references:
         for file in (Path(reference["frozen_path"]), Path(reference["original"]["path"])):
@@ -136,7 +145,8 @@ def score(root, folder, placements, previous):
     by_id = {x["id"]: x for x in placements}
     results, deltas = [], []
     feedback = set(protocol["partition"]["feedback_ids"])
-    silver = {x["listing_id"]: x for x in read(root.parent / "iteration-00/validation/judgments.json")}
+    silver_path = root.parent / 'iteration-00/validation/judgments.json'
+    silver = {x['listing_id']: x for x in read(silver_path)} if silver_path.exists() else {}
     for row in old:
         lid, gold = row["observation_id"], row["gold_original"][0]
         pred = by_id[lid]
@@ -144,14 +154,15 @@ def score(root, folder, placements, previous):
         results.append({"observation_id": lid, "join_status": "verified", "gold_original": row["gold_original"],
                         "partition": "feedback" if lid in feedback else "withheld_feedback",
                         "systems": {"candidate": {"saved_prediction": pred, "ruling": ruling}},
-                        "frozen_independent_validator": silver[lid], "scope_truth": None})
-        before = prior[lid]["systems"]["candidate" if previous else "baseline"]["ruling"]
+                        "frozen_independent_validator": silver.get(lid), "scope_truth": None})
+        before = prior[lid].get('systems', {}).get('candidate' if previous else 'baseline', {}).get('ruling')
+        before = before or ruling  # No invented comparator when scaling to a new sample.
         deltas.append({"id": lid, "partition": results[-1]["partition"], "before": before, "after": ruling,
                        "exact_gain": not before["identity_path_exact"] and ruling["identity_path_exact"],
                        "exact_regression": before["identity_path_exact"] and not ruling["identity_path_exact"],
                        "brand_gain": before["brand_correct"] is not True and ruling["brand_correct"] is True,
                        "brand_regression": before["brand_correct"] is True and ruling["brand_correct"] is not True,
-                       "silver_exact_agreement": pred["path"] == silver[lid]["path"]})
+                       "silver_exact_agreement": pred["path"] == silver[lid]["path"] if lid in silver else False})
     write(folder / "gold-rulings.json", results)
     write(folder / "paired-deltas.json", deltas)
     metrics = scorer.summarize(results)["candidate"]
@@ -159,13 +170,16 @@ def score(root, folder, placements, previous):
                              for p in ("feedback", "withheld_feedback")}
     metrics["paired"] = {k: sum(d[k] for d in deltas) for k in ("exact_gain", "exact_regression", "brand_gain", "brand_regression")}
     metrics["frozen_silver_agreement"] = sum(d["silver_exact_agreement"] for d in deltas)
+    metrics['silver_observations'] = sum(r['id'] in silver for r in placements)
+    metrics['paired_comparator'] = str(previous) if previous else ('baseline' if old[0].get('systems') else None)
     write(folder / "metrics.json", metrics)
     write(folder / "feedback-diagnosis.json", [r for r in results if r["partition"] == "feedback"])
     write(folder / "counterexamples.json", [r for r in results if r["systems"]["candidate"]["ruling"]["class"] != "exact"])
     return metrics
 
 
-def execute(root, name, card, previous=None):
+def execute(root, name, card=None, previous=None):
+    card = resolve_card(card)
     folder = root / name
     folder.mkdir(exist_ok=False)
     started = time.monotonic()
@@ -174,12 +188,17 @@ def execute(root, name, card, previous=None):
     if fingerprint(source)["sha256"] != protocol["source"]["sha256"]:
         raise ValueError("Frozen source drift")
     listings = rows(source)
+    if not listings or len({r['id'] for r in listings}) != len(listings):
+        raise ValueError('Expected nonempty source snapshot with unique IDs')
     write(folder / "hypothesis.json", read(card))
     hypothesis = read(card)
     rules = rules_for("food", ("consumer_packaged",))
     manifest = {"status": "running", "started_utc": datetime.now(timezone.utc).isoformat(), "pin": load_pin(),
                 "code": fingerprint(Path(__file__)), "card": fingerprint(card), "source": fingerprint(source),
                 "previous": str(previous) if previous else None, "production_status": "unadmitted_experiment"}
+    manifest.update(git_head=subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip(),
+                    rows=len(listings), batch_size=10, planned_calls=(len(listings)+9)//10,
+                    rules=[r.model_dump(mode='json') for r in rules])
     write(folder / "manifest.json", manifest)
     schema = strict_schema(Batch.model_json_schema())
     answers, errors = {}, []
@@ -193,11 +212,16 @@ node, using evidence field keys exactly. Every name word must be present in its 
 inferred from explicit title/description maker evidence when source brand is missing; a shop, reseller or
 license character is not automatically a maker. Never fill missing maker with a guessed brand.
 Use levels brand, model, variant in that order, max one each. Sizes and numeric pack counts are attributes,
-never node identity. Flavour/colour names are variants only when title supports them; form is product identity.
+never node identity. Naming evidence includes the title and explicitly offered/selected original shop
+variant_name/options, never Default Title or unspecified options. A conflicting title wins over generic
+descriptions or incompatible option claims. Form is product identity; do not invent missing flavours.
 Correct shallow paths beat unsupported deeper paths. Preserve actual named identity; do not create broad
 category nodes. Keep concise reason/confidence; do not provide private reasoning. Return every ID verbatim.
 CARD:
 """ + hypothesis["instruction"]
+    pack = yaml.safe_load(Path(__file__).with_name("pack.yaml").read_text(encoding="utf-8"))
+    prompt += ("\nCURRENT OWNER-SELECTED FOOD CONVENTIONS (govern naming evidence when a historical "
+               "card contains conflicting title-only language):\n" + pack["conventions"])
     dump_rows(folder / "source-evidence.jsonl", [evidence(r) for r in listings])
     try:
         def call(offset):
@@ -208,8 +232,8 @@ CARD:
             if len(parsed) != len(batch) or {p.listing_id for p in parsed} != {r["id"] for r in batch}:
                 raise ValueError("Missing/duplicate/foreign placement IDs")
             return parsed
-        with ThreadPoolExecutor(max_workers=3) as pool:
-            jobs = {pool.submit(call, offset): offset for offset in range(0, 50, 10)}
+        with ThreadPoolExecutor(max_workers=protocol.get('parallel_batches', 3)) as pool:
+            jobs = {pool.submit(call, offset): offset for offset in range(0, len(listings), 10)}
             for job in as_completed(jobs):
                 try:
                     for answer in job.result():
@@ -217,6 +241,10 @@ CARD:
                 except Exception as error:
                     errors.append({"batch_offset": jobs[job], "type": type(error).__name__, "error": str(error)})
                 write(folder / "batch-progress.json", {"completed_rows": len(answers), "errors": errors})
+                with (folder / 'progress.jsonl').open('a', encoding='utf-8') as stream:
+                    stream.write(json.dumps({'ts': datetime.now(timezone.utc).isoformat(),
+                        'batch_offset': jobs[job], 'completed_rows': len(answers),
+                        'failed_batches': len(errors), 'elapsed_seconds': round(time.monotonic()-started, 3)})+'\n')
         placements, nodes, events = [], {}, []
         for source_row in listings:
             lid = source_row["id"]
@@ -226,7 +254,8 @@ CARD:
             placements.append({"id": lid, "path": path, "route": "agent_evidence", "by": "food_source_path_placer",
                                "node_id": proposed[-1]["id"] if proposed else None,
                                "confidence": answer.confidence if answer else 0, "reason": answer.reason if answer else "CLI batch failed",
-                               "action": answer.action if answer else "park", "status": "proposal"})
+                               "action": answer.action if answer else "park", "status": "proposal",
+                               "execution_status": "completed" if answer else "failed_batch"})
             events.append({"id": lid, "route": "agent_evidence", "node_checks": findings, "abstained": not path})
         for node in nodes.values():
             node["children"] = [n["id"] for n in nodes.values() if n["parent_id"] == node["id"]]
@@ -234,6 +263,11 @@ CARD:
         dump_rows(folder / "nodes.jsonl", list(nodes.values()))
         dump_rows(folder / "rule-events.jsonl", events)
         write(folder / "errors.json", errors)
+        write(folder / 'diagnostics.json', {
+            'failed_rows': len(listings)-len(answers),
+            'intentional_parks': sum(a.action == 'park' for a in answers.values()),
+            'grounding_rejections': dict(Counter(c['rejected'] for e in events for c in e['node_checks'] if 'rejected' in c)),
+            'rules_fingerprint': hashlib.sha256(json.dumps(manifest['rules'], sort_keys=True).encode()).hexdigest()})
         metrics = score(root, folder, placements, previous)
         usage = Counter()
         for p in folder.glob("batch-*/manifest.json"):
@@ -241,8 +275,8 @@ CARD:
                 usage.update({k: v for k, v in (u or {}).items() if isinstance(v, (int, float))})
         manifest.update(status="completed_with_batch_errors" if errors else "completed", metrics=metrics,
                         elapsed_seconds=round(time.monotonic() - started, 3), usage=dict(usage), cost=None,
-                        actual_served_tier=None, model_calls=5, scorer_model_calls=0,
-                        metric_model_calls_scope="frozen summarize model_calls=0 means scoring only; placer actually executed5")
+                        actual_served_tier=None, model_calls=len(list(folder.glob('batch-*/manifest.json'))), scorer_model_calls=0,
+                        metric_model_calls_scope="Transport attempts including failures; scorer model_calls=0 means scoring only")
         with (root / "score-history.jsonl").open("a", encoding="utf-8") as stream:
             stream.write(json.dumps({"run": name, **manifest}) + "\n")
         write(root / "status.json", {"status": "run_completed", "last_run": name, "metrics": metrics,
@@ -254,13 +288,15 @@ CARD:
         raise
     finally:
         write(folder / "manifest.json", manifest)
+        write(folder / 'artifact-index.json', [fingerprint(p) for p in sorted(folder.rglob('*'))
+                                               if p.is_file() and p.name != 'artifact-index.json'])
 
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--root", type=Path, required=True)
     ap.add_argument("--name", required=True)
-    ap.add_argument("--card", type=Path, required=True)
+    ap.add_argument("--card", type=Path, help="explicit card; default: Food pack baseline_card")
     ap.add_argument("--previous", type=Path)
     a = ap.parse_args()
     execute(a.root, a.name, a.card, a.previous)

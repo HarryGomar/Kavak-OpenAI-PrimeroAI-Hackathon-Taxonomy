@@ -3,8 +3,14 @@ families: [consumer_packaged]       # family rules shared with fragrance (count,
 levels: [brand, line, product, variant, pack]
 data: food/                          # under TAXO_DATA_DIR
 truth: owner-confirmed Food Pedia human gold; verify exact source joins; labels stay outside Git
+baseline_card: cards/baseline-pedia.json
+baseline_authority: owner-selected Pedia starting conventions; not learned-rule admission
 conventions: |
   - Pack count and weight/volume are buying choices on the product, never identity nodes.
   - A flavour or colour is a variant; a different format or form is a separate product.
-  - The title must name the child: a marketplace option alone cannot move a listing to a variant.
-  - Shops are not brands (own-label is); a licensed product sits on the brand printed on the pack.
+  - For Food specificity, naming evidence includes the title and explicitly offered/selected original shop variant_name or variant_options, never Default Title or unspecified options; do not restrict specificity to title wording alone.
+  - A conflicting title wins over generic descriptions or incompatible option claims; do not invent missing flavours or variants.
+  - The consumer-facing marketed mark is the brand. Owner, manufacturer, distributor and seller are relations or unverified clues, not automatically that mark; a missing maker never proves shop own-label.
+  - The stable source-marketed product name is identity; sporadic dietary/occasion descriptors and trailing type nouns alone do not create a new product line.
+  - Same-maker named mixes/variety packs may have source-supported identity; multi-maker assortments park. All new-path nodes remain proposals.
+  - These are owner-selected starting conventions, not a claim that experimental learned rules passed production admission.
