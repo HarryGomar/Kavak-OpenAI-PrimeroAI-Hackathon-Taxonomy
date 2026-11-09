@@ -208,7 +208,7 @@ def report(records: dict[str, dict], ls: list[dict]) -> str:
         b, a = g.get("before") or {}, g.get("after") or {}
         bw = f"{g['better']} / {g['worse']}" if g.get("better") is not None else ""
         agent = f"{(g['agent_after'] - g['agent_before']) * 100:+.1f}" if g.get("agent_after") is not None else ""
-        out.append(f"| {r['domain']} ({r['kpi'].get('data') or 'edu'}) | {r['branch']} | {r['author']} | {r['loop']}/{r['round']} | {r['change']} | "
+        out.append(f"| {r['domain']} ({(r.get('kpi') or {}).get('data') or 'edu'}) | {r['branch']} | {r['author']} | {r['loop']}/{r['round']} | {r['change']} | "
                    f"{'kept' if r['keep'] else 'dropped'} ({r['decided_on']}) | {bw} | {_pct(a, b, 'exact_rate')} | "
                    f"{_pct(a, b, 'harm_rate')} | {agent} |")
     return "\n".join(out) + "\n"
