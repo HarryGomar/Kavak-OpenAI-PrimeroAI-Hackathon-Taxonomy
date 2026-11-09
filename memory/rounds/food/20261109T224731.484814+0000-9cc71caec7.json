@@ -1,0 +1,826 @@
+{
+ "id": "9cc71caec7",
+ "domain": "food",
+ "ts": "2026-11-09T22:47:31.484814+00:00",
+ "loop": "A",
+ "round": 1,
+ "change": "full-loop-011-fast",
+ "label": "full-loop-011-fast",
+ "keep": null,
+ "decided_on": null,
+ "lesson": "food-pedia-full-cli-loop",
+ "kind": "card_text",
+ "branch": "harness/food-loop-observability",
+ "author": "unknown",
+ "gate": null,
+ "kpi": {
+  "ts": "2026-11-09T22:47:31.484814+00:00",
+  "domain": "food",
+  "loop": "A",
+  "round": 1,
+  "label": "full-loop-011-fast",
+  "code": "8c43938947b4a5a3608055bac161e418abdf10ced53f509165aefad984c7c96c",
+  "vocab": null,
+  "rules": null,
+  "data": "549c975018dbac1d05182e129b3a442f18d13d200bbaf2be6658523a800e96db",
+  "gold_dev": null,
+  "gold_sealed": null,
+  "human_dev": null,
+  "human_sealed": null,
+  "shares": {
+   "to_agent": 1.0
+  },
+  "agent_calls": 153,
+  "secs": 58.854,
+  "silver": {
+   "version": "full-loop-011-fast",
+   "agreement": 0.22
+  },
+  "metadata": {
+   "status": "completed_development_cycle",
+   "roles_actual_calls": {
+    "validator_current": 50,
+    "proposer": 1,
+    "improver": 1,
+    "analyst": 1,
+    "placer": 50,
+    "validator_candidate": 50
+   },
+   "sample": 50,
+   "feedback": 20,
+   "withheld_feedback": 30,
+   "hypothesis": "Modifiers assigned by word position can leave part of a flavour in the model or turn option attributes into an invented commercial name. Other reported mismatches require unavailable canonical names or unsupported variants and do not establish semantic errors.",
+   "change": {
+    "hypothesis": "Modifiers assigned by word position can leave part of a flavour in the model or turn option attributes into an invented commercial name. Other reported mismatches require unavailable canonical names or unsupported variants and do not establish semantic errors.",
+    "instruction_append": "NAME–ATTRIBUTE CHECK: Anchor the model in a source-attested commercial designation, then assign disputed modifiers by their explicitly evidenced role. If a modifier describes an offered flavour/colour of that named core, keep the complete sensory designation together in the variant, even when its words surround a form noun. A distinct offered edible form supports a separate product; an option attribute list alone does not establish a newly concatenated commercial line. Title and explicitly offered/selected original variant_name or variant_options can supply naming evidence, including option-only names. Ignore Default Title and unspecified values; a conflicting title overrides incompatible claims. Do not infer variants from ingredients/composition alone or replace a distinctive commercial name with a generic type parent. Pack count and weight/volume remain buying attributes. Preserve existing maker, grounding, source-spelling and proposal rules.",
+    "expected_failure_shape": "Targets incomplete sensory variants and attribute-built model names by separating commercial-name evidence from modifier-role evidence. It should preserve supported forms and option specificity while leaving unavailable aliases and unsupported registry variants unresolved.",
+    "regression_risk": "Could split a legitimate commercial name or suppress a meaningful form distinction. Require explicit role evidence rather than taste-word heuristics. This is a development hypothesis; the supplied feedback provides no fresh sealed-holdout validation."
+   },
+   "candidate_decision": {
+    "keep_for_development": false,
+    "production_admission": false,
+    "gate": null,
+    "reason": "No qualifying exact gain, brand/strict regression, or incomplete execution",
+    "before": {
+     "frozen_n": 50,
+     "matched_gold_n": 50,
+     "unlabeled_or_join_unscorable": 0,
+     "resolved_prediction_n": 48,
+     "ambiguous_prediction_n": 2,
+     "classes": {
+      "exact": 15,
+      "unscorable_ambiguous_brand": 2,
+      "wrong_label_path": 26,
+      "valid_shallower": 3,
+      "abstain": 2,
+      "wrong_brand": 1,
+      "wrong_deeper": 1
+     },
+     "identity_path_exact": 15,
+     "strict_full_path_exact": 9,
+     "brand_correct": 45,
+     "rates_denominator": 50,
+     "identity_path_exact_rate": 0.3,
+     "strict_full_path_exact_rate": 0.18,
+     "brand_correct_rate": 0.9,
+     "primary_policy": "All verified-gold observations, including abstentions and ambiguous predictions; unresolved is not demonstrated correct, not necessarily semantically wrong.",
+     "secondary_resolved_only": {
+      "denominator": 48,
+      "identity_path_exact_rate": 0.3125,
+      "brand_correct_rate": 0.9375
+     },
+     "abstentions_all_frozen": 2,
+     "levels": {
+      "brand": {
+       "correct_prefix": 45,
+       "n": 50
+      },
+      "model": {
+       "correct_prefix": 20,
+       "n": 50
+      },
+      "variant": {
+       "correct_prefix": 8,
+       "n": 30
+      }
+     },
+     "scope_accuracy": null,
+     "model_calls": 0,
+     "partitions": {
+      "feedback": {
+       "frozen_n": 20,
+       "matched_gold_n": 20,
+       "unlabeled_or_join_unscorable": 0,
+       "resolved_prediction_n": 19,
+       "ambiguous_prediction_n": 1,
+       "classes": {
+        "exact": 8,
+        "wrong_label_path": 10,
+        "unscorable_ambiguous_brand": 1,
+        "valid_shallower": 1
+       },
+       "identity_path_exact": 8,
+       "strict_full_path_exact": 4,
+       "brand_correct": 19,
+       "rates_denominator": 20,
+       "identity_path_exact_rate": 0.4,
+       "strict_full_path_exact_rate": 0.2,
+       "brand_correct_rate": 0.95,
+       "primary_policy": "All verified-gold observations, including abstentions and ambiguous predictions; unresolved is not demonstrated correct, not necessarily semantically wrong.",
+       "secondary_resolved_only": {
+        "denominator": 19,
+        "identity_path_exact_rate": 0.42105263157894735,
+        "brand_correct_rate": 1.0
+       },
+       "abstentions_all_frozen": 0,
+       "levels": {
+        "brand": {
+         "correct_prefix": 19,
+         "n": 20
+        },
+        "model": {
+         "correct_prefix": 9,
+         "n": 20
+        },
+        "variant": {
+         "correct_prefix": 5,
+         "n": 13
+        }
+       },
+       "scope_accuracy": null,
+       "model_calls": 0
+      },
+      "withheld_feedback": {
+       "frozen_n": 30,
+       "matched_gold_n": 30,
+       "unlabeled_or_join_unscorable": 0,
+       "resolved_prediction_n": 29,
+       "ambiguous_prediction_n": 1,
+       "classes": {
+        "unscorable_ambiguous_brand": 1,
+        "wrong_label_path": 16,
+        "valid_shallower": 2,
+        "exact": 7,
+        "abstain": 2,
+        "wrong_brand": 1,
+        "wrong_deeper": 1
+       },
+       "identity_path_exact": 7,
+       "strict_full_path_exact": 5,
+       "brand_correct": 26,
+       "rates_denominator": 30,
+       "identity_path_exact_rate": 0.23333333333333334,
+       "strict_full_path_exact_rate": 0.16666666666666666,
+       "brand_correct_rate": 0.8666666666666667,
+       "primary_policy": "All verified-gold observations, including abstentions and ambiguous predictions; unresolved is not demonstrated correct, not necessarily semantically wrong.",
+       "secondary_resolved_only": {
+        "denominator": 29,
+        "identity_path_exact_rate": 0.2413793103448276,
+        "brand_correct_rate": 0.896551724137931
+       },
+       "abstentions_all_frozen": 2,
+       "levels": {
+        "brand": {
+         "correct_prefix": 26,
+         "n": 30
+        },
+        "model": {
+         "correct_prefix": 11,
+         "n": 30
+        },
+        "variant": {
+         "correct_prefix": 3,
+         "n": 17
+        }
+       },
+       "scope_accuracy": null,
+       "model_calls": 0
+      }
+     },
+     "paired": {
+      "exact_gain": 3,
+      "exact_regression": 2,
+      "brand_gain": 0,
+      "brand_regression": 0
+     },
+     "frozen_silver_agreement": 7,
+     "silver_observations": 50,
+     "paired_comparator": "C:\\Users\\eduar\\Desktop\\HACKATON\\tasks\\taxo-four-20261109T162041\\food\\improvement-loop-01\\run-007-warm-baseline"
+    },
+    "after": {
+     "frozen_n": 50,
+     "matched_gold_n": 50,
+     "unlabeled_or_join_unscorable": 0,
+     "resolved_prediction_n": 48,
+     "ambiguous_prediction_n": 2,
+     "classes": {
+      "exact": 13,
+      "unscorable_ambiguous_brand": 2,
+      "wrong_label_path": 30,
+      "valid_shallower": 2,
+      "abstain": 2,
+      "wrong_deeper": 1
+     },
+     "identity_path_exact": 13,
+     "strict_full_path_exact": 8,
+     "brand_correct": 46,
+     "rates_denominator": 50,
+     "identity_path_exact_rate": 0.26,
+     "strict_full_path_exact_rate": 0.16,
+     "brand_correct_rate": 0.92,
+     "primary_policy": "All verified-gold observations, including abstentions and ambiguous predictions; unresolved is not demonstrated correct, not necessarily semantically wrong.",
+     "secondary_resolved_only": {
+      "denominator": 48,
+      "identity_path_exact_rate": 0.2708333333333333,
+      "brand_correct_rate": 0.9583333333333334
+     },
+     "abstentions_all_frozen": 2,
+     "levels": {
+      "brand": {
+       "correct_prefix": 46,
+       "n": 50
+      },
+      "model": {
+       "correct_prefix": 18,
+       "n": 50
+      },
+      "variant": {
+       "correct_prefix": 7,
+       "n": 30
+      }
+     },
+     "scope_accuracy": null,
+     "model_calls": 0,
+     "partitions": {
+      "feedback": {
+       "frozen_n": 20,
+       "matched_gold_n": 20,
+       "unlabeled_or_join_unscorable": 0,
+       "resolved_prediction_n": 19,
+       "ambiguous_prediction_n": 1,
+       "classes": {
+        "exact": 6,
+        "wrong_label_path": 12,
+        "unscorable_ambiguous_brand": 1,
+        "valid_shallower": 1
+       },
+       "identity_path_exact": 6,
+       "strict_full_path_exact": 3,
+       "brand_correct": 19,
+       "rates_denominator": 20,
+       "identity_path_exact_rate": 0.3,
+       "strict_full_path_exact_rate": 0.15,
+       "brand_correct_rate": 0.95,
+       "primary_policy": "All verified-gold observations, including abstentions and ambiguous predictions; unresolved is not demonstrated correct, not necessarily semantically wrong.",
+       "secondary_resolved_only": {
+        "denominator": 19,
+        "identity_path_exact_rate": 0.3157894736842105,
+        "brand_correct_rate": 1.0
+       },
+       "abstentions_all_frozen": 0,
+       "levels": {
+        "brand": {
+         "correct_prefix": 19,
+         "n": 20
+        },
+        "model": {
+         "correct_prefix": 7,
+         "n": 20
+        },
+        "variant": {
+         "correct_prefix": 4,
+         "n": 13
+        }
+       },
+       "scope_accuracy": null,
+       "model_calls": 0
+      },
+      "withheld_feedback": {
+       "frozen_n": 30,
+       "matched_gold_n": 30,
+       "unlabeled_or_join_unscorable": 0,
+       "resolved_prediction_n": 29,
+       "ambiguous_prediction_n": 1,
+       "classes": {
+        "unscorable_ambiguous_brand": 1,
+        "wrong_label_path": 18,
+        "valid_shallower": 1,
+        "exact": 7,
+        "abstain": 2,
+        "wrong_deeper": 1
+       },
+       "identity_path_exact": 7,
+       "strict_full_path_exact": 5,
+       "brand_correct": 27,
+       "rates_denominator": 30,
+       "identity_path_exact_rate": 0.23333333333333334,
+       "strict_full_path_exact_rate": 0.16666666666666666,
+       "brand_correct_rate": 0.9,
+       "primary_policy": "All verified-gold observations, including abstentions and ambiguous predictions; unresolved is not demonstrated correct, not necessarily semantically wrong.",
+       "secondary_resolved_only": {
+        "denominator": 29,
+        "identity_path_exact_rate": 0.2413793103448276,
+        "brand_correct_rate": 0.9310344827586207
+       },
+       "abstentions_all_frozen": 2,
+       "levels": {
+        "brand": {
+         "correct_prefix": 27,
+         "n": 30
+        },
+        "model": {
+         "correct_prefix": 11,
+         "n": 30
+        },
+        "variant": {
+         "correct_prefix": 3,
+         "n": 17
+        }
+       },
+       "scope_accuracy": null,
+       "model_calls": 0
+      }
+     },
+     "paired": {
+      "exact_gain": 1,
+      "exact_regression": 3,
+      "brand_gain": 1,
+      "brand_regression": 0
+     },
+     "frozen_silver_agreement": 8,
+     "silver_observations": 50,
+     "paired_comparator": "C:\\Users\\eduar\\Desktop\\HACKATON\\tasks\\taxo-four-20261109T162041\\food\\improvement-loop-01\\continuation-008-candidate-1"
+    },
+    "paired": {
+     "exact_gain": 1,
+     "exact_regression": 3,
+     "brand_gain": 1,
+     "brand_regression": 0
+    },
+    "caveat": "Exploratory exact-label comparison on previously inspected gold; no sealed gate or cost claim",
+    "documented_gate_checks_on_development": false,
+    "gate_reasons": [
+     "FAIL exact 15 -> 13 does not fall",
+     "FAIL exact rises or agent share falls (1.000 -> 1.000)",
+     "PASS touches 16 sealed rows (>= 10)",
+     "FAIL better 1 of 4 changed: Wilson lower bound 0.05 >= 0.5"
+    ],
+    "advance_eligible": false,
+    "sealed_gate_executed": false
+   },
+   "independent_validator": {
+    "frozen_n": 50,
+    "matched_gold_n": 50,
+    "unlabeled_or_join_unscorable": 0,
+    "resolved_prediction_n": 49,
+    "ambiguous_prediction_n": 1,
+    "classes": {
+     "wrong_label_path": 39,
+     "wrong_brand": 2,
+     "exact": 8,
+     "unscorable_ambiguous_brand": 1
+    },
+    "identity_path_exact": 8,
+    "strict_full_path_exact": 5,
+    "brand_correct": 47,
+    "rates_denominator": 50,
+    "identity_path_exact_rate": 0.16,
+    "strict_full_path_exact_rate": 0.1,
+    "brand_correct_rate": 0.94,
+    "primary_policy": "All verified-gold observations, including abstentions and ambiguous predictions; unresolved is not demonstrated correct, not necessarily semantically wrong.",
+    "secondary_resolved_only": {
+     "denominator": 49,
+     "identity_path_exact_rate": 0.16326530612244897,
+     "brand_correct_rate": 0.9591836734693877
+    },
+    "abstentions_all_frozen": 0,
+    "levels": {
+     "brand": {
+      "correct_prefix": 47,
+      "n": 50
+     },
+     "model": {
+      "correct_prefix": 8,
+      "n": 50
+     },
+     "variant": {
+      "correct_prefix": 6,
+      "n": 30
+     }
+    },
+    "scope_accuracy": null,
+    "model_calls": 0,
+    "partitions": {
+     "feedback": {
+      "frozen_n": 20,
+      "matched_gold_n": 20,
+      "unlabeled_or_join_unscorable": 0,
+      "resolved_prediction_n": 19,
+      "ambiguous_prediction_n": 1,
+      "classes": {
+       "wrong_label_path": 16,
+       "wrong_brand": 1,
+       "unscorable_ambiguous_brand": 1,
+       "exact": 2
+      },
+      "identity_path_exact": 2,
+      "strict_full_path_exact": 1,
+      "brand_correct": 18,
+      "rates_denominator": 20,
+      "identity_path_exact_rate": 0.1,
+      "strict_full_path_exact_rate": 0.05,
+      "brand_correct_rate": 0.9,
+      "primary_policy": "All verified-gold observations, including abstentions and ambiguous predictions; unresolved is not demonstrated correct, not necessarily semantically wrong.",
+      "secondary_resolved_only": {
+       "denominator": 19,
+       "identity_path_exact_rate": 0.10526315789473684,
+       "brand_correct_rate": 0.9473684210526315
+      },
+      "abstentions_all_frozen": 0,
+      "levels": {
+       "brand": {
+        "correct_prefix": 18,
+        "n": 20
+       },
+       "model": {
+        "correct_prefix": 2,
+        "n": 20
+       },
+       "variant": {
+        "correct_prefix": 2,
+        "n": 13
+       }
+      },
+      "scope_accuracy": null,
+      "model_calls": 0
+     },
+     "withheld_feedback": {
+      "frozen_n": 30,
+      "matched_gold_n": 30,
+      "unlabeled_or_join_unscorable": 0,
+      "resolved_prediction_n": 30,
+      "ambiguous_prediction_n": 0,
+      "classes": {
+       "wrong_label_path": 23,
+       "exact": 6,
+       "wrong_brand": 1
+      },
+      "identity_path_exact": 6,
+      "strict_full_path_exact": 4,
+      "brand_correct": 29,
+      "rates_denominator": 30,
+      "identity_path_exact_rate": 0.2,
+      "strict_full_path_exact_rate": 0.13333333333333333,
+      "brand_correct_rate": 0.9666666666666667,
+      "primary_policy": "All verified-gold observations, including abstentions and ambiguous predictions; unresolved is not demonstrated correct, not necessarily semantically wrong.",
+      "secondary_resolved_only": {
+       "denominator": 30,
+       "identity_path_exact_rate": 0.2,
+       "brand_correct_rate": 0.9666666666666667
+      },
+      "abstentions_all_frozen": 0,
+      "levels": {
+       "brand": {
+        "correct_prefix": 29,
+        "n": 30
+       },
+       "model": {
+        "correct_prefix": 6,
+        "n": 30
+       },
+       "variant": {
+        "correct_prefix": 4,
+        "n": 17
+       }
+      },
+      "scope_accuracy": null,
+      "model_calls": 0
+     }
+    },
+    "paired": {
+     "exact_gain": 8,
+     "exact_regression": 0,
+     "brand_gain": 45,
+     "brand_regression": 1
+    },
+    "frozen_silver_agreement": 19,
+    "silver_observations": 50,
+    "paired_comparator": "baseline"
+   },
+   "validator_findings": {
+    "disagree": 39,
+    "pipeline_right": 15,
+    "both_wrong": 31,
+    "validator_right": 4,
+    "agree": 11
+   },
+   "rule": {
+    "status": "rejected_invalid_proposal",
+    "production_admission": false,
+    "reason": "Unsupported check/decision",
+    "caught": 0,
+    "false_rejects": 0,
+    "fires": 0
+   },
+   "checklist": {
+    "status": "actual_ab_evaluated",
+    "kept_for_development": false,
+    "production_admission": false,
+    "reason": "Exact must rise; harm cannot rise; abstention rate may rise at most .05",
+    "before": {
+     "frozen_n": 50,
+     "matched_gold_n": 50,
+     "unlabeled_or_join_unscorable": 0,
+     "resolved_prediction_n": 49,
+     "ambiguous_prediction_n": 1,
+     "classes": {
+      "wrong_label_path": 39,
+      "wrong_brand": 2,
+      "exact": 8,
+      "unscorable_ambiguous_brand": 1
+     },
+     "identity_path_exact": 8,
+     "strict_full_path_exact": 5,
+     "brand_correct": 47,
+     "rates_denominator": 50,
+     "identity_path_exact_rate": 0.16,
+     "strict_full_path_exact_rate": 0.1,
+     "brand_correct_rate": 0.94,
+     "primary_policy": "All verified-gold observations, including abstentions and ambiguous predictions; unresolved is not demonstrated correct, not necessarily semantically wrong.",
+     "secondary_resolved_only": {
+      "denominator": 49,
+      "identity_path_exact_rate": 0.16326530612244897,
+      "brand_correct_rate": 0.9591836734693877
+     },
+     "abstentions_all_frozen": 0,
+     "levels": {
+      "brand": {
+       "correct_prefix": 47,
+       "n": 50
+      },
+      "model": {
+       "correct_prefix": 8,
+       "n": 50
+      },
+      "variant": {
+       "correct_prefix": 6,
+       "n": 30
+      }
+     },
+     "scope_accuracy": null,
+     "model_calls": 0,
+     "partitions": {
+      "feedback": {
+       "frozen_n": 20,
+       "matched_gold_n": 20,
+       "unlabeled_or_join_unscorable": 0,
+       "resolved_prediction_n": 19,
+       "ambiguous_prediction_n": 1,
+       "classes": {
+        "wrong_label_path": 16,
+        "wrong_brand": 1,
+        "unscorable_ambiguous_brand": 1,
+        "exact": 2
+       },
+       "identity_path_exact": 2,
+       "strict_full_path_exact": 1,
+       "brand_correct": 18,
+       "rates_denominator": 20,
+       "identity_path_exact_rate": 0.1,
+       "strict_full_path_exact_rate": 0.05,
+       "brand_correct_rate": 0.9,
+       "primary_policy": "All verified-gold observations, including abstentions and ambiguous predictions; unresolved is not demonstrated correct, not necessarily semantically wrong.",
+       "secondary_resolved_only": {
+        "denominator": 19,
+        "identity_path_exact_rate": 0.10526315789473684,
+        "brand_correct_rate": 0.9473684210526315
+       },
+       "abstentions_all_frozen": 0,
+       "levels": {
+        "brand": {
+         "correct_prefix": 18,
+         "n": 20
+        },
+        "model": {
+         "correct_prefix": 2,
+         "n": 20
+        },
+        "variant": {
+         "correct_prefix": 2,
+         "n": 13
+        }
+       },
+       "scope_accuracy": null,
+       "model_calls": 0
+      },
+      "withheld_feedback": {
+       "frozen_n": 30,
+       "matched_gold_n": 30,
+       "unlabeled_or_join_unscorable": 0,
+       "resolved_prediction_n": 30,
+       "ambiguous_prediction_n": 0,
+       "classes": {
+        "wrong_label_path": 23,
+        "exact": 6,
+        "wrong_brand": 1
+       },
+       "identity_path_exact": 6,
+       "strict_full_path_exact": 4,
+       "brand_correct": 29,
+       "rates_denominator": 30,
+       "identity_path_exact_rate": 0.2,
+       "strict_full_path_exact_rate": 0.13333333333333333,
+       "brand_correct_rate": 0.9666666666666667,
+       "primary_policy": "All verified-gold observations, including abstentions and ambiguous predictions; unresolved is not demonstrated correct, not necessarily semantically wrong.",
+       "secondary_resolved_only": {
+        "denominator": 30,
+        "identity_path_exact_rate": 0.2,
+        "brand_correct_rate": 0.9666666666666667
+       },
+       "abstentions_all_frozen": 0,
+       "levels": {
+        "brand": {
+         "correct_prefix": 29,
+         "n": 30
+        },
+        "model": {
+         "correct_prefix": 6,
+         "n": 30
+        },
+        "variant": {
+         "correct_prefix": 4,
+         "n": 17
+        }
+       },
+       "scope_accuracy": null,
+       "model_calls": 0
+      }
+     },
+     "paired": {
+      "exact_gain": 8,
+      "exact_regression": 0,
+      "brand_gain": 45,
+      "brand_regression": 1
+     },
+     "frozen_silver_agreement": 19,
+     "silver_observations": 50,
+     "paired_comparator": "baseline"
+    },
+    "after": {
+     "frozen_n": 50,
+     "matched_gold_n": 50,
+     "unlabeled_or_join_unscorable": 0,
+     "resolved_prediction_n": 49,
+     "ambiguous_prediction_n": 1,
+     "classes": {
+      "wrong_label_path": 34,
+      "abstain": 10,
+      "exact": 2,
+      "unscorable_ambiguous_brand": 1,
+      "valid_shallower": 2,
+      "wrong_brand": 1
+     },
+     "identity_path_exact": 2,
+     "strict_full_path_exact": 1,
+     "brand_correct": 38,
+     "rates_denominator": 50,
+     "identity_path_exact_rate": 0.04,
+     "strict_full_path_exact_rate": 0.02,
+     "brand_correct_rate": 0.76,
+     "primary_policy": "All verified-gold observations, including abstentions and ambiguous predictions; unresolved is not demonstrated correct, not necessarily semantically wrong.",
+     "secondary_resolved_only": {
+      "denominator": 49,
+      "identity_path_exact_rate": 0.04081632653061224,
+      "brand_correct_rate": 0.7755102040816326
+     },
+     "abstentions_all_frozen": 10,
+     "levels": {
+      "brand": {
+       "correct_prefix": 38,
+       "n": 50
+      },
+      "model": {
+       "correct_prefix": 4,
+       "n": 50
+      },
+      "variant": {
+       "correct_prefix": 1,
+       "n": 30
+      }
+     },
+     "scope_accuracy": null,
+     "model_calls": 0,
+     "partitions": {
+      "feedback": {
+       "frozen_n": 20,
+       "matched_gold_n": 20,
+       "unlabeled_or_join_unscorable": 0,
+       "resolved_prediction_n": 19,
+       "ambiguous_prediction_n": 1,
+       "classes": {
+        "wrong_label_path": 14,
+        "abstain": 3,
+        "unscorable_ambiguous_brand": 1,
+        "valid_shallower": 2
+       },
+       "identity_path_exact": 0,
+       "strict_full_path_exact": 0,
+       "brand_correct": 16,
+       "rates_denominator": 20,
+       "identity_path_exact_rate": 0.0,
+       "strict_full_path_exact_rate": 0.0,
+       "brand_correct_rate": 0.8,
+       "primary_policy": "All verified-gold observations, including abstentions and ambiguous predictions; unresolved is not demonstrated correct, not necessarily semantically wrong.",
+       "secondary_resolved_only": {
+        "denominator": 19,
+        "identity_path_exact_rate": 0.0,
+        "brand_correct_rate": 0.8421052631578947
+       },
+       "abstentions_all_frozen": 3,
+       "levels": {
+        "brand": {
+         "correct_prefix": 16,
+         "n": 20
+        },
+        "model": {
+         "correct_prefix": 2,
+         "n": 20
+        },
+        "variant": {
+         "correct_prefix": 0,
+         "n": 13
+        }
+       },
+       "scope_accuracy": null,
+       "model_calls": 0
+      },
+      "withheld_feedback": {
+       "frozen_n": 30,
+       "matched_gold_n": 30,
+       "unlabeled_or_join_unscorable": 0,
+       "resolved_prediction_n": 30,
+       "ambiguous_prediction_n": 0,
+       "classes": {
+        "wrong_label_path": 20,
+        "exact": 2,
+        "wrong_brand": 1,
+        "abstain": 7
+       },
+       "identity_path_exact": 2,
+       "strict_full_path_exact": 1,
+       "brand_correct": 22,
+       "rates_denominator": 30,
+       "identity_path_exact_rate": 0.06666666666666667,
+       "strict_full_path_exact_rate": 0.03333333333333333,
+       "brand_correct_rate": 0.7333333333333333,
+       "primary_policy": "All verified-gold observations, including abstentions and ambiguous predictions; unresolved is not demonstrated correct, not necessarily semantically wrong.",
+       "secondary_resolved_only": {
+        "denominator": 30,
+        "identity_path_exact_rate": 0.06666666666666667,
+        "brand_correct_rate": 0.7333333333333333
+       },
+       "abstentions_all_frozen": 7,
+       "levels": {
+        "brand": {
+         "correct_prefix": 22,
+         "n": 30
+        },
+        "model": {
+         "correct_prefix": 2,
+         "n": 30
+        },
+        "variant": {
+         "correct_prefix": 1,
+         "n": 17
+        }
+       },
+       "scope_accuracy": null,
+       "model_calls": 0
+      }
+     },
+     "paired": {
+      "exact_gain": 2,
+      "exact_regression": 0,
+      "brand_gain": 36,
+      "brand_regression": 1
+     },
+     "frozen_silver_agreement": 18,
+     "silver_observations": 50,
+     "paired_comparator": "baseline"
+    }
+   },
+   "production_admission": false,
+   "gate": "blocked: no untouched Food brand-sealed gold",
+   "limitations": [
+    "Previously inspected development gold; no fresh-holdout claim",
+    "Existing owner-authorized Pedia labels adjudicate; no new human review or gold edits",
+    "Source-only validator: no web/siblings budget; dollar cost and served tier unavailable"
+   ],
+   "artifacts": {
+    "path": "C:\\Users\\eduar\\Desktop\\HACKATON\\tasks\\taxo-four-20261109T162041\\food\\improvement-loop-01\\full-loop-011-fast\\loop-report.json",
+    "sha256": "6f78731fa20a6e120d73cc9956b63461d3f4a4606335a04c7274f7fb95684a8d",
+    "bytes": 27819
+   }
+  }
+ }
+}

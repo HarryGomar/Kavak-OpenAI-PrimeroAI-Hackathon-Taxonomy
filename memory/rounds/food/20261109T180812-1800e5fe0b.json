@@ -1,0 +1,466 @@
+{
+ "id": "1800e5fe0b",
+ "domain": "food",
+ "ts": "2026-11-09T18:08:12",
+ "loop": "A",
+ "round": 12,
+ "change": "full-loop-012-executable",
+ "label": "full-loop-012-executable",
+ "keep": null,
+ "decided_on": null,
+ "lesson": "food-executable-configurations",
+ "kind": "rule_shape",
+ "branch": "harness/food-loop-observability",
+ "author": "unknown",
+ "gate": null,
+ "kpi": {
+  "ts": "2026-11-09T18:08:12",
+  "loop": "A",
+  "round": 12,
+  "label": "full-loop-012-executable",
+  "code": "771bc155fdc9f16df3031de7c002fbf0c2e3f32d33c829f582e37eedad86f607",
+  "data": "549c975018dbac1d05182e129b3a442f18d13d200bbaf2be6658523a800e96db",
+  "gold_dev": null,
+  "gold_sealed": null,
+  "human_dev": null,
+  "human_sealed": null,
+  "vocab": null,
+  "rules": null,
+  "shares": {},
+  "agent_calls": 102,
+  "metadata": {
+   "pipeline_status": "evaluated_offline_executable_config",
+   "proposal_kind": "new_check",
+   "before": {
+    "frozen_n": 50,
+    "matched_gold_n": 50,
+    "unlabeled_or_join_unscorable": 0,
+    "resolved_prediction_n": 48,
+    "ambiguous_prediction_n": 2,
+    "classes": {
+     "exact": 10,
+     "unscorable_ambiguous_brand": 2,
+     "wrong_label_path": 35,
+     "abstain": 2,
+     "valid_shallower": 1
+    },
+    "identity_path_exact": 10,
+    "strict_full_path_exact": 8,
+    "brand_correct": 46,
+    "rates_denominator": 50,
+    "identity_path_exact_rate": 0.2,
+    "strict_full_path_exact_rate": 0.16,
+    "brand_correct_rate": 0.92,
+    "primary_policy": "All verified-gold observations, including abstentions and ambiguous predictions; unresolved is not demonstrated correct, not necessarily semantically wrong.",
+    "secondary_resolved_only": {
+     "denominator": 48,
+     "identity_path_exact_rate": 0.20833333333333334,
+     "brand_correct_rate": 0.9583333333333334
+    },
+    "abstentions_all_frozen": 2,
+    "levels": {
+     "brand": {
+      "correct_prefix": 46,
+      "n": 50
+     },
+     "model": {
+      "correct_prefix": 12,
+      "n": 50
+     },
+     "variant": {
+      "correct_prefix": 6,
+      "n": 30
+     }
+    },
+    "scope_accuracy": null,
+    "model_calls": 0,
+    "partitions": {
+     "feedback": {
+      "frozen_n": 20,
+      "matched_gold_n": 20,
+      "unlabeled_or_join_unscorable": 0,
+      "resolved_prediction_n": 19,
+      "ambiguous_prediction_n": 1,
+      "classes": {
+       "exact": 6,
+       "wrong_label_path": 12,
+       "unscorable_ambiguous_brand": 1,
+       "valid_shallower": 1
+      },
+      "identity_path_exact": 6,
+      "strict_full_path_exact": 4,
+      "brand_correct": 19,
+      "rates_denominator": 20,
+      "identity_path_exact_rate": 0.3,
+      "strict_full_path_exact_rate": 0.2,
+      "brand_correct_rate": 0.95,
+      "primary_policy": "All verified-gold observations, including abstentions and ambiguous predictions; unresolved is not demonstrated correct, not necessarily semantically wrong.",
+      "secondary_resolved_only": {
+       "denominator": 19,
+       "identity_path_exact_rate": 0.3157894736842105,
+       "brand_correct_rate": 1.0
+      },
+      "abstentions_all_frozen": 0,
+      "levels": {
+       "brand": {
+        "correct_prefix": 19,
+        "n": 20
+       },
+       "model": {
+        "correct_prefix": 7,
+        "n": 20
+       },
+       "variant": {
+        "correct_prefix": 4,
+        "n": 13
+       }
+      },
+      "scope_accuracy": null,
+      "model_calls": 0
+     },
+     "withheld_feedback": {
+      "frozen_n": 30,
+      "matched_gold_n": 30,
+      "unlabeled_or_join_unscorable": 0,
+      "resolved_prediction_n": 29,
+      "ambiguous_prediction_n": 1,
+      "classes": {
+       "unscorable_ambiguous_brand": 1,
+       "wrong_label_path": 23,
+       "exact": 4,
+       "abstain": 2
+      },
+      "identity_path_exact": 4,
+      "strict_full_path_exact": 4,
+      "brand_correct": 27,
+      "rates_denominator": 30,
+      "identity_path_exact_rate": 0.13333333333333333,
+      "strict_full_path_exact_rate": 0.13333333333333333,
+      "brand_correct_rate": 0.9,
+      "primary_policy": "All verified-gold observations, including abstentions and ambiguous predictions; unresolved is not demonstrated correct, not necessarily semantically wrong.",
+      "secondary_resolved_only": {
+       "denominator": 29,
+       "identity_path_exact_rate": 0.13793103448275862,
+       "brand_correct_rate": 0.9310344827586207
+      },
+      "abstentions_all_frozen": 2,
+      "levels": {
+       "brand": {
+        "correct_prefix": 27,
+        "n": 30
+       },
+       "model": {
+        "correct_prefix": 5,
+        "n": 30
+       },
+       "variant": {
+        "correct_prefix": 2,
+        "n": 17
+       }
+      },
+      "scope_accuracy": null,
+      "model_calls": 0
+     }
+    },
+    "paired": {
+     "exact_gain": 0,
+     "exact_regression": 5,
+     "brand_gain": 1,
+     "brand_regression": 0
+    },
+    "frozen_silver_agreement": 4,
+    "silver_observations": 50,
+    "paired_comparator": "C:\\Users\\eduar\\Desktop\\HACKATON\\tasks\\taxo-four-20261109T162041\\food\\improvement-loop-01\\continuation-008-candidate-1"
+   },
+   "after": {
+    "frozen_n": 50,
+    "matched_gold_n": 50,
+    "unlabeled_or_join_unscorable": 0,
+    "resolved_prediction_n": 48,
+    "ambiguous_prediction_n": 2,
+    "classes": {
+     "exact": 10,
+     "unscorable_ambiguous_brand": 2,
+     "wrong_label_path": 35,
+     "abstain": 2,
+     "valid_shallower": 1
+    },
+    "identity_path_exact": 10,
+    "strict_full_path_exact": 8,
+    "brand_correct": 46,
+    "rates_denominator": 50,
+    "identity_path_exact_rate": 0.2,
+    "strict_full_path_exact_rate": 0.16,
+    "brand_correct_rate": 0.92,
+    "primary_policy": "All verified-gold observations, including abstentions and ambiguous predictions; unresolved is not demonstrated correct, not necessarily semantically wrong.",
+    "secondary_resolved_only": {
+     "denominator": 48,
+     "identity_path_exact_rate": 0.20833333333333334,
+     "brand_correct_rate": 0.9583333333333334
+    },
+    "abstentions_all_frozen": 2,
+    "levels": {
+     "brand": {
+      "correct_prefix": 46,
+      "n": 50
+     },
+     "model": {
+      "correct_prefix": 12,
+      "n": 50
+     },
+     "variant": {
+      "correct_prefix": 6,
+      "n": 30
+     }
+    },
+    "scope_accuracy": null,
+    "model_calls": 0,
+    "partitions": {
+     "feedback": {
+      "frozen_n": 20,
+      "matched_gold_n": 20,
+      "unlabeled_or_join_unscorable": 0,
+      "resolved_prediction_n": 19,
+      "ambiguous_prediction_n": 1,
+      "classes": {
+       "exact": 6,
+       "wrong_label_path": 12,
+       "unscorable_ambiguous_brand": 1,
+       "valid_shallower": 1
+      },
+      "identity_path_exact": 6,
+      "strict_full_path_exact": 4,
+      "brand_correct": 19,
+      "rates_denominator": 20,
+      "identity_path_exact_rate": 0.3,
+      "strict_full_path_exact_rate": 0.2,
+      "brand_correct_rate": 0.95,
+      "primary_policy": "All verified-gold observations, including abstentions and ambiguous predictions; unresolved is not demonstrated correct, not necessarily semantically wrong.",
+      "secondary_resolved_only": {
+       "denominator": 19,
+       "identity_path_exact_rate": 0.3157894736842105,
+       "brand_correct_rate": 1.0
+      },
+      "abstentions_all_frozen": 0,
+      "levels": {
+       "brand": {
+        "correct_prefix": 19,
+        "n": 20
+       },
+       "model": {
+        "correct_prefix": 7,
+        "n": 20
+       },
+       "variant": {
+        "correct_prefix": 4,
+        "n": 13
+       }
+      },
+      "scope_accuracy": null,
+      "model_calls": 0
+     },
+     "withheld_feedback": {
+      "frozen_n": 30,
+      "matched_gold_n": 30,
+      "unlabeled_or_join_unscorable": 0,
+      "resolved_prediction_n": 29,
+      "ambiguous_prediction_n": 1,
+      "classes": {
+       "unscorable_ambiguous_brand": 1,
+       "wrong_label_path": 23,
+       "exact": 4,
+       "abstain": 2
+      },
+      "identity_path_exact": 4,
+      "strict_full_path_exact": 4,
+      "brand_correct": 27,
+      "rates_denominator": 30,
+      "identity_path_exact_rate": 0.13333333333333333,
+      "strict_full_path_exact_rate": 0.13333333333333333,
+      "brand_correct_rate": 0.9,
+      "primary_policy": "All verified-gold observations, including abstentions and ambiguous predictions; unresolved is not demonstrated correct, not necessarily semantically wrong.",
+      "secondary_resolved_only": {
+       "denominator": 29,
+       "identity_path_exact_rate": 0.13793103448275862,
+       "brand_correct_rate": 0.9310344827586207
+      },
+      "abstentions_all_frozen": 2,
+      "levels": {
+       "brand": {
+        "correct_prefix": 27,
+        "n": 30
+       },
+       "model": {
+        "correct_prefix": 5,
+        "n": 30
+       },
+       "variant": {
+        "correct_prefix": 2,
+        "n": 17
+       }
+      },
+      "scope_accuracy": null,
+      "model_calls": 0
+     }
+    },
+    "paired": {
+     "exact_gain": 0,
+     "exact_regression": 0,
+     "brand_gain": 0,
+     "brand_regression": 0
+    },
+    "frozen_silver_agreement": 6,
+    "silver_observations": 50,
+    "paired_comparator": "C:\\Users\\eduar\\Desktop\\HACKATON\\tasks\\taxo-four-20261109T162041\\food\\improvement-loop-01\\full-loop-012-executable\\pipeline-trial\\reference"
+   },
+   "paired": {
+    "exact_gain": 0,
+    "exact_regression": 0,
+    "brand_gain": 0,
+    "brand_regression": 0
+   },
+   "validator": {
+    "status": "actual_paired_ab_executed",
+    "paired_all": {
+     "n": 50,
+     "exact": {
+      "current": 0.16,
+      "candidate": 0.18,
+      "delta": 0.02,
+      "current_ci": [
+       0.08337321362087696,
+       0.2851448096176598
+      ],
+      "candidate_ci": [
+       0.0977008273245379,
+       0.3079631945470261
+      ],
+      "delta_ci": [
+       -0.0192,
+       0.0592
+      ],
+      "gains": 1,
+      "regressions": 0
+     },
+     "harm": {
+      "current": 0.82,
+      "candidate": 0.8,
+      "delta": -0.02,
+      "current_ci": [
+       0.6920368054529739,
+       0.902299172675462
+      ],
+      "candidate_ci": [
+       0.6696262789551477,
+       0.8875637005402612
+      ],
+      "delta_ci": [
+       -0.0592,
+       0.0192
+      ],
+      "gains": 0,
+      "regressions": 1
+     },
+     "abstain": {
+      "current": 0.0,
+      "candidate": 0.0,
+      "delta": 0.0,
+      "current_ci": [
+       0.0,
+       0.07135003417431873
+      ],
+      "candidate_ci": [
+       0.0,
+       0.07135003417431873
+      ],
+      "delta_ci": [
+       0.0,
+       0.0
+      ],
+      "gains": 0,
+      "regressions": 0
+     },
+     "keep_for_development": true,
+     "production_admission": false
+    },
+    "withheld_development": {
+     "n": 30,
+     "exact": {
+      "current": 0.2,
+      "candidate": 0.23333333333333334,
+      "delta": 0.03333333333333333,
+      "current_ci": [
+       0.09504978102401235,
+       0.37306047381027446
+      ],
+      "candidate_ci": [
+       0.11792239210501232,
+       0.40928672330324267
+      ],
+      "delta_ci": [
+       -0.031999999999999994,
+       0.09866666666666665
+      ],
+      "gains": 1,
+      "regressions": 0
+     },
+     "harm": {
+      "current": 0.8,
+      "candidate": 0.7666666666666667,
+      "delta": -0.03333333333333333,
+      "current_ci": [
+       0.6269395261897256,
+       0.9049502189759876
+      ],
+      "candidate_ci": [
+       0.5907132766967574,
+       0.8820776078949878
+      ],
+      "delta_ci": [
+       -0.09866666666666665,
+       0.031999999999999994
+      ],
+      "gains": 0,
+      "regressions": 1
+     },
+     "abstain": {
+      "current": 0.0,
+      "candidate": 0.0,
+      "delta": 0.0,
+      "current_ci": [
+       -1.3877787807814457e-17,
+       0.113517091390478
+      ],
+      "candidate_ci": [
+       -1.3877787807814457e-17,
+       0.113517091390478
+      ],
+      "delta_ci": [
+       0.0,
+       0.0
+      ],
+      "gains": 0,
+      "regressions": 0
+     },
+     "keep_for_development": true,
+     "production_admission": false
+    },
+    "keep_for_development": true,
+    "production_admission": false
+   },
+   "calls": {
+    "validator_current": 50,
+    "proposer": 1,
+    "improver": 1,
+    "validator_candidate": 50,
+    "pipeline_fresh_model_calls": 0
+   },
+   "production_admission": false,
+   "artifact_index": {
+    "path": "C:\\Users\\eduar\\Desktop\\HACKATON\\tasks\\taxo-four-20261109T162041\\food\\improvement-loop-01\\full-loop-012-executable\\artifact-index.json",
+    "sha256": "43faec6342af883c78c0f8275b395ea7770305908e05a1782179a7a920e57e33",
+    "bytes": 7687
+   }
+  }
+ }
+}

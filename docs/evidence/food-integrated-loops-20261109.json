@@ -1,0 +1,1138 @@
+{
+  "format": "food_integrated_development_loops/v1",
+  "sampling": {
+    "n": 50,
+    "seed": 4160955408,
+    "eligible": 3836,
+    "overlap_previous": 0,
+    "source": {
+      "path": "C:\\Users\\eduar\\Desktop\\HACKATON\\tasks\\food-random-50-20261109\\sample-01\\source-snapshot.jsonl",
+      "sha256": "e171137cd82d5b8683c3d72edbc82e747c4fb2a2a30f1e01b4eaab1580673a47",
+      "bytes": 1409906
+    }
+  },
+  "baseline": {
+    "rates_denominator": 50,
+    "identity_path_exact": 5,
+    "strict_full_path_exact": 3,
+    "brand_correct": 29,
+    "abstentions_all_frozen": 13,
+    "classes": {
+      "wrong_brand": 8,
+      "wrong_label_path": 22,
+      "exact": 5,
+      "abstain": 13,
+      "valid_shallower": 2
+    }
+  },
+  "loops": [
+    {
+      "run": "loop-002",
+      "status": "completed_integrated_development_cycle",
+      "sample": 50,
+      "feedback": 20,
+      "withheld_feedback": 30,
+      "calls": {
+        "validator_current": 50,
+        "proposer": 1,
+        "improver": 1,
+        "validator_candidate": 102,
+        "actual_placer": 50
+      },
+      "version_before": 1,
+      "version_after": 2,
+      "pipeline_proposal": {
+        "kind": "agentic_rule",
+        "id": "bind_shop_options_to_food",
+        "description": "Determine what each shop option modifies before adding it to food identity.",
+        "scope": "domain",
+        "check": null,
+        "decision": null,
+        "payload_json": "{\"text\":\"Before constructing a Food path from explicit original shop options, excluding placeholders, use each option's name and compatible title/description evidence to identify the item each modifier describes: represent food flavour or colour at variant level and food format or form as distinct product identity, keep quantity and accessory properties outside the food identity path, and leave modifiers with unresolved referents unassigned.\"}",
+        "rationale": "The supplied validator adds a promotional bag's colour to a food variant and treats whole-bean form as a variant. Binding options to their referents targets these semantic errors without relying on exact-label mismatches. This is an untested development proposal."
+      },
+      "comparisons": {
+        "placer_only": {
+          "before": {
+            "rates_denominator": 50,
+            "identity_path_exact": 5,
+            "strict_full_path_exact": 3,
+            "brand_correct": 29,
+            "abstentions_all_frozen": 13,
+            "classes": {
+              "wrong_brand": 8,
+              "wrong_label_path": 22,
+              "exact": 5,
+              "abstain": 13,
+              "valid_shallower": 2
+            }
+          },
+          "after": {
+            "rates_denominator": 50,
+            "identity_path_exact": 6,
+            "strict_full_path_exact": 3,
+            "brand_correct": 29,
+            "abstentions_all_frozen": 13,
+            "classes": {
+              "wrong_brand": 8,
+              "wrong_label_path": 20,
+              "exact": 6,
+              "abstain": 13,
+              "valid_shallower": 3
+            }
+          },
+          "paired": {
+            "n": 50,
+            "exact": {
+              "current": 0.1,
+              "candidate": 0.12,
+              "delta": 0.02,
+              "current_ci": [
+                0.04347512399157111,
+                0.2136049033478839
+              ],
+              "candidate_ci": [
+                0.05617523710624646,
+                0.23805078886623582
+              ],
+              "delta_ci": [
+                -0.0192,
+                0.0592
+              ],
+              "gains": 1,
+              "regressions": 0
+            },
+            "harm": {
+              "current": 0.6,
+              "candidate": 0.56,
+              "delta": -0.04,
+              "current_ci": [
+                0.4618118910275937,
+                0.7239181021375425
+              ],
+              "candidate_ci": [
+                0.4230578680014353,
+                0.6883801278976466
+              ],
+              "delta_ci": [
+                -0.09486857023834319,
+                0.014868570238343183
+              ],
+              "gains": 0,
+              "regressions": 2
+            },
+            "abstain": {
+              "current": 0.26,
+              "candidate": 0.26,
+              "delta": 0.0,
+              "current_ci": [
+                0.15871379651367384,
+                0.3955342198899992
+              ],
+              "candidate_ci": [
+                0.15871379651367384,
+                0.3955342198899992
+              ],
+              "delta_ci": [
+                0.0,
+                0.0
+              ],
+              "gains": 0,
+              "regressions": 0
+            },
+            "keep_for_development": true,
+            "production_admission": false
+          },
+          "keep_for_development": true,
+          "actual_placer_calls": 50,
+          "routed": 50,
+          "free": 0,
+          "cached_fallback_answers": 0
+        },
+        "integrated": {
+          "before": {
+            "rates_denominator": 50,
+            "identity_path_exact": 5,
+            "strict_full_path_exact": 3,
+            "brand_correct": 29,
+            "abstentions_all_frozen": 13,
+            "classes": {
+              "wrong_brand": 8,
+              "wrong_label_path": 22,
+              "exact": 5,
+              "abstain": 13,
+              "valid_shallower": 2
+            }
+          },
+          "after": {
+            "rates_denominator": 50,
+            "identity_path_exact": 6,
+            "strict_full_path_exact": 3,
+            "brand_correct": 29,
+            "abstentions_all_frozen": 13,
+            "classes": {
+              "wrong_brand": 8,
+              "wrong_label_path": 20,
+              "exact": 6,
+              "abstain": 13,
+              "valid_shallower": 3
+            }
+          },
+          "paired": {
+            "n": 50,
+            "exact": {
+              "current": 0.1,
+              "candidate": 0.12,
+              "delta": 0.02,
+              "current_ci": [
+                0.04347512399157111,
+                0.2136049033478839
+              ],
+              "candidate_ci": [
+                0.05617523710624646,
+                0.23805078886623582
+              ],
+              "delta_ci": [
+                -0.0192,
+                0.0592
+              ],
+              "gains": 1,
+              "regressions": 0
+            },
+            "harm": {
+              "current": 0.6,
+              "candidate": 0.56,
+              "delta": -0.04,
+              "current_ci": [
+                0.4618118910275937,
+                0.7239181021375425
+              ],
+              "candidate_ci": [
+                0.4230578680014353,
+                0.6883801278976466
+              ],
+              "delta_ci": [
+                -0.09486857023834319,
+                0.014868570238343183
+              ],
+              "gains": 0,
+              "regressions": 2
+            },
+            "abstain": {
+              "current": 0.26,
+              "candidate": 0.26,
+              "delta": 0.0,
+              "current_ci": [
+                0.15871379651367384,
+                0.3955342198899992
+              ],
+              "candidate_ci": [
+                0.15871379651367384,
+                0.3955342198899992
+              ],
+              "delta_ci": [
+                0.0,
+                0.0
+              ],
+              "gains": 0,
+              "regressions": 0
+            },
+            "keep_for_development": true,
+            "production_admission": false
+          },
+          "keep_for_development": true,
+          "actual_placer_calls": 50,
+          "routed": 50,
+          "free": 0,
+          "cached_fallback_answers": 0
+        }
+      },
+      "validator": {
+        "status": "actual_paired_ab_executed",
+        "paired_all": {
+          "n": 50,
+          "exact": {
+            "current": 0.12,
+            "candidate": 0.04,
+            "delta": -0.08,
+            "current_ci": [
+              0.05617523710624646,
+              0.23805078886623582
+            ],
+            "candidate_ci": [
+              0.011038652660826577,
+              0.13460337877954667
+            ],
+            "delta_ci": [
+              -0.155962095811003,
+              -0.004037904188997007
+            ],
+            "gains": 0,
+            "regressions": 4
+          },
+          "harm": {
+            "current": 0.82,
+            "candidate": 0.6,
+            "delta": -0.22,
+            "current_ci": [
+              0.6920368054529739,
+              0.902299172675462
+            ],
+            "candidate_ci": [
+              0.4618118910275937,
+              0.7239181021375425
+            ],
+            "delta_ci": [
+              -0.3359889649923647,
+              -0.10401103500763531
+            ],
+            "gains": 0,
+            "regressions": 11
+          },
+          "abstain": {
+            "current": 0.04,
+            "candidate": 0.34,
+            "delta": 0.3,
+            "current_ci": [
+              0.011038652660826577,
+              0.13460337877954667
+            ],
+            "candidate_ci": [
+              0.2243676963506106,
+              0.47846431458517147
+            ],
+            "delta_ci": [
+              0.1716878805412365,
+              0.42831211945876346
+            ],
+            "gains": 15,
+            "regressions": 0
+          },
+          "keep_for_development": false,
+          "production_admission": false
+        },
+        "withheld_development": {
+          "n": 30,
+          "exact": {
+            "current": 0.13333333333333333,
+            "candidate": 0.03333333333333333,
+            "delta": -0.1,
+            "current_ci": [
+              0.05309569424218104,
+              0.2968168394441695
+            ],
+            "candidate_ci": [
+              0.0059084379948573795,
+              0.16670751396958874
+            ],
+            "delta_ci": [
+              -0.2091888588481065,
+              0.009188858848106482
+            ],
+            "gains": 0,
+            "regressions": 3
+          },
+          "harm": {
+            "current": 0.8333333333333334,
+            "candidate": 0.6333333333333333,
+            "delta": -0.2,
+            "current_ci": [
+              0.6643529481431982,
+              0.9266356575964831
+            ],
+            "candidate_ci": [
+              0.45513246433604937,
+              0.7812629779598231
+            ],
+            "delta_ci": [
+              -0.34558514513080874,
+              -0.054414854869191315
+            ],
+            "gains": 0,
+            "regressions": 6
+          },
+          "abstain": {
+            "current": 0.0,
+            "candidate": 0.3,
+            "delta": 0.3,
+            "current_ci": [
+              -1.3877787807814457e-17,
+              0.113517091390478
+            ],
+            "candidate_ci": [
+              0.16664562643958933,
+              0.4787612101166018
+            ],
+            "delta_ci": [
+              0.13321126309423442,
+              0.46678873690576556
+            ],
+            "gains": 9,
+            "regressions": 0
+          },
+          "keep_for_development": false,
+          "production_admission": false
+        },
+        "keep_for_development": false
+      },
+      "retained_exact": 6,
+      "production_admission": false,
+      "artifact": {
+        "path": "C:\\Users\\eduar\\Desktop\\HACKATON\\tasks\\food-random-50-20261109\\sample-01\\loop-002\\loop-report.json",
+        "sha256": "552e11829c9854577d7608c495988db56dcfe61c0a4efe56b2ddeaf561900faa",
+        "bytes": 30481
+      }
+    },
+    {
+      "run": "loop-003",
+      "status": "completed_integrated_development_cycle",
+      "sample": 50,
+      "feedback": 20,
+      "withheld_feedback": 30,
+      "calls": {
+        "validator_current": 50,
+        "proposer": 1,
+        "improver": 1,
+        "validator_candidate": 105,
+        "actual_placer": 50
+      },
+      "version_before": 2,
+      "version_after": 2,
+      "pipeline_proposal": {
+        "kind": "agentic_rule",
+        "id": "assess_first_party_brand_attribution",
+        "description": "Replace maker-required parking with an assessment of affirmative marketed-brand evidence.",
+        "scope": "domain",
+        "check": null,
+        "decision": null,
+        "payload_json": "{\"text\":\"For Food brand resolution, replace the requirement for maker evidence with a consumer-facing brand assessment: explicit official-shop provenance combined with affirmative first-person attribution of the item as the shop's own product may support the shop's unambiguous marketed mark, corroborated by its supplied seller/vendor identity. Seller/vendor roles or source slugs alone remain insufficient; preserve conflicting marketed-brand evidence and park when attribution remains ambiguous. Missing brand or maker fields are absence of evidence, not evidence of shop own-label.\"}",
+        "rationale": "Repeated development abstentions apply a maker requirement to brand resolution. This introduces a conditional first-party attribution mechanism without automatically promoting vendors, inventing aliases, or treating gold labels as source evidence."
+      },
+      "comparisons": {
+        "placer_only": {
+          "before": {
+            "rates_denominator": 50,
+            "identity_path_exact": 6,
+            "strict_full_path_exact": 3,
+            "brand_correct": 29,
+            "abstentions_all_frozen": 13,
+            "classes": {
+              "wrong_brand": 8,
+              "wrong_label_path": 20,
+              "exact": 6,
+              "abstain": 13,
+              "valid_shallower": 3
+            }
+          },
+          "after": {
+            "rates_denominator": 50,
+            "identity_path_exact": 6,
+            "strict_full_path_exact": 4,
+            "brand_correct": 36,
+            "abstentions_all_frozen": 7,
+            "classes": {
+              "wrong_brand": 7,
+              "wrong_label_path": 27,
+              "exact": 6,
+              "abstain": 7,
+              "valid_shallower": 3
+            }
+          },
+          "paired": {
+            "n": 50,
+            "exact": {
+              "current": 0.12,
+              "candidate": 0.12,
+              "delta": 0.0,
+              "current_ci": [
+                0.05617523710624646,
+                0.23805078886623582
+              ],
+              "candidate_ci": [
+                0.05617523710624646,
+                0.23805078886623582
+              ],
+              "delta_ci": [
+                -0.055999999999999994,
+                0.055999999999999994
+              ],
+              "gains": 1,
+              "regressions": 1
+            },
+            "harm": {
+              "current": 0.56,
+              "candidate": 0.68,
+              "delta": 0.12,
+              "current_ci": [
+                0.4230578680014353,
+                0.6883801278976466
+              ],
+              "candidate_ci": [
+                0.5418944286372394,
+                0.792419559060006
+              ],
+              "delta_ci": [
+                0.013158809441302086,
+                0.2268411905586979
+              ],
+              "gains": 7,
+              "regressions": 1
+            },
+            "abstain": {
+              "current": 0.26,
+              "candidate": 0.14,
+              "delta": -0.12,
+              "current_ci": [
+                0.15871379651367384,
+                0.3955342198899992
+              ],
+              "candidate_ci": [
+                0.06950745262022862,
+                0.2618645719852809
+              ],
+              "delta_ci": [
+                -0.2268411905586979,
+                -0.013158809441302086
+              ],
+              "gains": 1,
+              "regressions": 7
+            },
+            "keep_for_development": false,
+            "production_admission": false
+          },
+          "keep_for_development": false,
+          "actual_placer_calls": 50,
+          "routed": 50,
+          "free": 0,
+          "cached_fallback_answers": 0
+        },
+        "integrated": {
+          "before": {
+            "rates_denominator": 50,
+            "identity_path_exact": 6,
+            "strict_full_path_exact": 3,
+            "brand_correct": 29,
+            "abstentions_all_frozen": 13,
+            "classes": {
+              "wrong_brand": 8,
+              "wrong_label_path": 20,
+              "exact": 6,
+              "abstain": 13,
+              "valid_shallower": 3
+            }
+          },
+          "after": {
+            "rates_denominator": 50,
+            "identity_path_exact": 6,
+            "strict_full_path_exact": 4,
+            "brand_correct": 36,
+            "abstentions_all_frozen": 7,
+            "classes": {
+              "wrong_brand": 7,
+              "wrong_label_path": 27,
+              "exact": 6,
+              "abstain": 7,
+              "valid_shallower": 3
+            }
+          },
+          "paired": {
+            "n": 50,
+            "exact": {
+              "current": 0.12,
+              "candidate": 0.12,
+              "delta": 0.0,
+              "current_ci": [
+                0.05617523710624646,
+                0.23805078886623582
+              ],
+              "candidate_ci": [
+                0.05617523710624646,
+                0.23805078886623582
+              ],
+              "delta_ci": [
+                -0.055999999999999994,
+                0.055999999999999994
+              ],
+              "gains": 1,
+              "regressions": 1
+            },
+            "harm": {
+              "current": 0.56,
+              "candidate": 0.68,
+              "delta": 0.12,
+              "current_ci": [
+                0.4230578680014353,
+                0.6883801278976466
+              ],
+              "candidate_ci": [
+                0.5418944286372394,
+                0.792419559060006
+              ],
+              "delta_ci": [
+                0.013158809441302086,
+                0.2268411905586979
+              ],
+              "gains": 7,
+              "regressions": 1
+            },
+            "abstain": {
+              "current": 0.26,
+              "candidate": 0.14,
+              "delta": -0.12,
+              "current_ci": [
+                0.15871379651367384,
+                0.3955342198899992
+              ],
+              "candidate_ci": [
+                0.06950745262022862,
+                0.2618645719852809
+              ],
+              "delta_ci": [
+                -0.2268411905586979,
+                -0.013158809441302086
+              ],
+              "gains": 1,
+              "regressions": 7
+            },
+            "keep_for_development": false,
+            "production_admission": false
+          },
+          "keep_for_development": false,
+          "actual_placer_calls": 50,
+          "routed": 50,
+          "free": 0,
+          "cached_fallback_answers": 0
+        }
+      },
+      "validator": {
+        "status": "actual_paired_ab_executed",
+        "paired_all": {
+          "n": 50,
+          "exact": {
+            "current": 0.12,
+            "candidate": 0.14,
+            "delta": 0.02,
+            "current_ci": [
+              0.05617523710624646,
+              0.23805078886623582
+            ],
+            "candidate_ci": [
+              0.06950745262022862,
+              0.2618645719852809
+            ],
+            "delta_ci": [
+              -0.0192,
+              0.0592
+            ],
+            "gains": 1,
+            "regressions": 0
+          },
+          "harm": {
+            "current": 0.82,
+            "candidate": 0.74,
+            "delta": -0.08,
+            "current_ci": [
+              0.6920368054529739,
+              0.902299172675462
+            ],
+            "candidate_ci": [
+              0.6044657801100008,
+              0.8412862034863262
+            ],
+            "delta_ci": [
+              -0.155962095811003,
+              -0.004037904188997007
+            ],
+            "gains": 0,
+            "regressions": 4
+          },
+          "abstain": {
+            "current": 0.04,
+            "candidate": 0.1,
+            "delta": 0.06,
+            "current_ci": [
+              0.011038652660826577,
+              0.13460337877954667
+            ],
+            "candidate_ci": [
+              0.04347512399157111,
+              0.2136049033478839
+            ],
+            "delta_ci": [
+              -0.006496315687412338,
+              0.12649631568741232
+            ],
+            "gains": 3,
+            "regressions": 0
+          },
+          "keep_for_development": false,
+          "production_admission": false
+        },
+        "withheld_development": {
+          "n": 30,
+          "exact": {
+            "current": 0.13333333333333333,
+            "candidate": 0.13333333333333333,
+            "delta": 0.0,
+            "current_ci": [
+              0.05309569424218104,
+              0.2968168394441695
+            ],
+            "candidate_ci": [
+              0.05309569424218104,
+              0.2968168394441695
+            ],
+            "delta_ci": [
+              0.0,
+              0.0
+            ],
+            "gains": 0,
+            "regressions": 0
+          },
+          "harm": {
+            "current": 0.8333333333333334,
+            "candidate": 0.7666666666666667,
+            "delta": -0.06666666666666667,
+            "current_ci": [
+              0.6643529481431982,
+              0.9266356575964831
+            ],
+            "candidate_ci": [
+              0.5907132766967574,
+              0.8820776078949878
+            ],
+            "delta_ci": [
+              -0.1574549556138744,
+              0.024121622280541086
+            ],
+            "gains": 0,
+            "regressions": 2
+          },
+          "abstain": {
+            "current": 0.0,
+            "candidate": 0.06666666666666667,
+            "delta": 0.06666666666666667,
+            "current_ci": [
+              -1.3877787807814457e-17,
+              0.113517091390478
+            ],
+            "candidate_ci": [
+              0.01847663532769335,
+              0.21323817721072091
+            ],
+            "delta_ci": [
+              -0.024121622280541086,
+              0.1574549556138744
+            ],
+            "gains": 2,
+            "regressions": 0
+          },
+          "keep_for_development": false,
+          "production_admission": false
+        },
+        "keep_for_development": false
+      },
+      "retained_exact": 6,
+      "production_admission": false,
+      "artifact": {
+        "path": "C:\\Users\\eduar\\Desktop\\HACKATON\\tasks\\food-random-50-20261109\\sample-01\\loop-003\\loop-report.json",
+        "sha256": "8ec63670b584b7cf5f2dc69d22eff4d2feddce5a9e7fc0fa20cd70d483adcb03",
+        "bytes": 31057
+      }
+    },
+    {
+      "run": "loop-004",
+      "status": "completed_integrated_development_cycle",
+      "sample": 50,
+      "feedback": 20,
+      "withheld_feedback": 30,
+      "calls": {
+        "validator_current": 50,
+        "proposer": 1,
+        "improver": 1,
+        "validator_candidate": 50,
+        "actual_placer": 45
+      },
+      "version_before": 2,
+      "version_after": 2,
+      "pipeline_proposal": {
+        "kind": "vocab",
+        "id": "preserve_variety_assortment_signal",
+        "description": "Remove the whole phrase 'variety pack' from quantity vocabulary so its assortment meaning survives parsing.",
+        "scope": "domain",
+        "check": null,
+        "decision": null,
+        "payload_json": "{\"axis\":\"pack\",\"op\":\"remove\",\"tokens\":[\"variety pack\"]}",
+        "rationale": "Supplied source evidence distinguishes a named assortment of flavours from its serving count. Removing this compound entry preserves 'variety' for identity assessment while generic 'pack' and numeric quantities remain removable. This corrects a vocabulary conflict with the owner’s assortment convention; development gains remain unmeasured."
+      },
+      "comparisons": {
+        "configuration_only": {
+          "before": {
+            "rates_denominator": 50,
+            "identity_path_exact": 6,
+            "strict_full_path_exact": 3,
+            "brand_correct": 29,
+            "abstentions_all_frozen": 13,
+            "classes": {
+              "wrong_brand": 8,
+              "wrong_label_path": 20,
+              "exact": 6,
+              "abstain": 13,
+              "valid_shallower": 3
+            }
+          },
+          "after": {
+            "rates_denominator": 50,
+            "identity_path_exact": 6,
+            "strict_full_path_exact": 3,
+            "brand_correct": 28,
+            "abstentions_all_frozen": 13,
+            "classes": {
+              "wrong_brand": 9,
+              "wrong_label_path": 18,
+              "exact": 6,
+              "abstain": 13,
+              "valid_shallower": 4
+            }
+          },
+          "paired": {
+            "n": 50,
+            "exact": {
+              "current": 0.12,
+              "candidate": 0.12,
+              "delta": 0.0,
+              "current_ci": [
+                0.05617523710624646,
+                0.23805078886623582
+              ],
+              "candidate_ci": [
+                0.05617523710624646,
+                0.23805078886623582
+              ],
+              "delta_ci": [
+                -0.055999999999999994,
+                0.055999999999999994
+              ],
+              "gains": 1,
+              "regressions": 1
+            },
+            "harm": {
+              "current": 0.56,
+              "candidate": 0.54,
+              "delta": -0.02,
+              "current_ci": [
+                0.4230578680014353,
+                0.6883801278976466
+              ],
+              "candidate_ci": [
+                0.40398634328388083,
+                0.6703056539821737
+              ],
+              "delta_ci": [
+                -0.1083665094931332,
+                0.06836650949313319
+              ],
+              "gains": 2,
+              "regressions": 3
+            },
+            "abstain": {
+              "current": 0.26,
+              "candidate": 0.26,
+              "delta": 0.0,
+              "current_ci": [
+                0.15871379651367384,
+                0.3955342198899992
+              ],
+              "candidate_ci": [
+                0.15871379651367384,
+                0.3955342198899992
+              ],
+              "delta_ci": [
+                0.0,
+                0.0
+              ],
+              "gains": 0,
+              "regressions": 0
+            },
+            "keep_for_development": false,
+            "production_admission": false
+          },
+          "keep_for_development": false,
+          "actual_placer_calls": 45,
+          "routed": 45,
+          "free": 5,
+          "cached_fallback_answers": 0
+        },
+        "integrated": {
+          "before": {
+            "rates_denominator": 50,
+            "identity_path_exact": 6,
+            "strict_full_path_exact": 3,
+            "brand_correct": 29,
+            "abstentions_all_frozen": 13,
+            "classes": {
+              "wrong_brand": 8,
+              "wrong_label_path": 20,
+              "exact": 6,
+              "abstain": 13,
+              "valid_shallower": 3
+            }
+          },
+          "after": {
+            "rates_denominator": 50,
+            "identity_path_exact": 6,
+            "strict_full_path_exact": 3,
+            "brand_correct": 28,
+            "abstentions_all_frozen": 13,
+            "classes": {
+              "wrong_brand": 9,
+              "wrong_label_path": 18,
+              "exact": 6,
+              "abstain": 13,
+              "valid_shallower": 4
+            }
+          },
+          "paired": {
+            "n": 50,
+            "exact": {
+              "current": 0.12,
+              "candidate": 0.12,
+              "delta": 0.0,
+              "current_ci": [
+                0.05617523710624646,
+                0.23805078886623582
+              ],
+              "candidate_ci": [
+                0.05617523710624646,
+                0.23805078886623582
+              ],
+              "delta_ci": [
+                -0.055999999999999994,
+                0.055999999999999994
+              ],
+              "gains": 1,
+              "regressions": 1
+            },
+            "harm": {
+              "current": 0.56,
+              "candidate": 0.54,
+              "delta": -0.02,
+              "current_ci": [
+                0.4230578680014353,
+                0.6883801278976466
+              ],
+              "candidate_ci": [
+                0.40398634328388083,
+                0.6703056539821737
+              ],
+              "delta_ci": [
+                -0.1083665094931332,
+                0.06836650949313319
+              ],
+              "gains": 2,
+              "regressions": 3
+            },
+            "abstain": {
+              "current": 0.26,
+              "candidate": 0.26,
+              "delta": 0.0,
+              "current_ci": [
+                0.15871379651367384,
+                0.3955342198899992
+              ],
+              "candidate_ci": [
+                0.15871379651367384,
+                0.3955342198899992
+              ],
+              "delta_ci": [
+                0.0,
+                0.0
+              ],
+              "gains": 0,
+              "regressions": 0
+            },
+            "keep_for_development": false,
+            "production_admission": false
+          },
+          "keep_for_development": false,
+          "actual_placer_calls": 45,
+          "routed": 45,
+          "free": 5,
+          "cached_fallback_answers": 0
+        }
+      },
+      "validator": {
+        "status": "actual_paired_ab_executed",
+        "paired_all": {
+          "n": 50,
+          "exact": {
+            "current": 0.12,
+            "candidate": 0.14,
+            "delta": 0.02,
+            "current_ci": [
+              0.05617523710624646,
+              0.23805078886623582
+            ],
+            "candidate_ci": [
+              0.06950745262022862,
+              0.2618645719852809
+            ],
+            "delta_ci": [
+              -0.04835671144810873,
+              0.08835671144810874
+            ],
+            "gains": 2,
+            "regressions": 1
+          },
+          "harm": {
+            "current": 0.82,
+            "candidate": 0.78,
+            "delta": -0.04,
+            "current_ci": [
+              0.6920368054529739,
+              0.902299172675462
+            ],
+            "candidate_ci": [
+              0.6475818431054045,
+              0.8724621377569771
+            ],
+            "delta_ci": [
+              -0.09486857023834319,
+              0.014868570238343183
+            ],
+            "gains": 0,
+            "regressions": 2
+          },
+          "abstain": {
+            "current": 0.04,
+            "candidate": 0.06,
+            "delta": 0.02,
+            "current_ci": [
+              0.011038652660826577,
+              0.13460337877954667
+            ],
+            "candidate_ci": [
+              0.020614596364630478,
+              0.16217343370877002
+            ],
+            "delta_ci": [
+              -0.0192,
+              0.0592
+            ],
+            "gains": 1,
+            "regressions": 0
+          },
+          "keep_for_development": true,
+          "production_admission": false
+        },
+        "withheld_development": {
+          "n": 30,
+          "exact": {
+            "current": 0.13333333333333333,
+            "candidate": 0.13333333333333333,
+            "delta": 0.0,
+            "current_ci": [
+              0.05309569424218104,
+              0.2968168394441695
+            ],
+            "candidate_ci": [
+              0.05309569424218104,
+              0.2968168394441695
+            ],
+            "delta_ci": [
+              0.0,
+              0.0
+            ],
+            "gains": 0,
+            "regressions": 0
+          },
+          "harm": {
+            "current": 0.8333333333333334,
+            "candidate": 0.8333333333333334,
+            "delta": 0.0,
+            "current_ci": [
+              0.6643529481431982,
+              0.9266356575964831
+            ],
+            "candidate_ci": [
+              0.6643529481431982,
+              0.9266356575964831
+            ],
+            "delta_ci": [
+              0.0,
+              0.0
+            ],
+            "gains": 0,
+            "regressions": 0
+          },
+          "abstain": {
+            "current": 0.0,
+            "candidate": 0.0,
+            "delta": 0.0,
+            "current_ci": [
+              -1.3877787807814457e-17,
+              0.113517091390478
+            ],
+            "candidate_ci": [
+              -1.3877787807814457e-17,
+              0.113517091390478
+            ],
+            "delta_ci": [
+              0.0,
+              0.0
+            ],
+            "gains": 0,
+            "regressions": 0
+          },
+          "keep_for_development": false,
+          "production_admission": false
+        },
+        "keep_for_development": false
+      },
+      "retained_exact": 6,
+      "production_admission": false,
+      "artifact": {
+        "path": "C:\\Users\\eduar\\Desktop\\HACKATON\\tasks\\food-random-50-20261109\\sample-01\\loop-004\\loop-report.json",
+        "sha256": "e5a93bd506a216833bd91de2c1c3c875c3892d89a9a807e45bddcff7d92d4f45",
+        "bytes": 50724
+      }
+    }
+  ],
+  "active_cli_concurrency": 20,
+  "scale_policy": "Remain50; target45exact plus regression checks before expansion",
+  "source_coverage_audit": {
+    "source_n": 50,
+    "gold_n": 50,
+    "target_n": 45,
+    "whole_token_possible_n": 34,
+    "whole_token_possible_rate": 0.68,
+    "optimistic_substring_grounding_possible_n": 38,
+    "optimistic_substring_grounding_possible_rate": 0.76,
+    "classification_counts": {
+      "potentially_source_extractable": 38,
+      "missing_accepted_product_name_evidence": 8,
+      "missing_accepted_brand_evidence": 1,
+      "identity_policy_or_depth_conflict": 1,
+      "missing_accepted_variant_name_evidence": 2
+    },
+    "per_level": {
+      "brand": {
+        "total": 50,
+        "whole_token_covered": 46,
+        "substring_quote_covered": 49
+      },
+      "model": {
+        "total": 50,
+        "whole_token_covered": 39,
+        "substring_quote_covered": 41
+      },
+      "variant": {
+        "total": 41,
+        "whole_token_covered": 38,
+        "substring_quote_covered": 38
+      }
+    }
+  },
+  "coverage_qualification": "Optimistic accepted-name form coverage including substring citations; not achieved accuracy or a guarantee90percent is attainable",
+  "production_admission": false
+}

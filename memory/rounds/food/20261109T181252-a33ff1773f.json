@@ -1,0 +1,181 @@
+{
+ "id": "a33ff1773f",
+ "domain": "food",
+ "ts": "2026-11-09T18:12:52",
+ "loop": "A",
+ "round": 12,
+ "change": "loop-002",
+ "label": "loop-002",
+ "keep": null,
+ "decided_on": null,
+ "lesson": "food-executable-configurations",
+ "kind": "rule_shape",
+ "branch": "harness/food-loop-observability",
+ "author": "unknown",
+ "gate": null,
+ "kpi": {
+  "ts": "2026-11-09T18:12:52",
+  "loop": "A",
+  "round": 12,
+  "label": "loop-002",
+  "code": "771bc155fdc9f16df3031de7c002fbf0c2e3f32d33c829f582e37eedad86f607",
+  "data": "e171137cd82d5b8683c3d72edbc82e747c4fb2a2a30f1e01b4eaab1580673a47",
+  "gold_dev": null,
+  "gold_sealed": null,
+  "human_dev": null,
+  "human_sealed": null,
+  "vocab": null,
+  "rules": null,
+  "shares": {},
+  "agent_calls": 154,
+  "metadata": {
+   "pipeline_status": "not_executed",
+   "proposal_kind": "agentic_rule",
+   "before": null,
+   "after": null,
+   "paired": null,
+   "validator": {
+    "status": "actual_paired_ab_executed",
+    "paired_all": {
+     "n": 50,
+     "exact": {
+      "current": 0.12,
+      "candidate": 0.04,
+      "delta": -0.08,
+      "current_ci": [
+       0.05617523710624646,
+       0.23805078886623582
+      ],
+      "candidate_ci": [
+       0.011038652660826577,
+       0.13460337877954667
+      ],
+      "delta_ci": [
+       -0.155962095811003,
+       -0.004037904188997007
+      ],
+      "gains": 0,
+      "regressions": 4
+     },
+     "harm": {
+      "current": 0.82,
+      "candidate": 0.6,
+      "delta": -0.22,
+      "current_ci": [
+       0.6920368054529739,
+       0.902299172675462
+      ],
+      "candidate_ci": [
+       0.4618118910275937,
+       0.7239181021375425
+      ],
+      "delta_ci": [
+       -0.3359889649923647,
+       -0.10401103500763531
+      ],
+      "gains": 0,
+      "regressions": 11
+     },
+     "abstain": {
+      "current": 0.04,
+      "candidate": 0.34,
+      "delta": 0.3,
+      "current_ci": [
+       0.011038652660826577,
+       0.13460337877954667
+      ],
+      "candidate_ci": [
+       0.2243676963506106,
+       0.47846431458517147
+      ],
+      "delta_ci": [
+       0.1716878805412365,
+       0.42831211945876346
+      ],
+      "gains": 15,
+      "regressions": 0
+     },
+     "keep_for_development": false,
+     "production_admission": false
+    },
+    "withheld_development": {
+     "n": 30,
+     "exact": {
+      "current": 0.13333333333333333,
+      "candidate": 0.03333333333333333,
+      "delta": -0.1,
+      "current_ci": [
+       0.05309569424218104,
+       0.2968168394441695
+      ],
+      "candidate_ci": [
+       0.0059084379948573795,
+       0.16670751396958874
+      ],
+      "delta_ci": [
+       -0.2091888588481065,
+       0.009188858848106482
+      ],
+      "gains": 0,
+      "regressions": 3
+     },
+     "harm": {
+      "current": 0.8333333333333334,
+      "candidate": 0.6333333333333333,
+      "delta": -0.2,
+      "current_ci": [
+       0.6643529481431982,
+       0.9266356575964831
+      ],
+      "candidate_ci": [
+       0.45513246433604937,
+       0.7812629779598231
+      ],
+      "delta_ci": [
+       -0.34558514513080874,
+       -0.054414854869191315
+      ],
+      "gains": 0,
+      "regressions": 6
+     },
+     "abstain": {
+      "current": 0.0,
+      "candidate": 0.3,
+      "delta": 0.3,
+      "current_ci": [
+       -1.3877787807814457e-17,
+       0.113517091390478
+      ],
+      "candidate_ci": [
+       0.16664562643958933,
+       0.4787612101166018
+      ],
+      "delta_ci": [
+       0.13321126309423442,
+       0.46678873690576556
+      ],
+      "gains": 9,
+      "regressions": 0
+     },
+     "keep_for_development": false,
+     "production_admission": false
+    },
+    "keep_for_development": false,
+    "production_admission": false
+   },
+   "calls": {
+    "validator_current": 50,
+    "proposer": 1,
+    "improver": 1,
+    "validator_candidate": 102,
+    "pipeline_fresh_model_calls": 0
+   },
+   "production_admission": false,
+   "artifact_index": {
+    "path": "C:\\Users\\eduar\\Desktop\\HACKATON\\tasks\\food-random-50-20261109\\sample-01\\loop-002\\artifact-index.json",
+    "sha256": "df0cbc452ecbbbc4d9a5151d885481257c418132d9c40340462c84e7047ff822",
+    "bytes": 970
+   }
+  }
+ }
+}
