@@ -1,0 +1,1859 @@
+[
+ {
+  "ts": "2026-11-09T21:39:02.031471+00:00",
+  "kind": "codex_call",
+  "prev": "0000000000000000000000000000000000000000000000000000000000000000",
+  "domain": "electronics",
+  "role": "validator_v1",
+  "key": "d1c52b42a89735cbe519",
+  "cached": false,
+  "seconds": 70.0,
+  "usage": {
+   "input_tokens": 34884,
+   "cached_input_tokens": 15360,
+   "cache_write_input_tokens": 0,
+   "output_tokens": 4452,
+   "reasoning_output_tokens": 2069
+  },
+  "listings": 30,
+  "error": false,
+  "prompt_sha256": "5407df8af442",
+  "model": "codex-default",
+  "hash": "48535d93c71b7826c8438cf888edac8ffed5f16d1d5c43e12673adf085a02db1"
+ },
+ {
+  "ts": "2026-11-09T21:39:02.031803+00:00",
+  "kind": "codex_call",
+  "prev": "48535d93c71b7826c8438cf888edac8ffed5f16d1d5c43e12673adf085a02db1",
+  "domain": "electronics",
+  "role": "validator_v1",
+  "key": "165541e000ce1d8fe055",
+  "cached": false,
+  "seconds": 77.41,
+  "usage": {
+   "input_tokens": 33248,
+   "cached_input_tokens": 15360,
+   "cache_write_input_tokens": 0,
+   "output_tokens": 4872,
+   "reasoning_output_tokens": 3106
+  },
+  "listings": 30,
+  "error": false,
+  "prompt_sha256": "5407df8af442",
+  "model": "codex-default",
+  "hash": "11a08f5c378bf88ad88d5f0aef75542f42c08d7d7bb22595b5bf37dd2ce22e5f"
+ },
+ {
+  "ts": "2026-11-09T21:39:02.031927+00:00",
+  "kind": "codex_call",
+  "prev": "11a08f5c378bf88ad88d5f0aef75542f42c08d7d7bb22595b5bf37dd2ce22e5f",
+  "domain": "electronics",
+  "role": "validator_v1",
+  "key": "00e6f8473af62db4f7f0",
+  "cached": false,
+  "seconds": 119.96,
+  "usage": {
+   "input_tokens": 36925,
+   "cached_input_tokens": 15360,
+   "cache_write_input_tokens": 0,
+   "output_tokens": 5467,
+   "reasoning_output_tokens": 3053
+  },
+  "listings": 30,
+  "error": false,
+  "prompt_sha256": "5407df8af442",
+  "model": "codex-default",
+  "hash": "7d84fac2347b3e241ffe9510733a8f73279d68c19981b24451253e87a345918e"
+ },
+ {
+  "ts": "2026-11-09T21:39:02.032097+00:00",
+  "kind": "codex_call",
+  "prev": "7d84fac2347b3e241ffe9510733a8f73279d68c19981b24451253e87a345918e",
+  "domain": "electronics",
+  "role": "validator_v1",
+  "key": "6ebfa10c29cf429d0718",
+  "cached": false,
+  "seconds": 74.71,
+  "usage": {
+   "input_tokens": 34106,
+   "cached_input_tokens": 15360,
+   "cache_write_input_tokens": 0,
+   "output_tokens": 4807,
+   "reasoning_output_tokens": 2336
+  },
+  "listings": 30,
+  "error": false,
+  "prompt_sha256": "5407df8af442",
+  "model": "codex-default",
+  "hash": "d3cd16f3ce291df18e8288fd0eac7a205645384fdf362c0c40b6b3d620f3885e"
+ },
+ {
+  "ts": "2026-11-09T21:39:02.032245+00:00",
+  "kind": "codex_call",
+  "prev": "d3cd16f3ce291df18e8288fd0eac7a205645384fdf362c0c40b6b3d620f3885e",
+  "domain": "electronics",
+  "role": "validator_v1",
+  "key": "c20929400a47058b02df",
+  "cached": false,
+  "seconds": 75.3,
+  "usage": {
+   "input_tokens": 35597,
+   "cached_input_tokens": 15360,
+   "cache_write_input_tokens": 0,
+   "output_tokens": 4797,
+   "reasoning_output_tokens": 2357
+  },
+  "listings": 30,
+  "error": false,
+  "prompt_sha256": "5407df8af442",
+  "model": "codex-default",
+  "hash": "4e0bdfcd432345e9e1f1dc17834c2b3156303a7ca223bb0524f58c6ff3df8fb1"
+ },
+ {
+  "ts": "2026-11-09T21:39:02.038437+00:00",
+  "kind": "validate_run",
+  "prev": "4e0bdfcd432345e9e1f1dc17834c2b3156303a7ca223bb0524f58c6ff3df8fb1",
+  "domain": "electronics",
+  "round": 1,
+  "validator": 1,
+  "batches": 5,
+  "calls": 5,
+  "cached": 0,
+  "errors": 0,
+  "wall_seconds": 119.96,
+  "call_seconds": 417.38,
+  "tokens": {
+   "input_tokens": 174760,
+   "cached_input_tokens": 76800,
+   "cache_write_input_tokens": 0,
+   "output_tokens": 24395,
+   "reasoning_output_tokens": 12921
+  },
+  "prompt_sha256": "5407df8af442",
+  "workers": 6,
+  "batch_size": 30,
+  "model": "codex-default",
+  "labelled": 150,
+  "seconds_total": 120.7,
+  "relations": {
+   "fresh:depth": 6,
+   "fresh:different_product": 4,
+   "fresh:one_parks": 3,
+   "fresh:same": 83,
+   "fresh:validator_rejected": 4,
+   "gold_sample:depth": 2,
+   "gold_sample:different_brand": 1,
+   "gold_sample:different_product": 1,
+   "gold_sample:one_parks": 6,
+   "gold_sample:same": 37,
+   "gold_sample:validator_rejected": 3
+  },
+  "to_review": 24,
+  "spot_checks": 7,
+  "hash": "9975a23bcfa6c7aec945c11841a1b148bd6e63266a47dbb831adae49efc798d4"
+ },
+ {
+  "ts": "2026-11-09T21:40:44.760821+00:00",
+  "kind": "codex_call",
+  "prev": "9975a23bcfa6c7aec945c11841a1b148bd6e63266a47dbb831adae49efc798d4",
+  "domain": "electronics",
+  "role": "validator_v2",
+  "key": "8dd86f2b5306c379d0d9",
+  "cached": false,
+  "seconds": 102.11,
+  "usage": {
+   "input_tokens": 31701,
+   "cached_input_tokens": 0,
+   "cache_write_input_tokens": 0,
+   "output_tokens": 6437,
+   "reasoning_output_tokens": 4093
+  },
+  "listings": 30,
+  "error": false,
+  "prompt_sha256": "372e7782a9c6",
+  "model": "codex-default",
+  "hash": "8488c8e74d67d77509331a79f98da5d3f460a3b7f37f78bb936f2c287e8244f5"
+ },
+ {
+  "ts": "2026-11-09T21:40:44.761705+00:00",
+  "kind": "codex_call",
+  "prev": "8488c8e74d67d77509331a79f98da5d3f460a3b7f37f78bb936f2c287e8244f5",
+  "domain": "electronics",
+  "role": "validator_v2",
+  "key": "1f9e064cd9f7617f6c34",
+  "cached": false,
+  "seconds": 84.75,
+  "usage": {
+   "input_tokens": 28988,
+   "cached_input_tokens": 13056,
+   "cache_write_input_tokens": 0,
+   "output_tokens": 5510,
+   "reasoning_output_tokens": 3070
+  },
+  "listings": 30,
+  "error": false,
+  "prompt_sha256": "372e7782a9c6",
+  "model": "codex-default",
+  "hash": "161cd27c61d01e5c631138319b7485ba73aa051e024c703830b23a11cf7e9d29"
+ },
+ {
+  "ts": "2026-11-09T21:40:44.761970+00:00",
+  "kind": "codex_call",
+  "prev": "161cd27c61d01e5c631138319b7485ba73aa051e024c703830b23a11cf7e9d29",
+  "domain": "electronics",
+  "role": "validator_v2",
+  "key": "2f8e955ad93206487f95",
+  "cached": false,
+  "seconds": 69.53,
+  "usage": {
+   "input_tokens": 29191,
+   "cached_input_tokens": 15360,
+   "cache_write_input_tokens": 0,
+   "output_tokens": 4525,
+   "reasoning_output_tokens": 2070
+  },
+  "listings": 30,
+  "error": false,
+  "prompt_sha256": "372e7782a9c6",
+  "model": "codex-default",
+  "hash": "a1941245e745b389865ea6f88de31bf76bf202e7971504b0735324d8ffae71d0"
+ },
+ {
+  "ts": "2026-11-09T21:40:44.762302+00:00",
+  "kind": "codex_call",
+  "prev": "a1941245e745b389865ea6f88de31bf76bf202e7971504b0735324d8ffae71d0",
+  "domain": "electronics",
+  "role": "validator_v2",
+  "key": "3fa45a9b3d8982f5c289",
+  "cached": false,
+  "seconds": 77.74,
+  "usage": {
+   "input_tokens": 28364,
+   "cached_input_tokens": 15360,
+   "cache_write_input_tokens": 0,
+   "output_tokens": 5029,
+   "reasoning_output_tokens": 2588
+  },
+  "listings": 30,
+  "error": false,
+  "prompt_sha256": "372e7782a9c6",
+  "model": "codex-default",
+  "hash": "f9896532022dae6c696bc7418a17a8cc45da83fec519f54b8ce77aa8f07cfb8a"
+ },
+ {
+  "ts": "2026-11-09T21:40:44.762586+00:00",
+  "kind": "codex_call",
+  "prev": "f9896532022dae6c696bc7418a17a8cc45da83fec519f54b8ce77aa8f07cfb8a",
+  "domain": "electronics",
+  "role": "validator_v2",
+  "key": "0cf232da2a1c3ac82c74",
+  "cached": false,
+  "seconds": 54.95,
+  "usage": {
+   "input_tokens": 28723,
+   "cached_input_tokens": 15360,
+   "cache_write_input_tokens": 0,
+   "output_tokens": 3395,
+   "reasoning_output_tokens": 980
+  },
+  "listings": 30,
+  "error": false,
+  "prompt_sha256": "372e7782a9c6",
+  "model": "codex-default",
+  "hash": "6eeafb9b57d138099b146b9a9b91e0ca2301c6c42635688f9e4a076901c04553"
+ },
+ {
+  "ts": "2026-11-09T21:40:44.773663+00:00",
+  "kind": "validate_run",
+  "prev": "6eeafb9b57d138099b146b9a9b91e0ca2301c6c42635688f9e4a076901c04553",
+  "domain": "electronics",
+  "round": 1,
+  "validator": 2,
+  "batches": 5,
+  "calls": 5,
+  "cached": 0,
+  "errors": 0,
+  "wall_seconds": 102.11,
+  "call_seconds": 389.08,
+  "tokens": {
+   "input_tokens": 146967,
+   "cached_input_tokens": 59136,
+   "cache_write_input_tokens": 0,
+   "output_tokens": 24896,
+   "reasoning_output_tokens": 12801
+  },
+  "prompt_sha256": "372e7782a9c6",
+  "workers": 6,
+  "batch_size": 30,
+  "model": "codex-default",
+  "labelled": 150,
+  "seconds_total": 102.5,
+  "relations": {
+   "fresh:different_brand": 2,
+   "fresh:different_product": 4,
+   "fresh:one_parks": 3,
+   "fresh:same": 80,
+   "fresh:validator_rejected": 11,
+   "gold_sample:depth": 4,
+   "gold_sample:different_product": 1,
+   "gold_sample:one_parks": 5,
+   "gold_sample:same": 39,
+   "gold_sample:validator_rejected": 1
+  },
+  "to_review": 27,
+  "spot_checks": 7,
+  "hash": "e9a9940613f69f56dce15b2f02a4b41b2d708866e87fe5b73bfeda40d102853c"
+ },
+ {
+  "ts": "2026-11-09T21:40:45.121553+00:00",
+  "kind": "score",
+  "prev": "e9a9940613f69f56dce15b2f02a4b41b2d708866e87fe5b73bfeda40d102853c",
+  "domain": "electronics",
+  "round": 1,
+  "validator": {
+   "accept_rows": 9,
+   "exact": 2,
+   "shallower": 0,
+   "deeper": 1,
+   "wrong": 3,
+   "wrong_brand": 0,
+   "no_brand": 3,
+   "exact_rate": 0.222,
+   "right_or_shallower": 0.222,
+   "harm_rate": 0.444,
+   "levels": {
+    "0": {
+     "n": 9,
+     "acc": 0.667
+    },
+    "1": {
+     "n": 8,
+     "acc": 0.25
+    }
+   },
+   "reject_rows": 0,
+   "rejects_held": 0
+  },
+  "gold_files": [
+   "review-r01.yaml"
+  ],
+  "dev_rows": 9,
+  "sealed_brands": 2,
+  "pipeline": {
+   "accept_rows": 9,
+   "exact": 7,
+   "shallower": 0,
+   "deeper": 1,
+   "wrong": 1,
+   "wrong_brand": 0,
+   "no_brand": 0,
+   "exact_rate": 0.778,
+   "right_or_shallower": 0.778,
+   "harm_rate": 0.222,
+   "levels": {
+    "0": {
+     "n": 9,
+     "acc": 1.0
+    },
+    "1": {
+     "n": 8,
+     "acc": 0.875
+    }
+   },
+   "reject_rows": 0,
+   "rejects_held": 0
+  },
+  "validator_flags": {
+   "flag/pipeline_wrong": 2,
+   "flag/pipeline_ok": 5,
+   "agree/pipeline_ok": 2
+  },
+  "validator_flag_precision": 0.286,
+  "validator_missed_errors": 0,
+  "hash": "8026887a11bd17f04690bfaec876f2d5776896db6fa9a3582c795ac8ed817a4b"
+ },
+ {
+  "ts": "2026-11-09T21:40:45.393297+00:00",
+  "kind": "score",
+  "prev": "8026887a11bd17f04690bfaec876f2d5776896db6fa9a3582c795ac8ed817a4b",
+  "domain": "electronics",
+  "round": 1,
+  "validator": {
+   "accept_rows": 9,
+   "exact": 3,
+   "shallower": 0,
+   "deeper": 0,
+   "wrong": 0,
+   "wrong_brand": 0,
+   "no_brand": 6,
+   "exact_rate": 0.333,
+   "right_or_shallower": 0.333,
+   "harm_rate": 0.0,
+   "levels": {
+    "0": {
+     "n": 9,
+     "acc": 0.333
+    },
+    "1": {
+     "n": 8,
+     "acc": 0.375
+    }
+   },
+   "reject_rows": 0,
+   "rejects_held": 0
+  },
+  "gold_files": [
+   "review-r01.yaml"
+  ],
+  "dev_rows": 9,
+  "sealed_brands": 2,
+  "pipeline": {
+   "accept_rows": 9,
+   "exact": 7,
+   "shallower": 0,
+   "deeper": 1,
+   "wrong": 1,
+   "wrong_brand": 0,
+   "no_brand": 0,
+   "exact_rate": 0.778,
+   "right_or_shallower": 0.778,
+   "harm_rate": 0.222,
+   "levels": {
+    "0": {
+     "n": 9,
+     "acc": 1.0
+    },
+    "1": {
+     "n": 8,
+     "acc": 0.875
+    }
+   },
+   "reject_rows": 0,
+   "rejects_held": 0
+  },
+  "validator_flags": {
+   "flag/pipeline_wrong": 2,
+   "flag/pipeline_ok": 5,
+   "agree/pipeline_ok": 2
+  },
+  "validator_flag_precision": 0.286,
+  "validator_missed_errors": 0,
+  "hash": "b6abb9fdffa43871854db2b1b031a966dba67150a2a643ea53e7e76898382244"
+ },
+ {
+  "ts": "2026-11-09T21:43:13.121703+00:00",
+  "kind": "codex_call",
+  "prev": "b6abb9fdffa43871854db2b1b031a966dba67150a2a643ea53e7e76898382244",
+  "domain": "electronics",
+  "role": "validator_v3",
+  "key": "a0a3b70568378103792d",
+  "cached": false,
+  "seconds": 120.06,
+  "usage": {
+   "input_tokens": 33752,
+   "cached_input_tokens": 16896,
+   "cache_write_input_tokens": 0,
+   "output_tokens": 5481,
+   "reasoning_output_tokens": 3106
+  },
+  "listings": 30,
+  "error": false,
+  "prompt_sha256": "372e7782a9c6",
+  "model": "codex-default",
+  "hash": "f458e32c0b6e1ab4039d7c3c84395c396205a1df080491e27881d15b8513b9ba"
+ },
+ {
+  "ts": "2026-11-09T21:43:13.122260+00:00",
+  "kind": "codex_call",
+  "prev": "f458e32c0b6e1ab4039d7c3c84395c396205a1df080491e27881d15b8513b9ba",
+  "domain": "electronics",
+  "role": "validator_v3",
+  "key": "886fa69c1293908c94b5",
+  "cached": false,
+  "seconds": 93.91,
+  "usage": {
+   "input_tokens": 31137,
+   "cached_input_tokens": 16896,
+   "cache_write_input_tokens": 0,
+   "output_tokens": 6051,
+   "reasoning_output_tokens": 3593
+  },
+  "listings": 30,
+  "error": false,
+  "prompt_sha256": "372e7782a9c6",
+  "model": "codex-default",
+  "hash": "d2af9b8f8a847b968e9c4fea3264b35ee749ce971b50f0d685bc631fb21d347b"
+ },
+ {
+  "ts": "2026-11-09T21:43:13.122516+00:00",
+  "kind": "codex_call",
+  "prev": "d2af9b8f8a847b968e9c4fea3264b35ee749ce971b50f0d685bc631fb21d347b",
+  "domain": "electronics",
+  "role": "validator_v3",
+  "key": "2e09d3a5de7a0fc96544",
+  "cached": false,
+  "seconds": 104.8,
+  "usage": {
+   "input_tokens": 32161,
+   "cached_input_tokens": 16896,
+   "cache_write_input_tokens": 0,
+   "output_tokens": 4880,
+   "reasoning_output_tokens": 2458
+  },
+  "listings": 30,
+  "error": false,
+  "prompt_sha256": "372e7782a9c6",
+  "model": "codex-default",
+  "hash": "77397da2a198354a4de0d1dbac5bd4a3a179648e6664b0d754ee2ee65f811bf1"
+ },
+ {
+  "ts": "2026-11-09T21:43:13.122744+00:00",
+  "kind": "codex_call",
+  "prev": "77397da2a198354a4de0d1dbac5bd4a3a179648e6664b0d754ee2ee65f811bf1",
+  "domain": "electronics",
+  "role": "validator_v3",
+  "key": "bb303cf5c042365e4156",
+  "cached": false,
+  "seconds": 82.5,
+  "usage": {
+   "input_tokens": 31631,
+   "cached_input_tokens": 16896,
+   "cache_write_input_tokens": 0,
+   "output_tokens": 5273,
+   "reasoning_output_tokens": 2834
+  },
+  "listings": 30,
+  "error": false,
+  "prompt_sha256": "372e7782a9c6",
+  "model": "codex-default",
+  "hash": "2d2fade43584429fc1a71723598e33be97ce0195b74a6ddc86056d0cf6d3f06e"
+ },
+ {
+  "ts": "2026-11-09T21:43:13.122910+00:00",
+  "kind": "codex_call",
+  "prev": "2d2fade43584429fc1a71723598e33be97ce0195b74a6ddc86056d0cf6d3f06e",
+  "domain": "electronics",
+  "role": "validator_v3",
+  "key": "6e0d9a8d1417d322e261",
+  "cached": false,
+  "seconds": 53.34,
+  "usage": {
+   "input_tokens": 30912,
+   "cached_input_tokens": 16896,
+   "cache_write_input_tokens": 0,
+   "output_tokens": 3133,
+   "reasoning_output_tokens": 664
+  },
+  "listings": 30,
+  "error": false,
+  "prompt_sha256": "372e7782a9c6",
+  "model": "codex-default",
+  "hash": "5c0a7ad93eeef04e572f8dad2f99bcd51ab135c3f0bab27e95a50658db567635"
+ },
+ {
+  "ts": "2026-11-09T21:43:13.128613+00:00",
+  "kind": "validate_run",
+  "prev": "5c0a7ad93eeef04e572f8dad2f99bcd51ab135c3f0bab27e95a50658db567635",
+  "domain": "electronics",
+  "round": 1,
+  "validator": 3,
+  "batches": 5,
+  "calls": 5,
+  "cached": 0,
+  "errors": 0,
+  "wall_seconds": 120.06,
+  "call_seconds": 454.61,
+  "tokens": {
+   "input_tokens": 159593,
+   "cached_input_tokens": 84480,
+   "cache_write_input_tokens": 0,
+   "output_tokens": 24818,
+   "reasoning_output_tokens": 12655
+  },
+  "prompt_sha256": "372e7782a9c6",
+  "workers": 6,
+  "batch_size": 30,
+  "model": "codex-default",
+  "labelled": 150,
+  "seconds_total": 120.4,
+  "relations": {
+   "fresh:depth": 1,
+   "fresh:different_brand": 2,
+   "fresh:different_product": 4,
+   "fresh:one_parks": 4,
+   "fresh:same": 89,
+   "gold_sample:depth": 4,
+   "gold_sample:one_parks": 4,
+   "gold_sample:same": 41,
+   "gold_sample:validator_rejected": 1
+  },
+  "to_review": 19,
+  "spot_checks": 8,
+  "hash": "f4689fdafe5b2bb5aa5205ab3af30212c280d284042311bee2d64f8e0668820e"
+ },
+ {
+  "ts": "2026-11-09T21:43:13.451796+00:00",
+  "kind": "score",
+  "prev": "f4689fdafe5b2bb5aa5205ab3af30212c280d284042311bee2d64f8e0668820e",
+  "domain": "electronics",
+  "round": 1,
+  "validator": {
+   "accept_rows": 9,
+   "exact": 6,
+   "shallower": 0,
+   "deeper": 0,
+   "wrong": 1,
+   "wrong_brand": 0,
+   "no_brand": 2,
+   "exact_rate": 0.667,
+   "right_or_shallower": 0.667,
+   "harm_rate": 0.111,
+   "levels": {
+    "0": {
+     "n": 9,
+     "acc": 0.778
+    },
+    "1": {
+     "n": 8,
+     "acc": 0.75
+    }
+   },
+   "reject_rows": 0,
+   "rejects_held": 0
+  },
+  "gold_files": [
+   "review-r01.yaml"
+  ],
+  "dev_rows": 9,
+  "sealed_brands": 2,
+  "pipeline": {
+   "accept_rows": 9,
+   "exact": 7,
+   "shallower": 0,
+   "deeper": 1,
+   "wrong": 1,
+   "wrong_brand": 0,
+   "no_brand": 0,
+   "exact_rate": 0.778,
+   "right_or_shallower": 0.778,
+   "harm_rate": 0.222,
+   "levels": {
+    "0": {
+     "n": 9,
+     "acc": 1.0
+    },
+    "1": {
+     "n": 8,
+     "acc": 0.875
+    }
+   },
+   "reject_rows": 0,
+   "rejects_held": 0
+  },
+  "validator_flags": {
+   "flag/pipeline_wrong": 2,
+   "agree/pipeline_ok": 6,
+   "flag/pipeline_ok": 1
+  },
+  "validator_flag_precision": 0.667,
+  "validator_missed_errors": 0,
+  "hash": "7e074909cc677858e6c7d9cfe4f83319980de058ec15b79271f06a5e2b1a1637"
+ },
+ {
+  "ts": "2026-11-09T21:44:32.088476+00:00",
+  "kind": "score",
+  "prev": "7e074909cc677858e6c7d9cfe4f83319980de058ec15b79271f06a5e2b1a1637",
+  "domain": "electronics",
+  "round": 1,
+  "validator": {
+   "rows": 9,
+   "no_brand": 2,
+   "exact": 6,
+   "wrong": 1,
+   "exact_rate": 0.667,
+   "right_or_shallower": 0.667,
+   "harm_rate": 0.111
+  },
+  "gold_files": [
+   "review-r01.yaml"
+  ],
+  "dev_rows": 9,
+  "sealed_brands": 2,
+  "pipeline": {
+   "rows": 9,
+   "wrong": 1,
+   "exact": 8,
+   "exact_rate": 0.889,
+   "right_or_shallower": 0.889,
+   "harm_rate": 0.111
+  },
+  "validator_flags": {
+   "flag/pipeline_wrong": 1,
+   "agree/pipeline_ok": 6,
+   "flag/pipeline_ok": 2
+  },
+  "validator_flag_precision": 0.333,
+  "validator_missed_errors": 0,
+  "hash": "a6254b98b0386a9efa54ee51495393ac62385ecf89e3d50628dc6679d412aa5b"
+ },
+ {
+  "ts": "2026-11-09T21:44:41.181769+00:00",
+  "kind": "gate",
+  "prev": "a6254b98b0386a9efa54ee51495393ac62385ecf89e3d50628dc6679d412aa5b",
+  "domain": "electronics",
+  "change": "field-part-capacity-and-own-text",
+  "decision": "drop (dev)",
+  "listings_changed": 55,
+  "seconds": 2.9,
+  "base": {
+   "identity_version": "0.4.0",
+   "checks_pass": true,
+   "dev_gold": {
+    "rows": 9,
+    "wrong": 1,
+    "exact": 8,
+    "exact_rate": 0.889,
+    "right_or_shallower": 0.889,
+    "harm_rate": 0.111
+   },
+   "dev_pairs": {
+    "config_precision": 0.94,
+    "config_recall_resolved": 0.8057,
+    "recall_all_in_scope_matches": 0.6197
+   }
+  },
+  "new": {
+   "identity_version": "0.5.0",
+   "checks_pass": false,
+   "dev_gold": {
+    "rows": 9,
+    "wrong": 1,
+    "exact": 8,
+    "exact_rate": 0.889,
+    "right_or_shallower": 0.889,
+    "harm_rate": 0.111
+   },
+   "dev_pairs": {
+    "config_precision": 0.9342,
+    "config_recall_resolved": 0.8068,
+    "recall_all_in_scope_matches": 0.6239
+   }
+  },
+  "sealed": null,
+  "sealed_reads_total": 0,
+  "hash": "77030bf487f7ad07bd211e21c8b1de9cad68047dd783c260c524d6f4b8ac2d12"
+ },
+ {
+  "ts": "2026-11-09T21:45:09.913106+00:00",
+  "kind": "gate",
+  "prev": "77030bf487f7ad07bd211e21c8b1de9cad68047dd783c260c524d6f4b8ac2d12",
+  "domain": "electronics",
+  "change": "field-",
+  "decision": "drop (dev)",
+  "listings_changed": 33,
+  "seconds": 2.8,
+  "base": {
+   "identity_version": "0.4.0",
+   "checks_pass": true,
+   "dev_gold": {
+    "rows": 9,
+    "wrong": 1,
+    "exact": 8,
+    "exact_rate": 0.889,
+    "right_or_shallower": 0.889,
+    "harm_rate": 0.111
+   },
+   "dev_pairs": {
+    "config_precision": 0.94,
+    "config_recall_resolved": 0.8057,
+    "recall_all_in_scope_matches": 0.6197
+   }
+  },
+  "new": {
+   "identity_version": "0.5.0",
+   "checks_pass": true,
+   "dev_gold": {
+    "rows": 9,
+    "shallower": 1,
+    "exact": 8,
+    "exact_rate": 0.889,
+    "right_or_shallower": 1.0,
+    "harm_rate": 0.0
+   },
+   "dev_pairs": {
+    "config_precision": 0.9338,
+    "config_recall_resolved": 0.8057,
+    "recall_all_in_scope_matches": 0.6197
+   }
+  },
+  "sealed": null,
+  "sealed_reads_total": 0,
+  "hash": "11d5a2eab231823b10f07312aed15e668bc6c0c2357a90cf1c48c780fab09474"
+ },
+ {
+  "ts": "2026-11-09T21:45:13.017634+00:00",
+  "kind": "gate",
+  "prev": "11d5a2eab231823b10f07312aed15e668bc6c0c2357a90cf1c48c780fab09474",
+  "domain": "electronics",
+  "change": "field-",
+  "decision": "drop (dev)",
+  "listings_changed": 33,
+  "seconds": 2.9,
+  "base": {
+   "identity_version": "0.4.0",
+   "checks_pass": true,
+   "dev_gold": {
+    "rows": 9,
+    "wrong": 1,
+    "exact": 8,
+    "exact_rate": 0.889,
+    "right_or_shallower": 0.889,
+    "harm_rate": 0.111
+   },
+   "dev_pairs": {
+    "config_precision": 0.94,
+    "config_recall_resolved": 0.8057,
+    "recall_all_in_scope_matches": 0.6197
+   }
+  },
+  "new": {
+   "identity_version": "0.5.0",
+   "checks_pass": true,
+   "dev_gold": {
+    "rows": 9,
+    "shallower": 1,
+    "exact": 8,
+    "exact_rate": 0.889,
+    "right_or_shallower": 1.0,
+    "harm_rate": 0.0
+   },
+   "dev_pairs": {
+    "config_precision": 0.9338,
+    "config_recall_resolved": 0.8057,
+    "recall_all_in_scope_matches": 0.6197
+   }
+  },
+  "sealed": null,
+  "sealed_reads_total": 0,
+  "hash": "37765ae317c20cf0b23cc71779103e84ca32b57162209d0fc36f20fc319d6a38"
+ },
+ {
+  "ts": "2026-11-09T21:45:16.194589+00:00",
+  "kind": "gate",
+  "prev": "37765ae317c20cf0b23cc71779103e84ca32b57162209d0fc36f20fc319d6a38",
+  "domain": "electronics",
+  "change": "field-",
+  "decision": "drop (dev)",
+  "listings_changed": 33,
+  "seconds": 3.0,
+  "base": {
+   "identity_version": "0.4.0",
+   "checks_pass": true,
+   "dev_gold": {
+    "rows": 9,
+    "wrong": 1,
+    "exact": 8,
+    "exact_rate": 0.889,
+    "right_or_shallower": 0.889,
+    "harm_rate": 0.111
+   },
+   "dev_pairs": {
+    "config_precision": 0.94,
+    "config_recall_resolved": 0.8057,
+    "recall_all_in_scope_matches": 0.6197
+   }
+  },
+  "new": {
+   "identity_version": "0.5.0",
+   "checks_pass": true,
+   "dev_gold": {
+    "rows": 9,
+    "shallower": 1,
+    "exact": 8,
+    "exact_rate": 0.889,
+    "right_or_shallower": 1.0,
+    "harm_rate": 0.0
+   },
+   "dev_pairs": {
+    "config_precision": 0.9338,
+    "config_recall_resolved": 0.8057,
+    "recall_all_in_scope_matches": 0.6197
+   }
+  },
+  "sealed": null,
+  "sealed_reads_total": 0,
+  "hash": "00590e35e2a7efd8d2f53b384d8c8ef5429193f44755b72962fbc4ceb2e1cdcd"
+ },
+ {
+  "ts": "2026-11-09T21:45:27.044572+00:00",
+  "kind": "gate",
+  "prev": "00590e35e2a7efd8d2f53b384d8c8ef5429193f44755b72962fbc4ceb2e1cdcd",
+  "domain": "electronics",
+  "change": "field-spec-only",
+  "decision": "drop (dev)",
+  "listings_changed": 33,
+  "seconds": 2.9,
+  "base": {
+   "identity_version": "0.4.0",
+   "checks_pass": true,
+   "dev_gold": {
+    "rows": 9,
+    "wrong": 1,
+    "exact": 8,
+    "exact_rate": 0.889,
+    "right_or_shallower": 0.889,
+    "harm_rate": 0.111
+   },
+   "dev_pairs": {
+    "config_precision": 0.94,
+    "config_recall_resolved": 0.8057,
+    "recall_all_in_scope_matches": 0.6197
+   }
+  },
+  "new": {
+   "identity_version": "0.5.0",
+   "checks_pass": true,
+   "dev_gold": {
+    "rows": 9,
+    "shallower": 1,
+    "exact": 8,
+    "exact_rate": 0.889,
+    "right_or_shallower": 1.0,
+    "harm_rate": 0.0
+   },
+   "dev_pairs": {
+    "config_precision": 0.9338,
+    "config_recall_resolved": 0.8057,
+    "recall_all_in_scope_matches": 0.6197
+   }
+  },
+  "sealed": null,
+  "sealed_reads_total": 0,
+  "hash": "dd9148891a44718af92c72655c359693109cf824c8032dfda1a6dfe8ccac6a7d"
+ },
+ {
+  "ts": "2026-11-09T21:45:30.111187+00:00",
+  "kind": "gate",
+  "prev": "dd9148891a44718af92c72655c359693109cf824c8032dfda1a6dfe8ccac6a7d",
+  "domain": "electronics",
+  "change": "field-own-text-only",
+  "decision": "drop (dev)",
+  "listings_changed": 24,
+  "seconds": 2.8,
+  "base": {
+   "identity_version": "0.4.0",
+   "checks_pass": true,
+   "dev_gold": {
+    "rows": 9,
+    "wrong": 1,
+    "exact": 8,
+    "exact_rate": 0.889,
+    "right_or_shallower": 0.889,
+    "harm_rate": 0.111
+   },
+   "dev_pairs": {
+    "config_precision": 0.94,
+    "config_recall_resolved": 0.8057,
+    "recall_all_in_scope_matches": 0.6197
+   }
+  },
+  "new": {
+   "identity_version": "0.5.0",
+   "checks_pass": false,
+   "dev_gold": {
+    "rows": 9,
+    "shallower": 1,
+    "exact": 8,
+    "exact_rate": 0.889,
+    "right_or_shallower": 1.0,
+    "harm_rate": 0.0
+   },
+   "dev_pairs": {
+    "config_precision": 0.9404,
+    "config_recall_resolved": 0.8068,
+    "recall_all_in_scope_matches": 0.6239
+   }
+  },
+  "sealed": null,
+  "sealed_reads_total": 0,
+  "hash": "fd191e0b2d3aa7074fa57e0d1272f326b8846ce70c73fd4a566aef07e7967dd2"
+ },
+ {
+  "ts": "2026-11-09T21:45:33.169246+00:00",
+  "kind": "gate",
+  "prev": "fd191e0b2d3aa7074fa57e0d1272f326b8846ce70c73fd4a566aef07e7967dd2",
+  "domain": "electronics",
+  "change": "field-both",
+  "decision": "drop (dev)",
+  "listings_changed": 55,
+  "seconds": 2.8,
+  "base": {
+   "identity_version": "0.4.0",
+   "checks_pass": true,
+   "dev_gold": {
+    "rows": 9,
+    "wrong": 1,
+    "exact": 8,
+    "exact_rate": 0.889,
+    "right_or_shallower": 0.889,
+    "harm_rate": 0.111
+   },
+   "dev_pairs": {
+    "config_precision": 0.94,
+    "config_recall_resolved": 0.8057,
+    "recall_all_in_scope_matches": 0.6197
+   }
+  },
+  "new": {
+   "identity_version": "0.5.0",
+   "checks_pass": false,
+   "dev_gold": {
+    "rows": 9,
+    "shallower": 1,
+    "exact": 8,
+    "exact_rate": 0.889,
+    "right_or_shallower": 1.0,
+    "harm_rate": 0.0
+   },
+   "dev_pairs": {
+    "config_precision": 0.9342,
+    "config_recall_resolved": 0.8068,
+    "recall_all_in_scope_matches": 0.6239
+   }
+  },
+  "sealed": null,
+  "sealed_reads_total": 0,
+  "hash": "6175b5964c39d4ebb1cb2576b6846aecfd69b53791779acc4936e4962bf7c8e2"
+ },
+ {
+  "ts": "2026-11-09T21:46:12.274993+00:00",
+  "kind": "gate",
+  "prev": "6175b5964c39d4ebb1cb2576b6846aecfd69b53791779acc4936e4962bf7c8e2",
+  "domain": "electronics",
+  "change": "field-own-text-when-model-field-agrees",
+  "decision": "keep",
+  "listings_changed": 24,
+  "seconds": 3.2,
+  "base": {
+   "identity_version": "0.4.0",
+   "checks_pass": true,
+   "dev_gold": {
+    "rows": 9,
+    "wrong": 1,
+    "exact": 8,
+    "exact_rate": 0.889,
+    "right_or_shallower": 0.889,
+    "harm_rate": 0.111
+   },
+   "dev_pairs": {
+    "config_precision": 0.94,
+    "config_recall_resolved": 0.8057,
+    "recall_all_in_scope_matches": 0.6197
+   },
+   "sealed_gold": {
+    "rows": 2,
+    "exact": 1,
+    "wrong_brand": 1,
+    "exact_rate": 0.5,
+    "right_or_shallower": 0.5,
+    "harm_rate": 0.5
+   },
+   "sealed_pairs": {
+    "config_precision": 0.9535,
+    "config_recall_resolved": 0.7455,
+    "recall_all_in_scope_matches": 0.5309
+   }
+  },
+  "new": {
+   "identity_version": "0.5.0",
+   "checks_pass": true,
+   "dev_gold": {
+    "rows": 9,
+    "shallower": 1,
+    "exact": 8,
+    "exact_rate": 0.889,
+    "right_or_shallower": 1.0,
+    "harm_rate": 0.0
+   },
+   "dev_pairs": {
+    "config_precision": 0.9404,
+    "config_recall_resolved": 0.8068,
+    "recall_all_in_scope_matches": 0.6239
+   },
+   "sealed_gold": {
+    "rows": 2,
+    "exact": 1,
+    "wrong_brand": 1,
+    "exact_rate": 0.5,
+    "right_or_shallower": 0.5,
+    "harm_rate": 0.5
+   },
+   "sealed_pairs": {
+    "config_precision": 0.9535,
+    "config_recall_resolved": 0.7455,
+    "recall_all_in_scope_matches": 0.5309
+   }
+  },
+  "sealed": {
+   "rows": 2,
+   "base_gold": {
+    "rows": 2,
+    "exact": 1,
+    "wrong_brand": 1,
+    "exact_rate": 0.5,
+    "right_or_shallower": 0.5,
+    "harm_rate": 0.5
+   },
+   "new_gold": {
+    "rows": 2,
+    "exact": 1,
+    "wrong_brand": 1,
+    "exact_rate": 0.5,
+    "right_or_shallower": 0.5,
+    "harm_rate": 0.5
+   },
+   "base_pairs": {
+    "config_precision": 0.9535,
+    "config_recall_resolved": 0.7455,
+    "recall_all_in_scope_matches": 0.5309
+   },
+   "new_pairs": {
+    "config_precision": 0.9535,
+    "config_recall_resolved": 0.7455,
+    "recall_all_in_scope_matches": 0.5309
+   }
+  },
+  "sealed_reads_total": 1,
+  "hash": "087b1a79356996216ea9c8ddacae1f3d33a17ffa58d44195a461d1a7e0aea5c8"
+ },
+ {
+  "ts": "2026-11-09T21:46:42.066048+00:00",
+  "kind": "score",
+  "prev": "087b1a79356996216ea9c8ddacae1f3d33a17ffa58d44195a461d1a7e0aea5c8",
+  "domain": "electronics",
+  "round": 1,
+  "validator": {
+   "rows": 9,
+   "shallower": 4,
+   "no_brand": 3,
+   "exact": 2,
+   "exact_rate": 0.222,
+   "right_or_shallower": 0.667,
+   "harm_rate": 0.0
+  },
+  "gold_files": [
+   "review-r01.yaml"
+  ],
+  "dev_rows": 9,
+  "sealed_brands": 2,
+  "pipeline": {
+   "rows": 9,
+   "wrong": 1,
+   "exact": 8,
+   "exact_rate": 0.889,
+   "right_or_shallower": 0.889,
+   "harm_rate": 0.111
+  },
+  "validator_flags": {
+   "flag/pipeline_wrong": 1,
+   "flag/pipeline_ok": 6,
+   "agree/pipeline_ok": 2
+  },
+  "validator_flag_precision": 0.143,
+  "validator_missed_errors": 0,
+  "hash": "377d7f24932662a77665fc63457e8369aa9c1ca816637839d89a20e064b58995"
+ },
+ {
+  "ts": "2026-11-09T21:46:42.397716+00:00",
+  "kind": "score",
+  "prev": "377d7f24932662a77665fc63457e8369aa9c1ca816637839d89a20e064b58995",
+  "domain": "electronics",
+  "round": 1,
+  "validator": {
+   "rows": 9,
+   "exact": 3,
+   "no_brand": 6,
+   "exact_rate": 0.333,
+   "right_or_shallower": 0.333,
+   "harm_rate": 0.0
+  },
+  "gold_files": [
+   "review-r01.yaml"
+  ],
+  "dev_rows": 9,
+  "sealed_brands": 2,
+  "pipeline": {
+   "rows": 9,
+   "wrong": 1,
+   "exact": 8,
+   "exact_rate": 0.889,
+   "right_or_shallower": 0.889,
+   "harm_rate": 0.111
+  },
+  "validator_flags": {
+   "flag/pipeline_wrong": 1,
+   "flag/pipeline_ok": 6,
+   "agree/pipeline_ok": 2
+  },
+  "validator_flag_precision": 0.143,
+  "validator_missed_errors": 0,
+  "hash": "e39ff3a63e1de057f166da0632146610838c9c49bdd57817a84419e985431685"
+ },
+ {
+  "ts": "2026-11-09T21:46:42.681849+00:00",
+  "kind": "score",
+  "prev": "e39ff3a63e1de057f166da0632146610838c9c49bdd57817a84419e985431685",
+  "domain": "electronics",
+  "round": 1,
+  "validator": {
+   "rows": 9,
+   "no_brand": 2,
+   "exact": 6,
+   "wrong": 1,
+   "exact_rate": 0.667,
+   "right_or_shallower": 0.667,
+   "harm_rate": 0.111
+  },
+  "gold_files": [
+   "review-r01.yaml"
+  ],
+  "dev_rows": 9,
+  "sealed_brands": 2,
+  "pipeline": {
+   "rows": 9,
+   "wrong": 1,
+   "exact": 8,
+   "exact_rate": 0.889,
+   "right_or_shallower": 0.889,
+   "harm_rate": 0.111
+  },
+  "validator_flags": {
+   "flag/pipeline_wrong": 1,
+   "agree/pipeline_ok": 6,
+   "flag/pipeline_ok": 2
+  },
+  "validator_flag_precision": 0.333,
+  "validator_missed_errors": 0,
+  "hash": "76ba1cdd5240520dbc879cf5eefaf2f41d696363ee4f67ae3945fdf8ab2be774"
+ },
+ {
+  "ts": "2026-11-09T21:52:57.324870+00:00",
+  "kind": "codex_call",
+  "prev": "76ba1cdd5240520dbc879cf5eefaf2f41d696363ee4f67ae3945fdf8ab2be774",
+  "domain": "electronics",
+  "role": "proposer",
+  "key": "e2c52d2f9da61ffb18bc",
+  "cached": false,
+  "seconds": 22.51,
+  "usage": {
+   "input_tokens": 21545,
+   "cached_input_tokens": 0,
+   "cache_write_input_tokens": 0,
+   "output_tokens": 558,
+   "reasoning_output_tokens": 424
+  },
+  "listings": 0,
+  "error": false,
+  "prompt_sha256": "e2c52d2f9da6",
+  "model": "codex-default",
+  "hash": "e29eba13753536e8f34d9c4b7aed78c06cafeffe81a9013586dc20c8376a9b62"
+ },
+ {
+  "ts": "2026-11-09T21:53:00.354669+00:00",
+  "kind": "gate",
+  "prev": "e29eba13753536e8f34d9c4b7aed78c06cafeffe81a9013586dc20c8376a9b62",
+  "domain": "electronics",
+  "change": "auto-prefer_source_model_fields",
+  "decision": "drop (dev)",
+  "listings_changed": 24,
+  "seconds": 3.0,
+  "base": {
+   "identity_version": "0.5.0",
+   "checks_pass": true,
+   "dev_gold": {
+    "rows": 9,
+    "shallower": 1,
+    "exact": 8,
+    "exact_rate": 0.889,
+    "right_or_shallower": 1.0,
+    "harm_rate": 0.0
+   },
+   "dev_pairs": {
+    "config_precision": 0.9404,
+    "config_recall_resolved": 0.8068,
+    "recall_all_in_scope_matches": 0.6239
+   }
+  },
+  "new": {
+   "identity_version": "0.5.0",
+   "checks_pass": true,
+   "dev_gold": {
+    "rows": 9,
+    "wrong": 1,
+    "exact": 8,
+    "exact_rate": 0.889,
+    "right_or_shallower": 0.889,
+    "harm_rate": 0.111
+   },
+   "dev_pairs": {
+    "config_precision": 0.94,
+    "config_recall_resolved": 0.8057,
+    "recall_all_in_scope_matches": 0.6197
+   }
+  },
+  "sealed": null,
+  "sealed_reads_total": 1,
+  "hash": "fd34e38be1d533765e105f244f5909495f02ff87db4aa0203af5ccf59c3952c5"
+ },
+ {
+  "ts": "2026-11-09T21:53:00.361432+00:00",
+  "kind": "proposal",
+  "prev": "e29eba13753536e8f34d9c4b7aed78c06cafeffe81a9013586dc20c8376a9b62",
+  "domain": "electronics",
+  "name": "prefer_source_model_fields",
+  "ops": [
+   {
+    "op": "set",
+    "path": "model.field_confirm_in_own_text",
+    "value": false
+   }
+  ],
+  "rationale": "XM and Polaroid false splits share identical model fields but select different title identifiers. Requiring title confirmation causes inconsistent model selection.",
+  "expected_effect": "Reunite those pairs through their shared source fields and reduce title-driven false merges such as HP ce250a versus ce-250x, without adding broader equivalence rules.",
+  "proposed_by": "codex",
+  "at": "2026-11-09T15:52:57",
+  "status": "dropped",
+  "decision": "drop (dev)",
+  "listings_changed": 24,
+  "dev_gold": {
+   "exact_rate": [
+    0.889,
+    0.889
+   ],
+   "harm_rate": [
+    0.0,
+    0.111
+   ]
+  },
+  "dev_pairs": {
+   "config_precision": [
+    0.9404,
+    0.94
+   ],
+   "config_recall_resolved": [
+    0.8068,
+    0.8057
+   ]
+  },
+  "hash": "786b9f97e36efc37a72ea7ef88b6ea433e7188948fc38b87795c2f8e5d28c3a4"
+ },
+ {
+  "ts": "2026-11-09T21:53:51.241504+00:00",
+  "kind": "codex_call",
+  "prev": "786b9f97e36efc37a72ea7ef88b6ea433e7188948fc38b87795c2f8e5d28c3a4",
+  "domain": "electronics",
+  "role": "proposer",
+  "key": "1eacf5ae53a0b59da3d8",
+  "cached": false,
+  "seconds": 49.24,
+  "usage": {
+   "input_tokens": 19527,
+   "cached_input_tokens": 0,
+   "cache_write_input_tokens": 0,
+   "output_tokens": 1817,
+   "reasoning_output_tokens": 1697
+  },
+  "listings": 0,
+  "error": false,
+  "prompt_sha256": "1eacf5ae53a0",
+  "model": "codex-default",
+  "hash": "271494f9647de85ee1df9945265166f33590050136d47d7edaf98aa39eefa931"
+ },
+ {
+  "ts": "2026-11-09T21:53:54.251967+00:00",
+  "kind": "gate",
+  "prev": "271494f9647de85ee1df9945265166f33590050136d47d7edaf98aa39eefa931",
+  "domain": "electronics",
+  "change": "auto-allow_three_character_models",
+  "decision": "drop (dev)",
+  "listings_changed": 99,
+  "seconds": 3.0,
+  "base": {
+   "identity_version": "0.5.0",
+   "checks_pass": true,
+   "dev_gold": {
+    "rows": 9,
+    "shallower": 1,
+    "exact": 8,
+    "exact_rate": 0.889,
+    "right_or_shallower": 1.0,
+    "harm_rate": 0.0
+   },
+   "dev_pairs": {
+    "config_precision": 0.9404,
+    "config_recall_resolved": 0.8068,
+    "recall_all_in_scope_matches": 0.6239
+   }
+  },
+  "new": {
+   "identity_version": "0.5.0",
+   "checks_pass": true,
+   "dev_gold": {
+    "rows": 9,
+    "shallower": 1,
+    "exact": 8,
+    "exact_rate": 0.889,
+    "right_or_shallower": 1.0,
+    "harm_rate": 0.0
+   },
+   "dev_pairs": {
+    "config_precision": 0.925,
+    "config_recall_resolved": 0.8177,
+    "recall_all_in_scope_matches": 0.6496
+   }
+  },
+  "sealed": null,
+  "sealed_reads_total": 1,
+  "hash": "55601ae7b04da0d19ea21f0271679cd18768f49681ff219ac2f2b52596c48f42"
+ },
+ {
+  "ts": "2026-11-09T21:53:54.259272+00:00",
+  "kind": "proposal",
+  "prev": "271494f9647de85ee1df9945265166f33590050136d47d7edaf98aa39eefa931",
+  "domain": "electronics",
+  "name": "allow_three_character_models",
+  "ops": [
+   {
+    "op": "set",
+    "path": "model.min_key_length",
+    "value": 3
+   }
+  ],
+  "rationale": "The four-character minimum excludes short manufacturer models such as H17, causing identical products to fall back to differing source-field identifiers.",
+  "expected_effect": "Both Motorola H17 listings should resolve to h17. Existing numeric and specification-token exclusions remain active to limit false merges.",
+  "proposed_by": "codex",
+  "at": "2026-11-09T15:53:51",
+  "status": "dropped",
+  "decision": "drop (dev)",
+  "listings_changed": 99,
+  "dev_gold": {
+   "exact_rate": [
+    0.889,
+    0.889
+   ],
+   "harm_rate": [
+    0.0,
+    0.0
+   ]
+  },
+  "dev_pairs": {
+   "config_precision": [
+    0.9404,
+    0.925
+   ],
+   "config_recall_resolved": [
+    0.8068,
+    0.8177
+   ]
+  },
+  "hash": "1d3178e801056e4cbf6c29fe6d10c6c9a9185178c5ff7f64125cf858aa2deb8f"
+ },
+ {
+  "ts": "2026-11-09T21:54:57.091827+00:00",
+  "kind": "codex_call",
+  "prev": "1d3178e801056e4cbf6c29fe6d10c6c9a9185178c5ff7f64125cf858aa2deb8f",
+  "domain": "electronics",
+  "role": "proposer",
+  "key": "edd374b1ecd0eb7aa412",
+  "cached": false,
+  "seconds": 61.26,
+  "usage": {
+   "input_tokens": 19557,
+   "cached_input_tokens": 15360,
+   "cache_write_input_tokens": 0,
+   "output_tokens": 2432,
+   "reasoning_output_tokens": 2299
+  },
+  "listings": 0,
+  "error": false,
+  "prompt_sha256": "edd374b1ecd0",
+  "model": "codex-default",
+  "hash": "e88ff48dd3824c7ed1d710738fa42baec0703ed1405c9f3550d14b6423a9e55b"
+ },
+ {
+  "ts": "2026-11-09T21:55:00.061595+00:00",
+  "kind": "gate",
+  "prev": "e88ff48dd3824c7ed1d710738fa42baec0703ed1405c9f3550d14b6423a9e55b",
+  "domain": "electronics",
+  "change": "auto-tighten_sibling_suffix_aliasing",
+  "decision": "drop (dev)",
+  "listings_changed": 3,
+  "seconds": 3.0,
+  "base": {
+   "identity_version": "0.5.0",
+   "checks_pass": true,
+   "dev_gold": {
+    "rows": 9,
+    "shallower": 1,
+    "exact": 8,
+    "exact_rate": 0.889,
+    "right_or_shallower": 1.0,
+    "harm_rate": 0.0
+   },
+   "dev_pairs": {
+    "config_precision": 0.9404,
+    "config_recall_resolved": 0.8068,
+    "recall_all_in_scope_matches": 0.6239
+   }
+  },
+  "new": {
+   "identity_version": "0.5.0",
+   "checks_pass": true,
+   "dev_gold": {
+    "rows": 9,
+    "shallower": 1,
+    "exact": 8,
+    "exact_rate": 0.889,
+    "right_or_shallower": 1.0,
+    "harm_rate": 0.0
+   },
+   "dev_pairs": {
+    "config_precision": 0.9404,
+    "config_recall_resolved": 0.8068,
+    "recall_all_in_scope_matches": 0.6239
+   }
+  },
+  "sealed": null,
+  "sealed_reads_total": 1,
+  "hash": "484af7d51733ca36d1d34a47618be77bb9f64c6d64602b60acb737390ae83e86"
+ },
+ {
+  "ts": "2026-11-09T21:55:00.068873+00:00",
+  "kind": "proposal",
+  "prev": "e88ff48dd3824c7ed1d710738fa42baec0703ed1405c9f3550d14b6423a9e55b",
+  "domain": "electronics",
+  "name": "tighten_sibling_suffix_aliasing",
+  "ops": [
+   {
+    "op": "set",
+    "path": "model.sibling_suffix_max",
+    "value": 0
+   }
+  ],
+  "rationale": "Repeated Panasonic false merges collapse distinct suffix-bearing identifiers to dmc-fh5. Disabling the generic sibling-suffix allowance targets this overmerging conservatively.",
+  "expected_effect": "May reduce short-suffix false merges without adding equivalences. Genuine suffix aliases may split; explicit color-code aliases may remain unaffected.",
+  "proposed_by": "codex",
+  "at": "2026-11-09T15:54:57",
+  "status": "dropped",
+  "decision": "drop (dev)",
+  "listings_changed": 3,
+  "dev_gold": {
+   "exact_rate": [
+    0.889,
+    0.889
+   ],
+   "harm_rate": [
+    0.0,
+    0.0
+   ]
+  },
+  "dev_pairs": {
+   "config_precision": [
+    0.9404,
+    0.9404
+   ],
+   "config_recall_resolved": [
+    0.8068,
+    0.8068
+   ]
+  },
+  "hash": "5edbbefefca5937e8305171e99d17a504f22f03420bd0f7ca30088a3c8b9c978"
+ },
+ {
+  "ts": "2026-11-09T21:55:00.070002+00:00",
+  "kind": "auto_rules",
+  "prev": "5edbbefefca5937e8305171e99d17a504f22f03420bd0f7ca30088a3c8b9c978",
+  "domain": "electronics",
+  "proposals": 3,
+  "kept": [],
+  "seconds": 146.8,
+  "hash": "2e3fa719aa0d5e928bc5ebc2793cb1a60e79f593f704b397a669ff33cd54104a"
+ },
+ {
+  "ts": "2026-11-09T21:55:36.855775+00:00",
+  "kind": "codex_call",
+  "prev": "2e3fa719aa0d5e928bc5ebc2793cb1a60e79f593f704b397a669ff33cd54104a",
+  "domain": "electronics",
+  "role": "improver",
+  "key": "93a4a0afdf7d80f4c248",
+  "cached": false,
+  "seconds": 29.57,
+  "usage": {
+   "input_tokens": 18347,
+   "cached_input_tokens": 0,
+   "cache_write_input_tokens": 0,
+   "output_tokens": 911,
+   "reasoning_output_tokens": 800
+  },
+  "listings": 0,
+  "error": false,
+  "prompt_sha256": "93a4a0afdf7d",
+  "model": "codex-default",
+  "hash": "d77156a6e7398df3f0774129660aeb368f33e58d179ac5ec952a0e68ba71e0ed"
+ },
+ {
+  "ts": "2026-11-09T21:56:56.939198+00:00",
+  "kind": "codex_call",
+  "prev": "d77156a6e7398df3f0774129660aeb368f33e58d179ac5ec952a0e68ba71e0ed",
+  "domain": "electronics",
+  "role": "validator_v4",
+  "key": "f6d6261cb7ded53cf9be",
+  "cached": false,
+  "seconds": 74.4,
+  "usage": {
+   "input_tokens": 33820,
+   "cached_input_tokens": 16896,
+   "cache_write_input_tokens": 0,
+   "output_tokens": 4386,
+   "reasoning_output_tokens": 2588
+  },
+  "listings": 30,
+  "error": false,
+  "prompt_sha256": "b2a334227cd8",
+  "model": "codex-default",
+  "hash": "1c7cc2d21e6eacbd3441e71df24c9729c4ace3c5dee0cac72574dd29b7213e36"
+ },
+ {
+  "ts": "2026-11-09T21:56:56.940020+00:00",
+  "kind": "codex_call",
+  "prev": "1c7cc2d21e6eacbd3441e71df24c9729c4ace3c5dee0cac72574dd29b7213e36",
+  "domain": "electronics",
+  "role": "validator_v4",
+  "key": "e6202aed963b774402a3",
+  "cached": false,
+  "seconds": 79.71,
+  "usage": {
+   "input_tokens": 31205,
+   "cached_input_tokens": 16896,
+   "cache_write_input_tokens": 0,
+   "output_tokens": 4166,
+   "reasoning_output_tokens": 1810
+  },
+  "listings": 30,
+  "error": false,
+  "prompt_sha256": "b2a334227cd8",
+  "model": "codex-default",
+  "hash": "127ae7eaa429647e06513128beaf62104258386c6a5863b5cfffdf830a7b9fe7"
+ },
+ {
+  "ts": "2026-11-09T21:56:56.940329+00:00",
+  "kind": "codex_call",
+  "prev": "127ae7eaa429647e06513128beaf62104258386c6a5863b5cfffdf830a7b9fe7",
+  "domain": "electronics",
+  "role": "validator_v4",
+  "key": "577a708eecad93495188",
+  "cached": false,
+  "seconds": 71.13,
+  "usage": {
+   "input_tokens": 32227,
+   "cached_input_tokens": 16896,
+   "cache_write_input_tokens": 0,
+   "output_tokens": 3599,
+   "reasoning_output_tokens": 1331
+  },
+  "listings": 30,
+  "error": false,
+  "prompt_sha256": "b2a334227cd8",
+  "model": "codex-default",
+  "hash": "2c08be459e6a567b2397dd240441cb4a09351c95a736030966237ef5d98a81d2"
+ },
+ {
+  "ts": "2026-11-09T21:56:56.940693+00:00",
+  "kind": "codex_call",
+  "prev": "2c08be459e6a567b2397dd240441cb4a09351c95a736030966237ef5d98a81d2",
+  "domain": "electronics",
+  "role": "validator_v4",
+  "key": "3ee00c21ce4a5b43eedb",
+  "cached": false,
+  "seconds": 74.76,
+  "usage": {
+   "input_tokens": 31703,
+   "cached_input_tokens": 16896,
+   "cache_write_input_tokens": 0,
+   "output_tokens": 4489,
+   "reasoning_output_tokens": 2070
+  },
+  "listings": 30,
+  "error": false,
+  "prompt_sha256": "b2a334227cd8",
+  "model": "codex-default",
+  "hash": "817f682543790c66e20db0fff0d65907375bca2a32bad2d7901dba0e780df4be"
+ },
+ {
+  "ts": "2026-11-09T21:56:56.940993+00:00",
+  "kind": "codex_call",
+  "prev": "817f682543790c66e20db0fff0d65907375bca2a32bad2d7901dba0e780df4be",
+  "domain": "electronics",
+  "role": "validator_v4",
+  "key": "0476a3a23110ae385938",
+  "cached": false,
+  "seconds": 62.25,
+  "usage": {
+   "input_tokens": 30984,
+   "cached_input_tokens": 13056,
+   "cache_write_input_tokens": 0,
+   "output_tokens": 3442,
+   "reasoning_output_tokens": 1034
+  },
+  "listings": 30,
+  "error": false,
+  "prompt_sha256": "b2a334227cd8",
+  "model": "codex-default",
+  "hash": "d249198e10b9a8a20cfd8249984b00a84c83d23c7b792d3b5a87e7973a9c768a"
+ },
+ {
+  "ts": "2026-11-09T21:56:56.953550+00:00",
+  "kind": "validate_run",
+  "prev": "d249198e10b9a8a20cfd8249984b00a84c83d23c7b792d3b5a87e7973a9c768a",
+  "domain": "electronics",
+  "round": 1,
+  "validator": 4,
+  "batches": 5,
+  "calls": 5,
+  "cached": 0,
+  "errors": 0,
+  "wall_seconds": 79.72,
+  "call_seconds": 362.25,
+  "tokens": {
+   "input_tokens": 159939,
+   "cached_input_tokens": 80640,
+   "cache_write_input_tokens": 0,
+   "output_tokens": 20082,
+   "reasoning_output_tokens": 8833
+  },
+  "prompt_sha256": "b2a334227cd8",
+  "workers": 6,
+  "batch_size": 30,
+  "model": "codex-default",
+  "labelled": 150,
+  "seconds_total": 80.1,
+  "relations": {
+   "fresh:depth": 1,
+   "fresh:different_brand": 2,
+   "fresh:different_product": 5,
+   "fresh:same": 92,
+   "gold_sample:depth": 4,
+   "gold_sample:different_product": 1,
+   "gold_sample:one_parks": 2,
+   "gold_sample:same": 43
+  },
+  "to_review": 16,
+  "spot_checks": 8,
+  "hash": "31c4353d632685d318b28fdd21bb22aaa35d20d43c03d70dd656bfea808a8efa"
+ },
+ {
+  "ts": "2026-11-09T21:56:57.118737+00:00",
+  "kind": "score",
+  "prev": "31c4353d632685d318b28fdd21bb22aaa35d20d43c03d70dd656bfea808a8efa",
+  "domain": "electronics",
+  "round": 1,
+  "validator": {
+   "rows": 9,
+   "no_brand": 2,
+   "exact": 6,
+   "wrong": 1,
+   "exact_rate": 0.667,
+   "right_or_shallower": 0.667,
+   "harm_rate": 0.111
+  },
+  "gold_files": [
+   "review-r01.yaml"
+  ],
+  "dev_rows": 9,
+  "sealed_brands": 2,
+  "pipeline": {
+   "rows": 9,
+   "wrong": 1,
+   "exact": 8,
+   "exact_rate": 0.889,
+   "right_or_shallower": 0.889,
+   "harm_rate": 0.111
+  },
+  "validator_flags": {
+   "flag/pipeline_wrong": 1,
+   "agree/pipeline_ok": 6,
+   "flag/pipeline_ok": 2
+  },
+  "validator_flag_precision": 0.333,
+  "validator_missed_errors": 0,
+  "hash": "aebabea0dc61b69b69de89c15c84655ef6fc3c2950605ee106d21f0b0bca1e13"
+ },
+ {
+  "ts": "2026-11-09T21:56:57.209118+00:00",
+  "kind": "score",
+  "prev": "aebabea0dc61b69b69de89c15c84655ef6fc3c2950605ee106d21f0b0bca1e13",
+  "domain": "electronics",
+  "round": 1,
+  "validator": {
+   "rows": 9,
+   "exact": 8,
+   "wrong": 1,
+   "exact_rate": 0.889,
+   "right_or_shallower": 0.889,
+   "harm_rate": 0.111
+  },
+  "gold_files": [
+   "review-r01.yaml"
+  ],
+  "dev_rows": 9,
+  "sealed_brands": 2,
+  "pipeline": {
+   "rows": 9,
+   "wrong": 1,
+   "exact": 8,
+   "exact_rate": 0.889,
+   "right_or_shallower": 0.889,
+   "harm_rate": 0.111
+  },
+  "validator_flags": {
+   "flag/pipeline_wrong": 1,
+   "agree/pipeline_ok": 7,
+   "flag/pipeline_ok": 1
+  },
+  "validator_flag_precision": 0.5,
+  "validator_missed_errors": 0,
+  "hash": "5badee46af7c2727bac17672793e52989b9c149845772db8f05d4911ef9e989d"
+ },
+ {
+  "ts": "2026-11-09T21:56:57.216690+00:00",
+  "kind": "validator_improve",
+  "prev": "d77156a6e7398df3f0774129660aeb368f33e58d179ac5ec952a0e68ba71e0ed",
+  "domain": "electronics",
+  "version": 4,
+  "parent": 3,
+  "kept": true,
+  "lines": [
+   "Treat included accessories or upgrade wording as evidence for matching kit candidates; do not reject bundles solely because packaging differs.",
+   "Allow multipacks to match explicitly identified constituent candidates when no pack candidate fits and no distinguishing product attributes conflict.",
+   "Choose only supplied candidates; prefer an explicitly supported family node over an inferred exact model absent from the candidate set."
+  ],
+  "score": {
+   "rows": 9,
+   "exact": 8,
+   "wrong": 1,
+   "exact_rate": 0.889,
+   "right_or_shallower": 0.889,
+   "harm_rate": 0.111
+  },
+  "parent_score": {
+   "rows": 9,
+   "no_brand": 2,
+   "exact": 6,
+   "wrong": 1,
+   "exact_rate": 0.667,
+   "right_or_shallower": 0.667,
+   "harm_rate": 0.111
+  },
+  "hash": "ccaf612031d42b5fa0184a84058dd4d9260380116b20a126d03f956e57fe2d46"
+ }
+]

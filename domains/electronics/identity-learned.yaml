@@ -1,0 +1,119 @@
+# Rule edits proposed by the Codex proposer and decided by the gate (loop.gate_cfgs).
+# Only status: kept is applied (graph.load_cfg). Written by code, never by hand.
+changes:
+- name: prefer_source_model_fields
+  ops:
+  - op: set
+    path: model.field_confirm_in_own_text
+    value: false
+  rationale: XM and Polaroid false splits share identical model fields but select
+    different title identifiers. Requiring title confirmation causes inconsistent
+    model selection.
+  expected_effect: Reunite those pairs through their shared source fields and reduce
+    title-driven false merges such as HP ce250a versus ce-250x, without adding broader
+    equivalence rules.
+  proposed_by: codex
+  at: '2026-11-09T15:52:57'
+  status: dropped
+  decision: drop (dev)
+  listings_changed: 24
+  dev_gold:
+    exact_rate:
+    - 0.889
+    - 0.889
+    harm_rate:
+    - 0.0
+    - 0.111
+  dev_pairs:
+    config_precision:
+    - 0.9404
+    - 0.94
+    config_recall_resolved:
+    - 0.8068
+    - 0.8057
+- name: allow_three_character_models
+  ops:
+  - op: set
+    path: model.min_key_length
+    value: 3
+  rationale: The four-character minimum excludes short manufacturer models such as
+    H17, causing identical products to fall back to differing source-field identifiers.
+  expected_effect: Both Motorola H17 listings should resolve to h17. Existing numeric
+    and specification-token exclusions remain active to limit false merges.
+  proposed_by: codex
+  at: '2026-11-09T15:53:51'
+  status: dropped
+  decision: drop (dev)
+  listings_changed: 99
+  dev_gold:
+    exact_rate:
+    - 0.889
+    - 0.889
+    harm_rate:
+    - 0.0
+    - 0.0
+  dev_pairs:
+    config_precision:
+    - 0.9404
+    - 0.925
+    config_recall_resolved:
+    - 0.8068
+    - 0.8177
+- name: tighten_sibling_suffix_aliasing
+  ops:
+  - op: set
+    path: model.sibling_suffix_max
+    value: 0
+  rationale: Repeated Panasonic false merges collapse distinct suffix-bearing identifiers
+    to dmc-fh5. Disabling the generic sibling-suffix allowance targets this overmerging
+    conservatively.
+  expected_effect: May reduce short-suffix false merges without adding equivalences.
+    Genuine suffix aliases may split; explicit color-code aliases may remain unaffected.
+  proposed_by: codex
+  at: '2026-11-09T15:54:57'
+  status: dropped
+  decision: drop (dev)
+  listings_changed: 3
+  dev_gold:
+    exact_rate:
+    - 0.889
+    - 0.889
+    harm_rate:
+    - 0.0
+    - 0.0
+  dev_pairs:
+    config_precision:
+    - 0.9404
+    - 0.9404
+    config_recall_resolved:
+    - 0.8068
+    - 0.8068
+- name: recognize_singleton_title_brands
+  ops:
+  - op: set
+    path: brand.title_prefix_min_listings
+    value: 1
+  rationale: Garmin and Apple manufacturer-leading titles lack paths, while Atrend-Bbox
+    is assigned to Ford despite its existing alias. Requiring two listings may suppress
+    valid title-prefix brand evidence.
+  expected_effect: Recover missing or misassigned brands where singleton support is
+    the blocker, without broadening model aliasing.
+  proposed_by: codex
+  at: '2026-11-09T16:20:19'
+  status: dropped
+  decision: drop (dev)
+  listings_changed: 89
+  dev_gold:
+    exact_rate:
+    - 0.72
+    - 0.7
+    harm_rate:
+    - 0.12
+    - 0.14
+  dev_pairs:
+    config_precision:
+    - 0.9404
+    - 0.9383
+    config_recall_resolved:
+    - 0.8068
+    - 0.8172

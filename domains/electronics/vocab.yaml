@@ -1,0 +1,8 @@
+# Electronics variant vocabulary: tokens that are configurations or trade-item facts, never product names.
+# The identity rules use the same lists (identity.yaml dimensions / trade_item); this file is the shared-layout copy
+# read by taxo.kpis for its hash and by agents that need the variant words.
+variant:
+  color: [black, white, silver, red, blue, green, pink, purple, orange, yellow, gray, grey, brown, gold, teal, chrome, cyan, magenta, titanium, graphite, beige, plum, violet, bronze, navy, tan, ivory, lime]
+  capacity_units: [gb, tb, mb]
+pack: [pack, pk, twin pack, dual pack, triple pack, pack of]
+condition: [remanufactured, refurbished, renewed, recertified, reconditioned]

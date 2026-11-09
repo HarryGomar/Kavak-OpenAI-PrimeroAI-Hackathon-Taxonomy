@@ -24,6 +24,7 @@ import yaml
 from taxo import climb, kpis, loopb, score, validator
 from taxo.core.codex import Runner
 from taxo.core.config import DOMAINS_DIR, ROOT, RUNS_DIR
+from taxo.core.domain import hook
 from taxo.lattice.vocab import tokens
 from taxo.roles.improver import make_improver
 
@@ -59,11 +60,18 @@ def _misses(domain: str, version: str, suffix: str = "") -> list[dict]:
         v = json.loads(x)
         p = P[v["id"]]
         gp = p["pedia_path"]
-        j = score.judge(p["pedia_brand"], v["path"], p["pedia_brand"], gp, set(tokens(gp[0])))
-        if j.cls != "exact":
+        jd = hook(domain, "judge")
+        cls = jd.classify(v["path"], gp) if jd is not None else \
+            score.judge(p["pedia_brand"], v["path"], p["pedia_brand"], gp, set(tokens(gp[0]))).cls
+        if cls != "exact":
             out.append({"title": blind[v["id"]]["title"], "validator": " > ".join(v["path"]), "trace": v.get("trace"),
-                        "human": " > ".join(gp), "class": j.cls})
+                        "human": " > ".join(gp), "class": cls})
     return out
+
+
+def _tool_names(domain: str) -> list[str]:
+    tm = hook(domain, "validator_tools")
+    return [getattr(t, "name", str(t)) for t in getattr(tm, "TOOLS", [])] if tm is not None else ["brand_products"]
 
 
 def propose_change(domain: str, misses: list[dict], log: Path) -> dict | None:
@@ -73,7 +81,7 @@ def propose_change(domain: str, misses: list[dict], log: Path) -> dict | None:
     qs = [{k: q.get(k) for k in ("id", "ask", "tools", "then")} for q in s.get("questions") or []
           if q.get("status") in ("admitted", "shadow")]
     text = ("Current questions:\n" + json.dumps(qs, ensure_ascii=False, indent=0)
-            + "\n\nTools: similar_brands, ask_person, brand_products" + (", web_search" if s.get("web") else "")
+            + "\n\nTools: similar_brands, ask_person, " + ", ".join(_tool_names(domain)) + (", web_search" if s.get("web") else "")
             + "\n\nMistakes (listing, the validator's answer and trace, the person's answer):\n"
             + json.dumps(misses[:30], ensure_ascii=False, indent=0))
     try:
@@ -147,7 +155,13 @@ def improve_validator(domain: str, cyc: int) -> dict:
     return result
 
 
+def steps(domain: str):
+    """Loop A steps: a domain's own (domains/<d>/loop_hooks.py: phase, checkpoint, label, pipeline_run) or climb's."""
+    return hook(domain, "loop_hooks") or climb
+
+
 def cycle(domain: str, cyc: int, silver: str, rounds: int, skip_rules: bool = False) -> dict:
+    climb = steps(domain)
     out: dict = {"cycle": cyc, "silver": silver}
     if not skip_rules:
         _say(f"cycle {cyc}: 1. rule phase on silver {silver}")
@@ -179,7 +193,7 @@ def main() -> None:
         res = cycle(a.domain, k, silver, a.rule_rounds, skip_rules=a.skip_first_rules and k == a.start)
         silver = res["next_silver"]
     _say("final: one sealed read")
-    fin = climb.pipeline_run(a.domain, 999, f"final after {a.cycles} cycles: one sealed read", sealed=True)
+    fin = steps(a.domain).pipeline_run(a.domain, 999, f"final after {a.cycles} cycles: one sealed read", sealed=True)
     _say(f"  final: {fin}")
     (RUNS_DIR / a.domain / "loop-final.json").write_text(json.dumps(fin, indent=1), encoding="utf-8")
     print(kpis.table(kpis.history(a.domain)[-16:]))

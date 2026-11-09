@@ -1,0 +1,14 @@
+{
+ "kind": "model",
+ "question_id": null,
+ "ask": null,
+ "tools": [],
+ "then": null,
+ "after": null,
+ "tool_name": null,
+ "code": null,
+ "fires_on": null,
+ "quiet_on": null,
+ "text": "Reword `model_number` to distinguish a named product line from a manufacturer part number: use an explicit product or series name from the title as the product level when present, then add a verified manufacturer part number as a child only when the listing identifies it as a distinct model; do not infer or normalize variants, and omit product type when the named product is the established path.",
+ "rationale": "The errors cluster at `model_number`: traces treat a named line as unusable without a part number (Canon Rebel XS, Jwin Mega Bass Pro), over-trust listing model fields or matching catalog entries (SanDisk, IBM), and split variants from a shared line or part number (Canon CLI8PC, Panasonic DMC-TZ5). The repeated answer is inconsistent because the current instruction calls a part number the product name while also directing reuse of exact catalog matches, without saying when a title’s named product line should anchor the path or how to treat variants. This change targets those mistakes while preserving room for genuine model hierarchies; it could cause a named marketing series to be treated as a product level even when the taxonomy convention expects a part number."
+}

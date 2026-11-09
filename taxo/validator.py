@@ -18,6 +18,7 @@ from pathlib import Path
 from taxo.core.codex import Runner
 from taxo.core.config import RUNS_DIR
 from taxo.lattice.vocab import tokens
+from taxo.core.domain import hook
 from taxo.pipeline import brand_names
 from taxo.roles.validator import ValidateContext, load_setup, make_validator
 
@@ -49,13 +50,16 @@ def label(domain: str, items: list[dict], log: Path, base: bool = False, timeout
     menus = {it["brand"]: it.get("menu") or [] for it in items}
     for b in menus:
         menus[b] = [m.split(" > ", 1)[1] if " > " in m else m for m in menus[b]]
-    names = sorted(set(brand_names().values()))
+    tools_mod = hook(domain, "validator_tools")       # a domain may supply its own brand list (else fragrance's)
+    names = sorted(set((tools_mod.brand_names() if tools_mod is not None and hasattr(tools_mod, "brand_names")
+                        else brand_names()).values()))
+    template = s.get("input") or INPUT                  # a domain may word the listing input (validator.yaml: input)
     card_v = f"v{s.get('version', 0)}" + ("-base" if base else "")
 
     def one(it: dict) -> dict | None:
         ctx = ValidateContext(domain, names, it["id"], int(s.get("version", 0)), {it["brand"]: menus[it["brand"]]})
         try:
-            r = Runner.run_sync(agent, INPUT.format(**{k: it.get(k) or "" for k in ("title", "brand", "source", "url")}),
+            r = Runner.run_sync(agent, template.format(**{k: it.get(k) or "" for k in ("title", "brand", "source", "url")}),
                                 context=ctx, timeout=timeout)
         except Exception as e:                      # refused, never patched
             return {"id": it["id"], "error": str(e)[:300]}

@@ -11,7 +11,7 @@ import yaml
 from taxo.core.config import DOMAINS_DIR
 from taxo.core.schemas import Listing, Node
 
-DOMAINS = tuple(name for name in ("food", "fragrance", "cars", "car_parts", "toys", "clothing", "footwear")
+DOMAINS = tuple(name for name in ("food", "fragrance", "cars", "car_parts", "toys", "clothing", "footwear", "electronics")
                 if (DOMAINS_DIR / name / "pack.yaml").is_file())
 
 
@@ -29,6 +29,14 @@ class Domain:
 
     def nodes(self) -> Iterator[Node]:
         return self.adapter.load_taxonomy()
+
+
+def hook(name: str, module: str):
+    """A domain's optional module (domains/<name>/<module>.py), or None. Lets shared code use a domain's own judge,
+    validator tools or loop steps without knowing the domain; domains without the module keep the shared default."""
+    if not (DOMAINS_DIR / name / f"{module}.py").is_file():
+        return None
+    return importlib.import_module(f"domains.{name}.{module}")
 
 
 def load(name: str) -> Domain:
