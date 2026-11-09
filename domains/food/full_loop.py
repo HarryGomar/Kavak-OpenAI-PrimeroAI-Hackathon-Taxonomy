@@ -17,12 +17,18 @@ from taxo.gate import decide as gate_decide
 from taxo.tools import checks
 
 
-def run(root, baseline, name, setup_path):
+def run(root, baseline, name, setup_path, resume=False):
     out = root/name
-    out.mkdir(exist_ok=False)
+    out.mkdir(exist_ok=resume)
     write(out/'stage-status.json', {'status': 'running', 'stage': 'independent_validation'})
-    validate_paths.execute(root, setup_path, name+'-validator-current')
     current = root/(name+'-validator-current')
+    resumed_validator = resume and (current/'role-manifest.json').exists() and read(current/'role-manifest.json')['status'] == 'executed'
+    if not resumed_validator:
+        validate_paths.execute(root, setup_path, name+'-validator-current')
+    else:
+        write(out/'resume.json', {'stage': 'feedback_roles', 'independent_validator':
+            'Actual calls already completed in this same cycle; resume after setup parsing failure',
+            'source': fingerprint(current/'role-manifest.json')})
     gold = {r['observation_id']: r for r in read(current/'gold-rulings.json')}
     pipeline = {r['id']: r for r in rows(baseline/'placements.jsonl')}
     judgments = {r['listing_id']: r for r in read(current/'judgments.json')}
@@ -43,6 +49,8 @@ def run(root, baseline, name, setup_path):
     write(out/'validator-findings.json', dict(counts))
     # Reuse existing role factories/runtime on authorized feedback only.
     role_name = name+'-feedback'
+    if resume and (root/role_name).exists():
+        role_name += '-resume'
     (root/role_name).mkdir()
     write(root/role_name/'feedback-diagnosis.json', read(baseline/'feedback-diagnosis.json'))
     loop_roles.execute(root, role_name, current/'judgments.json')
@@ -150,5 +158,6 @@ if __name__ == '__main__':
     ap.add_argument('--baseline', type=Path, required=True)
     ap.add_argument('--name', required=True)
     ap.add_argument('--setup', type=Path, required=True)
+    ap.add_argument('--resume', action='store_true', help='resume this same cycle after completed blind validation')
     a = ap.parse_args()
-    run(a.root, a.baseline, a.name, a.setup)
+    run(a.root, a.baseline, a.name, a.setup, a.resume)

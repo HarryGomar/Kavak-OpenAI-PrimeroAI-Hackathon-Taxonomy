@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse
 import inspect
 import json
+import yaml
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
@@ -40,7 +41,7 @@ def execute(root, run_name, validator_path=None):
     from taxo.roles.validator import load_setup
     setup = load_setup('food')
     if validator_path and (validator_path.parent / "role-manifest.json").exists():
-        setup = read(Path(read(validator_path.parent / "role-manifest.json")["setup"]["path"]))
+        setup = yaml.safe_load(Path(read(validator_path.parent / 'role-manifest.json')['setup']['path']).read_text(encoding='utf-8'))
     payload = json.dumps({"constraints": constraint, "cases": cases, "current_setup": setup}, ensure_ascii=False)
     def call(role, factory):
         scoped = payload
