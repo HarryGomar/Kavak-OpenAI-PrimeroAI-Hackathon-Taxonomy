@@ -19,7 +19,7 @@ import unicodedata
 import yaml
 
 HERE = Path(__file__).resolve().parent
-PACK_FILES = ["identity.yaml", "vocab.yaml"]
+PACK_FILES = ["identity.yaml", "vocab.yaml", "identity-learned.yaml"]
 FAMILY = {"kavak": "kavak", "seminuevos": "seminuevos", "mercadolibre_autos": "mercadolibre",
           "autocosmos_used": "autocosmos", "carshop": "carshop"}
 MISSING = {None, "", "$undefined", "n/a", "N/A"}
@@ -32,14 +32,68 @@ def sha256_file(path: Path) -> str:
 def pack_sha256() -> str:
     h = hashlib.sha256()
     for rel in PACK_FILES:
-        h.update(rel.encode() + b"\0" + (HERE / rel).read_bytes() + b"\0")
+        if (HERE / rel).exists():
+            h.update(rel.encode() + b"\0" + (HERE / rel).read_bytes() + b"\0")
     return h.hexdigest()
 
 
-def load_pack():
+# Edits the automatic proposer may make (domains/cars/auto.py), as op -> {path pattern: value kind}.
+ALLOWED = {
+    "set": {"trim.label.add_gearbox": bool, "trim.label.fix_typos": bool, "version_guard.number_guard": bool,
+            "models.typo_min_token_length": int},
+    "append": {"trim.noise.words": "word", "trim.noise.patterns": "regex", "trim.generic_tokens": "word",
+               "models.line_suffixes": "word", "models.placeholders": "word", "models.nameplate_head_words": "word",
+               "models.next_token_stopwords": "word", "non_listing_title_patterns": "regex", "brands.extra_makes": "word"},
+    "add_alias": {"brands.aliases.<canonical make>": "spelling", "models.aliases.<make>": "from=to"},
+}
+
+
+def apply_op(rules: dict, op: dict) -> None:
+    """Apply one whitelisted edit to the merged rules dict. Raises ValueError when the edit is not allowed."""
+    kind, path, value = op["op"], op["path"], op["value"]
+    parts = path.split(".")
+    if kind == "set":
+        want = ALLOWED["set"].get(path)
+        if want is None or not isinstance(value, want) or (want is int and isinstance(value, bool)):
+            raise ValueError(f"set {path}={value!r} not allowed")
+    elif kind == "append":
+        want = ALLOWED["append"].get(path)
+        if want is None or not isinstance(value, str) or not value.strip():
+            raise ValueError(f"append to {path} not allowed")
+        if want == "regex":
+            re.compile(value)
+    elif kind == "add_alias":
+        if not (len(parts) == 3 and parts[:2] in (["brands", "aliases"], ["models", "aliases"])) or not isinstance(value, str):
+            raise ValueError(f"add_alias {path} not allowed")
+        if parts[0] == "models" and "=" not in value:
+            raise ValueError("models alias value must be 'from=to'")
+    else:
+        raise ValueError(f"unknown op {kind}")
+    node = rules
+    for k in parts[:-1] if kind != "add_alias" else parts[:2]:
+        node = node.setdefault(k, {})
+    if kind == "set":
+        node[parts[-1]] = value
+    elif kind == "append":
+        lst = node.setdefault(parts[-1], [])
+        if value not in lst:
+            lst.append(value)
+    elif parts[0] == "brands":
+        node[value.strip()] = parts[2]
+    else:
+        src, dst = (x.strip() for x in value.split("=", 1))
+        node.setdefault(parts[2], {})[src] = dst
+
+
+def load_pack(learned: bool = True):
     ident = yaml.safe_load((HERE / "identity.yaml").read_text(encoding="utf-8"))
     vocab = yaml.safe_load((HERE / "vocab.yaml").read_text(encoding="utf-8"))
     rules = {**ident, "trim": vocab["trim"], "dimensions": vocab["dimensions"]}
+    lf = HERE / "identity-learned.yaml"
+    if learned and lf.exists():     # edits kept by the gate (auto.py / gate.py), applied on load; base YAML untouched
+        for change in yaml.safe_load(lf.read_text(encoding="utf-8")) or []:
+            for op in change.get("ops", []):
+                apply_op(rules, op)
     return {"scope": {"version": ident["version"]}, "taxonomy": {"categories": vocab["categories"]},
             "bodies": vocab["bodies"], "rules": rules}
 
@@ -102,6 +156,10 @@ class Pack:
         self.trim_noise_words = {key(w) for w in tn.get("words", [])}
         self.trim_noise_patterns = [re.compile(x) for x in tn.get("patterns", [])]
         self.version_number_guard = bool((r.get("version_guard") or {}).get("number_guard"))
+        vl = r["trim"].get("label", {}) or {}
+        self.label_gearbox = bool(vl.get("add_gearbox"))
+        self.fix_trim_typos = bool(vl.get("fix_typos"))
+        self.gear_words = [r"(?:aut|at|auto|automatico|automatica|automatic|tiptronic|tip|steptronic|cvt|ivt|xtronic|dct|dsg|edc|pdk|std|mt|man|manual|estandar|tm)"]
         self.non_listing = [re.compile(x) for x in r.get("non_listing_title_patterns", [])]
         self.typo_min_len = r["models"].get("typo_min_token_length", 4)
         self.next_token_stop = {key(x) for x in r["models"].get("next_token_stopwords", [])}
@@ -722,11 +780,27 @@ class Resolver:
         words = sorted({t for t in toks if re.search(r"[a-z]", t) and not re.fullmatch(r"\d\.\dt?", t)})
         if not words:
             return None, None
+        label = re.sub(r"\s+", " ", r["trim_text"]).strip()
+        if self.p.fix_trim_typos and r["brand"] and r["nameplate"] in self.c.np.get(r["brand"], {}):
+            # candidate (round 02 review): a one-letter misspelling of a catalogue version word for this model
+            known = {w for vs in self.c.np[r["brand"]][r["nameplate"]]["versions"].values() for vk in vs for w in vk.split()
+                     if len(w) >= 5 and w.isalpha()}
+            fixed = []
+            for t in words:
+                hit = sorted(k for k in known if k != t and len(t) >= 5 and edit1(t, k))
+                fixed.append(hit[0] if len(hit) == 1 else t)
+                if len(hit) == 1:
+                    label = re.sub(re.escape(t), hit[0].upper() if label.isupper() else hit[0].title(), label, flags=re.I)
+            words = sorted(set(fixed))
         d = r["dimensions"]
+        if self.p.label_gearbox and d.get("transmission") and not any(
+                re.fullmatch(rx, t) for t in key(label).split() for rx in self.p.gear_words):
+            # candidate (round 02 review): the owner names the gearbox in the version ("1.5 S MT", "1.6 EX Manual")
+            label += " " + {"automatic": "AT", "cvt": "CVT", "dct": "DCT", "manual": "MT"}[d["transmission"]]
         gear = {"automatic": "auto", "cvt": "auto", "dct": "auto", "manual": "manual"}.get(d.get("transmission"), "")
         disp = d.get("engine_displacement_l") or ""
         drive = d.get("drivetrain") if d.get("drivetrain") in ("4x4", "awd") else ""
-        return f"{' '.join(words)}|{disp}|{gear}|{drive}", re.sub(r"\s+", " ", r["trim_text"]).strip()
+        return f"{' '.join(words)}|{disp}|{gear}|{drive}", label
 
     # -- pass 3: support and level ("as specific as possible", owner 2026-11-09; status kept per level)
     def decide(self, r, np_families, my_families, ver_families):

@@ -34,6 +34,12 @@ CANDIDATES = [
      "codes (\"4p Sense L4/1.6 Aut Blanco\", \"SENSE NV4005\", \"... CSGDL\"); drop them from the version key.",
      "file": "vocab.yaml", "patch": lambda d: d["trim"].setdefault("noise", {}).update(
          {"words": COLOURS + ["csgdl", "cscun", "csmty"], "patterns": [r"[a-z]{2}\d{3,5}", r"cs[a-z]{3}"]})},
+    {"id": "version-label-gearbox", "why": "Review r01: the owner names the gearbox in the version (\"1.5 S MT\", "
+     "\"1.6 EX Manual\"); add it from the listing's transmission field when the trim text lacks it.",
+     "file": "vocab.yaml", "patch": lambda d: d["trim"].setdefault("label", {}).update({"add_gearbox": True})},
+    {"id": "trim-typo-to-catalogue", "why": "Review r01: \"TREDLINE\" is Trendline; a one-letter misspelling of a "
+     "catalogue version word for the same model takes the catalogue spelling.",
+     "file": "vocab.yaml", "patch": lambda d: d["trim"].setdefault("label", {}).update({"fix_typos": True})},
     {"id": "catalogue-version-number-guard", "why": "A model number in the listing (\"Rubicon 392\") that the catalogue "
      "version lacks blocks that catalogue version (validator flag on gold, round 01).",
      "file": "identity.yaml", "patch": lambda d: d.setdefault("version_guard", {}).update({"number_guard": True})},
@@ -41,38 +47,29 @@ CANDIDATES = [
 
 
 def evaluate(records, pack_doc, gold_rows, graw):
+    """Rules only (no agent): each gold row judged with the cars judge (domains/cars/judge.py)."""
+    from collections import Counter
+
+    from domains.cars.judge import judge
     d = config.data_dir() / "cars"
     results, pack, cat = resolve.resolve_records(records, d / "taxonomy.jsonl", pack_doc)
     pl = pipeline.run_steps(results, records)
     results, pl, _ = pipeline.one_per_listing(results, pl)
     by = {p["listing_id"]: p for p in pl}
-    rep, holds, n, yrs = score.Report(), 0, 0, [0, 0]
-    paths = {}
+    cls, holds, n, paths = Counter(), 0, 0, {}
     for g in gold_rows:
         p = by.get(graw[g.id].get("listing_id"))
         if not p:
+            cls["not_in_run"] += 1
             continue
         path = (p["candidate"] or p)["path"] if (p["candidate"] or p["node_id"]) else []
         paths[g.id] = path
-        gp = [str(x) for x in g.expected_path]
-        if not gp:
-            n += g.expect == "accept"
-            holds += g.expect == "accept" and not path
-            continue
-        gb = codex_agents.canon_make(gp[0])
-        pb = codex_agents.canon_make(path[0]) if path else None
-        j = score.judge(pb, [pb] + list(path[1:]) if pb else [], gb, [gb] + gp[1:],
-                        set(resolve.key(gp[0]).split()) | {gb}, g.compare, g.expect)
-        rep.add(j, g.expect)
-        if g.expect == "accept":
-            n += 1
-            holds += j.cls == "exact" or (g.compare == "prefix" and j.cls == "deeper")
-            if len(gp) >= 3:
-                yrs[0] += 1
-                yrs[1] += len(path) >= 3 and str(path[2]) == gp[2]
-    s = rep.summary()
-    return {"holds": holds, "n": n, "harm": s["wrong"] + s["wrong_brand"] + s["no_brand"], "exact": s["exact"],
-            "years": yrs, "rejects_held": f"{s['rejects_held']}/{s['reject_rows']}",
+        j = judge(path, g.expected_path, g.compare, g.expect)
+        cls[j["cls"]] += 1
+        n += 1
+        holds += j["holds"]
+    harm = cls["wrong"] + cls["out_of_domain_wrong"] + cls["reject_broken"]
+    return {"holds": holds, "n": n, "harm": harm, "classes": dict(cls),
             "routed": sum(1 for p in pl if p["route"]),
             "version_nodes": len({(p["candidate"] or p)["node_id"] for p in pl if (p["candidate"] or p).get("level") == "version"})}, paths
 
@@ -81,9 +78,10 @@ def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--round", type=int, default=1)
     ap.add_argument("--apply", action="store_true")
+    ap.add_argument("--dry", action="store_true", help="no sealed read, no ledger, no files: check the run only")
     a = ap.parse_args()
     t0 = time.time()
-    ledger = Ledger(RUNS_DIR / "cars" / "ledger.jsonl")
+    ledger = Ledger(RUNS_DIR / "cars" / "ledger.jsonl") if not a.dry else type("NoLedger", (), {"append": lambda *x, **k: None})()
     d = config.data_dir() / "cars"
     records = list(read_jsonl(d / "listings.jsonl"))
     files = sorted(f for f in (d / "gold").glob("*.yaml") if not f.stem.endswith("-second"))
@@ -125,6 +123,9 @@ def main() -> None:
         if not progress:
             break
     # one logged sealed read of the final rule set
+    if a.dry:
+        print(json.dumps({"dry": True, "dev_rows": len(dev), "log": log, "kept": [c["id"] for c in kept]}, indent=1, default=str))
+        return
     sealed_rows = gold.sealed(f"cars gate round {a.round}")
     sealed, _ = evaluate(records, current, sealed_rows, graw) if sealed_rows else ({"rows": 0}, None)
     ledger.append("gate_sealed_read", domain="cars", round=a.round, rows=len(sealed_rows), kept=[c["id"] for c in kept], **sealed)

@@ -1,22 +1,26 @@
-# Validator setup v1 (cars). Checklist steps are proposals until the validator scores better on gold with them.
-version: 1
-model: gpt-6-luna
-web: true
-use_proposals: false
-inputs: [title, make, model, version, year, km, price]
-# Starts empty: the improver induces steps from the validator's mistakes on our labels.
+# Validator setup (cars). Prompt: domains/cars/codex_agents.py. version 1 = raw listing JSON (cut at 700 chars);
+# version 2 = identifying fields uncut + catalogue versions of the model the listing names (round 01, a query fix).
+# Later versions = version 2 + the checklist lines below, written by the improver (domains/cars/auto.py validator) and
+# kept only when the validator scores better on dev gold with them.
+version: 2
+backend: codex-cli
+effort: high
 checklist: []
-
-# EXAMPLES of steps the improver might induce (not active):
-#   - id: similar_models
-#     text: Look up makes and models with similar names (similar_brands) to catch spelling variants (VW / Volkswagen, Mercedes-Benz / Mercedes Benz).
-#     status: proposal
-#     origin: cars catalogue vs seller spellings
-#   - id: version_in_catalogue
-#     text: Web-search the make's Mexican catalogue for the stated version and year; if the version is not sold that year, abstain.
-#     status: proposal
-#     origin: SPEC.md hypothesis (registry routes carry cars)
-#   - id: price_sanity
-#     text: If the price is far below the catalogue list price for that year and version, say so; it may be another version or a damaged car.
-#     status: proposal
-#     origin: new
+history:
+- version: 1
+  kept: true
+  note: raw fields; baseline
+- version: 2
+  kept: true
+  note: 'uncut identifying fields + catalogue hint (round 01): same gold score, years 32/32, fewer tokens'
+- version: 3
+  kept: false
+  round: 2
+  lines:
+  - Validate advertised trims and powertrain aliases against the Mexican-market make–model–year catalog before assigning its
+    canonical version label.
+  - Preserve body style, cab configuration, and conversion descriptors when extracting the complete version.
+  - Require explicit version evidence or a verified catalog match rather than treating generic transmission metadata as a
+    version.
+  dev_hold_rate: 0.879
+  was: 0.869

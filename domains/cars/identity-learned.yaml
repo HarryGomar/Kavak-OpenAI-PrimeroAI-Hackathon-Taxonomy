@@ -1,0 +1,56 @@
+# Rule edits kept by the gate (domains/cars/auto.py, gate.py). Applied on top of identity.yaml + vocab.yaml
+# when the rules load (resolve.load_pack). Each entry: the ops, why, where it came from, and its gate scores.
+- id: version-label-gearbox
+  round: 2
+  kept_at: '2026-11-09'
+  origin: queued (human review)
+  source: owner review r01 (Yaris 1.5 S MT, Kia Rio 1.6 EX Manual)
+  why: The owner names the gearbox in the version; add it from the listing's transmission field when the trim text lacks it.
+  ops:
+  - op: set
+    path: trim.label.add_gearbox
+    value: true
+  dev:
+    holds: 100
+    n: 105
+    harm: 2
+    routed: 5792
+    version_nodes: 5161
+  delta:
+    holds: 6
+    harm: -3
+    routed: 0
+    version_nodes: 0
+  sealed:
+    rows: 7
+    before: 6
+    after: 6
+    harm: 1
+    reads_total: 3
+- id: trim-typo-to-catalogue
+  round: 2
+  kept_at: '2026-11-09'
+  origin: queued (human review)
+  source: owner review r01 (TREDLINE -> Trendline)
+  why: A one-letter misspelling of a catalogue version word for the same model takes the catalogue spelling.
+  ops:
+  - op: set
+    path: trim.label.fix_typos
+    value: true
+  dev:
+    holds: 101
+    n: 105
+    harm: 1
+    routed: 5792
+    version_nodes: 5159
+  delta:
+    holds: 1
+    harm: -1
+    routed: 0
+    version_nodes: -2
+  sealed:
+    rows: 7
+    before: 6
+    after: 6
+    harm: 1
+    reads_total: 4

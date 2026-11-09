@@ -291,15 +291,26 @@ VALIDATOR_PROMPT_V2 = VALIDATOR_PROMPT.replace(
 VALIDATOR_PROMPTS = {1: VALIDATOR_PROMPT, 2: VALIDATOR_PROMPT_V2}
 
 
-def validate(rows: list[tuple[str, dict]], batch: int = 15, effort: str = "high", version: int = 1) -> dict[str, dict]:
+def validator_setup() -> dict:
+    return yaml.safe_load((HERE / "validator.yaml").read_text(encoding="utf-8"))
+
+
+def validate(rows: list[tuple[str, dict]], batch: int = 15, effort: str = "high", version: int = 1,
+             checklist: list[str] | None = None) -> dict[str, dict]:
+    """version 1 = raw fields; 2+ = identifying fields + catalogue hint. checklist = the improver's admitted lines
+    (validator.yaml); they are appended to the v2 prompt, so validator version N = prompt 2 + N-2 rounds of lines."""
+    base = VALIDATOR_PROMPTS[min(version, 2)]
+    if checklist:
+        base = base.replace("Conventions:", "Checklist (carry out every step):\n" + "\n".join(f"- {c}" for c in checklist)
+                            + "\nConventions:")
     prompts = []
     for i in range(0, len(rows), batch):
         if version == 1:
             items = "\n".join(f"- listing_id: {lid}\n  listing: {listing_text(raw)}" for lid, raw in rows[i:i + batch])
-        else:
+        else:  # 2 and later
             items = "\n".join(f"- listing_id: {lid}\n  listing: {evidence_text(raw)}\n  {catalogue_hint(raw)}"
                               for lid, raw in rows[i:i + batch])
-        prompts.append(VALIDATOR_PROMPTS[version].format(conventions=conventions(), items=items))
+        prompts.append(base.format(conventions=conventions(), items=items))
     results = run_all(prompts, VALIDATOR_SCHEMA, effort, role=f"validator_v{version}",
                       sizes=[len(rows[i:i + batch]) for i in range(0, len(rows), batch)])
     out = {l["listing_id"]: l for r in results for l in r.get("labels", [])}
