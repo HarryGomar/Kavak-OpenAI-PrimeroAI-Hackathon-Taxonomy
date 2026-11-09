@@ -10,11 +10,11 @@ from __future__ import annotations
 
 import argparse
 import json
-import math
 from pathlib import Path
 
 from taxo import gold as goldmod, kpis, score
 from taxo.core.config import ROOT, RUNS_DIR
+from taxo.core.metrics import wilson
 from taxo.parse import Brands
 from taxo.pipeline import load_gold
 
@@ -23,11 +23,8 @@ BAR = 0.5
 RANK = {"exact": 5, "shallower": 4, "no_brand": 3, "deeper": 2, "wrong": 1, "wrong_brand": 0}
 
 
-def wilson_lower(k: int, n: int, z: float = 1.96) -> float:
-    if n == 0:
-        return 0.0
-    p = k / n
-    return (p + z * z / (2 * n) - z * math.sqrt(p * (1 - p) / n + z * z / (4 * n * n))) / (1 + z * z / n)
+def wilson_lower(k: int, n: int) -> float:
+    return wilson(k, n)[0] if n else 0.0
 
 
 def _placed(d: Path) -> dict[str, dict]:

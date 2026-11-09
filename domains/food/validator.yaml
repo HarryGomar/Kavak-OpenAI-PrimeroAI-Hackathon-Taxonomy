@@ -1,0 +1,27 @@
+# Validator setup v1 (food). A line of questions, each with the tools that answer it; proposals until the validator
+# scores better on gold with them.
+version: 1
+model: gpt-6-luna
+web: true
+use_proposals: false
+inputs: [title, brand_field, seller, size, pack]
+# Starts empty: the improver induces questions from the validator's mistakes on our labels.
+questions: []
+
+# EXAMPLES of questions the improver might induce (not active):
+#   - id: who_makes_it
+#     ask: Which maker is this? Two makers can share a name (Halls).
+#     tools: [similar_brands, web_search]
+#     then: Web-search when unsure who makes it; if still unsure, ask_person.
+#     status: proposal
+#     origin: Pedia food homonym brands (Halls split 48)
+#   - id: shop_not_brand
+#     ask: Is the brand field a shop or seller rather than the maker printed on the pack?
+#     then: If so, the brand is the maker on the pack.
+#     status: proposal
+#     origin: Pedia SELLER_CONNECTION / brand_field_seller
+#   - id: title_names_variant
+#     ask: Does the title itself name the flavour or variant?
+#     then: Place on a variant only if it does; a marketplace option alone is not enough.
+#     status: proposal
+#     origin: Pedia parent_to_child 28/17 -> 38/4

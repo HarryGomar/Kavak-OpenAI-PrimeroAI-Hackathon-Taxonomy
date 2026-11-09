@@ -1,0 +1,42 @@
+# Gold: human blind labels, the only truth. See docs/DATA-SPEC.md §5.
+# One file per round (round-01.yaml, round-02.yaml ...). Written and edited by people only, never by an agent.
+# Synthetic examples below: delete them and keep the shape.
+
+- id: gold-food-r01-0001              # unique row id: gold-<domain>-r<round>-<nnnn>
+  listing_id: "examplemart:SKU-0001"  # the listing's id in the raw export
+  title: Acme Crunch Bites BBQ 6 x 1.5 oz Snack Packs
+  source: examplemart
+  brand: acme snacks                  # lower-case brand; code uses it for the sealed split
+  expected_path: [Acme Snacks, Crunch Bites, BBQ]
+  compare: prefix                     # prefix (default): path must start with this | exact: must be exactly this
+  expect: accept                      # accept: this path must hold | reject: this path must NOT come back
+  why: "Flavour is named in the title; the 6-pack is a pack, not a node."
+  labelled_by: ana
+  labelled_at: 2026-11-09
+  provenance: blind_random            # blind_random | review | imported:<file>
+
+- id: gold-food-r01-0002
+  listing_id: "examplemart:SKU-0042"
+  title: Acme Snacks Party Assortment
+  source: examplemart
+  brand: acme snacks
+  expected_path: [Acme Snacks]
+  compare: exact                      # stop at the brand: the title names no product
+  expect: accept
+  why: "No product named, and the members of the assortment are not listed."
+  labelled_by: ana
+  labelled_at: 2026-11-09
+  provenance: blind_random
+
+- id: gold-food-r01-0003
+  listing_id: "examplemart:SKU-0001"
+  title: Acme Crunch Bites BBQ 6 x 1.5 oz Snack Packs
+  source: examplemart
+  brand: acme snacks
+  expected_path: [Acme Snacks, Crunch Bites, BBQ, 6 x 1.5 oz]
+  compare: exact
+  expect: reject                      # a known-wrong shape found in review: it must never come back
+  why: "The pipeline made the pack size a node; sizes are never nodes."
+  labelled_by: ana
+  labelled_at: 2026-11-09
+  provenance: review

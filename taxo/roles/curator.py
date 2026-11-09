@@ -1,5 +1,7 @@
-"""Curator (code, not an LLM): admits, promotes and retires rules on their record. It is the only role that
-reads labels, so no agent can be fooled into, or fool anyone by, reading the truth.
+"""Curator (code, not an agent): keeps the books. It admits, promotes and retires rules on their record: what a rule
+caught and wrongly rejected against the frozen, gold-scored validator's silver (and gold where gold exists). It is the
+only role that reads labels, so no agent can be fooled into, or fool anyone by, reading the truth. The sealed gold
+gate (taxo/gate.py) still has the last word before a rule goes active.
 
 Stub: the admission test and promotion rule are written; wiring them to runs comes next.
 """

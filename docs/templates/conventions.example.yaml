@@ -1,0 +1,20 @@
+# Domain conventions: the owner's decisions about the shape of the tree. See docs/DATA-SPEC.md §6.
+# One plain statement and one example each. Synthetic examples below.
+
+- id: size-not-node
+  statement: Size and pack count are never nodes. A 12-pack of a flavour sits on that flavour.
+  example: {title: "Acme Crunch Bites BBQ 12 x 1 oz", path: [Acme Snacks, Crunch Bites, BBQ]}
+  decided_by: ana
+  decided_at: 2026-11-09
+
+- id: format-is-product
+  statement: A different format (bites, minis, bars) is a separate product; a flavour is a variant.
+  example: {title: "Acme Crunch Minis BBQ", path: [Acme Snacks, Crunch Minis, BBQ]}
+  decided_by: ana
+  decided_at: 2026-11-09
+
+- id: same-trim
+  statement: Two version names are one trim when the catalogue lists only one of them for that model and year.
+  example: {title: "Zephyr Nova Sport CVT 2021", path: [Zephyr, Nova, Sport 1.6 CVT, 2021]}
+  decided_by: luis
+  decided_at: 2026-11-09
