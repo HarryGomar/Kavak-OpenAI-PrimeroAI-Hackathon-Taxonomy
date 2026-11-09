@@ -337,7 +337,8 @@ G:\My Drive\meta-pedia-data\<domain>\          <domain> = food | fragrance | car
 
 **Silver** is what the validator agent says about listings no one has labelled ([SPEC §5.2](../SPEC.md)). It is
 useful for finding where to look: the cases where the validator and the pipeline disagree go to a person for review.
-It is **never truth**. A rule is never scored on silver, and silver never becomes gold unless a person reviews the
-row, which then goes into gold with `provenance: review`. Silver is written by the system under `runs/`, outside Git.
+It is **never truth**. Once the validator is scored on gold and frozen, its silver is the wide test candidate rules
+run against (sealed gold still has the last word); silver never becomes gold unless a person reviews the row, which
+then goes into gold with `provenance: review`. Silver is written by the system under `runs/`, outside Git.
 **You do not need to provide any.** If someone gives you a file of "labels" made by a model, it is silver: keep it out
 of `gold\`.
