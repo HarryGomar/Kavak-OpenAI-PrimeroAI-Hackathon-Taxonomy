@@ -1,4 +1,4 @@
-"""Agents (OpenAI Agents SDK). The same roles serve every domain; a domain only supplies its pack and data.
+"""Agents run through installed Codex CLI FAST. The same roles serve every domain.
 
 placer    listing -> node, with taxonomy tools                 (LLM)
 validator one per domain; its setup (model, web, checklist of investigation steps) is data in

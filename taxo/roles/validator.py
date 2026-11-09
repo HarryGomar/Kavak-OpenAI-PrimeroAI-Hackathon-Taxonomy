@@ -15,8 +15,9 @@ import difflib
 from dataclasses import dataclass, field
 
 import yaml
-from agents import Agent, RunContextWrapper, WebSearchTool, function_tool
 from pydantic import BaseModel, Field
+
+from taxo.roles.runtime import CliAgent, ToolContext
 
 from taxo.core import config
 from taxo.core.schemas import Decision, Status
@@ -38,8 +39,7 @@ class ValidatorOut(BaseModel):
     question: str | None = Field(default=None, description="if abstaining: the one question a person must settle")
 
 
-@function_tool
-def similar_brands(ctx: RunContextWrapper[ValidateContext], name: str, limit: int = 8) -> list[str]:
+def similar_brands(ctx: ToolContext[ValidateContext], name: str, limit: int = 8) -> list[str]:
     """Brands in this domain whose names look like `name` (spelling variants, a word more or less, shared prefix)."""
     n = name.lower().strip()
     pool = ctx.context.brands
@@ -62,16 +62,16 @@ Checklist:
 {checklist}"""
 
 
-def make_validator(domain: str, setup: dict | None = None) -> Agent[ValidateContext]:
+def make_validator(domain: str, setup: dict | None = None) -> CliAgent[ValidateContext]:
     s = setup or load_setup(domain)
     steps = [c for c in s.get("checklist") or [] if c.get("status") in (Status.ADMITTED.value, Status.SHADOW.value)
              or s.get("use_proposals")]
-    tools = [similar_brands] + ([WebSearchTool()] if s.get("web") else [])
-    return Agent[ValidateContext](
+    return CliAgent[ValidateContext](
         name=f"validator-{domain}-v{s.get('version', 0)}",
         instructions=INSTRUCTIONS.format(domain=domain,
                                          checklist="\n".join(f"- [{c['id']}] {c['text']}" for c in steps) or "- (none)"),
-        model=s.get("model") or config.model("validator"),
-        tools=tools,
+        domain=domain,
+        tools=[similar_brands],
+        web=bool(s.get("web")),
         output_type=ValidatorOut,
     )

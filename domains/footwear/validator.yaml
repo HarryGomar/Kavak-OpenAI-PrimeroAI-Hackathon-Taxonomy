@@ -1,5 +1,5 @@
 version: 1
-web: true
+web: false
 use_proposals: false
 inputs: [title, brand_field, size, width, model]
 checklist: []
