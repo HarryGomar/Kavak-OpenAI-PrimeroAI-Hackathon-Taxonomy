@@ -1,0 +1,180 @@
+schema_version: 1
+version: 0.2.0
+status: draft
+subject:
+  field: title
+  compatibility_boundary: '\b(?:for use with|compatible with|designed for|replacement for|fits|for)\b'
+  inclusion_boundary: '\bwith\b|\bw\s*/\s*|\bw\s+'
+  meaning: Read product-type cues in the title prefix; retain the suffix as reference evidence, not as the sold item.
+selection:
+  method: Highest-priority applicable item-type rule; incomparable categories at equal priority abstain.
+  source_hint: Corroborating or conflicting evidence only; never a silent tie-breaker.
+  bundle_policy: Keep the main item-type proposal but flag composition for review; no single-product identity implied.
+bundle_patterns: ['\b(?:kit|bundle|starter set|combo|value pk|value pack)\b', '\b(?:\d+\s*[- ]?pack|pack of \d+|set of \d+)\b']
+exclude_rules:
+  - id: exclude/desk-furniture
+    any: ['\blaminate desk\b', '\bdesk (?:center )?drawer\b']
+    reason: Explicit office-furniture item outside the four electronics profiles.
+title_rules:
+  - id: classify/storage-enclosure
+    category: electronics.storage.enclosure
+    priority: 100
+    any: ['\b(?:drive|hdd|ssd)\s+(?:external\s+)?enclosure\b', '\bhard drive case\b']
+  - id: classify/storage-reader
+    category: electronics.storage.card_reader
+    priority: 100
+    any: ['\b(?:card|memory)\s+reader\b', '\bcard reader\b']
+  - id: classify/storage-dock
+    category: electronics.storage.dock
+    priority: 100
+    any: ['\b(?:hard drive|hdd|ssd)\b.*\b(?:duplicator|dock)\b']
+  - id: classify/storage-optical
+    category: electronics.storage.optical_drive
+    priority: 90
+    any: ['\b(?:dvd|cd|blu[- ]?ray)[- /]?(?:rw|rom)\b.*\b(?:drive|sata|ata|usb|ide|scsi)\b', '\b(?:dvd|cd|blu[- ]?ray)[- /]?(?:writer|burner)\b', '\boptical drive\b']
+  - id: classify/storage-flash
+    category: electronics.storage.usb_flash_drive
+    priority: 80
+    any: ['\b(?:usb\s+(?:\d(?:\.\d)?\s+)?)?flash drive\b', '\bthumb drive\b']
+  - id: classify/storage-card
+    category: electronics.storage.memory_card
+    priority: 80
+    any: ['\bmemory card\b', '\b(?:micro ?sd|sdhc|sdxc|compact ?flash)\b']
+    none: ['\badapter\b', '\bcase\b', '\breader\b', '\bmp[345]\b', '\b(?:media|video|audio|mp3) player\b', '\btv out\b', '\bslot\b', '\bsupport(?:s|ed)?\b', '\bmpix\b', '\b(?:digital camera|camcorder|phone|smartphone|tablet|gps)\b(?!.*\b(?:memory|flash)? ?card\b)']
+    origin: Owner feedback electronics-manual-20-v1 E05; a card format named as a feature of a host device is not the sold item.
+  - id: classify/storage-nas
+    category: electronics.storage.network_storage
+    priority: 80
+    any: ['\bnetwork[- ]attached storage\b', '\bnas (?:server|enclosure|device)\b']
+  - id: classify/storage-ssd
+    category: electronics.storage.ssd
+    priority: 80
+    any: ['\bsolid[- ]state drive\b', '\bssd\b']
+    none: ['\b(?:enclosure|adapter|mount|bracket|case|dock|duplicator|bag|cooler)\b']
+  - id: classify/storage-external
+    category: electronics.storage.external_hard_drive
+    priority: 70
+    any: ['\b(?:external|desktop|portable)\b.*\b(?:hard drive|hard disk|hdd)\b']
+    none: ['\b(?:enclosure|adapter|mount|bracket|case|dock|duplicator|bag|cooler)\b']
+  - id: classify/storage-internal
+    category: electronics.storage.internal_hard_drive
+    priority: 70
+    any: ['\binternal\b.*\b(?:hard drive|hard disk|hdd)\b']
+    none: ['\b(?:enclosure|adapter|mount|bracket|case|dock|duplicator|bag|cooler)\b']
+  - id: classify/storage-drive
+    category: electronics.storage.hard_drive
+    priority: 50
+    any: ['\bhard (?:drive|disk)\b']
+    none: ['\b(?:enclosure|adapter|mount|bracket|case|dock|duplicator|bag|cooler)\b']
+  - id: classify/imaging-lens-accessory
+    category: electronics.imaging.lens_accessory
+    priority: 110
+    any: ['\blens (?:front |rear )?(?:cap|cover|hood|filter|adapter|cleaner|cleaning)\b', '\b(?:uv|polarizing|polarising) filter\b', '\badapter ring\b']
+  - id: classify/imaging-case
+    category: electronics.imaging.case
+    priority: 110
+    any: ['\b(?:camera|camcorder|slr|dslr)\b.*\b(?:bag|case|sling pack|backpack)\b']
+  - id: classify/imaging-charger
+    category: electronics.imaging.charger
+    priority: 110
+    any: ['\b(?:camera|camcorder) battery charger\b']
+  - id: classify/imaging-battery
+    category: electronics.imaging.battery
+    priority: 100
+    any: ['\b(?:digital )?(?:camera|camcorder) batter(?:y|ies)\b', '\bphoto lithium batteries\b']
+    none: ['\bcharger\b']
+  - id: classify/imaging-tripod
+    category: electronics.imaging.tripod
+    priority: 100
+    any: ['\b(?:tripod|monopod)\b']
+    none: ['\b(?:bag|case|adapter)\b']
+  - id: classify/imaging-lens
+    category: electronics.imaging.lens
+    priority: 90
+    any: ['\b(?:lens|lenses)\b']
+    none: ['\blens (?:front |rear )?(?:cap|cover|hood|filter|adapter|cleaner|cleaning)\b', '\badapter ring\b']
+  - id: classify/imaging-camera
+    category: electronics.imaging.camera
+    priority: 60
+    any: ['\b(?:digital|slr|dslr|instant|film) camera\b', '\bcoolpix\b']
+    none: ['\b(?:lens|lenses|battery|batteries|charger|case|bag|strap|mount|remote|adapter|cable|starter kit)\b']
+  - id: classify/imaging-camcorder
+    category: electronics.imaging.camcorder
+    priority: 60
+    any: ['\bcamcorder\b']
+    none: ['\b(?:lens|battery|batteries|charger|case|bag|strap|mount|adapter|cable|starter kit)\b']
+  - id: classify/printing-imaging-unit
+    category: electronics.printing.imaging_unit
+    priority: 110
+    any: ['\bimaging unit\b', '\b(?:imaging|printer) drum\b', '\bdrum (?:unit|cartridge)\b', '\bphotoconductor\b']
+  - id: classify/printing-transfer
+    category: electronics.printing.transfer_unit
+    priority: 110
+    any: ['\btransfer (?:unit|belt|roller)\b']
+  - id: classify/printing-printhead
+    category: electronics.printing.printhead
+    priority: 110
+    any: ['\bprint ?head\b']
+    none: ['\bcleaner\b']
+  - id: classify/printing-toner
+    category: electronics.printing.toner
+    priority: 100
+    any: ['\btoner (?:print )?cartridges?\b']
+  - id: classify/printing-ink-cartridge
+    category: electronics.printing.ink_cartridge
+    priority: 100
+    any: ['\bink cartridges?\b', '\bink cart\b']
+  - id: classify/printing-ink-supply
+    category: electronics.printing.ink_supply
+    priority: 80
+    any: ['\b(?:inkjet|printer) ink\b', '\bink refill\b']
+  - id: classify/printing-ribbon
+    category: electronics.printing.ribbon
+    priority: 100
+    any: ['\b(?:printer|matrix|typewriter) ribbon\b']
+  - id: classify/printing-printer
+    category: electronics.printing.printer
+    priority: 50
+    any: ['\b(?:inkjet|laser|all[- ]in[- ]one|multifunction|photo) printer\b']
+    none: ['\b(?:cartridge|toner|ink|drum|ribbon|stand|drawer|cable|tray|printhead|print head|imaging unit)\b']
+  - id: classify/audio-accessory
+    category: electronics.audio.accessory
+    priority: 110
+    any: ['\b(?:ear ?pads?|ear cushions?)\b', '\b(?:headphone|headset|speaker) (?:case|stand|mount|cable|adapter)s?\b']
+  - id: classify/audio-headset
+    category: electronics.audio.headset
+    priority: 80
+    any: ['\bheadsets?\b']
+    none: ['\b(?:case|earpad|cushion|replacement cable|adapter)\b', '\b(?:earbuds?|earphones?)\b']
+    origin: Owner feedback electronics-manual-20-v1 E20; headset plus earbuds or earphones is placed in Headphones.
+  - id: classify/audio-headphones
+    category: electronics.audio.headphones
+    priority: 80
+    any: ['\bheadphones?\b', '\bearbuds?\b', '\bearphones?\b']
+    none: ['\b(?:case|earpad|cushion|replacement cable|adapter|stopper)\b']
+    origin: Earphones added after owner feedback electronics-manual-20-v1 E20, so headset plus earphones does not lose its placement.
+  - id: classify/audio-speaker
+    category: electronics.audio.speaker
+    priority: 70
+    any: ['\bspeakers?\b', '\bsubwoofer\b']
+    none: ['\b(?:stand|mount|wire|cable|bracket|enclosure|grille|adapter)\b']
+  - id: classify/audio-player
+    category: electronics.audio.player
+    priority: 80
+    any: ['\b(?:mp3|digital audio|cd|cassette) player\b', '\bturntable\b']
+    none: ['\b(?:case|mount|cable|adapter|head unit|receiver)\b', '\b(?:dvd|blu[- ]?ray)\b']
+  - id: classify/audio-amplifier
+    category: electronics.audio.amplifier
+    priority: 70
+    any: ['\b(?:power|stereo|channel|mono|integrated) amplifier\b']
+    none: ['\b(?:kit|cable|wire)\b']
+  - id: classify/audio-receiver
+    category: electronics.audio.receiver
+    priority: 70
+    any: ['\b(?:av|a/v|stereo|home theater|audio) receiver\b', '\breceiver/av head unit\b']
+  - id: classify/video-portable-player
+    category: electronics.video.portable_media_player
+    priority: 100
+    any: ['\bvideo mp3 player\b', '\bportable video player\b', '\bpersonal media player\b', '\bmp[45] player\b', '\b\d+\s?gb\s+mp[45]\b']
+    none: ['\b(?:case|armband|charger|cable|adapter|skin|dvd)\b']
+    origin: Owner feedback electronics-manual-20-v1 E05 (owner note "Its like a tv"); video-explicit players only, generic portable media players stay in Audio players.

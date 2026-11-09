@@ -1,0 +1,96 @@
+schema_version: 1
+scope: electronics
+version: 0.5.0
+status: draft
+purpose: >
+  Draft identity-construction rules for the first electronics graph build.
+  Kept outside the category pack (not globbed by profile_tools.Pack) so category
+  previews and frozen review packets keep their pack hash. Every rule ID below is
+  cited, with this version, on the claims and placements it produces.
+brand:
+  rule_ids:
+    field: brand/source-field
+    title_prefix: brand/title-prefix
+    title_overrides_field: brand/title-overrides-absent-field-brand
+  # Brand key = casefold, punctuation and spaces removed, corporate suffix words dropped.
+  drop_words: [inc, corp, corporation, co, ltd, llc, technology, technologies, international]
+  aliases:
+    hp: [hewlett packard, hewlett-packard, hp inc]
+    western digital: [wd]
+    oki data: [okidata, oki]
+    g-technology: [g-tech]
+    meelectronics: [meelectonics]
+    lexar: [lexar media]
+    edge: [edge tech, edgetech]
+    atrend: [atrend-bbox, atrend bbox]
+  not_brands: [compatible, generic, oem, unbranded, n/a, na, unknown, new]
+  title_prefix_min_listings: 2
+model:
+  rule_ids:
+    field_confirmed: model/source-field-in-title
+    field_unconfirmed: model/source-field
+    title_token: model/title-token
+    supply_number: model/supply-number
+    shared_identifier: identity/shared-own-identifier
+    merchant_prefix: identity/merchant-prefix-alias
+    series_prefix: identity/series-word-prefix-alias
+    color_suffix: identity/color-code-suffix-alias
+  # Loose key: casefold, keep only letters and digits. Used inside one resolved brand only.
+  key_rule: identity/model-key-alnum
+  min_key_length: 4
+  # v2 (round 02, owner gold r01 Kingston): a model-field part that looks like a size/spec token is never a model, and a
+  # field part is confirmed anywhere in the listing's own text (title before "for ..."), not only before "with ...".
+  field_reject_spec_tokens: false
+  field_confirm_in_own_text: true
+  not_model_tokens:
+    - '^\d+(?:\.\d+)?(?:gb|tb|mb|kb|mp|mm|cm|in|inch|ft|w|v|mah|rpm|hz|khz|mhz|ghz|x|p|ms|oz|lb|lbs|pk|pack|gbps|mbps|db|ohm|ohms|watt|watts|ch|bit|ppm|dpi)$'
+    - '^(?:usb|mp3|mp4|mp5|hdmi|sata|ide|ieee|wifi|dvd|cd|hd|lcd|led|tft|ipod|iphone|ipad|802\.11[a-z]*)\d*(?:\.\d+)?$'
+    - '^\d{1,3}(?:\.\d+)?$'
+    - '^(?:19|20)\d\d$'
+    - '^\d+x\d+$'
+    - '^\d+(?:st|nd|rd|th)$'
+    - '^class\s?\d+$'
+    - '^\d+-in-\d+$'
+    - '^\d+-(?:way|pair|piece|port|button|channel|speed|step)s?$'
+    - '^\d*pairs?$'
+    - '^gb-s$'
+    - '^(?:sata|usb|ata|scsi|pci|pcie)[-\d.]*\w*$'
+  # Short supply numbers like "hp 60" or "kodak 10" directly after the brand.
+  supply_number_categories: [electronics.printing]
+  supply_number_pattern: '^\d{1,3}[a-z]{0,2}$'
+  # Cleaning of raw identifiers before keying (recorded on the claim).
+  strip_prefixes: ['new-']
+  field_split: '\s/\s|,|#'
+  # Merchant SKU prefix: key = <1-4 letters> + another key of the same brand (>= 5 chars).
+  merchant_prefix_max: 4
+  merchant_prefix_min_base: 5
+  # Two identifiers of equal length differing only in their last 1-2 characters are
+  # treated as sibling part numbers (e.g. ce250a / ce250x) and never linked.
+  sibling_suffix_max: 2
+  # A key = <series word> + another key, where the series word is a standalone word in this brand's titles.
+  series_prefix_min_word: 4
+  # A key = another key + colour code, linked only when the listing itself states that colour.
+  color_codes:
+    black: [k, b, bk, blk, black]
+    silver: [s, sl, sil, slv, silver]
+    white: [w, wh, wht, white]
+    red: [r, rd, red]
+    pink: [p, pk, pnk, pink]
+    blue: [a, bl, blu, blue]
+    green: [g, gr, grn, green]
+    gold: [n, gd, gold]
+    purple: [v, pr, purple]
+    violet: [v, violet]
+    plum: [p, plum]
+    gray: [h, gy, gray]
+dimensions:
+  capacity: '\b(\d+(?:\.\d+)?)\s?(gb|tb|mb)\b'
+  colors: [black, white, silver, red, blue, green, pink, purple, orange, yellow, gray, grey, brown, gold, teal, chrome, cyan, magenta, titanium, graphite, beige, plum, violet, bronze, navy, tan, ivory, lime]
+  color_axis_categories: [electronics.audio, electronics.video, electronics.storage, electronics.imaging.camera, electronics.imaging.camcorder, electronics.imaging.case]
+  capacity_axis_categories: [electronics.storage, electronics.video]
+trade_item:
+  condition: '\b(remanufactured|refurbished|renewed|recertified|reconditioned)\b'
+  pack: '\b(\d+)\s?[- ]?(?:pack|pk)\b|\bpack of (\d+)\b|\b(twin|dual|triple) pack\b'
+support:
+  rule: Supported when own-model claims come from at least two different merchants (source families).
+  note: Amazon rows in different benchmark datasets are one source family; one merchant repeated is not corroboration.

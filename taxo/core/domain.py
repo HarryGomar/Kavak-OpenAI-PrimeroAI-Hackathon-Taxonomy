@@ -11,7 +11,7 @@ import yaml
 from taxo.core.config import DOMAINS_DIR
 from taxo.core.schemas import Listing, Node
 
-DOMAINS = tuple(name for name in ("food", "fragrance", "cars", "car_parts", "toys", "clothing", "footwear")
+DOMAINS = tuple(name for name in ("food", "fragrance", "cars", "car_parts", "toys", "clothing", "footwear", "electronics")
                 if (DOMAINS_DIR / name / "pack.yaml").is_file())
 
 

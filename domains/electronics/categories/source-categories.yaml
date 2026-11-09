@@ -1,0 +1,63 @@
+schema_version: 1
+version: 0.1.0
+status: draft
+hint_groups:
+  - category: electronics.storage.usb_flash_drive
+    aliases: [usb flash drives, usb drives]
+  - category: electronics.storage.hard_drive
+    aliases: [hard drives]
+  - category: electronics.storage.external_hard_drive
+    aliases: [external hard drives]
+  - category: electronics.storage.internal_hard_drive
+    aliases: [internal hard drives]
+  - category: electronics.storage.memory_card
+    aliases: [memory cards]
+  - category: electronics.storage.card_reader
+    aliases: [memory card readers]
+  - category: electronics.storage.enclosure
+    aliases: [hard drive enclosures]
+  - category: electronics.storage.optical_drive
+    aliases: [optical drives, dvd drives, internal dvd drives, internal optical drives, blu-ray drives]
+  - category: electronics.storage.network_storage
+    aliases: [network attached storage]
+  - category: electronics.imaging.camera
+    aliases: [point shoot digital cameras, digital slr cameras, digital cameras, cameras, film cameras, instant cameras]
+  - category: electronics.imaging.camcorder
+    aliases: [camcorders]
+  - category: electronics.imaging.lens
+    aliases: [camera lenses, camcorder lenses, lenses]
+  - category: electronics.imaging.lens_accessory
+    aliases: [lens accessories, adapter rings]
+  - category: electronics.imaging.battery
+    aliases: [camera batteries, camcorder batteries]
+  - category: electronics.imaging.charger
+    aliases: [camera battery chargers]
+  - category: electronics.imaging.tripod
+    aliases: [complete tripod units, tripods, tripods monopods, monopods, tripod heads]
+  - category: electronics.printing.printer
+    aliases: [printers, inkjet printers, laser printers, inkjet all-in-one printers, laser all-in-one printers, all-in-one printers]
+  - category: electronics.printing.ink_supply
+    aliases: [inkjet printer ink]
+  - category: electronics.printing.toner
+    aliases: [laser printer toner]
+  - category: electronics.printing.imaging_unit
+    aliases: [printer photoconductors]
+  - category: electronics.printing.transfer_unit
+    aliases: [printer transfer units, printer transfer belts, printer transfer rollers]
+  - category: electronics.printing.ribbon
+    aliases: [impact dot matrix printer ribbons]
+  - category: electronics.audio.headphones
+    aliases: [headphones]
+  - category: electronics.audio.headset
+    aliases: [headsets, bluetooth headsets, wired headsets]
+  - category: electronics.audio.speaker
+    aliases: [speakers, speaker systems, computer speakers, coaxial speakers, component subwoofers, subwoofers]
+  - category: electronics.audio.player
+    aliases: [mp3 players, cd players, portable cd players, cd-mp3 players, digital media receivers, turntables]
+  - category: electronics.audio.amplifier
+    aliases: [amplifiers, multichannel amplifiers, component amplifiers, stereo amplifiers, mono amplifiers, power amplifiers]
+  - category: electronics.audio.receiver
+    aliases: [component receivers]
+  - category: electronics.audio.accessory
+    aliases: [headphone accessories, earpads, speaker mounts, speaker stands, microphone cables, speaker cables]
+unmapped_policy: Generic or mixed categories such as memory, cases, accessories, camera photo, and printer ink toner require title evidence.
