@@ -239,15 +239,15 @@
     <div><h3>Accuracy</h3><p class="k">an agent on everything: exact match</p><p class="v"><span class="ph" data-r="AO.f1">[f]</span></p>
       <p class="m">Few labels, and its own eval can't be trusted</p><svg class="cv" id="cv3"></svg>
       <p class="a">Rules from a few labels; an eval that improves</p><p class="l"><span style="color:var(--ind)">Loop 1</span> · <span style="color:var(--val)">Loop 2</span></p></div>
-    <div><h3>Cost</h3><p class="k">an agent on all 2M listings, one pass</p><p class="v"><span class="ph" data-r="AO.cost2M">[$C]</span></p>
+    <div><h3>Cost</h3><p class="k">an agent on all 2M listings, one pass, est.</p><p class="v"><span class="ph" data-r="AO.cost2M">[$C]</span></p>
       <p class="m">Paid again on every refresh, in every domain</p><svg class="cv" id="cv2"></svg>
       <p class="a"><span style="color:var(--ind)">Rules</span> settle 89%, free; an agent the rest</p><p class="l">The solver</p></div>
-    <div><h3>Speed</h3><p class="k">the same, one call at a time</p><p class="v"><span class="ph" data-r="AO.hours">[h]</span></p>
+    <div><h3>Speed</h3><p class="k">the same, one call at a time, est.</p><p class="v"><span class="ph" data-r="AO.hours">[h]</span></p>
       <p class="m">Seconds per agent call; each domain starts from zero</p><svg class="cv" id="cv4"></svg>
       <p class="a">Rules take 1 ms a listing; <span style="color:var(--meta)">lessons</span> carry over</p><p class="l" style="color:var(--meta)">Loop 3</p></div>
   </div>
-  <p class="src">Measured on fragrance: the agent matched Pedia's labels on 120 of 160 listings, using ~920 tokens and ~0.9 s a listing, 40 per call. Estimates assume $3 per million tokens.</p>
-  <aside class="notes">This is what we want the system to improve by itself, on three fronts. Accuracy: an agent on everything matched Pedia's labels exactly on 75% of 160 fragrance listings. We have few labels, and as we saw, its own eval can't be trusted. So loop 1 learns rules from the few we label, and loop 2 improves the eval itself. Cost: it used about 920 tokens a listing, so all two million listings come to about 1.8 billion tokens: around $5,500 a pass at $3 per million, paid again on every refresh and in every domain. On fragrance, rules settle 89% for free, so the agent bill falls to about $600. Speed: at 0.9 seconds a listing, one call at a time, that's about 510 hours. Rules take about a millisecond a listing: two million in about 35 minutes. And loop 3 lets each new domain start from the last one's lessons. Cost and speed check themselves. Accuracy doesn't, so that's where most of the work goes.</aside>
+  <p class="src">Cost and time are estimates from the fragrance runs: ~920 tokens and ~0.9 s a listing, 40 per call, over 840 listings, at an assumed $3 per million tokens.</p>
+  <aside class="notes">This is what we want the system to improve by itself, on three fronts. Accuracy: an agent on everything gets [f], measured against Pedia's labels. We have few labels, and as we saw, its own eval can't be trusted. So loop 1 learns rules from the few we label, and loop 2 improves the eval itself. Cost: it used about 920 tokens a listing, so all two million listings come to about 1.8 billion tokens: around $5,500 a pass at $3 per million, paid again on every refresh and in every domain. On fragrance, rules settle 89% for free, so the agent bill falls to about $600. Speed: at 0.9 seconds a listing, one call at a time, that's about 510 hours. Rules take about a millisecond a listing: two million in about 35 minutes. And loop 3 lets each new domain start from the last one's lessons. Cost and speed check themselves. Accuracy doesn't, so that's where most of the work goes.</aside>
 </section>
 
 <!-- 5A · Architecture: the sketch, top to bottom, with the real agents -->
@@ -361,7 +361,7 @@ record: round 3, kept
 <section class="slide" data-n="11">
   <h2>Results: what each loop adds, in each domain.</h2>
   <div class="fill"><table class="res" id="res"></table></div>
-  <p class="src">Exact match against Pedia's labels (the agent: 160 fresh listings; the rules: 2,233 sealed). Beside it, $ per 1,000 listings, est. at $3 per million tokens.</p>
+  <p class="src">Exact match against Pedia's labels (fragrance rules: 2,233 sealed listings). Beside it, $ per 1,000 listings, est. at $3 per million tokens.</p>
   <aside class="notes">We have more under the hood, like the wiki the agents keep; happy to go into it after, there isn't time for the whole architecture now. Here is how each loop improves each domain. [Read the one row that matters most once the numbers are in.]</aside>
 </section>
 
@@ -389,10 +389,11 @@ record: round 3, kept
   const RESULTS = {
     // Every listing to an agent: F1 (0–1), dollars per 1,000 listings (the 2M bill on slide 4 is cost × 2,000),
     //   and hours to place all 2M listings.   e.g. agentOnly: { f1: …, cost: …, hours: … }
-    // Measured on fragrance (C:\Work\Kavak-Taxo-runs\fragrance-run): the validator agent, blind, matched Pedia's labels
-    //   exactly on 120 of 160 listings (V1-V4, 40 each); it used ~920 tokens and ~0.9 s per listing, 40 listings per call
-    //   (840 listings). cost = $ per 1,000 listings at an assumed $3 per million tokens; hours = 2M x 0.92 s, one call at a time.
-    agentOnly: { f1: 0.75, cost: 2.76, hours: 511 },
+    // f1: not measured yet. The validator's 120 of 160 is NOT agent-only (it is given the brand and its menu); the real
+    //   agent-only baseline lands in C:\Work\Kavak-Taxo-runs\RESULTS.md. cost and hours are estimates from the validator's
+    //   logs (fragrance-run): ~920 tokens and ~0.9 s per listing, 40 per call, over 840 listings. cost = $ per 1,000 listings
+    //   at an assumed $3 per million tokens (Codex on the ChatGPT login is not billed per token); hours = 2M x 0.92 s.
+    agentOnly: { f1: null, cost: 2.76, hours: 511 },
     // Slide 8, loop 1 on fragrance: one entry per round, round 0 first. f1 on gold (0–1), kept: the rule kept that round.
     //   e.g. A: { rounds: [{ f1: …, kept: null }, { f1: …, kept: 'registry' }, { f1: …, kept: 'lattice' }] }
     // Fragrance, drive data: exact match on sealed gold (2,233 listings with Pedia's labels), the rounds the gate kept.
@@ -408,9 +409,9 @@ record: round 3, kept
     C: null,
     // Slide 11: F1 on fresh listings (0–1) and $ per 1,000 listings, per domain and system.
     //   e.g. final: { fragrance: { agent: { f1, cost }, loop1: { f1, cost }, loop2: { f1, cost }, loop3: { f1, cost } }, food: {…}, cars: {…} }
-    // Fragrance only so far. agent: the validator's 120 of 160 (Pedia's labels); loop1: sealed gold after round 6, with
+    // Fragrance only so far. agent: waiting for the agent-only baseline; loop1: sealed gold after round 6, with
     //   11.1% of listings still sent to the agent (cost = 0.111 x the agent's $2.76).
-    final: { fragrance: { agent: { f1: 0.75, cost: 2.76 }, loop1: { f1: 0.689, cost: 0.31 } } },
+    final: { fragrance: { loop1: { f1: 0.689, cost: 0.31 } } },
   };
 
   // Pedia replay pe2 (C:\Work\RSI\hackathon\runs\pe2\ledger.jsonl), listing task: % of the 245 held-out listings right,

@@ -52,9 +52,10 @@ partly agent-built system. Against Harry's own labels the rules moved less (47% 
 
 **Show:** three columns. Each has what an agent on everything gets, why that's a problem, a small picture, what we do,
 and which part of the system does it:
-- **Accuracy:** 75% exact match. Few labels, and its own eval can't be trusted (its own eval climbing past a person's
-  check) → rules from a few labels, and an eval that improves → loops 1 and 2.
-- **Cost:** ≈ $5,500 for one pass over all 2M listings. Paid again on every refresh and in every domain (a grid, mostly
+- **Accuracy:** [f], an agent on everything (the baseline is running; see below). Few labels, and its own eval can't be
+  trusted (its own eval climbing past a person's check) → rules from a few labels, and an eval that improves → loops 1
+  and 2.
+- **Cost:** ≈ $5,500 for one pass over all 2M listings, est. Paid again on every refresh and in every domain (a grid, mostly
   rules, a few agent calls) → rules settle 89%, free; an agent the rest → the solver.
 - **Speed:** ≈ 510 hours, one call at a time. Each domain starts from zero (food's rules, then fragrance and cars starting
   from lessons) → rules take 1 ms a listing, and lessons carry over → loop 3.
@@ -63,8 +64,8 @@ Under it, small: how these were measured.
 
 **Say:**
 - We want the system to improve on three fronts, by itself.
-- Accuracy: an agent on every listing matched Pedia's labels exactly on 75% of 160 fragrance listings. But we have few
-  labels, and as we saw, a system's own eval can't be trusted. So loop 1 learns rules from the few we label, and loop 2
+- Accuracy: an agent on every listing gets [f], against Pedia's labels. But we have few labels, and as we saw, a
+  system's own eval can't be trusted. So loop 1 learns rules from the few we label, and loop 2
   improves the eval itself.
 - Cost: the agent used about 920 tokens a listing. Two million listings is about 1.8 billion tokens: around $5,500 a
   pass, at an assumed $3 per million tokens, paid again on every refresh and in every new domain. On fragrance, rules
@@ -75,7 +76,14 @@ Under it, small: how these were measured.
 
 *How the estimates were made:* 840 listings labelled by the validator agent (Codex CLI) in batches of 40 used 919
 tokens and 0.87 s per listing; the rules placed 15,000 listings in about 15 s. Cost per 1,000 listings = 920 × 1,000 ×
-$3 / 1M = $2.76; for 2M listings, × 2,000 ≈ $5,500. Placing one listing per call, with tools, would cost more.
+$3 / 1M = $2.76; for 2M listings, × 2,000 ≈ $5,500. The $3 per million tokens is an assumption: Codex on the ChatGPT
+login isn't billed per token, so the token count is what we measured. Placing one listing per call, with tools, would
+cost more.
+
+*[f] is not filled on purpose.* The validator matched Pedia on 120 of 160 listings, but it is given the pipeline's
+brand and that brand's product menu, so it is not an agent on its own, and 40-listing samples swing from 58% to 85%. A
+real agent-only baseline (title, shop, URL and brand field only; 200 random dev listings each for fragrance and food,
+scored on the same rows as the rules) is landing in `C:\Work\Kavak-Taxo-runs\RESULTS.md`.
 
 ## 5. The architecture: a solver, and three loops (40 s)
 
@@ -185,14 +193,14 @@ lesson before it goes global.
 ## 11. Results: what each loop adds, in each domain (35 s)
 
 **Show:** a table, fragrance, food and cars: exact match and cost per 1,000 listings for an agent on everything, after
-loop 1, after loop 2, and with loop 3's head start. Filled so far: fragrance, agent on everything 75% at $2.76; after
-loop 1, 69% at $0.31.
+loop 1, after loop 2, and with loop 3's head start. Filled so far: fragrance after loop 1, 69% at about $0.31 per 1,000 listings
+(est.). The agent-only row waits for the baseline.
 
 **Say:**
 - We have more under the hood, like the wiki our agents keep. Happy to go into it after; there isn't time for the whole
   architecture now.
-- On fragrance, rules cut the cost per thousand listings from about $2.76 to about $0.31, and the eval is what tells us
-  where they still lose to the agent: 69% against 75%.
+- On fragrance, rules cut the estimated cost per thousand listings from about $2.76 to about $0.31. [Add how the rules
+  compare with the agent alone once the baseline is in.]
 
 ## 12. Everything is in the evals (20 s)
 
@@ -211,7 +219,7 @@ customer-feedback models, and other tasks with no ground truth.
 
 | Figure | Slide | What it shows | From | Status |
 |---|---|---|---|---|
-| Agent alone | 4 | Exact match, $ and hours for all 2M listings with an agent on everything | validator samples V1–V4 (160 listings) and silver S1–S3 (token and time logs); $3 per million tokens assumed | estimated |
+| Agent alone | 4 | Exact match, $ and hours for all 2M listings with an agent on everything | $ and hours: the validator's token and time logs (840 listings), $3 per million tokens assumed. Exact match: the agent-only baseline in `C:\Work\Kavak-Taxo-runs\RESULTS.md` | $ and hours estimated; accuracy running |
 | **A** | 8 | Exact match on sealed gold, round by round, each point labelled with the change kept | `memory/rounds/fragrance` on `origin/distill/rounds` | in the deck |
 | **B** | 9 | F1 of rule set 1 and rule set 2 on each round's eval; the sizes of gold and silver per round | validation rounds 1–2 | to run |
 | Loop 3 evidence | 10 | A lesson file; whole_name on food and fragrance | `lessons/brand-site-rung.yaml`; food run `metrics.json` (−789 harm); fragrance dev (−41 exact, from the run notes) | in the deck |
@@ -223,7 +231,7 @@ customer-feedback models, and other tasks with no ground truth.
 | Question | Answer |
 |---|---|
 | Isn't this over-engineering a labeller? | The labels are the first task, not the point. The point is improving a task with no ground truth by improving its eval. Rules are free, testable and carry to the next domain; the same loops apply wherever an answer can't be checked directly. |
-| Why not just use an agent for everything? | Cost and speed: about $5,500 and 510 hours a pass for 2 million listings, again on every refresh. On fragrance the agent alone was more accurate (75% against 69%), and the eval is what shows where the rules still lose. |
+| Why not just use an agent for everything? | Cost and speed: an estimated $5,500 and 510 hours a pass for 2 million listings, again on every refresh. [Add the agent-only accuracy once the baseline is in.] |
 | Who is "the person"? | In these runs, Pedia's labels stand in for the person. Against Harry's own labels, the rules moved from 47% to 50% exact, on 121 rows: smaller, and we say so. |
 | Isn't the validator just another agent you trust? | No. It is scored on gold at every version, its agreements are spot-checked, and only a person settles a disagreement or changes gold. Its flags went from 79% to 95% right after one review. |
 | How do you know a rule generalises? | The gate tests it on sealed gold the loop never tunes on, and loop 2 tests it on listings gold doesn't contain. |
