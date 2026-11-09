@@ -17,6 +17,52 @@ from taxo.tools.checks import CHECKS
 from domains.food.place_paths import read, rows, evidence
 
 
+def proposal_decision(raw, executable, feedback_ids):
+    """Validate one proposal independently; no implicit conversion between change kinds."""
+    kind = raw.get('kind', 'code_rule')
+    proposed = raw
+    decoded, payload_error = {}, None
+    if executable:
+        try:
+            decoded = json.loads(raw.get('payload_json') or '{}')
+            if not isinstance(decoded, dict):
+                raise ValueError('Proposal payload_json must be an object')
+        except Exception as error:
+            decoded, payload_error = {}, str(error)
+        proposed = {'id': raw['id'], 'description': raw['description'], 'scope': raw['scope'],
+                    'check': raw.get('check') or '', 'decision': raw.get('decision') or 'info',
+                    'params_json': json.dumps(decoded.get('params') or {}), 'rationale': raw['rationale']}
+    valid, reason = True, 'Existing check with signature-valid general parameters; evaluate in shadow only.'
+    try:
+        if executable and (kind != 'code_rule' or payload_error):
+            raise ValueError(payload_error or f'{kind} is not a legacy check; use its executable candidate handler')
+        if executable and set(decoded)-{'params'}:
+            raise ValueError('code_rule payload only accepts params; undeclared conditions cannot be silently ignored')
+        params = json.loads(proposed['params_json'])
+        if proposed['check'] not in CHECKS or proposed['decision'] not in {'veto', 'abstain', 'info'}:
+            raise ValueError('Unsupported check/decision')
+        if not isinstance(params, dict) or any(isinstance(v, (list, dict)) for v in params.values()):
+            raise ValueError('Check parameters must be a plain parameter mapping, not mined lists or nested lookups')
+        inspect.signature(CHECKS[proposed['check']][0]).bind(None, None, None, **params)
+    except Exception as error:
+        valid, reason = False, str(error)
+    candidate = valid or (executable and kind in {'agentic_rule', 'vocab', 'route'} and payload_error is None)
+    candidate_reason = reason
+    if executable and kind == 'new_check':
+        candidate_reason = 'Missing-check proposal recorded; no implementation was generated or qualified'
+    elif executable and kind == 'registry':
+        candidate_reason = 'Requires independent source provenance and registry importer; gold is not a runtime catalog'
+    elif executable and kind == 'convention_question':
+        candidate_reason = 'Policy question recorded for owner review; no executable change'
+    elif executable and kind == 'no_change':
+        candidate_reason = 'Empty justified proposal set; current pipeline retained without a manufactured change'
+    elif candidate and not valid:
+        candidate_reason = 'Eligible kind; executable candidate handler must validate its payload and measure effects'
+    return {'accept_for_shadow_experiment': valid, 'reason': reason, 'kind': kind,
+            'executable_candidate': candidate, 'executable_reason': candidate_reason,
+            'raw_proposal': raw, 'production_admission': False, 'rule': proposed, 'feedback_ids': feedback_ids}
+
+
 def execute(root, run_name, validator_path=None, *, executable=False):
     folder = root / (run_name + "-feedback-roles")
     folder.mkdir(exist_ok=False)
@@ -43,6 +89,10 @@ def execute(root, run_name, validator_path=None, *, executable=False):
                   "Propose one general mechanism, no listing/ASIN/title/brand-answer lists. "
                   "Model/CLI pin cannot change; no web or outside evidence. "
                   "A rule must not enforce missing brand fields as missing makers. No per-case exceptions.")
+    if executable:
+        constraint = constraint.replace('Propose one general mechanism',
+            'The proposer may justify zero to two independent mechanisms, at most one agentic_rule and one '
+            'other kind; never manufacture both. The improver proposes one validator setup change')
     from taxo.roles.validator import load_setup
     setup = load_setup('food')
     if validator_path and (validator_path.parent / "role-manifest.json").exists():
@@ -74,6 +124,8 @@ def execute(root, run_name, validator_path=None, *, executable=False):
             old_roles = root/(previous.parent.name+'-feedback-feedback-roles')
             if (old_roles/'proposer-output.json').exists():
                 history.append({'trial':previous.parent.name, 'proposal':read(old_roles/'proposer-output.json'),
+                    'joint_proposals':read(old_roles/'pipeline-proposals.json')
+                        if (old_roles/'pipeline-proposals.json').exists() else None,
                     'retained_system_version':old['version_after'],
                     'outcome':'retained' if old['version_after'] > old['version_before'] else 'rejected'})
             vp = root/(previous.parent.name+'-validator-candidate/metrics.json')
@@ -107,55 +159,34 @@ def execute(root, run_name, validator_path=None, *, executable=False):
                                  'prior_validator_trials_feedback_only': validator_history if executable else [],
                                  'validator_mistakes': [{k: v for k, v in c.items() if k != 'pipeline'}
                                                        for c in mistakes]}, ensure_ascii=False)
-        result = run_sync(factory('food', executable=executable), scoped, output=folder / role, max_turns=1)
+        options = {'executable': executable}
+        if role == 'proposer' and executable:
+            options['joint'] = True
+        result = run_sync(factory('food', **options), scoped, output=folder / role, max_turns=1)
         return result.final_output.model_dump(mode="json")
     with ThreadPoolExecutor(max_workers=2) as pool:
         proposer = pool.submit(call, "proposer", make_proposer)
         improver = pool.submit(call, "improver", make_improver)
         proposed, improved = proposer.result(), improver.result()
+    proposal_list = proposed['proposals'] if executable else [proposed]
+    if executable:
+        write(folder/'pipeline-proposals.json', proposal_list)
+        proposed = proposal_list[0] if proposal_list else {
+            'kind': 'no_change', 'id': 'no_change', 'description': 'No justified pipeline change proposed',
+            'scope': 'domain', 'check': None, 'decision': 'info', 'payload_json': '{}',
+            'rationale': 'Empty bounded proposal set; retain the current integrated pipeline.'}
     write(folder / "proposer-output.json", proposed)
     write(folder / "improver-output.json", improved)
-    raw_proposed = proposed
-    kind = proposed.get('kind', 'code_rule')
-    payload_error = None
+    feedback_ids = [c['listing_id'] for c in cases]
+    decisions = [proposal_decision(p, executable, feedback_ids) for p in proposal_list]
+    primary = decisions[0] if decisions else proposal_decision(proposed, executable, feedback_ids)
+    primary.update(proposal_count=len(proposal_list), joint=executable,
+                   individual_decisions=decisions, any_executable_candidate=any(d['executable_candidate'] for d in decisions))
     if executable:
-        try:
-            decoded = json.loads(proposed.get('payload_json') or '{}')
-            if not isinstance(decoded, dict):
-                raise ValueError('Proposal payload_json must be an object')
-        except Exception as error:
-            decoded, payload_error = {}, str(error)
-        proposed = {'id': proposed['id'], 'description': proposed['description'], 'scope': proposed['scope'],
-                    'check': proposed.get('check') or '', 'decision': proposed.get('decision') or 'info',
-                    'params_json': json.dumps(decoded.get('params') or {}), 'rationale': proposed['rationale']}
-    valid, reason = True, "Existing check with signature-valid general parameters; evaluate in shadow only."
-    try:
-        if executable and (kind != 'code_rule' or payload_error):
-            raise ValueError(payload_error or f'{kind} is not a legacy check; use its executable candidate handler')
-        if executable and set(decoded)-{'params'}:
-            raise ValueError('code_rule payload only accepts params; undeclared conditions cannot be silently ignored')
-        params = json.loads(proposed["params_json"])
-        if proposed["check"] not in CHECKS or proposed["decision"] not in {"veto", "abstain", "info"}:
-            raise ValueError("Unsupported check/decision")
-        if any(isinstance(v, (list, dict)) for v in params.values()):
-            raise ValueError("No mined word/name lists or nested lookup parameters accepted")
-        inspect.signature(CHECKS[proposed["check"]][0]).bind(None, None, None, **params)
-    except Exception as error:
-        valid, reason = False, str(error)
-    candidate = valid or (executable and kind in {'agentic_rule', 'vocab', 'route'} and payload_error is None)
-    candidate_reason = reason
-    if executable and kind == 'new_check':
-        candidate_reason = 'Missing-check proposal recorded; no implementation was generated or qualified'
-    elif executable and kind == 'registry':
-        candidate_reason = 'Requires independent source provenance and registry importer; gold is not a runtime catalog'
-    elif executable and kind == 'convention_question':
-        candidate_reason = 'Policy question recorded for owner review; no executable change'
-    elif candidate and not valid:
-        candidate_reason = 'Eligible kind; executable candidate handler must validate its payload and measure effects'
-    write(folder / "proposer-decision.json", {"accept_for_shadow_experiment": valid, "reason": reason,
-          'kind': kind, 'executable_candidate': candidate, 'executable_reason': candidate_reason,
-          'raw_proposal': raw_proposed,
-          "production_admission": False, "rule": proposed, "feedback_ids": [c["listing_id"] for c in cases]})
+        write(folder/'pipeline-proposal-decisions.json', decisions)
+    write(folder/'proposer-decision.json', primary)
+    proposed, kind = primary['rule'], primary['kind']
+    valid, candidate = primary['accept_for_shadow_experiment'], primary['executable_candidate']
     accepted = improved["kind"] == "checklist_step" and len(improved["text"]) < 2000
     names = {s["label"].casefold() for c in cases for s in c["human_gold"] if len(s["label"]) >= 5}
     applied_text = '\n'.join(str(improved.get(k) or '') for k in ('text', 'ask', 'code'))
@@ -203,6 +234,8 @@ def execute(root, run_name, validator_path=None, *, executable=False):
         write(folder / "validator-setup-v2.json", setup)
     write(folder / "manifest.json", {"feedback_partition_only": True, "feedback_ids": [c["listing_id"] for c in cases],
           'executable_contracts': executable, 'proposal_kind': kind, 'executable_candidate': candidate,
+          'joint_proposal_count': len(proposal_list), 'proposal_kinds': [d['kind'] for d in decisions],
+          'any_executable_candidate': any(d['executable_candidate'] for d in decisions),
           "source": fingerprint(folder / "feedback-cases.json"), "roles": ["proposer", "improver"],
           "proposer_accepted_for_shadow": valid, "validator_setup_trial_accepted": accepted})
     print(json.dumps({"proposer": proposed, "proposer_valid": valid, "improver": improved, "improver_accepted": accepted}))

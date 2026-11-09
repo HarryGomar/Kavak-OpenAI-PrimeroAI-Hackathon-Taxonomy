@@ -68,38 +68,42 @@ def run(root, fallback, name, setup):
         write(root/role_name/'feedback-diagnosis.json', read(fallback/'feedback-diagnosis.json'))
         loop_roles.execute(root, role_name, current/'judgments.json', executable=True)
     proposal = read(roles/'proposer-output.json')
+    proposals = read(roles/'pipeline-proposals.json') if (roles/'pipeline-proposals.json').exists() else [proposal]
+    primary_proposal = proposal
     improved = read(roles/'improver-decision.json')
     candidate_config, candidate_card, candidate_tools = config, card_path, list(tool_reports)
     config_changed = card_changed = False
     diagnostics = {'status': 'unchanged', 'fresh_model_calls': 0}
-    if proposal['kind'] in ('vocab', 'route', 'code_rule', 'new_check'):
-        trial = out/'configuration-isolation'
-        diagnostics = read(trial/'report.json') if (trial/'report.json').exists() else executable_changes.evaluate(
-            proposal, root, fallback, trial, base_config=config)
-        if diagnostics['status'] == 'evaluated_offline_executable_config':
-            candidate_config = trial/'candidate-config.yaml'
-            config_changed = True
-    elif proposal['kind'] == 'agentic_rule':
-        payload = json.loads(proposal['payload_json'])
-        if not isinstance(payload.get('text'), str) or not payload['text'].strip():
-            raise ValueError('Placer instruction proposal requires concrete text')
-        gold_names = {s['label'].casefold() for r in read(fallback/'feedback-diagnosis.json')
-                      for s in r['gold_original'][0]['pedia_full_path'] if len(s['label']) >= 5}
-        if any(n in payload['text'].casefold() for n in gold_names):
-            raise ValueError('Specific gold name in proposed placer instruction')
-        card = read(card_path)
-        card.update(hypothesis=proposal['description'], change_id=proposal['id'],
-                    instruction=card['instruction']+'\nPLACER RULE CANDIDATE:\n'+payload['text'])
-        candidate_card = out/'candidate-placer-card.json'
-        write(candidate_card, card)
-        if payload.get('tool_report'):
-            report_path = Path(payload['tool_report'])
-            load_tool(report_path)  # qualification/source-hash check before candidate eligibility
-            candidate_tools.append(report_path)
-        card_changed = True
-    else:
-        diagnostics = {'status': 'implementation_or_evidence_needed', 'proposal': proposal,
-                       'reason': 'No invented registry, check, or policy capability', 'fresh_model_calls': 0}
+    for proposal in proposals:
+        if proposal['kind'] in ('vocab', 'route', 'code_rule', 'new_check'):
+            trial = out/'configuration-isolation'
+            diagnostics = read(trial/'report.json') if (trial/'report.json').exists() else executable_changes.evaluate(
+                proposal, root, fallback, trial, base_config=config)
+            if diagnostics['status'] == 'evaluated_offline_executable_config':
+                candidate_config = trial/'candidate-config.yaml'
+                config_changed = True
+        elif proposal['kind'] == 'agentic_rule':
+            payload = json.loads(proposal['payload_json'])
+            if not isinstance(payload.get('text'), str) or not payload['text'].strip():
+                raise ValueError('Placer instruction proposal requires concrete text')
+            gold_names = {s['label'].casefold() for r in read(fallback/'feedback-diagnosis.json')
+                          for s in r['gold_original'][0]['pedia_full_path'] if len(s['label']) >= 5}
+            if any(n in payload['text'].casefold() for n in gold_names):
+                raise ValueError('Specific gold name in proposed placer instruction')
+            card = read(card_path)
+            card.update(hypothesis=proposal['description'], change_id=proposal['id'],
+                        instruction=card['instruction']+'\nPLACER RULE CANDIDATE:\n'+payload['text'])
+            candidate_card = out/'candidate-placer-card.json'
+            write(candidate_card, card)
+            if payload.get('tool_report'):
+                report_path = Path(payload['tool_report'])
+                load_tool(report_path)  # qualification/source-hash check before candidate eligibility
+                candidate_tools.append(report_path)
+            card_changed = True
+        else:
+            diagnostics = {'status': 'implementation_or_evidence_needed', 'proposal': proposal,
+                           'reason': 'No invented registry, check, or policy capability', 'fresh_model_calls': 0}
+    proposal = primary_proposal
     write(out/'stage-status.json', {'status': 'running', 'stage': 'actual_full_pipeline_and_validator_comparisons'})
     outcomes, measurements = {}, {}
     def evaluate_pipeline(label, cfg, card, reports):
@@ -175,7 +179,9 @@ def run(root, fallback, name, setup):
             routing_mode='rules_then_agent' if chosen['config'] else 'agent_all',
             placer={'card': chosen['card'], 'tool_reports': chosen['tool_reports']})
     if validator['keep_for_development']:
-        changes['validator'] = {'setup': validator['setup']}
+        import yaml
+        retained_validator = yaml.safe_load(Path(validator['setup']).read_text(encoding='utf-8'))
+        changes['validator'] = {'setup': validator['setup'], 'tool_reports':retained_validator.get('tool_reports', [])}
     if changes:
         changes.setdefault('baseline_output', state['baseline_output']['path'])
     gate = {'keep_for_development': bool(changes), 'production_admission': False,
@@ -192,7 +198,7 @@ def run(root, fallback, name, setup):
     calls['actual_placer'] = sum(x['actual_placer_calls'] for x in measurements.values())
     report = {'status':'completed_integrated_development_cycle','sample':len(rows(root/'source-snapshot.jsonl')),
         'feedback':len(read(root/'protocol.json')['partition']['feedback_ids']), 'version_before':before_version,
-        'version_after':state['version'],'roles_actual_calls':calls,'pipeline_proposal':proposal,
+        'version_after':state['version'],'roles_actual_calls':calls,'pipeline_proposal':proposal, 'pipeline_proposals':proposals,
         'configuration_isolation_diagnostic':diagnostics,'component_and_integrated_comparisons':outcomes,
         'validator_comparison':validator,'retained_output':state['baseline_output']['path'],
         'retained_exact':read(Path(state['baseline_output']['path'])/'metrics.json')['identity_path_exact'],
