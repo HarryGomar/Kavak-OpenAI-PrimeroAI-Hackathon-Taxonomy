@@ -160,3 +160,88 @@ will be needed before long.
 - Pedia names typed products with their form word ("Coral Coast Body Mist"), while our vocab strips forms.
 - Catalog rows have no brand.
 - Single listings fall under the lattice's floor.
+
+### Rounds 4 and 5
+
+| Round | Change | Dev exact | Sealed exact | Sealed harm | Human sealed | To agent | Gate |
+|---|---|---:|---:|---:|---:|---:|---|
+| 4 | typed child when the listing's form differs from its product's usual form (`child/typed-form`) | 60.9% | n/a | n/a | n/a | 18.8% | **dropped on dev** (171 better, 295 worse; sealed not read). Pedia keeps most mists and oils on the scent itself, so the rule stays in shadow |
+| 5 | brand rung `url`: Parfumo and Fragrantica `/Perfumes/<Brand>/` and shop slugs `…-by-<brand>-…` | 62.8% | **66.0%** | 12.8% | 48.4% | **18.1%** | **kept** (32 better, 6 worse) |
+
+**Sealed reads:** 6 in total.
+
+**Rule for future rounds:** a change that loses on dev is dropped without reading sealed.
+
+## Loop B, round V1: validator plus person review (in progress)
+
+**Sample** (`uv run python -m taxo.loopb sample fragrance V1`): 40 fresh listings with no Pedia label and a known
+brand. 25 are ones the lattice placed and 15 are ones it sent to the agent.
+
+**Validator v1:** no `OPENAI_API_KEY` is set, so v1 is the Claude Code session itself. It labelled from a file that
+hides the pipeline's answers. It is not fully blind, because the same session wrote the pipeline.
+
+**Compare:** the validator agrees with the pipeline on 6 and disagrees on 34. The disagreements fall into these groups:
+- Catalog names seen once stop at the brand.
+- Clusters made of the junk word "AL".
+- HTML markup became a product name (`<span class="label_a small upper">`).
+- Titles joined a near neighbour: "While in Love Forever" placed on "Hawas Love", "Kunafa Chocolate" on "Odyssey Dubai
+  Chocolate Gourmand".
+
+**Review:** the person settles all 34 disagreements and the 6 agreed spot checks on a private review page. The two
+answers are shown as A and B in a fixed order per listing, without saying which labeller gave which. After that,
+`taxo.loopb settle` freezes V1, adds the person's labels as gold, and writes the validator's score as the KPI silver
+row.
+
+### Loop B V1, settled with Pedia as the reviewer; round 6 from its findings
+
+**Setup:** for testing, Pedia's label plays the person. Each Loop B round "reveals" Pedia's labels for a new batch, as if
+someone had just labelled it. Everything is still scored against Pedia. For the presentation, the same flow runs with a
+person reviewing (`taxo.loopb settle` takes a person's verdicts).
+
+**V1 sample** (`taxo.loopb sample fragrance V1 --pool pedia-dev`): 40 Pedia-labelled listings from dev brands. The
+earlier unlabelled sample is kept in `runs/fragrance/loopb/V0-unlabelled/`.
+
+| V1 | Result |
+|---|---:|
+| Validator agrees with the pipeline | 21 of 40 (52.5%) |
+| Validator right when it disagrees | 15 of 19 (79%) |
+| Spot checks of agreed rows that held | 5 of 6 |
+| Pipeline errors found | 16 |
+| New gold rows written (`V1-gold.jsonl`) | 25 |
+
+**Pipeline errors:** 12 of the 16 were short product names seen once ("Invincible", "Aayah", "Big Apple"), which the
+pipeline sent to the agent.
+
+**Validator errors:** it names sets ("Minis Gift Set") where the reviewer uses plain "Gift Set". This became validator
+card v2: `cards/validator-fragrance.md`.
+
+| Round | Change | Dev exact | Sealed exact | Sealed harm | Human sealed | To agent | Gate |
+|---|---|---:|---:|---:|---:|---:|---|
+| 6 | `settle/single-name`: a short name under the floor (3 words or fewer) gets its own product node instead of going to the agent (found by V1) | 65.7% | **68.9%** | 14.2% | 50.3% | **11.1%** | **kept** (93 better, 33 worse) |
+
+**Sealed reads:** 7 in total.
+
+### Loop B V2 (validator card v2), then rounds 7 and 8
+
+**V2 sample:** 40 new Pedia-labelled dev listings, none from V1 (the sampler skips listings an earlier round used). I
+labelled them blind with card v2, and Pedia settled the disagreements.
+
+| | V1 (card v1) | V2 (card v2) |
+|---|---:|---:|
+| Validator agrees with the pipeline | 21 of 40 | 18 of 40 |
+| Validator right when it disagrees | 15 of 19 (79%) | **21 of 22 (95%)** |
+| Spot checks of agreed rows that held | 5 of 6 | **6 of 6** |
+| Pipeline errors found | 16 | 21 |
+
+**What V2's pipeline errors show:**
+- The concentration veto blocks right answers ("Yeah EDP", "Gala Premiere EDP"). Pedia doesn't split by concentration.
+- "for Everyone N/A" (Target's audience text) became a product name.
+- Junk clusters remain: "Pack", "Scents", "Hair Mist".
+
+| Round | Change | Dev exact | Sealed exact | Gate |
+|---|---|---:|---:|---|
+| 7 | concentration veto to shadow | 66.0% | 69.1% | **dropped** (8 better, 5 worse on sealed: bound 0.36) |
+| 8 | `audience += for everyone, everyone, n a` | 66.3% (77 better, 6 worse on dev) | 69.0% | **dropped**: it touches 1 sealed row, so sealed cannot test it. Re-test on a larger or fresh sealed set |
+
+**State after round 8:** the pipeline stays at round 6. Sealed exact is 68.9%, and 11.1% of listings go to the agent.
+Sealed has been read 9 times.
