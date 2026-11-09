@@ -1,0 +1,46 @@
+{
+ "id": "5516b7deca",
+ "domain": "cars",
+ "ts": "2026-11-09T23:01:11.550762+00:00",
+ "loop": "A",
+ "round": 3,
+ "change": "Ignore trailing abbreviated catalogue years",
+ "label": "untested r3: Ignore trailing abbreviated catalogue years",
+ "keep": null,
+ "decided_on": "dev",
+ "lesson": "spec-tokens-are-not-model-names",
+ "kind": "rule_shape",
+ "branch": "cars-pipeline",
+ "author": "Diego Mendez",
+ "gate": {
+  "touched": 0,
+  "why": "Nissan catalogue versions include a trailing '26 that duplicates the model-year level and can create an irrelevant trim-token mismatch.",
+  "before": {
+   "accept_rows": 194,
+   "exact_rate": 0.8763,
+   "right_or_shallower": null,
+   "harm_rate": 0.0515
+  },
+  "after": {
+   "accept_rows": 194,
+   "exact_rate": 0.8763,
+   "right_or_shallower": null,
+   "harm_rate": 0.0515
+  },
+  "net": {
+   "holds": 0,
+   "harm": 0,
+   "routed": 0,
+   "version_nodes": 0
+  },
+  "sealed": null
+ },
+ "kpi": {
+  "ts": "2026-11-09T23:01:11.550762+00:00",
+  "loop": "A",
+  "round": 3,
+  "label": "untested r3: Ignore trailing abbreviated catalogue years",
+  "change": "Ignore trailing abbreviated catalogue years",
+  "code": "[{\"op\": \"append\", \"path\": \"trim.noise.patterns\", \"value\": \"(?:^|\\\\s)['\\u2019]\\\\d{2}\\\\s*$\"}]"
+ }
+}

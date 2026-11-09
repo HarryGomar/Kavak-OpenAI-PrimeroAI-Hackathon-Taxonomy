@@ -1,0 +1,46 @@
+{
+ "id": "87a7dc4448",
+ "domain": "cars",
+ "ts": "2026-11-09T22:25:04.349650+00:00",
+ "loop": "A",
+ "round": 2,
+ "change": "catalogue-version-number-guard",
+ "label": "DROPPED on dev (cars gate): r2: catalogue-version-number-guard",
+ "keep": false,
+ "decided_on": "dev",
+ "lesson": "sibling-part-numbers-stay-apart",
+ "kind": "rule_shape",
+ "branch": "cars-pipeline",
+ "author": "Diego Mendez",
+ "gate": {
+  "touched": 2,
+  "why": "A model number in the listing that the catalogue version lacks blocks that catalogue version.",
+  "before": {
+   "accept_rows": 105,
+   "exact_rate": 0.9619,
+   "right_or_shallower": null,
+   "harm_rate": 0.0095
+  },
+  "after": {
+   "accept_rows": 105,
+   "exact_rate": 0.9524,
+   "right_or_shallower": null,
+   "harm_rate": 0.019
+  },
+  "net": {
+   "holds": -1,
+   "harm": 1,
+   "routed": 2,
+   "version_nodes": 2
+  },
+  "sealed": null
+ },
+ "kpi": {
+  "ts": "2026-11-09T22:25:04.349650+00:00",
+  "loop": "A",
+  "round": 2,
+  "label": "DROPPED on dev (cars gate): r2: catalogue-version-number-guard",
+  "change": "catalogue-version-number-guard",
+  "code": "[{\"op\": \"set\", \"path\": \"version_guard.number_guard\", \"value\": true}]"
+ }
+}

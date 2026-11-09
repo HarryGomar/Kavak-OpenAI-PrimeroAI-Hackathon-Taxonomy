@@ -10,23 +10,30 @@
   - op: set
     path: trim.label.add_gearbox
     value: true
-  dev:
+  dev: &id002
     holds: 100
     n: 105
     harm: 2
     routed: 5792
     version_nodes: 5161
-  delta:
+  delta: &id001
     holds: 6
     harm: -3
     routed: 0
     version_nodes: 0
-  sealed:
+  sealed: &id003
     rows: 7
     before: 6
     after: 6
     harm: 1
     reads_total: 3
+  status: applied
+  evidence:
+    gold_dev_rows_touched_delta: *id001
+    gold_dev_after: *id002
+    sealed: *id003
+    source: owner review r01 (Yaris 1.5 S MT, Kia Rio 1.6 EX Manual)
+  lesson: version-names-carry-the-gearbox
 - id: trim-typo-to-catalogue
   round: 2
   kept_at: '2026-11-09'
@@ -37,76 +44,95 @@
   - op: set
     path: trim.label.fix_typos
     value: true
-  dev:
+  dev: &id005
     holds: 101
     n: 105
     harm: 1
     routed: 5792
     version_nodes: 5159
-  delta:
+  delta: &id004
     holds: 1
     harm: -1
     routed: 0
     version_nodes: -2
-  sealed:
+  sealed: &id006
     rows: 7
     before: 6
     after: 6
     harm: 1
     reads_total: 4
+  status: applied
+  evidence:
+    gold_dev_rows_touched_delta: *id004
+    gold_dev_after: *id005
+    sealed: *id006
+    source: owner review r01 (TREDLINE -> Trendline)
+  lesson: typo-snaps-to-catalogue-spelling
 - id: Normalize Kia Soul with embedded EX trim
   round: 3
   kept_at: '2026-11-09'
   origin: codex proposer
   source: codex proposer
-  why: The Kia Soul EX listing incorrectly creates the nameplate 'soul ex'. A Kia-specific alias maps this trim-bearing nameplate
-    to 'soul' without affecting other makes.
+  why: The Kia Soul EX listing incorrectly creates the nameplate 'soul ex'.
   ops:
   - op: add_alias
     path: models.aliases.kia
     value: soul ex=soul
-  dev:
+  dev: &id008
     holds: 168
     n: 194
     harm: 11
     routed: 5790
     version_nodes: 5160
-  delta:
+  delta: &id007
     holds: 1
     harm: 0
     routed: -2
     version_nodes: 1
-  sealed:
+  sealed: &id009
     rows: 34
     before: 23
     after: 23
     harm: 6
     reads_total: 5
+  status: applied
+  evidence:
+    gold_dev_rows_touched_delta: *id007
+    gold_dev_after: *id008
+    sealed: *id009
+    source: codex proposer
+  lesson: model-alias-strips-trim-word
 - id: Restore JAC nameplate after make-prefix stripping
   round: 3
   kept_at: '2026-11-09'
   origin: codex proposer
   source: codex proposer
-  why: The listing explicitly names 'Jac 2', but normalization reduces it to '2'. A JAC-scoped alias restores the nameplate
-    without affecting numeric models of other makes.
+  why: The listing explicitly names 'Jac 2', but normalization reduces it to '2'.
   ops:
   - op: add_alias
     path: models.aliases.jac
     value: 2=jac 2
-  dev:
+  dev: &id011
     holds: 170
     n: 194
     harm: 10
     routed: 5791
     version_nodes: 5160
-  delta:
+  delta: &id010
     holds: 2
     harm: -1
     routed: 1
     version_nodes: 0
-  sealed:
+  sealed: &id012
     rows: 34
     before: 23
     after: 23
     harm: 6
     reads_total: 6
+  status: applied
+  evidence:
+    gold_dev_rows_touched_delta: *id010
+    gold_dev_after: *id011
+    sealed: *id012
+    source: codex proposer
+  lesson: short-model-codes

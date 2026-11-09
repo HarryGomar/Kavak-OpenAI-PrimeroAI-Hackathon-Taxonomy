@@ -1,0 +1,39 @@
+{
+ "id": "7144557393",
+ "domain": "cars",
+ "ts": "2026-11-09T21:42:17.177582+00:00",
+ "loop": "A",
+ "round": 1,
+ "change": "trim-noise-colours-stock-codes",
+ "label": "untested r1: trim-noise-colours-stock-codes",
+ "keep": null,
+ "decided_on": "dev",
+ "lesson": "colour-and-stock-codes-are-not-version-names",
+ "kind": "rule_shape",
+ "branch": "cars-pipeline",
+ "author": "Diego Mendez",
+ "gate": {
+  "touched": 0,
+  "why": "Listing-stated versions fragment on colour words and stock/dealer codes (\"4p Sense L4/1.6 Aut Blanco\", \"SENSE NV4005\", \"... CSGDL\"); drop them from the version key.",
+  "after": {
+   "accept_rows": 37,
+   "exact_rate": 1.0,
+   "right_or_shallower": null,
+   "harm_rate": 0.0
+  },
+  "net": {
+   "holds": 0,
+   "harm": 0,
+   "routed": -5,
+   "version_nodes": -12
+  }
+ },
+ "kpi": {
+  "ts": "2026-11-09T21:42:17.177582+00:00",
+  "loop": "A",
+  "round": 1,
+  "label": "untested r1: trim-noise-colours-stock-codes",
+  "change": "trim-noise-colours-stock-codes",
+  "code": "trim-noise-colours-stock-codes"
+ }
+}

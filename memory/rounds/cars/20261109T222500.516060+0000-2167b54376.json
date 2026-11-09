@@ -1,0 +1,52 @@
+{
+ "id": "2167b54376",
+ "domain": "cars",
+ "ts": "2026-11-09T22:25:00.516060+00:00",
+ "loop": "A",
+ "round": 2,
+ "change": "version-label-gearbox",
+ "label": "gate KEPT: r2: version-label-gearbox",
+ "keep": true,
+ "decided_on": "dev+sealed",
+ "lesson": "version-names-carry-the-gearbox",
+ "kind": "rule_shape",
+ "branch": "cars-pipeline",
+ "author": "Diego Mendez",
+ "gate": {
+  "touched": 13,
+  "why": "The owner names the gearbox in the version; add it from the listing's transmission field when the trim text lacks it.",
+  "before": {
+   "accept_rows": 105,
+   "exact_rate": 0.8952,
+   "right_or_shallower": null,
+   "harm_rate": 0.0476
+  },
+  "after": {
+   "accept_rows": 105,
+   "exact_rate": 0.9524,
+   "right_or_shallower": null,
+   "harm_rate": 0.019
+  },
+  "net": {
+   "holds": 6,
+   "harm": -3,
+   "routed": 0,
+   "version_nodes": 0
+  },
+  "sealed": {
+   "rows": 7,
+   "before": 6,
+   "after": 6,
+   "harm": 1,
+   "reads_total": 3
+  }
+ },
+ "kpi": {
+  "ts": "2026-11-09T22:25:00.516060+00:00",
+  "loop": "A",
+  "round": 2,
+  "label": "gate KEPT: r2: version-label-gearbox",
+  "change": "version-label-gearbox",
+  "code": "[{\"op\": \"set\", \"path\": \"trim.label.add_gearbox\", \"value\": true}]"
+ }
+}

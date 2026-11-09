@@ -1,0 +1,48 @@
+{
+ "id": "0dd48424b0",
+ "domain": "cars",
+ "ts": "2026-11-09T22:30:57.043091+00:00",
+ "loop": "B",
+ "round": 2,
+ "change": "validator-checklist-from-mistakes",
+ "label": "DROPPED on dev (cars gate): r2: validator-checklist-from-mistakes",
+ "keep": false,
+ "decided_on": "dev",
+ "lesson": "validator-checklist-from-gold-mistakes",
+ "kind": "validator_check",
+ "branch": "cars-pipeline",
+ "author": "Diego Mendez",
+ "gate": {
+  "touched": 99,
+  "why": "These checks prevent noncanonical version labels, lost body or cab distinctions, and unsupported version assignments from generic specifications.",
+  "before": {
+   "accept_rows": 99,
+   "exact_rate": 0.8687,
+   "right_or_shallower": null,
+   "harm_rate": 0.0505
+  },
+  "after": {
+   "accept_rows": 99,
+   "exact_rate": 0.8788,
+   "right_or_shallower": null,
+   "harm_rate": 0.0606
+  },
+  "flag_precision": [
+   0.5,
+   0.333
+  ],
+  "lines": [
+   "Validate advertised trims and powertrain aliases against the Mexican-market make–model–year catalog before assigning its canonical version label.",
+   "Preserve body style, cab configuration, and conversion descriptors when extracting the complete version.",
+   "Require explicit version evidence or a verified catalog match rather than treating generic transmission metadata as a version."
+  ]
+ },
+ "kpi": {
+  "ts": "2026-11-09T22:30:57.043091+00:00",
+  "loop": "B",
+  "round": 2,
+  "label": "DROPPED on dev (cars gate): r2: validator-checklist-from-mistakes",
+  "change": "validator-checklist-from-mistakes",
+  "code": "validator-checklist-from-mistakes"
+ }
+}

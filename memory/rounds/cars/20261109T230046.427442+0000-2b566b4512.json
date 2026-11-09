@@ -1,0 +1,46 @@
+{
+ "id": "2b566b4512",
+ "domain": "cars",
+ "ts": "2026-11-09T23:00:46.427442+00:00",
+ "loop": "A",
+ "round": 3,
+ "change": "Treat 4WD consistently with generic drivetrain tokens",
+ "label": "untested r3: Treat 4WD consistently with generic drivetrain tokens",
+ "keep": null,
+ "decided_on": "dev",
+ "lesson": "spec-tokens-are-not-model-names",
+ "kind": "rule_shape",
+ "branch": "cars-pipeline",
+ "author": "Diego Mendez",
+ "gate": {
+  "touched": 0,
+  "why": "Compass listings contain 4WD while catalogue versions use AWD. AWD and 4x4 are already generic tokens; the missing 4wd spelling can cause a false trim mismatch.",
+  "before": {
+   "accept_rows": 194,
+   "exact_rate": 0.8763,
+   "right_or_shallower": null,
+   "harm_rate": 0.0515
+  },
+  "after": {
+   "accept_rows": 194,
+   "exact_rate": 0.8763,
+   "right_or_shallower": null,
+   "harm_rate": 0.0515
+  },
+  "net": {
+   "holds": 0,
+   "harm": 0,
+   "routed": -8,
+   "version_nodes": -7
+  },
+  "sealed": null
+ },
+ "kpi": {
+  "ts": "2026-11-09T23:00:46.427442+00:00",
+  "loop": "A",
+  "round": 3,
+  "label": "untested r3: Treat 4WD consistently with generic drivetrain tokens",
+  "change": "Treat 4WD consistently with generic drivetrain tokens",
+  "code": "[{\"op\": \"append\", \"path\": \"trim.generic_tokens\", \"value\": \"4wd\"}]"
+ }
+}

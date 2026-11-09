@@ -1,0 +1,52 @@
+{
+ "id": "ce7a64b656",
+ "domain": "cars",
+ "ts": "2026-11-09T23:00:27.482944+00:00",
+ "loop": "A",
+ "round": 3,
+ "change": "Restore JAC nameplate after make-prefix stripping",
+ "label": "gate KEPT: r3: Restore JAC nameplate after make-prefix stripping",
+ "keep": true,
+ "decided_on": "dev+sealed",
+ "lesson": "short-model-codes",
+ "kind": "rule_shape",
+ "branch": "cars-pipeline",
+ "author": "Diego Mendez",
+ "gate": {
+  "touched": 2,
+  "why": "The listing explicitly names 'Jac 2', but normalization reduces it to '2'. A JAC-scoped alias restores the nameplate without affecting numeric models of other makes.",
+  "before": {
+   "accept_rows": 194,
+   "exact_rate": 0.866,
+   "right_or_shallower": null,
+   "harm_rate": 0.0567
+  },
+  "after": {
+   "accept_rows": 194,
+   "exact_rate": 0.8763,
+   "right_or_shallower": null,
+   "harm_rate": 0.0515
+  },
+  "net": {
+   "holds": 2,
+   "harm": -1,
+   "routed": 1,
+   "version_nodes": 0
+  },
+  "sealed": {
+   "rows": 34,
+   "before": 23,
+   "after": 23,
+   "harm": 6,
+   "reads_total": 6
+  }
+ },
+ "kpi": {
+  "ts": "2026-11-09T23:00:27.482944+00:00",
+  "loop": "A",
+  "round": 3,
+  "label": "gate KEPT: r3: Restore JAC nameplate after make-prefix stripping",
+  "change": "Restore JAC nameplate after make-prefix stripping",
+  "code": "[{\"op\": \"add_alias\", \"path\": \"models.aliases.jac\", \"value\": \"2=jac 2\"}]"
+ }
+}

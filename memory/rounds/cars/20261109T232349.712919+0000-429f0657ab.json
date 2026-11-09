@@ -1,0 +1,45 @@
+{
+ "id": "429f0657ab",
+ "domain": "cars",
+ "ts": "2026-11-09T23:23:49.712919+00:00",
+ "loop": "A",
+ "round": 4,
+ "change": "Normalize Nissan NV350 Urvan to Urvan",
+ "label": "DROPPED on silver (cars gate): r4: Normalize Nissan NV350 Urvan to Urvan",
+ "keep": false,
+ "decided_on": "silver+dev",
+ "lesson": "model-alias-strips-trim-word",
+ "kind": "rule_shape",
+ "branch": "cars-pipeline",
+ "author": "Diego Mendez",
+ "gate": {
+  "touched": 1,
+  "why": "The listing explicitly names Urvan; a make-scoped alias consolidates the NV350-prefixed name under the supported nameplate.",
+  "verdict": "dropped on silver",
+  "before": {
+   "accept_rows": 500,
+   "exact_rate": 0.868,
+   "right_or_shallower": null,
+   "harm_rate": 0.014
+  },
+  "after": {
+   "accept_rows": 500,
+   "exact_rate": 0.868,
+   "right_or_shallower": null,
+   "harm_rate": 0.014
+  },
+  "evidence": "silver = frozen validator v2 labels",
+  "catalogue_precision": [
+   0.077,
+   0.077
+  ]
+ },
+ "kpi": {
+  "ts": "2026-11-09T23:23:49.712919+00:00",
+  "loop": "A",
+  "round": 4,
+  "label": "DROPPED on silver (cars gate): r4: Normalize Nissan NV350 Urvan to Urvan",
+  "change": "Normalize Nissan NV350 Urvan to Urvan",
+  "code": "[{\"op\": \"add_alias\", \"path\": \"models.aliases.nissan\", \"value\": \"nv350 urvan=urvan\"}]"
+ }
+}

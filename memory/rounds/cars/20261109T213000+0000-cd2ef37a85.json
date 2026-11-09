@@ -1,0 +1,39 @@
+{
+ "id": "cd2ef37a85",
+ "domain": "cars",
+ "ts": "2026-11-09T21:30:00+00:00",
+ "loop": "A",
+ "round": 1,
+ "change": "brand/group-title-model-owner",
+ "label": "gate KEPT: r1: brand/group-title-model-owner",
+ "keep": true,
+ "decided_on": "dev-retro",
+ "lesson": "reference-brand-is-not-the-maker",
+ "kind": "rule_shape",
+ "branch": "cars-pipeline",
+ "author": "Diego Mendez",
+ "gate": {
+  "touched": null,
+  "why": "owner-directed (validator flag on the random sample); measured afterwards on dev gold with vs without the change",
+  "before": {
+   "accept_rows": 194,
+   "exact_rate": 0.8711,
+   "right_or_shallower": null,
+   "harm_rate": 0.0515
+  },
+  "after": {
+   "accept_rows": 194,
+   "exact_rate": 0.8763,
+   "right_or_shallower": null,
+   "harm_rate": 0.0515
+  }
+ },
+ "kpi": {
+  "ts": "2026-11-09T21:30:00+00:00",
+  "loop": "A",
+  "round": 1,
+  "label": "gate KEPT: r1: brand/group-title-model-owner",
+  "change": "brand/group-title-model-owner",
+  "code": "brand/group-title-model-owner"
+ }
+}

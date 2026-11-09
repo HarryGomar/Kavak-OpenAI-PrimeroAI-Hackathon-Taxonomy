@@ -1,0 +1,45 @@
+{
+ "id": "491d4cb585",
+ "domain": "cars",
+ "ts": "2026-11-09T23:24:11.927436+00:00",
+ "loop": "A",
+ "round": 4,
+ "change": "Treat generic Pick Up model values as placeholders",
+ "label": "DROPPED on silver (cars gate): r4: Treat generic Pick Up model values as placeholders",
+ "keep": false,
+ "decided_on": "silver+dev",
+ "lesson": "cars-treat-generic-pick-up-model-values-as-placeholders",
+ "kind": "rule_shape",
+ "branch": "cars-pipeline",
+ "author": "Diego Mendez",
+ "gate": {
+  "touched": 1,
+  "why": "The Nissan listing repeats its Pickup body type as the model and supplies no distinct nameplate. This supports stopping at Nissan rather than creating a Pick Up model and year.",
+  "verdict": "dropped on silver",
+  "before": {
+   "accept_rows": 500,
+   "exact_rate": 0.868,
+   "right_or_shallower": null,
+   "harm_rate": 0.014
+  },
+  "after": {
+   "accept_rows": 500,
+   "exact_rate": 0.868,
+   "right_or_shallower": null,
+   "harm_rate": 0.014
+  },
+  "evidence": "silver = frozen validator v2 labels",
+  "catalogue_precision": [
+   0.077,
+   0.077
+  ]
+ },
+ "kpi": {
+  "ts": "2026-11-09T23:24:11.927436+00:00",
+  "loop": "A",
+  "round": 4,
+  "label": "DROPPED on silver (cars gate): r4: Treat generic Pick Up model values as placeholders",
+  "change": "Treat generic Pick Up model values as placeholders",
+  "code": "[{\"op\": \"append\", \"path\": \"models.placeholders\", \"value\": \"pick up\"}]"
+ }
+}

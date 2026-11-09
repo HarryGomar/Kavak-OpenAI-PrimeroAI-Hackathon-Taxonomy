@@ -1,0 +1,52 @@
+{
+ "id": "919796921a",
+ "domain": "cars",
+ "ts": "2026-11-09T22:59:59.515650+00:00",
+ "loop": "A",
+ "round": 3,
+ "change": "Normalize Kia Soul with embedded EX trim",
+ "label": "gate KEPT: r3: Normalize Kia Soul with embedded EX trim",
+ "keep": true,
+ "decided_on": "dev+sealed",
+ "lesson": "model-alias-strips-trim-word",
+ "kind": "rule_shape",
+ "branch": "cars-pipeline",
+ "author": "Diego Mendez",
+ "gate": {
+  "touched": 1,
+  "why": "The Kia Soul EX listing incorrectly creates the nameplate 'soul ex'. A Kia-specific alias maps this trim-bearing nameplate to 'soul' without affecting other makes.",
+  "before": {
+   "accept_rows": 194,
+   "exact_rate": 0.8608,
+   "right_or_shallower": null,
+   "harm_rate": 0.0567
+  },
+  "after": {
+   "accept_rows": 194,
+   "exact_rate": 0.866,
+   "right_or_shallower": null,
+   "harm_rate": 0.0567
+  },
+  "net": {
+   "holds": 1,
+   "harm": 0,
+   "routed": -2,
+   "version_nodes": 1
+  },
+  "sealed": {
+   "rows": 34,
+   "before": 23,
+   "after": 23,
+   "harm": 6,
+   "reads_total": 5
+  }
+ },
+ "kpi": {
+  "ts": "2026-11-09T22:59:59.515650+00:00",
+  "loop": "A",
+  "round": 3,
+  "label": "gate KEPT: r3: Normalize Kia Soul with embedded EX trim",
+  "change": "Normalize Kia Soul with embedded EX trim",
+  "code": "[{\"op\": \"add_alias\", \"path\": \"models.aliases.kia\", \"value\": \"soul ex=soul\"}]"
+ }
+}

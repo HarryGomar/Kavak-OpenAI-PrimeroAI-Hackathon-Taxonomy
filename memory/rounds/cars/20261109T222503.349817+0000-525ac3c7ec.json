@@ -1,0 +1,52 @@
+{
+ "id": "525ac3c7ec",
+ "domain": "cars",
+ "ts": "2026-11-09T22:25:03.349817+00:00",
+ "loop": "A",
+ "round": 2,
+ "change": "trim-typo-to-catalogue",
+ "label": "gate KEPT: r2: trim-typo-to-catalogue",
+ "keep": true,
+ "decided_on": "dev+sealed",
+ "lesson": "typo-snaps-to-catalogue-spelling",
+ "kind": "rule_shape",
+ "branch": "cars-pipeline",
+ "author": "Diego Mendez",
+ "gate": {
+  "touched": 2,
+  "why": "A one-letter misspelling of a catalogue version word for the same model takes the catalogue spelling.",
+  "before": {
+   "accept_rows": 105,
+   "exact_rate": 0.9524,
+   "right_or_shallower": null,
+   "harm_rate": 0.019
+  },
+  "after": {
+   "accept_rows": 105,
+   "exact_rate": 0.9619,
+   "right_or_shallower": null,
+   "harm_rate": 0.0095
+  },
+  "net": {
+   "holds": 1,
+   "harm": -1,
+   "routed": 0,
+   "version_nodes": -2
+  },
+  "sealed": {
+   "rows": 7,
+   "before": 6,
+   "after": 6,
+   "harm": 1,
+   "reads_total": 4
+  }
+ },
+ "kpi": {
+  "ts": "2026-11-09T22:25:03.349817+00:00",
+  "loop": "A",
+  "round": 2,
+  "label": "gate KEPT: r2: trim-typo-to-catalogue",
+  "change": "trim-typo-to-catalogue",
+  "code": "[{\"op\": \"set\", \"path\": \"trim.label.fix_typos\", \"value\": true}]"
+ }
+}

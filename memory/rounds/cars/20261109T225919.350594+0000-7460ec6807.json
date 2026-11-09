@@ -1,0 +1,48 @@
+{
+ "id": "7460ec6807",
+ "domain": "cars",
+ "ts": "2026-11-09T22:59:19.350594+00:00",
+ "loop": "B",
+ "round": 3,
+ "change": "validator-checklist-from-mistakes",
+ "label": "DROPPED on dev (cars gate): r3: validator-checklist-from-mistakes",
+ "keep": false,
+ "decided_on": "dev",
+ "lesson": "validator-checklist-from-gold-mistakes",
+ "kind": "validator_check",
+ "branch": "cars-pipeline",
+ "author": "Diego Mendez",
+ "gate": {
+  "touched": 175,
+  "why": "These checks address inconsistent branding, noncanonical version names, and omitted qualifiers that distinguish complete versions.",
+  "before": {
+   "accept_rows": 175,
+   "exact_rate": 0.8971,
+   "right_or_shallower": null,
+   "harm_rate": 0.0286
+  },
+  "after": {
+   "accept_rows": 175,
+   "exact_rate": 0.9371,
+   "right_or_shallower": null,
+   "harm_rate": 0.0514
+  },
+  "flag_precision": [
+   0.667,
+   0.667
+  ],
+  "lines": [
+   "Resolve conflicting brand fields using the model’s identity in the target Mexican taxonomy before rejecting a listing.",
+   "Match versions to the target make–model–year taxonomy, applying established aliases for trim, engine, drivetrain, and transmission.",
+   "Retain all explicit version qualifiers across title, model, and version fields, including body style, cab configuration, and “Estándar.”"
+  ]
+ },
+ "kpi": {
+  "ts": "2026-11-09T22:59:19.350594+00:00",
+  "loop": "B",
+  "round": 3,
+  "label": "DROPPED on dev (cars gate): r3: validator-checklist-from-mistakes",
+  "change": "validator-checklist-from-mistakes",
+  "code": "validator-checklist-from-mistakes"
+ }
+}

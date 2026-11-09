@@ -39,6 +39,7 @@ OUT = RUNS_DIR / "cars"
 LEARNED = resolve.HERE / "identity-learned.yaml"
 VALIDATOR_YAML = resolve.HERE / "validator.yaml"
 
+# Loop A on silver (round 04 on): `silver --round N` then `phase --round N` (see cmd_phase).
 # From the owner's A/B review (round 01): proposals a person's verdicts point to; they go through the same gate.
 QUEUED = [
     {"name": "version-label-gearbox", "source": "owner review r01 (Yaris 1.5 S MT, Kia Rio 1.6 EX Manual)",
@@ -342,9 +343,223 @@ def main() -> None:
     r.add_argument("--patience", type=int, default=3)
     v = sub.add_parser("validator")
     v.add_argument("--round", type=int, default=2)
+    sv = sub.add_parser("silver")
+    sv.add_argument("--round", type=int, required=True)
+    sv.add_argument("--n", type=int, default=500)
+    ph = sub.add_parser("phase")
+    ph.add_argument("--round", type=int, required=True)
+    ph.add_argument("--max", type=int, default=8)
+    ph.add_argument("--patience", type=int, default=4)
     a = ap.parse_args()
-    out = cmd_rules(a.round, a.max, a.patience) if a.cmd == "rules" else cmd_validator(a.round)
+    if a.cmd == "silver":
+        out = cmd_silver(a.round, a.n)
+    elif a.cmd == "phase":
+        out = cmd_phase(a.round, a.max, a.patience)
+    else:
+        out = cmd_rules(a.round, a.max, a.patience) if a.cmd == "rules" else cmd_validator(a.round)
     print(json.dumps(out, indent=1, default=str))
+
+
+
+# ------------------------------------------------------------------ Loop A on silver (main's design, cars)
+
+SILVER_PROPOSER_PROMPT = PROPOSER_PROMPT.replace(
+    "Dev gold rows the rules get wrong (gold = a person's path; ours = the rules' deepest stated path):",
+    "Listings where the rules disagree with the frozen validator's SILVER labels (silver = a blind Codex validator's "
+    "path, scored about 90% right on human gold, so it can itself be wrong: fix a shape only when the listing's own "
+    "fields support the silver path; ours = the rules' deepest stated path):")
+
+
+def silver_pool(rnd: int) -> list[str]:
+    """Fresh listing ids: never gold, never in a drawn gold sample, never labelled in an earlier loop round."""
+    from domains.cars.loop import load_raw
+    raw = load_raw()
+    used = set()
+    _, graw, _ = load_gold()
+    used |= {g.get("listing_id") for g in graw.values()}
+    for f in OUT.glob("gold-r*/sample-r*.jsonl"):
+        used |= {json.loads(l)["listing_id"] for l in f.read_text(encoding="utf-8").splitlines() if l.strip()}
+    for f in OUT.glob("loop-r*/validator*.jsonl"):
+        used |= {r["listing_id"] for r in read_jsonl(f)}
+    for f in OUT.glob("silver-r*.jsonl"):
+        if f.name != f"silver-r{rnd:02d}.jsonl":
+            used |= {r["listing_id"] for r in read_jsonl(f)}
+    pl = {p["listing_id"]: p for p in read_jsonl(OUT / "placements.jsonl")}
+    return [l for l in sorted(raw) if l not in used and pl.get(l, {}).get("step") != "parse"], raw
+
+
+def cmd_silver(rnd: int, n: int) -> dict:
+    """The frozen validator (validator.yaml version + checklist) labels n fresh listings: the silver set for a rule phase."""
+    import random
+    from domains.cars.loop import val_path
+    pool, raw = silver_pool(rnd)
+    ids = random.Random(f"cars-silver-r{rnd}").sample(pool, min(n, len(pool)))
+    setup = codex_agents.validator_setup()
+    labels = codex_agents.validate([(i, raw[i]) for i in ids], version=setup["version"], checklist=setup.get("checklist") or [])
+    stats = labels.pop("_stats")
+    out = OUT / f"silver-r{rnd:02d}.jsonl"
+    with open(out, "w", encoding="utf-8") as f:
+        for i in ids:
+            v = labels.get(i)
+            if v:
+                f.write(json.dumps({"listing_id": i, "validator_version": setup["version"], "validator": v,
+                                    "path": val_path(v)}, ensure_ascii=False) + "\n")
+    res = {"round": rnd, "silver": str(out), "asked": len(ids), "labelled": sum(1 for i in ids if labels.get(i)),
+           "validator_version": setup["version"], "codex": stats}
+    Ledger(OUT / "ledger.jsonl").append("silver_labelled", domain="cars", **{k: v for k, v in res.items() if k != "codex"},
+                                        tokens=stats.get("tokens"), seconds=stats.get("secs"))
+    return res
+
+
+def silver_eval(records, doc, silver: dict):
+    """Rules only vs silver: exact agreement, harm (wrong level / wrong scope), and catalogue-level precision (of the
+    listings the rules place on a catalogue version, the share whose path agrees with silver)."""
+    from collections import Counter
+
+    from domains.cars import pipeline
+    d = config.data_dir() / "cars"
+    results, _, _ = resolve.resolve_records(records, d / "taxonomy.jsonl", doc)
+    pl = pipeline.run_steps(results, records)
+    results, pl, _ = pipeline.one_per_listing(results, pl)
+    cls, agree, n, cat_n, cat_ok, paths = Counter(), 0, 0, 0, 0, {}
+    for p, r in zip(pl, results):
+        sp = silver.get(p["listing_id"])
+        if sp is None:
+            continue
+        path = (p["candidate"] or p)["path"] if (p["candidate"] or p["node_id"]) else []
+        paths[p["listing_id"]] = path
+        j = judge(path, sp, "exact", "accept")
+        n += 1
+        cls[j["cls"]] += 1
+        agree += j["holds"]
+        if (r.get("version_support") or "") == "catalogue":
+            cat_n += 1
+            cat_ok += j["holds"]
+    harm = cls["wrong"] + cls["out_of_domain_wrong"]
+    return {"n": n, "agree": agree, "harm": harm, "catalogue_n": cat_n, "catalogue_agree": cat_ok,
+            "catalogue_precision": round(cat_ok / cat_n, 3) if cat_n else None, "classes": dict(cls),
+            "routed": sum(1 for p in pl if p["route"])}, paths
+
+
+def silver_evidence(records, doc, silver, raw_by, limit=25):
+    from domains.cars import pipeline
+    d = config.data_dir() / "cars"
+    results, _, _ = resolve.resolve_records(records, d / "taxonomy.jsonl", doc)
+    pl = pipeline.run_steps(results, records)
+    results, pl, _ = pipeline.one_per_listing(results, pl)
+    out = []
+    for p in pl:
+        sp = silver.get(p["listing_id"])
+        if sp is None:
+            continue
+        path = (p["candidate"] or p)["path"] if (p["candidate"] or p["node_id"]) else []
+        j = judge(path, sp, "exact", "accept")
+        if not j["holds"]:
+            out.append(f"- fields: {codex_agents.evidence_text(raw_by[p['listing_id']])}\n  silver: {' > '.join(sp) or '(not a car)'}"
+                       f"\n  ours: {' > '.join(path) or '(nothing)'} | class: {j['cls']} | reasons: {p['reason'][:160]}")
+    return out[:limit], len(out)
+
+
+def set_learned_status(ids: list[str], status: str, note: str) -> None:
+    cur = yaml.safe_load(LEARNED.read_text(encoding="utf-8")) or []
+    for c in cur:
+        if c.get("id") in ids:
+            c["status"] = status
+            c["status_note"] = note
+    head = "".join(l for l in LEARNED.read_text(encoding="utf-8").splitlines(True) if l.startswith("#"))
+    LEARNED.write_text(head + yaml.safe_dump(cur, allow_unicode=True, sort_keys=False, width=120), encoding="utf-8")
+
+
+def cmd_phase(rnd: int, max_props: int, patience: int) -> dict:
+    """Loop A on silver: proposals gated on silver (more exact agreement, no more harm, catalogue precision not lower),
+    then ONE checkpoint on dev gold for the whole phase; a phase that lowers gold right or raises gold harm is rolled back."""
+    t0 = time.time()
+    ledger = Ledger(OUT / "ledger.jsonl")
+    d = config.data_dir() / "cars"
+    records = list(read_jsonl(d / "listings.jsonl"))
+    raw_by = {}
+    for r in records:
+        raw_by.setdefault(listing_id(r), r)
+    silver = {r["listing_id"]: r["path"] for r in read_jsonl(OUT / f"silver-r{rnd:02d}.jsonl")}
+    files, graw, gold = load_gold()
+    dev = gold.dev
+    doc = resolve.load_pack()
+    s_cur, s_paths = silver_eval(records, doc, silver)
+    g_start, _ = gate.evaluate(records, doc, dev, graw)
+    ledger.append("phase_start", domain="cars", round=rnd, silver_n=len(silver), silver=s_cur, gold_dev=g_start)
+    log, tried, drops, n, kept_ids = [{"step": "phase_start", "silver": s_cur, "gold_dev": g_start}], [], 0, 0, []
+    while n < max_props and drops < patience:
+        ev, total = silver_evidence(records, doc, silver, raw_by)
+        prompt = SILVER_PROPOSER_PROMPT.format(
+            allowed=json.dumps({k: {p: (v if isinstance(v, str) else v.__name__) for p, v in m.items()}
+                                for k, m in resolve.ALLOWED.items()}, indent=1),
+            rules=rules_yaml(doc), tried=json.dumps(tried), errors="\n".join(ev) or "(none)", mismatches="(not used in this phase)")
+        r = codex_agents.codex_json(prompt, PROPOSAL_SCHEMA, effort="high", role="proposer_silver", ledger=ledger)
+        if "_error" in r:
+            log.append({"step": "proposer_error", "error": r["_error"][-200:]})
+            break
+        if not r.get("ops"):
+            log.append({"step": "proposer_done", "why": r.get("rationale")})
+            break
+        n += 1
+        tried.append(r["name"])
+        cand = copy.deepcopy(doc)
+        try:
+            for op in r["ops"]:
+                resolve.apply_op(cand["rules"], op)
+        except (ValueError, KeyError, TypeError) as e:
+            drops += 1
+            entry = {"step": r["name"], "verdict": f"invalid: {e}", "ops": r["ops"]}
+            log.append(entry)
+            ledger.append("phase_decision", domain="cars", round=rnd, **entry)
+            continue
+        s_new, paths = silver_eval(records, cand, silver)
+        touched = sum(1 for k in paths if paths[k] != s_paths.get(k))
+        cp_ok = (s_new["catalogue_precision"] or 0) >= (s_cur["catalogue_precision"] or 0)
+        ok = touched > 0 and s_new["agree"] > s_cur["agree"] and s_new["harm"] <= s_cur["harm"] and cp_ok
+        verdict = ("kept on silver" if ok else "untestable: touches no silver listing" if not touched else
+                   "dropped: catalogue precision falls" if not cp_ok else "dropped on silver")
+        entry = {"step": r["name"], "ops": r["ops"], "why": r.get("rationale"), "silver_disagreements_shown": len(ev),
+                 "silver_disagreements_total": total, "silver_touched": touched, "verdict": verdict,
+                 "silver_before": {k: s_cur[k] for k in ("agree", "harm", "n", "catalogue_precision")},
+                 "silver_after": {k: s_new[k] for k in ("agree", "harm", "n", "catalogue_precision")}}
+        log.append(entry)
+        ledger.append("phase_decision", domain="cars", round=rnd, **entry)
+        if ok:
+            write_learned({"id": r["name"], "round": rnd, "phase": f"silver-r{rnd:02d}", "kept_at": date.today().isoformat(),
+                           "origin": "codex proposer on silver", "status": "applied",
+                           "why": (r.get("rationale") or "").split(". ")[0][:200],
+                           "ops": r["ops"], "evidence": {"silver_n": s_new["n"], "silver_touched": touched,
+                                                         "silver_agree": [s_cur["agree"], s_new["agree"]],
+                                                         "silver_harm": [s_cur["harm"], s_new["harm"]],
+                                                         "catalogue_precision": [s_cur["catalogue_precision"], s_new["catalogue_precision"]]}})
+            kept_ids.append(r["name"])
+            doc, s_cur, s_paths, drops = cand, s_new, paths, 0
+        else:
+            drops += 1
+    # checkpoint on dev gold for the whole phase
+    g_end, _ = gate.evaluate(records, doc, dev, graw)
+    rolled = bool(kept_ids) and (g_end["holds"] < g_start["holds"] or g_end["harm"] > g_start["harm"])
+    if rolled:
+        set_learned_status(kept_ids, "rolled_back", f"phase r{rnd:02d} checkpoint: gold dev right {g_start['holds']}->{g_end['holds']}, harm {g_start['harm']}->{g_end['harm']}")
+    elif kept_ids:
+        cur = yaml.safe_load(LEARNED.read_text(encoding="utf-8")) or []
+        for c in cur:
+            if c.get("id") in kept_ids:
+                c.setdefault("evidence", {})["gold_dev_checkpoint"] = {"right": [g_start["holds"], g_end["holds"]],
+                                                                       "harm": [g_start["harm"], g_end["harm"]], "n": g_end["n"]}
+        head = "".join(l for l in LEARNED.read_text(encoding="utf-8").splitlines(True) if l.startswith("#"))
+        LEARNED.write_text(head + yaml.safe_dump(cur, allow_unicode=True, sort_keys=False, width=120), encoding="utf-8")
+    sealed_rows = gold.sealed(f"cars silver phase round {rnd} checkpoint")
+    sealed_final, _ = gate.evaluate(records, resolve.load_pack(), sealed_rows, graw)
+    out = {"round": rnd, "silver_n": len(silver), "log": log, "kept_on_silver": kept_ids, "rolled_back": rolled,
+           "gold_dev_start": g_start, "gold_dev_end": g_end, "sealed_after": sealed_final,
+           "sealed_reads_total": gold.reads(), "secs": round(time.time() - t0, 1)}
+    ledger.append("phase_end", domain="cars", round=rnd, kept=kept_ids, rolled_back=rolled, gold_dev_start=g_start,
+                  gold_dev_end=g_end, sealed=sealed_final, secs=out["secs"])
+    (OUT / f"loop-r{rnd:02d}").mkdir(parents=True, exist_ok=True)
+    (OUT / f"loop-r{rnd:02d}" / "phase.json").write_text(json.dumps(out, indent=2, default=str) + "\n", encoding="utf-8")
+    return out
 
 
 if __name__ == "__main__":

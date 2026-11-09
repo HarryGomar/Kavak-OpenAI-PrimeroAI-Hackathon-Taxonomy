@@ -1,0 +1,46 @@
+{
+ "id": "631976781a",
+ "domain": "cars",
+ "ts": "2026-11-09T23:01:29.793828+00:00",
+ "loop": "A",
+ "round": 3,
+ "change": "Normalize gear-count transmission notation",
+ "label": "untested r3: Normalize gear-count transmission notation",
+ "keep": null,
+ "decided_on": "dev",
+ "lesson": "spec-tokens-are-not-model-names",
+ "kind": "rule_shape",
+ "branch": "cars-pipeline",
+ "author": "Diego Mendez",
+ "gate": {
+  "touched": 0,
+  "why": "Catalogue tokens such as ATX6, ATX8, 6AT, and 6A/T encode transmissions already treated as generic, but their combined spellings can obstruct trim matching.",
+  "before": {
+   "accept_rows": 194,
+   "exact_rate": 0.8763,
+   "right_or_shallower": null,
+   "harm_rate": 0.0515
+  },
+  "after": {
+   "accept_rows": 194,
+   "exact_rate": 0.8763,
+   "right_or_shallower": null,
+   "harm_rate": 0.0515
+  },
+  "net": {
+   "holds": 0,
+   "harm": 0,
+   "routed": 0,
+   "version_nodes": 0
+  },
+  "sealed": null
+ },
+ "kpi": {
+  "ts": "2026-11-09T23:01:29.793828+00:00",
+  "loop": "A",
+  "round": 3,
+  "label": "untested r3: Normalize gear-count transmission notation",
+  "change": "Normalize gear-count transmission notation",
+  "code": "[{\"op\": \"append\", \"path\": \"trim.noise.patterns\", \"value\": \"\\\\b(?:atx[4-9]|[4-9](?:at|mt|a/t|m/t))\\\\b\"}]"
+ }
+}

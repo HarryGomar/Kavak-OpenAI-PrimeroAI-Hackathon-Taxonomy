@@ -1,0 +1,39 @@
+{
+ "id": "19d4f4b742",
+ "domain": "cars",
+ "ts": "2026-11-09T21:00:00+00:00",
+ "loop": "B",
+ "round": 1,
+ "change": "validator-v2-uncut-identifying-fields",
+ "label": "gate KEPT: r1: validator-v2-uncut-identifying-fields",
+ "keep": true,
+ "decided_on": "dev",
+ "lesson": "validator-reads-structured-fields",
+ "kind": "validator_check",
+ "branch": "cars-pipeline",
+ "author": "Diego Mendez",
+ "gate": {
+  "touched": 36,
+  "why": "v1 read raw JSON cut at 700 chars and lost version/gearbox fields; v2 reads the identifying fields uncut (+ catalogue versions of the model the listing names): same gold holds, model years 31->32 of 32, fewer tokens and seconds",
+  "before": {
+   "accept_rows": 36,
+   "exact_rate": 0.8333,
+   "right_or_shallower": null,
+   "harm_rate": null
+  },
+  "after": {
+   "accept_rows": 36,
+   "exact_rate": 0.8333,
+   "right_or_shallower": null,
+   "harm_rate": null
+  }
+ },
+ "kpi": {
+  "ts": "2026-11-09T21:00:00+00:00",
+  "loop": "B",
+  "round": 1,
+  "label": "gate KEPT: r1: validator-v2-uncut-identifying-fields",
+  "change": "validator-v2-uncut-identifying-fields",
+  "code": "validator-v2-uncut-identifying-fields"
+ }
+}

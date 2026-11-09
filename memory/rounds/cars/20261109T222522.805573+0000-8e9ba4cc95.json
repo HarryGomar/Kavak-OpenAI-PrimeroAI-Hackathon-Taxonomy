@@ -1,0 +1,46 @@
+{
+ "id": "8e9ba4cc95",
+ "domain": "cars",
+ "ts": "2026-11-09T22:25:22.805573+00:00",
+ "loop": "A",
+ "round": 2,
+ "change": "trim-generic-4wd",
+ "label": "untested r2: trim-generic-4wd",
+ "keep": null,
+ "decided_on": "dev",
+ "lesson": "spec-tokens-are-not-model-names",
+ "kind": "rule_shape",
+ "branch": "cars-pipeline",
+ "author": "Diego Mendez",
+ "gate": {
+  "touched": 0,
+  "why": "4wd is absent from generic tokens although 4x4 and awd are included, creating inconsistent treatment of drivetrain descriptors.",
+  "before": {
+   "accept_rows": 105,
+   "exact_rate": 0.9619,
+   "right_or_shallower": null,
+   "harm_rate": 0.0095
+  },
+  "after": {
+   "accept_rows": 105,
+   "exact_rate": 0.9619,
+   "right_or_shallower": null,
+   "harm_rate": 0.0095
+  },
+  "net": {
+   "holds": 0,
+   "harm": 0,
+   "routed": -8,
+   "version_nodes": -7
+  },
+  "sealed": null
+ },
+ "kpi": {
+  "ts": "2026-11-09T22:25:22.805573+00:00",
+  "loop": "A",
+  "round": 2,
+  "label": "untested r2: trim-generic-4wd",
+  "change": "trim-generic-4wd",
+  "code": "[{\"op\": \"append\", \"path\": \"trim.generic_tokens\", \"value\": \"4wd\"}]"
+ }
+}

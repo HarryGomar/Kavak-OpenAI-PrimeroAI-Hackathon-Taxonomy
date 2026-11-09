@@ -1,0 +1,39 @@
+{
+ "id": "99121f2705",
+ "domain": "cars",
+ "ts": "2026-11-09T21:42:18.074700+00:00",
+ "loop": "A",
+ "round": 1,
+ "change": "catalogue-version-number-guard",
+ "label": "DROPPED on dev (cars gate): r1: catalogue-version-number-guard",
+ "keep": false,
+ "decided_on": "dev",
+ "lesson": "sibling-part-numbers-stay-apart",
+ "kind": "rule_shape",
+ "branch": "cars-pipeline",
+ "author": "Diego Mendez",
+ "gate": {
+  "touched": 2,
+  "why": "A model number in the listing (\"Rubicon 392\") that the catalogue version lacks blocks that catalogue version (validator flag on gold, round 01).",
+  "after": {
+   "accept_rows": 37,
+   "exact_rate": 0.973,
+   "right_or_shallower": null,
+   "harm_rate": 0.027
+  },
+  "net": {
+   "holds": -1,
+   "harm": 1,
+   "routed": 2,
+   "version_nodes": 2
+  }
+ },
+ "kpi": {
+  "ts": "2026-11-09T21:42:18.074700+00:00",
+  "loop": "A",
+  "round": 1,
+  "label": "DROPPED on dev (cars gate): r1: catalogue-version-number-guard",
+  "change": "catalogue-version-number-guard",
+  "code": "catalogue-version-number-guard"
+ }
+}

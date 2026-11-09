@@ -1,0 +1,45 @@
+{
+ "id": "9b8d39b03e",
+ "domain": "cars",
+ "ts": "2026-11-09T23:23:59.809514+00:00",
+ "loop": "A",
+ "round": 4,
+ "change": "Normalize Mini Cooper Convertible to Cooper",
+ "label": "DROPPED on silver (cars gate): r4: Normalize Mini Cooper Convertible to Cooper",
+ "keep": false,
+ "decided_on": "silver+dev",
+ "lesson": "model-alias-strips-trim-word",
+ "kind": "rule_shape",
+ "branch": "cars-pipeline",
+ "author": "Diego Mendez",
+ "gate": {
+  "touched": 1,
+  "why": "The listing explicitly identifies Convertible as its body style, supporting Cooper as the nameplate. A make-specific alias fixes this model split without changing other makes.",
+  "verdict": "dropped on silver",
+  "before": {
+   "accept_rows": 500,
+   "exact_rate": 0.868,
+   "right_or_shallower": null,
+   "harm_rate": 0.014
+  },
+  "after": {
+   "accept_rows": 500,
+   "exact_rate": 0.868,
+   "right_or_shallower": null,
+   "harm_rate": 0.014
+  },
+  "evidence": "silver = frozen validator v2 labels",
+  "catalogue_precision": [
+   0.077,
+   0.077
+  ]
+ },
+ "kpi": {
+  "ts": "2026-11-09T23:23:59.809514+00:00",
+  "loop": "A",
+  "round": 4,
+  "label": "DROPPED on silver (cars gate): r4: Normalize Mini Cooper Convertible to Cooper",
+  "change": "Normalize Mini Cooper Convertible to Cooper",
+  "code": "[{\"op\": \"add_alias\", \"path\": \"models.aliases.mini\", \"value\": \"cooper convertible=cooper\"}]"
+ }
+}

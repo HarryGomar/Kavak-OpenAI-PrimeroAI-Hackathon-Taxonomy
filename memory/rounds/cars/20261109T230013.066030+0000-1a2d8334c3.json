@@ -1,0 +1,46 @@
+{
+ "id": "1a2d8334c3",
+ "domain": "cars",
+ "ts": "2026-11-09T23:00:13.066030+00:00",
+ "loop": "A",
+ "round": 3,
+ "change": "Guard against numeric trim information loss",
+ "label": "DROPPED on dev (cars gate): r3: Guard against numeric trim information loss",
+ "keep": false,
+ "decided_on": "dev",
+ "lesson": "sibling-part-numbers-stay-apart",
+ "kind": "rule_shape",
+ "branch": "cars-pipeline",
+ "author": "Diego Mendez",
+ "gate": {
+  "touched": 2,
+  "why": "The GLC and Tucson matches drop explicit engine sizes, producing versions that the gold rows reject as incomplete.",
+  "before": {
+   "accept_rows": 194,
+   "exact_rate": 0.866,
+   "right_or_shallower": null,
+   "harm_rate": 0.0567
+  },
+  "after": {
+   "accept_rows": 194,
+   "exact_rate": 0.8608,
+   "right_or_shallower": null,
+   "harm_rate": 0.0619
+  },
+  "net": {
+   "holds": -1,
+   "harm": 1,
+   "routed": 2,
+   "version_nodes": 2
+  },
+  "sealed": null
+ },
+ "kpi": {
+  "ts": "2026-11-09T23:00:13.066030+00:00",
+  "loop": "A",
+  "round": 3,
+  "label": "DROPPED on dev (cars gate): r3: Guard against numeric trim information loss",
+  "change": "Guard against numeric trim information loss",
+  "code": "[{\"op\": \"set\", \"path\": \"version_guard.number_guard\", \"value\": true}]"
+ }
+}

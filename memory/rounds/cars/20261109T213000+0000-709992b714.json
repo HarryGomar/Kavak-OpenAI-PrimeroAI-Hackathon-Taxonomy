@@ -1,0 +1,39 @@
+{
+ "id": "709992b714",
+ "domain": "cars",
+ "ts": "2026-11-09T21:30:00+00:00",
+ "loop": "A",
+ "round": 1,
+ "change": "brand/rebrand-by-year",
+ "label": "gate KEPT: r1: brand/rebrand-by-year",
+ "keep": true,
+ "decided_on": "dev-retro",
+ "lesson": "make-rebrand-by-model-year",
+ "kind": "rule_shape",
+ "branch": "cars-pipeline",
+ "author": "Diego Mendez",
+ "gate": {
+  "touched": null,
+  "why": "owner-directed (validator flag on the random sample); measured afterwards on dev gold with vs without the change",
+  "before": {
+   "accept_rows": 194,
+   "exact_rate": 0.866,
+   "right_or_shallower": null,
+   "harm_rate": 0.0619
+  },
+  "after": {
+   "accept_rows": 194,
+   "exact_rate": 0.8763,
+   "right_or_shallower": null,
+   "harm_rate": 0.0515
+  }
+ },
+ "kpi": {
+  "ts": "2026-11-09T21:30:00+00:00",
+  "loop": "A",
+  "round": 1,
+  "label": "gate KEPT: r1: brand/rebrand-by-year",
+  "change": "brand/rebrand-by-year",
+  "code": "brand/rebrand-by-year"
+ }
+}

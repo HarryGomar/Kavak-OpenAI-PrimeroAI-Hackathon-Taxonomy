@@ -92,6 +92,8 @@ def load_pack(learned: bool = True):
     lf = HERE / "identity-learned.yaml"
     if learned and lf.exists():     # edits kept by the gate (auto.py / gate.py), applied on load; base YAML untouched
         for change in yaml.safe_load(lf.read_text(encoding="utf-8")) or []:
+            if change.get("status") == "rolled_back":      # kept for the record (and distillation), not applied
+                continue
             for op in change.get("ops", []):
                 apply_op(rules, op)
     return {"scope": {"version": ident["version"]}, "taxonomy": {"categories": vocab["categories"]},
