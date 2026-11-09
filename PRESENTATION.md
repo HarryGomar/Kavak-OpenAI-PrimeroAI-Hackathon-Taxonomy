@@ -13,7 +13,8 @@
 The story in one breath: a system improves only as far as its eval, and most useful tasks have no ground truth to check
 against. We took one that looks easy and isn't, connecting a market's listings into product trees, and built a system
 that improves at it on three fronts: accuracy, cost and speed. It learns rules from a small gold set. Its eval gets
-better with a person's feedback. And it carries lessons to the next domain. Everything is in the evals.
+better with a person's feedback. And it carries lessons to the next domain. Taxo improves the system and its eval
+together.
 
 **One caveat to say out loud if asked:** in every run, Pedia's labels stand in for the person. Pedia is our earlier,
 partly agent-built system. Against Harry's own labels the rules moved less: 47% → 50% exact, on 121 rows.
