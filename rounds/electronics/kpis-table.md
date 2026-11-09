@@ -15,3 +15,4 @@
 | 2026-11-09T16:27:23 | deepmatcher | hand-picked | B/202 | validator improver cycle 2: dropped (1 steps) | abb88b5578 | 0.78 [0.65-0.87] n=50 | 0.84 [0.71-0.92] n=50 | 0.12 [0.06-0.24] n=50 | - | - | - | - | - | 0.877 | 0.123 |
 | 2026-11-09T16:27:26 | deepmatcher | hand-picked | A/999 | final after 1 cycles: one sealed read | abb88b5578 | 0.78 [0.65-0.87] n=50 | 0.84 [0.71-0.92] n=50 | 0.12 [0.06-0.24] n=50 | - | 0.75 [0.41-0.93] n=8 | - | - | - | 0.877 | 0.123 |
 | 2026-11-09T16:38:43 | deepmatcher | hand-picked | B/502 | validator A/B on all dev gold: v1 0.68 vs v2 0.76 -> KEPT | abb88b5578 | 0.82 [0.69-0.90] n=50 | 0.90 [0.79-0.96] n=50 | 0.06 [0.02-0.16] n=50 | - | - | - | - | - | 0.876 | 0.124 |
+| 2026-11-09T17:07:58 | deepmatcher | hand-picked | B/501 | validator A/B on all dev gold: v2 0.752 vs v1 0.744 -> dropped | abb88b5578 | 0.82 [0.75-0.88] n=133 | 0.90 [0.84-0.94] n=133 | 0.07 [0.04-0.13] n=133 | - | - | - | - | - | 0.876 | 0.124 |
