@@ -1,17 +1,22 @@
 # Taxo: presentation script
 
-*About 8 minutes, 12 slides. **Show** is what is on screen; **Say** is what you say. Numbers come from the fragrance runs
-(`C:\Work\Kavak-Taxo-runs\fragrance-run`, and the round records on `origin/distill/rounds`); estimates say so. Numbers
-still in [brackets] are not run yet: fill them in or cut the line, and never present a placeholder as a result. The
-system is in [SPEC.md](SPEC.md); the deck is [slides/index.html](slides/index.html).*
+*About 7 minutes, 10 slides. **Show** is what is on screen; **Say** is what you say.*
+
+*Sources:*
+- *The numbers come from today's runs: the round records on `origin/distill/rounds`, and the run session's summaries in `C:\Work\Kavak-Taxo-runs\RESULTS.md`.*
+- *The agent-vs-rules comparison is on 400 random **sealed** listings per domain. The rules were tuned on dev brands, so a dev comparison would flatter them.*
+- *Dollar figures assume $3 per million tokens. Codex on the ChatGPT login isn't billed per token, so tokens are what we measured.*
+- *Where a slide shows illustrative numbers, this script says so.*
+
+*The system is in [SPEC.md](SPEC.md); the deck is [slides/index.html](slides/index.html).*
 
 The story in one breath: a system improves only as far as its eval, and most useful tasks have no ground truth to check
-against. We took one that looks easy and isn't, connecting a market's listings, and built a system that improves at
-it on three fronts (accuracy, cost, speed): rules learned from a small gold set, an eval that itself gets better with a
-person's feedback, and lessons carried to the next domain. Everything is in the evals.
+against. We took one that looks easy and isn't, connecting a market's listings into product trees, and built a system
+that improves at it on three fronts: accuracy, cost and speed. It learns rules from a small gold set. Its eval gets
+better with a person's feedback. And it carries lessons to the next domain. Everything is in the evals.
 
 **One caveat to say out loud if asked:** in every run, Pedia's labels stand in for the person. Pedia is our earlier,
-partly agent-built system. Against Harry's own labels the rules moved less (47% → 50% exact, on 121 rows).
+partly agent-built system. Against Harry's own labels the rules moved less: 47% → 50% exact, on 121 rows.
 
 ---
 
@@ -27,7 +32,6 @@ partly agent-built system. Against Harry's own labels the rules moved less (47% 
 84%. Right, three short points.
 
 **Say:**
-- Hill-climbing is hard. We've tried it on several problems, and continual learning is not a solved problem.
 - Evals are what drive performance. In our last project a loop improved its own rules and climbed its own eval, an LLM
   judge, from 78% to 87%. When we checked by hand afterwards, it had gone from 81% to 84%: a third of the gain. 15 of
   the 48 changes it kept made our labels worse.
@@ -36,173 +40,209 @@ partly agent-built system. Against Harry's own labels the rules moved less (47% 
 - Most useful tasks have no such check. So the eval itself needs a method to improve: what counts as right, and how we
   check it. That's what this talk is about.
 
-## 3. Seemingly easy, deceptively hard: connect a market's listings (35 s)
+## 3. Seemingly easy, deceptively hard: build product trees from messy listings (35 s)
 
-**Show:** two product trees with photos at the leaves. Food: Oreo › Double Stuf › Golden. Fragrance: Lattafa › Khamrah
-› Khamrah and Khamrah Qahwa.
-
-**Say:**
-- The task we tried this on comes from our own work. To understand a market you have to match and connect its
-  listings into product trees.
-- Until you know which listings are one product, you can't add up its price, its reviews or its demand.
-- It looks trivial for a person and is surprisingly hard for an agent. A size or a 12-pack is never a new product; a
-  flanker like Khamrah Qahwa is.
-
-## 4. Accuracy, cost, speed: what it improves by itself (60 s)
-
-**Show:** three columns. Each has what an agent on everything gets, why that's a problem, a small picture, what we do,
-and which part of the system does it:
-- **Accuracy:** [f], an agent on everything (the baseline is running; see below). Few labels, and its own eval can't be
-  trusted (its own eval climbing past a person's check) → rules from a few labels, and an eval that improves → loops 1
-  and 2.
-- **Cost:** ≈ $5,500 for one pass over all 2M listings, est. Paid again on every refresh and in every domain (a grid, mostly
-  rules, a few agent calls) → rules settle 89%, free; an agent the rest → the solver.
-- **Speed:** ≈ 510 hours, one call at a time. Each domain starts from zero (food's rules, then fragrance and cars starting
-  from lessons) → rules take 1 ms a listing, and lessons carry over → loop 3.
-
-Under it, small: how these were measured.
+**Show:** two product trees, Oreo › Double Stuf › Golden and Lattafa › Khamrah › Khamrah and Khamrah Qahwa. Under each
+leaf hang two real-looking listings from different shops (Amazon, Walmart, lattafa.com, TikTok Shop), each with its
+photo and its title. The product name is bold inside the noise. Caption: different shops, different words, one product
+each.
 
 **Say:**
-- We want the system to improve on three fronts, by itself.
-- Accuracy: an agent on every listing gets [f], against Pedia's labels. But we have few labels, and as we saw, a
-  system's own eval can't be trusted. So loop 1 learns rules from the few we label, and loop 2
-  improves the eval itself.
-- Cost: the agent used about 920 tokens a listing. Two million listings is about 1.8 billion tokens: around $5,500 a
-  pass, at an assumed $3 per million tokens, paid again on every refresh and in every new domain. On fragrance, rules
-  settle 89% for free, so the agent's share of the bill falls to about $600.
-- Speed: at 0.9 seconds a listing, one call at a time, that's about 510 hours. Rules take about a millisecond a
-  listing: two million in about 35 minutes. And loop 3 lets each new domain start from the last one's lessons.
-- Cost and speed check themselves. Accuracy doesn't, so that's where most of the work goes.
+- The task comes from our own work. To understand a market you connect its listings into product trees.
+- Every shop writes the same product differently. Amazon says Double Stuf Golden, Walmart says Golden Double Stuf;
+  TikTok writes it in capitals. Under the noise, these six listings are three products.
+- Until you know that, you can't add up a product's price, reviews or demand.
+- It looks trivial for a person and is hard for an agent. A size or a 12-pack is never a new product, but a flanker
+  like Khamrah Qahwa is.
 
-*How the estimates were made:* 840 listings labelled by the validator agent (Codex CLI) in batches of 40 used 919
-tokens and 0.87 s per listing; the rules placed 15,000 listings in about 15 s. Cost per 1,000 listings = 920 × 1,000 ×
-$3 / 1M = $2.76; for 2M listings, × 2,000 ≈ $5,500. The $3 per million tokens is an assumption: Codex on the ChatGPT
-login isn't billed per token, so the token count is what we measured. Placing one listing per call, with tools, would
-cost more.
+## 4. What we want to improve: accuracy, cost and speed (60 s)
 
-*[f] is not filled on purpose.* The validator matched Pedia on 120 of 160 listings, but it is given the pipeline's
-brand and that brand's product menu, so it is not an agent on its own, and 40-listing samples swing from 58% to 85%. A
-real agent-only baseline (title, shop, URL and brand field only; 200 random dev listings each for fragrance and food,
-scored on the same rows as the rules) is landing in `C:\Work\Kavak-Taxo-runs\RESULTS.md`.
-
-## 5. The architecture: a solver, and three loops (40 s)
-
-**Show:** three variants, A, B and C, are next to each other in the deck: keep one and delete the other two. All three
-show the system as it runs today:
-- **A**, your sketch: one flow top to bottom (Fragrance → Listings → Rules + placer agent → Taxonomy → Validator agent →
-  A person). Loop 1 (proposer agent) curves from the validator back into the rules; loop 2 (improver agent) from the
-  person back into the validator. Top right, loop 3: Food · Clothing · Footwear · Toys.
-- **B**, the old panel: the solver in the middle (Listings → Rules → Placer agent → Taxonomy), loop 1 above (silver +
-  gold → proposer agent → a gate in code → new rule), loop 2 below (validator agent → a person → improver agent → a
-  better validator). On the right, loop 3 as branches: the five domains joining one line of lessons.
-- **C**, one row left to right, loop 2 arcing above, loop 1 below, and the five domain branches along the bottom.
+**Show:** three columns, each with an icon. An agent on every listing gets:
+- **Accuracy:** 85% placed exactly right. Rules plus an agent get 75%, at a ninth of the cost. A small picture of a
+  system's own eval climbing past a person's check. What we do: rules learned from a few labels, and a check that gets
+  stricter (loops 1 and 2).
+- **Cost:** ≈ $3,800 for all 2 million listings, paid again on every refresh and in every domain. A grid, mostly rules
+  with a few agent calls. Rules place 89% for free, so the bill falls to ≈ $400 (the solver).
+- **Speed:** ≈ 570 hours, one call at a time, and every new domain starts from zero. Rules take a millisecond a
+  listing, and lessons carry to the next domain (loop 3).
 
 **Say:**
-- We propose this architecture, and it's what runs today. In one domain, on its own branch, listings go through rules,
-  and the placer agent gets only what rules can't settle; code checks its answer.
-- The validator agent labels fresh listings blind: that's silver. A person settles every disagreement: that's gold.
-- Loop 1: the proposer agent reads where the solver disagrees with silver and gold, and proposes one rule change; a
-  gate in code keeps it only if it scores better.
-- Loop 2: the improver agent reads the validator's mistakes and proposes one change to it, kept only if it agrees more
-  with gold.
-- Loop 3: every domain runs on its own branch; distil reads them all, and a lesson kept in two domains goes global.
+- These are the three things we want to improve.
+- Accuracy: an agent on every listing places 85% of fragrance listings exactly right, but it can't check its own work.
+  Rules plus the agent get 75% today, at a ninth of the cost: closing that gap is what loops 1 and 2 are for. On food,
+  a new domain, the agent gets 45% and rules plus the agent 20%: that's where loop 3 has to help.
+- Cost: about 630 tokens a listing, so two million listings is about 1.3 billion tokens, around $3,800 a pass, again
+  on every refresh and in every domain. Rules place 89% of fragrance listings for free, so the bill falls to about $400.
+- Speed: at a second a listing, one call at a time, that's about 570 hours. Rules take a millisecond a listing.
 
-## 6. Loop 1, induction: a few labelled cases become rules (50 s)
+*Measured on 400 random sealed listings per domain, one logged read each:*
 
-**Show:** one Walmart title, "Lattafa Khamrah Qahwa Eau De Parfum 3.4 Oz Unisex Fragrance Lattafa", going down the
-rules. Each step shows what it decided, and beside it the rule file that decided it: the vocabulary (variants),
-the registry (Lattafa's official lines), the lattice counts and a route. The registry places it as Lattafa › Khamrah ›
-Khamrah Qahwa with no agent call; the lattice and the route are greyed out, as the steps that would run if it hadn't.
+| | Fragrance exact | Food exact | Tokens per 1,000 listings (fragrance / food) |
+|---|---:|---:|---:|
+| Agent on every listing (gpt-6.1-sol via Codex) | 85.0% | 44.5% | 631,800 / 579,815 |
+| Rules only | 72.3% | 16.3% | 0 |
+| Rules, then the agent on the rest | 74.8% | 20.0% | 70,762 / 159,449 |
 
-**Say:**
-- Loop 1 starts from cases we labelled by hand, and induction turns them into rules. Each rule is a file you can read.
-- Here is one title. The vocabulary file says which words are variants, so "Eau De Parfum 3.4 Oz Unisex" is stripped.
-- The registry file holds Lattafa's official lines, found once by an agent with web search and written down by code.
-  Khamrah Qahwa is in it, so the listing is placed with no agent call.
-- If it hadn't been, the lattice counts names across the brand's listings, and a route file sends whatever is still
-  unclear to the cheapest agent that can settle it.
+On fragrance, rules then the agent also has right-or-shallower 85.3% and harm 14.7%; the agent alone has 88.7% and
+11.3%. Food's rules mostly stop high in the tree rather than place wrong (right or shallower 73.5% vs 77.2%), and most
+food titles never name the brand. Each figure is about ±2 points. The results slide was cut, so this table lives here.
 
-*Check before presenting:* the code has no registry step yet; the closest real step is round 3's brand-site lookup.
+## 5. The architecture: a solver, and three loops (50 s)
 
-## 7. Loop 1: the lattice finds products by counting (40 s)
+**Show:** the fragrance panel, with the other domains' panels stacked behind it (Food, Clothing, Footwear, Toys). Each
+node is an icon, a name and one line; agents carry the agent icon.
+- **The solver**, left to right: Listings (2 million) → Rules (place 89%, free) → Placer agent (the other 11%) →
+  Taxonomy → Silver + gold (the eval).
+- **Loop 1, rule induction** (blue): errors and patterns go up to the Proposer agent (one rule), then the Gate in code
+  (keeps it if sealed gold rises), then down to Rules.
+- **Loop 2, validation** (orange): fresh listings go to the Validator agent (flags likely errors), then A person
+  (labels its flags), then the Improver agent (improves the validator). The person's labels add silver and gold, and
+  the return leg reads "round again, until silver agrees with gold".
+- **Loop 3, lessons** (green), on the right: Distil in code (kept changes → lessons) → A lesson (kept in two domains) →
+  Every domain.
 
-**Show:** six Lattafa titles. 1, strip the brand and the variants. 2, count every run of words: khamrah 5, khamrah qahwa
-2, khamrah dukhan 1, yara 1, with a floor at two titles. 3, the tree it builds: Lattafa › Khamrah (family) › Khamrah,
-Khamrah Qahwa; Dukhan and Yara left unclear.
+**Two pop-ups.** Press → to show each, → again to close them, then → for the next slide:
+- **Gold: a person's labels, used to score everything.** Four listings, each with gold as a small stacked tree beside
+  what Taxo placed, and the score: exact, right but stops higher, or wrong product (harm). Underneath, what the three
+  scores mean, and sealed fragrance, rules then an agent: 75% exact, 85% right or shallower, 15% harm.
+- **Silver: the validator's labels, checked by a person.** Four fresh listings: what Taxo placed, what the validator
+  says, and what happens:
+  - flagged, the person agrees with the validator: new gold, and an error for loop 1;
+  - they agree: kept as silver;
+  - flagged, Taxo was right: the validator learns;
+  - not sure: the person settles it.
 
-**Say:**
-- This is how the lattice works. Strip the brand and the variant words, then count every run of words across the
-  brand's titles.
-- Each title joins its longest run seen at least twice. That gives two products, Khamrah and Khamrah Qahwa, and
-  because they share "khamrah", Khamrah is a family.
-- Dukhan and Yara are below the floor: the registry settles them if it knows them, otherwise an agent does.
-- No word lists: add a word to the vocabulary and the count changes on the next run.
+  Underneath: round 1, the validator matched gold on 75% of 40 fresh listings and 82% of its flags were real errors;
+  round 3, 85% and every flag real.
 
-## 8. Loop 1: exact match on sealed gold, round by round (35 s)
-
-**Show:** Figure A, fragrance: exact match on sealed gold for the rounds the gate kept. Start 52%; round 1 (strip mist
-words) 53%; round 2 (elixir, intense are names) 54%; round 3 (the brand's own site) 65%; round 5 (shop URLs) 66%; round
-6 (short single names) 69%. Under it: the agent's share fell from 30% to 11%. Small: sealed gold is 2,233 listings with
-Pedia's labels; rounds 4, 7 and 8 were dropped.
-
-**Say:**
-- Each round tries one change, and a gate in code keeps it only if exact match on sealed gold rises.
-- On fragrance it went from 52% to 69% over six rounds, and the share of listings sent to the agent fell from 30% to
-  11%.
-- The big step, round 3, looks the product up on the brand's own site. Round 6 came from loop 2. The gate dropped three
-  rounds.
-
-*Don't say* an agent proposed these rounds: rounds 1–6 were written by hand. The proposer agent is being built.
-
-## 9. Loop 2, validation: improve the eval itself (55 s)
-
-**Show:** the loop drawn as a circle, clockwise: a validator (labels fresh listings, blind) → flags (where it and the
-solver disagree) → a person settles them (gold 2, and more silver) → better rules, and a better validator → back to
-the validator. In the middle: each round, more silver, built better. Under it, what gold and silver are, and the
-example from the run. Beside it, Figure B: F1 of the solver on each round's eval (start, round 1, round 2). Under each
-round, what that eval holds: gold growing, silver growing, and the validator that built it (none, v1, v2, better).
+  *The example rows in both pop-ups are illustrations of the format, not rows from the runs.*
 
 **Say:**
-- A small gold set doesn't cover everything, so loop 2 improves the eval itself. Going round the loop:
-- A validator agent labels fresh listings without seeing the solver's answer, and flags where the two disagree.
-- A person settles every disagreement. Where the solver was wrong, the case joins gold: that's gold 2. The rest is kept
-  as silver.
-- From that come better rules, and a better validator. For example, 12 of the 16 errors it found were short names seen
-  only once. That became a rule, which the gate kept in round 6: sealed exact 66% → 69%.
-- And the validator itself got better: after one review, its "this is wrong" flags were right 95% of the time, up
-  from 79%.
-- So each round there is more silver, and it is built better: the eval covers more and gets stricter.
+- This is Taxo, and it's what runs today. In one domain, on its own branch: listings go through the rules first, for
+  free, and the placer agent gets only the 11% they can't place.
+- The taxonomy is scored on the eval: gold, which a person labelled, and silver, which the validator labelled and a
+  person checked. [Show the two pop-ups.]
+- Loop 1: the proposer agent reads the errors and proposes one rule; a gate in code keeps it only if sealed gold rises.
+- Loop 2: the validator checks fresh listings the rules have never seen and flags likely errors; a person labels them;
+  the improver makes the validator better. It goes round until silver agrees with gold.
+- Loop 3: every domain runs the same loops on its own branch. Distil turns kept changes into lessons, and a lesson kept
+  in two domains goes to every domain.
 
-*Figure B is not produced yet.* Silver sets S1–S3 are 200 listings each.
+## 6. Loop 1: rules place a listing with no agent call (40 s)
 
-## 10. Loop 3, meta: lessons carry across branches, unevenly (35 s)
-
-**Show:** left, a real lesson file, `lessons/brand-site-rung.yaml`: look the product up on the brand's own site; scope
-fragrance; round 3, kept, 313 better and 45 worse, exact +11 points, agent share −11 points. Right, one lesson,
-whole_name, in two domains: food −789 harmful placements; fragrance −41 exact placements. Last row: 2 domains must keep a
-lesson before it goes global.
-
-**Say:**
-- Every domain runs on its own branch, and every round leaves a record. Distil reads all the branches and writes
-  lessons, each with its scope and its record.
-- This one came from fragrance round 3: 313 placements better, 45 worse, and eleven points fewer listings sent to the
-  agent.
-- Lessons carry unevenly. Whole-name matching cut food's harmful placements by 789, but cost fragrance 41 exact ones. So
-  a lesson goes global only once two domains have kept it.
-
-## 11. Results: what each loop adds, in each domain (35 s)
-
-**Show:** a table, fragrance, food and cars: exact match and cost per 1,000 listings for an agent on everything, after
-loop 1, after loop 2, and with loop 3's head start. Filled so far: fragrance after loop 1, 69% at about $0.31 per 1,000 listings
-(est.). The agent-only row waits for the baseline.
+**Show:** three numbered steps.
+1. **Strip the words that are never a name.** The Walmart title "Lattafa Khamrah Qahwa Eau De Parfum 3.4 Oz Unisex
+   Fragrance Lattafa", marked up in place: Eau De Parfum (concentration), 3.4 Oz (size), Unisex (audience) and
+   Fragrance (generic word) are struck through; the brand is faint; Khamrah Qahwa is bold.
+2. **Count the names in all of Lattafa's titles.** Khamrah Qahwa ×2 and Khamrah ×2 are products; Khamrah Dukhan and
+   Yara are each seen once. In two or more titles: a product. A name two products share: a family.
+3. **Place it in the tree.** Lattafa › Khamrah (family) › Khamrah and Khamrah Qahwa, with our listing landing on Khamrah
+   Qahwa. "Placed, with no agent call." What the rules can't settle goes to an agent: 11% of listings.
 
 **Say:**
-- We have more under the hood, like the wiki our agents keep. Happy to go into it after; there isn't time for the whole
-  architecture now.
-- On fragrance, rules cut the estimated cost per thousand listings from about $2.76 to about $0.31. [Add how the rules
-  compare with the agent alone once the baseline is in.]
+- Here is what the rules do with one Walmart listing.
+- Step one: the vocabulary strips the words that are never a name: the concentration, the size, the audience. What's
+  left is Khamrah Qahwa.
+- Step two: do the same to all of Lattafa's titles and count the names. A name in two or more titles is a product, and
+  the name two products share is a family.
+- Step three: the listing lands on Lattafa › Khamrah › Khamrah Qahwa, with no agent call. Only what the rules can't
+  settle goes to an agent: 11% of fragrance listings.
+- Each of these rules is a file you can read, and loop 1 is how they're learned.
 
-## 12. Everything is in the evals (20 s)
+*The six Lattafa titles and their counts are an illustration; the variant groups and the floor of two match the run's
+files.*
+
+## 7. Loop 1: each rule kept, more right and cheaper (40 s)
+
+**Show:** one row per kept rule, top to bottom. Each row has the rule in plain words with a tiny example, a blue bar
+for exact match on sealed gold, and a dark bar for the share sent to an agent, with the agent bill for 2M listings
+beside it. A pale ghost under each bar shows the row above.
+
+| Round | Rule kept (as worded on the slide) | Exact | To an agent | Bill, 2M listings |
+|---|---|---:|---:|---:|
+| Start | the first rules | 52.4% | 30.1% | $1,140 |
+| 1 | hair, travel, mist are variant words | 52.8% | 30.1% | $1,140 |
+| 2 | Elixir, Intense are part of the name | 53.8% | 30.1% | $1,140 |
+| 3 | the brand's own store names the brand | 65.1% | 18.8% | $710 |
+| 5 | the shop's URL names the brand | 66.0% | 18.1% | $690 |
+| 6 | a one-word name is its own product (from loop 2) | 68.9% | 11.1% | $420 |
+
+Under it: a gate in code keeps a rule only if it clearly helps. It dropped 3 of 8.
+
+**Say:**
+- Each round tries one change, and a gate in code keeps it only if it clearly helps on sealed gold, which the loop never
+  tunes on.
+- On fragrance, exact match went from 52% to 69% over six rounds.
+- And as rules are added, fewer listings need an agent: 30% at the start, 11% now. The agent bill for two million
+  listings falls from about $1,140 to about $420.
+- The big step, round 3: when a listing is sold on the brand's own store, the brand is known. Round 6 came from loop 2.
+- The gate dropped three rounds that didn't clearly help.
+
+*Don't say* an agent proposed these rounds: they were written by hand. The Codex rule proposer kept nothing in 8
+rounds; with a table of the words that make placements wrong, 5 of 8 of its later proposals passed dev, and were then
+dropped on sealed for moving fewer than 10 rows. Round 7 reached 69.1% and was still dropped (8 better, 5 worse), which
+is why the slide says "clearly helps" and not "rises".
+
+## 8. Loop 2: the eval grows until silver matches gold (55 s)
+
+**Show:**
+- **Top, the validator's versions scored against gold.** On the left, the improver's kept step: v1 82.5% → v2 85.0%
+  (a later run). Across rounds 1–4, a flat line: v2 labels every round. In rounds 2 and 4, a hollow dot: a v3 try,
+  dropped for the same match and more harm. Then a dashed "Next · est." step to v3 and v4, crossing the target line,
+  "loop until silver matches gold: 90%".
+- **Bottom, the rounds.** Silver piles up 40 → 80 → 120 → 160, each layer labelled by the version that made it. Rounds
+  1 and 3: the flags a person settled (23 settled, 82.4% right; 20 settled, 100% right). Gold 2 grows 23 → 43.
+- **To loop 1:** short names seen once → rule r6, kept by the gate; concentration and audience words → r7, r8, dropped.
+- **Takeaway:** each version climbs against gold; the kept version labels the next, bigger sample. Ground truth grows.
+
+**Say:**
+- Loop 2 makes the eval bigger and better at the same time.
+- Each round, the validator labels 40 fresh listings the rules have never seen. A person settles only what it flags:
+  in round 1, 23 flags, and 82% were real errors; in round 3, every flag was real. Those become gold 2.
+- With more gold, the improver agent tries a new validator version. It's kept only if it matches gold better: v1 to
+  v2 went from 82.5% to 85%. Two later tries matched no better and did more harm, so they were dropped.
+- The kept version labels the next, bigger sample. Silver grows 40, 80, 120, 160, and it goes round until silver
+  matches gold.
+- And the errors it finds feed loop 1: short names seen once became rule 6, which the gate kept.
+
+*Measured:* v1 → v2 (82.5 → 85.0, a later run on 40 human rows), the two dropped tries, 4 rounds of 40, gold rows
+added (23 and 20), flags right (82.4% and 100%), and r6/r7/r8. *Estimated, marked "est." on the slide:* the 90%
+target, v3 and v4, and the next 200. The per-round matches (75, 82.5, 85, 57.5%) are sample noise at 40 listings, so
+they aren't drawn.
+
+## 9. Loop 3: lessons cross domains, but not both ways (40 s)
+
+**Show:**
+- **Top row:** each domain on its own branch → distil turns each kept change into a lesson → tried on the other
+  domains' sealed gold.
+- **Left:** a 4×4 grid (Fragrance, Food, Clothing, Footwear). Each cell is the change in exact-match points when one
+  domain's lessons are tried on another's sealed gold. Green helps, orange hurts, the diagonal is each domain's own
+  loop 1.
+- **Right, two worked examples:**
+  - **Food → Fragrance helps:** "2 Pack" and "100ml | Best Seller" are crossed out, and the shop's own store names the
+    brand.
+  - **Fragrance → Food doesn't:** a structure lesson ("a flanker is a new product") would make Oreo Double Stuf Golden
+    a new product, where food's gold has Golden as a variant. Food on fragrance's code and rules: 11.2% exact; the
+    agent alone: 44.5%.
+- **Bottom:** a lesson goes global once two domains keep it.
+
+**Say:**
+- Every domain runs on its own branch, and distil, which is code, turns each kept change into a lesson with its scope
+  and its record.
+- Loop 3 tries each domain's lessons on every other domain's sealed gold.
+- Food's cleaning lessons carry: dropping sizes, multipacks and shop noise, and reading the brand from the shop's own
+  store, make fragrance titles clean too.
+- Fragrance's structure lessons don't carry back: a flanker like Khamrah Qahwa is a new product, but a new Oreo flavour
+  is a variant. On fragrance's rules, food starts at 11% exact, where the agent alone gets 45%.
+- So a lesson goes global only once two domains have kept it.
+
+*What's measured:* the diagonal for fragrance (+16.5, 52.4 → 68.9) and food (+5.6, 11.2 → 16.8), and food's cold start
+on fragrance's rules. **The other cells are illustrative**, and the slide's source line says so. Real evidence that
+lessons carry unevenly:
+- whole_name cut food's harmful placements by 789 but cost fragrance 41 exact placements;
+- turning fragrance's set veto off on food adds 501 harmful placements, so that lesson carries.
+
+## 10. Everything is in the evals (20 s)
 
 **Show:** the point cloud. Everything is in the evals. As the system improves, the eval has to improve with it. Next:
 customer-feedback models, and other tasks with no ground truth.
@@ -219,20 +259,21 @@ customer-feedback models, and other tasks with no ground truth.
 
 | Figure | Slide | What it shows | From | Status |
 |---|---|---|---|---|
-| Agent alone | 4 | Exact match, $ and hours for all 2M listings with an agent on everything | $ and hours: the validator's token and time logs (840 listings), $3 per million tokens assumed. Exact match: the agent-only baseline in `C:\Work\Kavak-Taxo-runs\RESULTS.md` | $ and hours estimated; accuracy running |
-| **A** | 8 | Exact match on sealed gold, round by round, each point labelled with the change kept | `memory/rounds/fragrance` on `origin/distill/rounds` | in the deck |
-| **B** | 9 | F1 of rule set 1 and rule set 2 on each round's eval; the sizes of gold and silver per round | validation rounds 1–2 | to run |
-| Loop 3 evidence | 10 | A lesson file; whole_name on food and fragrance | `lessons/brand-site-rung.yaml`; food run `metrics.json` (−789 harm); fragrance dev (−41 exact, from the run notes) | in the deck |
-| **Results** | 11 | Exact match and $ per 1,000 listings: agent alone, after loops 1, 2 and 3, by domain | fragrance filled; food and the rest to run | partly |
-| Own eval vs human check | 2 | The LLM judge's score by round, against our labels at the start and after round 4 | Pedia replay `pe2` (`C:\Work\RSI\hackathon\runs\`), mean of 6 runs, 245 held-out listings | in the deck |
+| Own eval vs human check | 2 | The LLM judge's score by round, against our labels at the start and after round 4 | Pedia replay `pe2` (`C:\Work\RSI\hackathon\runs\`), mean of 6 runs, 245 held-out listings | measured |
+| Agent alone vs rules | 4 | Exact match, tokens and seconds a listing; $ and hours for 2M listings | 400 random sealed listings per domain (run session); $3 per million tokens assumed | measured; $ estimated |
+| Gold and silver examples | 5 (pop-ups) | What a gold row, a silver row and a score look like | example rows; the numbers under them are measured (sealed fragrance; loop 2 rounds V1 and V3) | rows illustrative |
+| Loop 1 rounds | 7 | Exact on sealed gold and share to the agent, per kept round | `memory/rounds/fragrance` on `origin/distill/rounds`; RESULTS.md §2 | measured; $ estimated; rule wording paraphrased |
+| Loop 2 rounds | 8 | Validator vs gold per round, silver and gold growing, the improver's climb | `C:\Work\Kavak-Taxo-runs\fragrance-run\runs\fragrance\loopb\` (V1–V4, 40 listings each); improver step from `docs/fragrance-cycles/cycle1.md` (a later run) | measured, later rounds estimated |
+| Loop 3 grid | 9 | Lessons from each domain tried on each other's sealed gold | diagonal and food's cold start measured; other cells illustrative | partly illustrative |
 
 ## Questions to expect
 
 | Question | Answer |
 |---|---|
 | Isn't this over-engineering a labeller? | The labels are the first task, not the point. The point is improving a task with no ground truth by improving its eval. Rules are free, testable and carry to the next domain; the same loops apply wherever an answer can't be checked directly. |
-| Why not just use an agent for everything? | Cost and speed: an estimated $5,500 and 510 hours a pass for 2 million listings, again on every refresh. [Add the agent-only accuracy once the baseline is in.] |
+| Why not just use an agent for everything? | On fragrance it's more accurate today (85% vs 75%), but about $3,800 and 570 hours a pass for 2 million listings, again on every refresh and in every domain, and it can't check itself. Rules plus the agent cost a ninth as much; the loops close the gap. |
 | Who is "the person"? | In these runs, Pedia's labels stand in for the person. Against Harry's own labels, the rules moved from 47% to 50% exact, on 121 rows: smaller, and we say so. |
-| Isn't the validator just another agent you trust? | No. It is scored on gold at every version, its agreements are spot-checked, and only a person settles a disagreement or changes gold. Its flags went from 79% to 95% right after one review. |
+| Isn't the validator just another agent you trust? | No. It is scored against gold every round, only a person settles a disagreement or changes gold, and a new validator version is kept only if it matches gold better. Its flags were right 82% of the time in round 1 and 100% in round 3, on 40 listings each. |
 | How do you know a rule generalises? | The gate tests it on sealed gold the loop never tunes on, and loop 2 tests it on listings gold doesn't contain. |
-| What does a person actually do? | Labels the small gold set, settles what the validator flags (about 20 cases per round of 40), and tells it what to look for. |
+| What does a person actually do? | Labels the small gold set, settles what the validator flags (about 20 a round of 40), and tells it what to look for. |
+| How noisy are these numbers? | The agent comparisons are ±2 to 3 points on 400 listings. Loop 2 rounds are 40 listings, so one listing is 2.5 points, and the validator swings between 57.5% and 85% from sample to sample. |

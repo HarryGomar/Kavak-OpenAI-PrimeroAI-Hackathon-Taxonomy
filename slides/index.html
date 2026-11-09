@@ -1,7 +1,7 @@
 <!doctype html>
 <!--
   The pitch deck. One file, no build step. Open it in a browser (it needs internet for the fonts and product photos).
-  12 slides (PRESENTATION.md, slide by slide).
+  10 slides (PRESENTATION.md, slide by slide). A slide with pop-ups shows them one at a time on →, then closes them.
 
   Keys:  → Space  next   ← back   Home / End   F fullscreen   O or Esc overview   N speaker notes
   URL:   #5 opens the 5th page.  ?all turns off the fade (for screenshots).
@@ -83,6 +83,15 @@
   .nd small { display: block; font: 400 19px var(--sans); color: var(--mute); letter-spacing: 0; margin-top: 6px; }
   .nd.sm { font-size: 30px; }
   .nd.dim { color: var(--faint); }
+  .lst { position: absolute; width: 200px; margin-left: -100px; }
+  .lst .sh { display: flex; align-items: center; gap: 8px; height: 46px; margin: 0 0 8px; font: 500 18px var(--sans); color: var(--mute); }
+  .lst .sh img { width: 46px; height: 46px; object-fit: contain; margin-right: 4px; }
+  .lst .sh svg { height: 20px; width: auto; flex: none; color: var(--ink2); }
+  .lst .sh svg.wm { height: 17px; }
+  .lst .tt { margin: 0; font: 400 20px/1.35 var(--sans); color: var(--faint); }
+  .lst .tt i { font-style: normal; }
+  .lst .tt b { color: var(--ink); font-weight: 600; }
+  .lcap { position: absolute; left: 0; right: 0; top: 640px; margin: 0; text-align: center; font: 400 24px var(--sans); color: var(--mute); }
 
   /* ---------- 2 · evals ---------- */
   .say p { font: 400 30px/1.4 var(--sans); color: var(--ink2); margin: 0 0 30px; }
@@ -93,28 +102,14 @@
   .axes > div { padding: 0 56px; display: flex; flex-direction: column; }
   .axes > div:first-child { padding-left: 0; }
   .axes > div + div { border-left: 2px solid var(--line); }
-  .axes h3 { font: 600 52px/1 var(--disp); letter-spacing: -.02em; margin: 0 0 18px; }
-  .axes .k { font: 500 21px var(--sans); color: var(--faint); margin: 0 0 6px; }
+  .axes h3 { font: 600 52px/1 var(--disp); letter-spacing: -.02em; margin: 0 0 22px; display: flex; align-items: center; gap: 16px; }
+  .axes h3 .ic { color: var(--ink2); }
+  .axes .k { font: 500 22px var(--sans); color: var(--mute); margin: 0 0 8px; }
   .axes .v { font: 600 64px/1 var(--disp); margin: 0; }
   .axes .m { font: 400 26px/1.35 var(--sans); color: var(--ink2); margin: 30px 0 0; min-height: 70px; }
   .axes .cv { width: 100%; height: 200px; margin: 26px 0; display: block; overflow: visible; }
   .axes .a { font: 600 30px/1.3 var(--sans); margin: 0; min-height: 78px; }
   .axes .l { font: 600 24px var(--sans); color: var(--mute); margin: 14px 0 0; }
-
-  /* ---------- 7 · loop 1, one listing through the rules ---------- */
-  .trace { display: flex; flex-direction: column; margin-top: -8px; }
-  .tr { display: grid; grid-template-columns: 210px 1fr 600px; column-gap: 40px; padding: 18px 0; border-top: 2px solid var(--line); align-items: start; }
-  .tr .rl { margin: 6px 0 0; font: 600 24px var(--sans); color: var(--ind); }
-  .tr .tt { margin: 0; font: 400 32px/1.25 var(--sans); }
-  .tr.first .tt { grid-column: 2 / 4; }
-  .tr .tt s { color: var(--faint); text-decoration-thickness: 2px; }
-  .tr .tt b, .tr .why b { color: var(--ind); font-weight: 600; }
-  .tr .why { margin: 8px 0 0; font: 400 22px/1.4 var(--sans); color: var(--mute); }
-  .tr.first .rl { color: var(--mute); }
-  .tr.dim .rl, .tr.dim .tt { color: var(--faint); }
-  .yml { margin: 0; padding-left: 22px; border-left: 3px solid var(--indT, #E8F2FB); font: 400 19px/1.42 var(--mono); color: var(--ink2); white-space: pre; }
-  .yml i { font-style: normal; color: var(--faint); }
-  .yml em { font-style: normal; color: var(--ind); }
 
   /* ---------- charts ---------- */
   svg.ch { width: 100%; height: 100%; display: block; overflow: visible; }
@@ -127,21 +122,93 @@
   .ex { font: 400 24px/1.4 var(--sans); color: var(--mute); margin: 14px 0 0; }
 
   /* ---------- 10 · loop 3 ---------- */
-  .xfer { display: flex; flex-direction: column; }
-  .xfer .hd { font: 500 22px var(--sans); color: var(--faint); margin: 0 0 14px; }
-  .xfer > div { display: grid; grid-template-columns: 330px 150px 1fr; column-gap: 30px; align-items: baseline; padding: 26px 0; border-top: 2px solid var(--line); }
-  .xfer .k { margin: 0; font: 600 30px var(--sans); }
-  .xfer .v { margin: 0; font: 600 50px/1 var(--disp); }
-  .xfer .w { margin: 0; font: 400 24px/1.35 var(--sans); color: var(--ink2); }
+  .l3-flow { margin: 0; display: flex; align-items: center; gap: 22px; font: 400 24px var(--sans); color: var(--ink2); white-space: nowrap; }
+  .l3-flow > span { display: inline-flex; align-items: center; gap: 12px; }
+  .l3-flow .l3-ar { color: var(--faint); font-size: 26px; }
+  .l3-main { display: grid; grid-template-columns: 880px 1fr; column-gap: 72px; flex: 1; min-height: 0; }
+  .l3-mx { display: block; width: 880px; height: 100%; overflow: visible; }
+  .l3-ex { display: flex; flex-direction: column; gap: 40px; min-height: 0; }
+  .l3-ex h3 { display: flex; align-items: center; gap: 14px; margin: 0 0 10px; font: 600 30px/1.2 var(--sans); color: var(--ink); }
+  .l3-ex h3 .ic { flex: none; }
+  .l3-w { margin: 0; font: 400 24px/1.35 var(--sans); color: var(--ink2); }
+  .l3-ba { display: grid; grid-template-columns: 92px 1fr; row-gap: 10px; align-items: baseline; margin: 18px 0 0; }
+  .l3-ba p { margin: 0; }
+  .l3-ba .k { font: 500 18px var(--sans); color: var(--faint); }
+  .l3-ba .t { font: 400 26px/1.25 var(--sans); color: var(--ink); }
+  .l3-ba s { color: var(--faint); text-decoration-thickness: 2px; }
+  .l3-ba small { display: block; margin-top: 4px; font: 400 20px var(--sans); color: var(--mute); }
+  .l3-ba u { text-decoration: underline 3px var(--meta); text-underline-offset: 6px; font-weight: 600; color: var(--ink); }
+  .l3-tr { display: block; width: 100%; height: 158px; margin: 16px 0 0; overflow: visible; }
+  .l3-m { margin: 10px 0 0; font: 400 20px/1.35 var(--sans); color: var(--mute); }
+  .l3-end { margin: auto 0 0; display: flex; align-items: center; gap: 14px; font: 600 28px/1.2 var(--sans); color: var(--ink); white-space: nowrap; }
+  .l3-end .ic { flex: none; }
 
   /* ---------- 11 · results ---------- */
   .res { border-collapse: collapse; width: 100%; }
   .res th { font: 500 22px var(--sans); color: var(--faint); text-align: left; padding: 0 0 16px; }
-  .res th:first-child { width: 520px; }
+  .res th:first-child { width: 640px; }
+  .res td.n small { display: block; font: 400 22px var(--sans); color: var(--mute); margin-top: 6px; }
+  .resl { margin: 0; font: 400 28px/1.4 var(--sans); color: var(--ink2); }
+  .resl b { color: var(--ink); }
   .res td { border-top: 2px solid var(--line); padding: 26px 0; font: 400 30px var(--sans); vertical-align: baseline; }
   .res td:first-child { font-weight: 500; }
   .res .f { font: 600 46px/1 var(--disp); }
   .res .c { font: 400 22px var(--sans); color: var(--mute); margin-left: 14px; }
+
+  /* ---------- pop-ups: shown one at a time with → before the next slide ---------- */
+  .pop { position: absolute; inset: 0; z-index: 5; padding: 96px 128px 120px; display: flex; flex-direction: column; gap: 40px;
+         background: #fff; opacity: 0; visibility: hidden; transform: translateY(18px);
+         transition: opacity .3s var(--ease), transform .3s var(--ease), visibility .3s; }
+  .pop.on { opacity: 1; visibility: visible; transform: none; }
+  .static .pop { transition: none; }
+  body.overview .pop { display: none; }
+  @media print { .pop { display: none !important; } }
+
+  /* ---------- 6 · loop 1: strip, count, place ---------- */
+  .l1 { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 58px; }
+  .l1-h { margin: 0 0 22px; font: 600 28px var(--sans); color: var(--ink); display: flex; align-items: center; gap: 14px; }
+  .l1-h > b { color: var(--ind); font: 600 30px var(--disp); }
+  .l1-src { display: inline-flex; align-items: center; gap: 8px; margin-left: 10px; font: 400 21px var(--sans); color: var(--faint); }
+  .l1-src svg { height: 18px; width: auto; }
+  .l1-t { display: flex; gap: 22px; align-items: flex-start; font: 500 40px/1.1 var(--sans); white-space: nowrap; }
+  .l1-t .w { display: flex; flex-direction: column; align-items: center; }
+  .l1-t em { font: 500 20px var(--sans); font-style: normal; margin-top: 12px; color: var(--ind); }
+  .l1-t .b { color: var(--faint); } .l1-t .b em { color: var(--faint); }
+  .l1-t .n { color: var(--ink); font-weight: 600; } .l1-t .n em { color: var(--ink); margin-top: 4px; }
+  .l1-t .n > span { border-bottom: 4px solid var(--ind); padding-bottom: 4px; }
+  .l1-t .v { color: var(--faint); } .l1-t .v > span { text-decoration: line-through; text-decoration-thickness: 3px; }
+  .l1-row { display: grid; grid-template-columns: 700px 1fr; gap: 120px; }
+  .l1-c { display: flex; flex-direction: column; gap: 8px; }
+  .l1-c .r { display: grid; grid-template-columns: 290px 90px 1fr; align-items: center; height: 56px; padding: 0 16px; border-radius: 10px; }
+  .l1-c .r.me { background: #E8F2FB; }
+  .l1-c .nm { font: 600 28px var(--sans); }
+  .l1-c .sqs { display: flex; gap: 6px; } .l1-c .sqs i { width: 24px; height: 24px; border-radius: 4px; background: var(--ind); }
+  .l1-c .lb { font: 500 22px var(--sans); color: var(--ind); }
+  .l1-c .dim .nm { color: var(--faint); font-weight: 500; } .l1-c .dim .sqs i { background: var(--line); } .l1-c .dim .lb { color: var(--faint); font-weight: 400; }
+  .l1-k { margin: 22px 0 0 16px; font: 400 23px/1.45 var(--sans); color: var(--mute); }
+  .l1-tree { position: relative; height: 300px; }
+  .l1-tree .l1-me { color: var(--ind); }
+  .l1-ok { margin: 30px 0 0; display: flex; align-items: center; gap: 12px; font: 600 28px var(--sans); }
+  .l1-ag { margin: 14px 0 0; display: flex; align-items: center; gap: 12px; font: 400 22px var(--sans); color: var(--mute); }
+
+  .evt { border-collapse: collapse; width: 100%; }
+  .evt th { font: 500 21px var(--sans); color: var(--faint); text-align: left; padding: 0 24px 14px 0; }
+  .evt td { border-top: 2px solid var(--line); padding: 16px 24px 14px 0; font: 400 23px/1.3 var(--sans); color: var(--ink2); vertical-align: top; }
+  .evt td b { color: var(--ink); font-weight: 600; }
+  .evt td.li { width: 410px; color: var(--ink); }
+  .evt td.li small { display: block; font: 400 19px var(--sans); color: var(--faint); margin-top: 6px; }
+  .mt { font: 400 21px/1 var(--sans); color: var(--mute); }
+  .mt > div { position: relative; height: 31px; display: flex; align-items: center; padding-left: calc(var(--k) * 26px); white-space: nowrap; }
+  .mt > div + div::before { content: ''; position: absolute; left: calc(var(--k) * 26px - 19px); top: -6px; width: 11px; height: 21px;
+                            border-left: 2px solid var(--line); border-bottom: 2px solid var(--line); border-bottom-left-radius: 4px; }
+  .mt b { color: var(--ink); font-weight: 600; }
+  .mt .sq { width: 13px; height: 13px; border-radius: 3px; margin-right: 9px; flex: none; background: var(--ink); }
+  .mt.g .sq { background: #E3AC2A; } .mt.s .sq { background: #C3C8D0; }
+  .evt td.vd { width: 370px; }
+  .evt td.vd div { display: flex; gap: 12px; align-items: flex-start; }
+  .evt td.vd .ic { flex: none; margin-top: 1px; }
+  .evk { margin: 0; font: 400 25px/1.55 var(--sans); color: var(--ink2); }
+  .evk b { color: var(--ink); }
 
   /* ---------- HUD, overview, print ---------- */
   .progress { position: fixed; left: 0; bottom: 0; height: 3px; width: 0; background: var(--ink); z-index: 20; transition: width .3s var(--ease); }
@@ -181,6 +248,7 @@
   <symbol id="lg-amazon" viewBox="0 0 24 24"><path fill="#FF9900" d="M.045 18.02c.072-.116.187-.124.348-.022 3.636 2.11 7.594 3.166 11.87 3.166 2.852 0 5.668-.533 8.447-1.595l.315-.14c.138-.06.234-.1.293-.13.226-.088.39-.046.525.13.12.174.09.336-.12.48-.256.19-.6.41-1.006.654-1.244.743-2.64 1.316-4.185 1.726a17.617 17.617 0 01-10.951-.577 17.88 17.88 0 01-5.43-3.35c-.1-.074-.151-.15-.151-.22 0-.047.021-.09.051-.13zm6.565-6.218c0-1.005.247-1.863.743-2.577.495-.71 1.17-1.25 2.04-1.615.796-.335 1.756-.575 2.912-.72.39-.046 1.033-.103 1.92-.174v-.37c0-.93-.105-1.558-.3-1.875-.302-.43-.78-.65-1.44-.65h-.182c-.48.046-.896.196-1.246.46-.35.27-.575.63-.675 1.096-.06.3-.206.465-.435.51l-2.52-.315c-.248-.06-.372-.18-.372-.39 0-.046.007-.09.022-.15.247-1.29.855-2.25 1.82-2.88.976-.616 2.1-.975 3.39-1.05h.54c1.65 0 2.957.434 3.888 1.29.135.15.27.3.405.48.12.165.224.314.283.45.075.134.15.33.195.57.06.254.105.42.135.51.03.104.062.3.076.615.01.313.02.493.02.553v5.28c0 .376.06.72.165 1.036.105.313.21.54.315.674l.51.674c.09.136.136.256.136.36 0 .12-.06.226-.18.314-1.2 1.05-1.86 1.62-1.963 1.71-.165.135-.375.15-.63.045a6.062 6.062 0 01-.526-.496l-.31-.347a9.391 9.391 0 01-.317-.42l-.3-.435c-.81.886-1.603 1.44-2.4 1.665-.494.15-1.093.227-1.83.227-1.11 0-2.04-.343-2.76-1.034-.72-.69-1.08-1.665-1.08-2.94l-.05-.076zm3.753-.438c0 .566.14 1.02.425 1.364.285.34.675.512 1.155.512.045 0 .106-.007.195-.02.09-.016.134-.023.166-.023.614-.16 1.08-.553 1.424-1.178.165-.28.285-.58.36-.91.09-.32.12-.59.135-.8.015-.195.015-.54.015-1.005v-.54c-.84 0-1.484.06-1.92.18-1.275.36-1.92 1.17-1.92 2.43l-.035-.02zm9.162 7.027c.03-.06.075-.11.132-.17.362-.243.714-.41 1.05-.5a8.094 8.094 0 011.612-.24c.14-.012.28 0 .41.03.65.06 1.05.168 1.172.33.063.09.099.228.099.39v.15c0 .51-.149 1.11-.424 1.8-.278.69-.664 1.248-1.156 1.68-.073.06-.14.09-.197.09-.03 0-.06 0-.09-.012-.09-.044-.107-.12-.064-.24.54-1.26.806-2.143.806-2.64 0-.15-.03-.27-.087-.344-.145-.166-.55-.257-1.224-.257-.243 0-.533.016-.87.046-.363.045-.7.09-1 .135-.09 0-.148-.014-.18-.044-.03-.03-.036-.047-.02-.077 0-.017.006-.03.02-.063v-.06z"/></symbol>
   <symbol id="lg-walmart" viewBox="0 8.6 24 6.8"><path fill="#0071CE" d="M21.41818 9.10219c-.22048 0-.39583.12308-.39583.27297l.13393 1.51627c.01478.09132.12669.16185.26197.16185.13555-.00017.24705-.07065.26214-.16185l.13424-1.51627c0-.1499-.17555-.27297-.39645-.27297zM-.00002 10.3184s.59713 2.44699.69242 2.84417c.11123.46362.3117.63419.88954.51913l.37291-1.51718c.0945-.37683.1579-.64553.21866-1.02883h.01065c.04269.3871.10354.65314.18131 1.03017 0 0 .15176.68869.22949 1.05042.07795.36163.29482.5895.86083.46542l.88851-3.3633h-.71735l-.30339 1.45411c-.08155.42325-.15544.75396-.21251 1.14117h-.01022c-.05189-.38347-.11777-.70096-.20072-1.11331l-.31586-1.48197h-.7474l-.3378 1.44462c-.09569.43899-.18528.79337-.2422 1.16745h-.01023c-.05832-.35224-.13599-.7977-.22006-1.22261 0 0-.20074-1.03328-.27115-1.38946zm6.83845 0v3.3633h.68299v-3.3633zm9.6188 0v2.48118c0 .34202.0644.5817.20213.72811.12033.12806.31854.21094.55604.21094.20193 0 .40062-.0383.49426-.07317l-.0088-.53367c-.06968.01711-.1498.03078-.25942.03078-.23265 0-.31068-.149-.31068-.45611v-.94921h.59479v-.64351h-.59481v-.79533zm2.77885 0c-.11446.0027-.24452.08936-.32723.23277-.11062.19096-.09105.40434.03838.47923l1.3799.64254c.0862.03205.20323-.02912.27103-.14597.06814-.11745.0629-.2496-.0088-.3082l-1.24635-.8741c-.03237-.01874-.06877-.02717-.10693-.02627zm4.36427 0c-.03815-.0009-.0745.0075-.1068.02628l-1.2464.8741c-.07112.05846-.07653.1901-.0092.30734.00006.00013.00015.00023.00025.00036.00009.00016.00015.00033.00024.00049.06804.11686.18472.17803.27091.14598l1.38004-.64254c.12997-.0749.14861-.28827.03874-.47923-.08309-.1434-.21333-.23006-.32777-.23277zM5.312 11.0981c-.42444 0-.76136.11916-.94501.22529l.13442.46019c.16808-.10595.43566-.19366.68907-.19366.41954-.0011.48817.23728.48817.39012v.03613c-.9142-.0014-1.49164.31493-1.49164.9598 0 .3937.29399.76266.80512.76266.31466 0 .57778-.12554.73548-.32662h.01545s.10445.4367.67982.26969c-.03022-.18174-.04002-.37546-.04002-.60884v-.89849c0-.57263-.24452-1.07627-1.07086-1.07627zm4.08552 0c-.42739 0-.61944.2166-.7359.40034h-.01016v-.34335h-.65173v2.5266h.68658V12.2c0-.06945.00799-.1429.03223-.2068.05689-.1492.19565-.3237.41725-.3237.27704 0 .40667.2342.40667.57222v1.44h.68585v-1.4996c0-.06636.0091-.14622.02859-.20486.05639-.16969.20602-.30776.41201-.30776.28086 0 .41567.23012.41567.62788v1.38434h.68633v-1.48805c0-.78478-.39845-1.09555-.8483-1.09555-.19922 0-.35646.04996-.49863.13722-.1195.07334-.22655.17753-.32006.3147h-.0101c-.10853-.27228-.36375-.45192-.6963-.45192zm3.7702 0c-.42435 0-.76113.11916-.94495.22529l.13454.46019c.16792-.10595.43572-.19366.689-.19366.41926-.0011.48806.23728.48806.39012v.03613c-.91407-.0014-1.49164.31494-1.49164.9598 0 .3937.29418.76266.8056.76266.31441 0 .57759-.12554.735-.32662h.01557s.10437.4367.67982.26969c-.03027-.18174-.03996-.37546-.03996-.60884v-.89849c0-.57263-.24458-1.07627-1.07104-1.07627zm2.85129 0c-.26292 0-.56205.1697-.68761.53354h-.0191v-.47655h-.6181v2.5266h.70453V12.388c0-.06985.0042-.1307.01527-.1865.0521-.27102.25945-.44425.55696-.44425.08167 0 .1401.0088.20333.018v-.66151c-.05302-.0107-.0893-.01563-.15528-.01563zm4.35946 1.22067c-.01785-.00025-.03513.0026-.05134.0087l-1.3799.6418c-.12943.07519-.149.28868-.03838.47984.11028.1906.30469.28118.43415.20644l1.24634-.87349c.0717-.05929.07696-.19127.0088-.30862l.0006.00025c-.05507-.09558-.14292-.15388-.22027-.15492zm2.07955 0c-.07727.001-.1649.05934-.22012.15491l.00049-.00025c-.06781.11735-.06254.24934.0088.30862l1.2464.87349c.12921.07474.3238-.01584.43458-.20644.10986-.19116.09122-.40466-.03875-.47983l-1.38012-.64181c-.0162-.0061-.03344-.0089-.05128-.0087zm-16.75741.14518v.31519c0 .0466-.00406.09467-.01697.13673-.05286.17506-.23415.32303-.46086.32303-.18901 0-.33916-.1073-.33916-.33422 0-.34707.38204-.443.81699-.44073zm7.85577 0v.31519c0 .0466-.0041.09467-.0169.13673-.05287.17506-.23421.32303-.46093.32303-.18905 0-.3392-.1073-.3392-.33422 0-.34707.38209-.443.81703-.44073zm7.86138.48324c-.13506.00016-.24672.07024-.26148.16137l-.13393 1.5162c0 .15015.17535.27304.39583.27304.2209 0 .39645-.12289.39645-.27303l-.13424-1.51621c-.01509-.09113-.12659-.1612-.26214-.16137z"/></symbol>
   <symbol id="lg-tiktok" viewBox="0 0 24 24"><path style="fill:var(--ink)" d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></symbol>
+
 </svg>
 <div class="viewport"><div class="stage">
 
@@ -208,165 +276,150 @@
   <aside class="notes">Hill-climbing is hard, and continual learning is not a solved problem. Evals are what drive performance. In our last project a loop improved its own rules and climbed its own eval, an LLM judge, from 78% to 87%. When we checked by hand afterwards, it had gone from 81% to 84%: a third of the gain. 15 of the 48 changes it kept made our labels worse. Where a task checks itself, a loss or a test suite, that's enough: Karpathy's autoresearch hill-climbs on its own. Most useful tasks have no such check. So the eval itself needs a method to improve: what counts as right, and how we check it. That's what this talk is about.</aside>
 </section>
 
-<!-- 4 · The task: listings into trees -->
+<!-- 3 · The task: messy listings from many shops, built into product trees -->
 <section class="slide" data-n="3">
-  <h2>Seemingly easy, deceptively hard: connect a market's listings into product trees.</h2>
+  <h2>Seemingly easy, deceptively hard: build product trees from messy listings.</h2>
   <div class="fill tree">
     <svg class="links"></svg>
-    <div class="nd" id="b-oreo" style="left:380px;top:0">Oreo<small>brand</small></div>
-    <div class="nd sm dim" id="b-orig" data-p="b-oreo" style="left:110px;top:150px">Original</div>
-    <div class="nd sm" id="b-ds" data-p="b-oreo" style="left:380px;top:150px">Double Stuf<small>product</small></div>
-    <div class="nd sm dim" id="b-th" data-p="b-oreo" style="left:650px;top:150px">Thins</div>
-    <div class="nd sm dim" id="b-choc" data-p="b-ds" style="left:220px;top:300px">Chocolate</div>
-    <div class="nd sm" id="b-gold" data-p="b-ds" style="left:500px;top:300px">Golden<small>variant</small></div>
-    <figure class="pic" data-p="b-gold" style="left:390px;top:440px;width:220px"><div class="im"><img referrerpolicy="no-referrer" alt="Oreo Double Stuf Golden on Amazon" src="https://m.media-amazon.com/images/I/713KTU5Cw1L._SL500_.jpg"></div><figcaption><svg viewBox="0 0 24 24"><use href="#lg-amazon"/></svg>Amazon</figcaption></figure>
+    <div class="nd" id="b-oreo" style="left:330px;top:0">Oreo<small>brand</small></div>
+    <div class="nd sm dim" id="b-orig" data-p="b-oreo" style="left:90px;top:130px">Original</div>
+    <div class="nd sm" id="b-ds" data-p="b-oreo" style="left:330px;top:130px">Double Stuf<small>product</small></div>
+    <div class="nd sm dim" id="b-th" data-p="b-oreo" style="left:570px;top:130px">Thins</div>
+    <div class="nd sm dim" id="b-choc" data-p="b-ds" style="left:190px;top:260px">Chocolate</div>
+    <div class="nd sm" id="b-gold" data-p="b-ds" style="left:430px;top:260px">Golden<small>variant</small></div>
 
-    <div class="nd" id="b-lat" style="left:1240px;top:0">Lattafa<small>brand</small></div>
-    <div class="nd sm" id="b-khf" data-p="b-lat" style="left:1120px;top:150px">Khamrah<small>family</small></div>
-    <div class="nd sm dim" id="b-yara" data-p="b-lat" style="left:1500px;top:150px">Yara</div>
-    <div class="nd sm" id="b-kh" data-p="b-khf" style="left:920px;top:300px">Khamrah<small>product</small></div>
-    <div class="nd sm" id="b-kq" data-p="b-khf" style="left:1320px;top:300px">Khamrah Qahwa<small>product</small></div>
-    <figure class="pic" data-p="b-kh" style="left:810px;top:440px;width:220px"><div class="im"><img referrerpolicy="no-referrer" alt="Lattafa Khamrah on the brand's site" src="https://cdn.shopify.com/s/files/1/0754/4936/8799/files/Khamrah-1_0ffa4f52-30e3-4dea-9399-9bae4b8cb4af.png?v=1747421472&width=500"></div><figcaption>lattafa.com</figcaption></figure>
-    <figure class="pic" data-p="b-kq" style="left:1210px;top:440px;width:220px"><div class="im"><img referrerpolicy="no-referrer" alt="Khamrah Qahwa on Walmart" src="https://i5.walmartimages.com/seo/Lattafa-Khamrah-Qahwa-Eau-De-Parfum-3-4-Oz-Unisex-Fragrance-Lattafa_97970d71-3809-466a-86c2-a6622eb2052b.847378a05cda93ada488988400606dbb.jpeg?odnHeight=400&odnWidth=400&odnBg=FFFFFF"></div><figcaption><svg class="wm" viewBox="0 0 24 6.8"><use href="#lg-walmart"/></svg></figcaption></figure>
+    <div class="nd" id="b-lat" style="left:1200px;top:0">Lattafa<small>brand</small></div>
+    <div class="nd sm" id="b-khf" data-p="b-lat" style="left:1160px;top:130px">Khamrah<small>family</small></div>
+    <div class="nd sm dim" id="b-yara" data-p="b-lat" style="left:1540px;top:130px">Yara</div>
+    <div class="nd sm" id="b-kh" data-p="b-khf" style="left:920px;top:260px">Khamrah<small>product</small></div>
+    <div class="nd sm" id="b-kq" data-p="b-khf" style="left:1400px;top:260px">Khamrah Qahwa<small>product</small></div>
+
+    <div class="lst" data-p="b-gold" style="left:322px;top:420px"><p class="sh"><img referrerpolicy="no-referrer" alt="" src="https://m.media-amazon.com/images/I/713KTU5Cw1L._SL500_.jpg" onerror="this.remove()"><svg viewBox="0 0 24 24"><use href="#lg-amazon"/></svg>Amazon</p><p class="tt"><i>OREO</i> <b>Double Stuf Golden</b> <i>Sandwich Cookies, Family Size, 18.71 oz</i></p></div>
+    <div class="lst" data-p="b-gold" style="left:538px;top:420px"><p class="sh"><img referrerpolicy="no-referrer" alt="" src="https://m.media-amazon.com/images/I/713KTU5Cw1L._SL500_.jpg" onerror="this.remove()"><svg class="wm" viewBox="0 0 24 6.8"><use href="#lg-walmart"/></svg></p><p class="tt"><i>Oreo</i> <b>Golden Double Stuf</b> <i>Sandwich Cookies, 14.03 oz</i></p></div>
+    <div class="lst" data-p="b-kh" style="left:812px;top:420px"><p class="sh"><img referrerpolicy="no-referrer" alt="" src="https://cdn.shopify.com/s/files/1/0754/4936/8799/files/Khamrah-1_0ffa4f52-30e3-4dea-9399-9bae4b8cb4af.png?v=1747421472&width=500" onerror="this.remove()"><i data-ic="shop" data-s="20"></i>lattafa.com</p><p class="tt"><b>Khamrah</b> <i>– Eau de Parfum 100ml</i></p></div>
+    <div class="lst" data-p="b-kh" style="left:1028px;top:420px"><p class="sh"><img referrerpolicy="no-referrer" alt="" src="https://cdn.shopify.com/s/files/1/0754/4936/8799/files/Khamrah-1_0ffa4f52-30e3-4dea-9399-9bae4b8cb4af.png?v=1747421472&width=500" onerror="this.remove()"><svg viewBox="0 0 24 24"><use href="#lg-amazon"/></svg>Amazon</p><p class="tt"><i>Lattafa Perfumes</i> <b>Khamrah</b> <i>EDP Spray for Unisex, 3.4 Ounce</i></p></div>
+    <div class="lst" data-p="b-kq" style="left:1292px;top:420px"><p class="sh"><img referrerpolicy="no-referrer" alt="" src="https://i5.walmartimages.com/seo/Lattafa-Khamrah-Qahwa-Eau-De-Parfum-3-4-Oz-Unisex-Fragrance-Lattafa_97970d71-3809-466a-86c2-a6622eb2052b.847378a05cda93ada488988400606dbb.jpeg?odnHeight=400&odnWidth=400&odnBg=FFFFFF" onerror="this.remove()"><svg class="wm" viewBox="0 0 24 6.8"><use href="#lg-walmart"/></svg></p><p class="tt"><i>Lattafa</i> <b>Khamrah Qahwa</b> <i>Eau De Parfum 3.4 Oz Unisex Fragrance Lattafa</i></p></div>
+    <div class="lst" data-p="b-kq" style="left:1508px;top:420px"><p class="sh"><img referrerpolicy="no-referrer" alt="" src="https://i5.walmartimages.com/seo/Lattafa-Khamrah-Qahwa-Eau-De-Parfum-3-4-Oz-Unisex-Fragrance-Lattafa_97970d71-3809-466a-86c2-a6622eb2052b.847378a05cda93ada488988400606dbb.jpeg?odnHeight=400&odnWidth=400&odnBg=FFFFFF" onerror="this.remove()"><svg viewBox="0 0 24 24"><use href="#lg-tiktok"/></svg>TikTok Shop</p><p class="tt"><b>KHAMRAH QAHWA</b> <i>by LATTAFA 100ML EDP | 100% Original</i></p></div>
+    <p class="lcap">Different shops, different words: one product each. The tree is what we build.</p>
   </div>
-  <aside class="notes">The task we tried this on comes from our own work. To understand a market you have to match and connect its listings into product trees: Oreo, Double Stuf, Golden; Lattafa, the Khamrah family, Khamrah Qahwa. Until you know listings are one product you can't add up its price, its reviews or its demand. It looks trivial for a person and is surprisingly hard for an agent: a size or a 12-pack is never a new product, a flanker like Khamrah Qahwa is.</aside>
+  <aside class="notes">The task comes from our own work. To understand a market you connect its listings into product trees. Every shop writes the same product differently: Amazon says Double Stuf Golden, Walmart says Golden Double Stuf; Walmart repeats the brand, TikTok writes it in capitals. Under the noise, these six listings are three products: Oreo Double Stuf Golden, Lattafa Khamrah, and Khamrah Qahwa. Until you know that, you can't add up a product's price, reviews or demand. It looks trivial for a person and is hard for an agent: a size or a 12-pack is never a new product, but a flanker like Khamrah Qahwa is.</aside>
 </section>
 
-<!-- 4 · What we want to improve, and what each takes -->
+<!-- 4 · What we want to improve: accuracy, cost, speed -->
 <section class="slide" data-n="4">
-  <h2>Accuracy, cost, speed: what it improves by itself.</h2>
+  <h2>What we want to improve: accuracy, cost and speed.</h2>
   <div class="axes">
-    <div><h3>Accuracy</h3><p class="k">an agent on everything: exact match</p><p class="v"><span class="ph" data-r="AO.f1">[f]</span></p>
-      <p class="m">Few labels, and its own eval can't be trusted</p><svg class="cv" id="cv3"></svg>
-      <p class="a">Rules from a few labels; an eval that improves</p><p class="l"><span style="color:var(--ind)">Loop 1</span> · <span style="color:var(--val)">Loop 2</span></p></div>
-    <div><h3>Cost</h3><p class="k">an agent on all 2M listings, one pass, est.</p><p class="v"><span class="ph" data-r="AO.cost2M">[$C]</span></p>
-      <p class="m">Paid again on every refresh, in every domain</p><svg class="cv" id="cv2"></svg>
-      <p class="a"><span style="color:var(--ind)">Rules</span> settle 89%, free; an agent the rest</p><p class="l">The solver</p></div>
-    <div><h3>Speed</h3><p class="k">the same, one call at a time, est.</p><p class="v"><span class="ph" data-r="AO.hours">[h]</span></p>
-      <p class="m">Seconds per agent call; each domain starts from zero</p><svg class="cv" id="cv4"></svg>
-      <p class="a">Rules take 1 ms a listing; <span style="color:var(--meta)">lessons</span> carry over</p><p class="l" style="color:var(--meta)">Loop 3</p></div>
+    <div><h3><i data-ic="target" data-s="44"></i>Accuracy</h3><p class="k">An agent on every listing</p><p class="v"><span class="ph" data-r="AO.f1">[f]</span></p>
+      <p class="m">placed exactly right. Rules plus an agent: 75%, at a ninth of the cost</p><svg class="cv" id="cv3"></svg>
+      <p class="a">Rules learned from a few labels, and a check that gets stricter</p><p class="l"><span style="color:var(--ind)">Loop 1</span> · <span style="color:var(--val)">Loop 2</span></p></div>
+    <div><h3><i data-ic="cost" data-s="44"></i>Cost</h3><p class="k">An agent on all 2 million listings</p><p class="v"><span class="ph" data-r="AO.cost2M">[$C]</span></p>
+      <p class="m">paid again on every refresh, in every domain</p><svg class="cv" id="cv2"></svg>
+      <p class="a"><span style="color:var(--ind)">Rules</span> place 89% for free, so the bill falls to <span data-r="AO.cost89">[$]</span></p><p class="l">The solver</p></div>
+    <div><h3><i data-ic="time" data-s="44"></i>Speed</h3><p class="k">The same, one call at a time</p><p class="v"><span class="ph" data-r="AO.hours">[h]</span></p>
+      <p class="m">about a second a listing, and every new domain starts from zero</p><svg class="cv" id="cv4"></svg>
+      <p class="a">Rules take a millisecond a listing, and <span style="color:var(--meta)">lessons</span> carry to the next domain</p><p class="l" style="color:var(--meta)">Loop 3</p></div>
   </div>
-  <p class="src">Cost and time are estimates from the fragrance runs: ~920 tokens and ~0.9 s a listing, 40 per call, over 840 listings, at an assumed $3 per million tokens.</p>
-  <aside class="notes">This is what we want the system to improve by itself, on three fronts. Accuracy: an agent on everything gets [f], measured against Pedia's labels. We have few labels, and as we saw, its own eval can't be trusted. So loop 1 learns rules from the few we label, and loop 2 improves the eval itself. Cost: it used about 920 tokens a listing, so all two million listings come to about 1.8 billion tokens: around $5,500 a pass at $3 per million, paid again on every refresh and in every domain. On fragrance, rules settle 89% for free, so the agent bill falls to about $600. Speed: at 0.9 seconds a listing, one call at a time, that's about 510 hours. Rules take about a millisecond a listing: two million in about 35 minutes. And loop 3 lets each new domain start from the last one's lessons. Cost and speed check themselves. Accuracy doesn't, so that's where most of the work goes.</aside>
+  <p class="src">Agent: gpt-6.1-sol on 400 sealed fragrance listings, against Pedia's labels. 632 tokens and 1.03 s a listing. Dollars at $3 per million tokens.</p>
+  <aside class="notes">These are the three things we want to improve. Accuracy: an agent on every listing places 85% of fragrance listings exactly right, but it can't check its own work, as we just saw. Rules plus the agent get 75% today, at a ninth of the cost: closing that gap is what loops 1 and 2 are for. Loop 1 learns rules from a few labels, and loop 2 makes the check stricter. On food, a new domain, the agent gets 45% and rules plus the agent 20%: that's where loop 3 has to help. Cost: the agent uses about 630 tokens a listing. For two million listings that's about 1.3 billion tokens, around $3,800 a pass, and we pay it again on every refresh and in every domain. Rules place 89% of fragrance listings for free, so the bill falls to about $400. Speed: at a second a listing, one call at a time, that's about 570 hours. Rules take a millisecond a listing, and loop 3 lets each new domain start from the last one's lessons.</aside>
 </section>
 
-<!-- 5A · Architecture: the sketch, top to bottom, with the real agents -->
-<section class="slide" data-n="5" data-var="A">
+<!-- 5 · Architecture: one domain opened up (solver in the middle, loop 1 above, loop 2 below), the other domains stacked behind it, loop 3 on the right -->
+<section class="slide" data-n="5">
   <h2>Taxo: a solver, and three loops that improve it.</h2>
-  <div class="fill"><svg class="ch" id="archA"></svg></div>
-  <aside class="notes">We propose this architecture, and it is what runs today. In one domain, on its own branch, listings go through rules, and the placer agent gets only what rules can't settle; code checks its answer. The validator agent labels fresh listings blind: that's silver. A person settles every disagreement: that's gold. Loop 1: the proposer agent reads where the solver disagrees with silver and gold and proposes one rule change; a gate in code keeps it only if it scores better. Loop 2: the improver agent reads the validator's mistakes and proposes one change to the validator, kept only if it agrees more with gold. Loop 3: every domain runs on its own branch; distil reads them all, and a lesson kept in two domains goes global.</aside>
+  <div class="fill"><svg class="ch" id="arch"></svg></div>
+  <div class="pop">
+    <h2><span style="color:#B07F0C">Gold:</span> a person's labels, used to score everything.</h2>
+    <table class="evt"><tr><th>Listing</th><th>Gold, from a person</th><th>Taxo placed it</th><th>Score</th></tr><tr><td class="li">Lattafa Khamrah Qahwa Eau De Parfum 3.4 Oz Unisex<small>Walmart</small></td><td><div class="mt g"><div style="--k:0">Lattafa</div><div style="--k:1">Khamrah</div><div style="--k:2"><i class="sq"></i><b>Khamrah Qahwa</b></div></div></td><td><div class="mt t"><div style="--k:0">Lattafa</div><div style="--k:1">Khamrah</div><div style="--k:2"><i class="sq"></i><b>Khamrah Qahwa</b></div></div></td><td class="vd"><div><i data-ic="check" data-s="26" data-c="#1E9E6E"></i><span>Exact</span></div></td></tr><tr><td class="li">Dior Sauvage Elixir Parfum Spray for Men, 2 oz<small>Amazon</small></td><td><div class="mt g"><div style="--k:0">Dior</div><div style="--k:1">Sauvage</div><div style="--k:2"><i class="sq"></i><b>Sauvage Elixir</b></div></div></td><td><div class="mt t"><div style="--k:0">Dior</div><div style="--k:1"><i class="sq"></i><b>Sauvage</b></div></div></td><td class="vd"><div><i data-ic="check" data-s="26" data-c="#A3A8B3"></i><span>Right, but stops higher</span></div></td></tr><tr><td class="li">Armaf Club De Nuit Intense Man Edt 105 Ml Original<small>Mercado Libre</small></td><td><div class="mt g"><div style="--k:0">Armaf</div><div style="--k:1">Club de Nuit</div><div style="--k:2"><i class="sq"></i><b>Intense Man</b></div></div></td><td><div class="mt t"><div style="--k:0">Armaf</div><div style="--k:1">Club de Nuit</div><div style="--k:2"><i class="sq"></i><b>Club de Nuit Woman</b></div></div></td><td class="vd"><div><i data-ic="cross" data-s="26" data-c="#D9622B"></i><span>Wrong product: harm</span></div></td></tr><tr><td class="li">Yara by LATTAFA 100ml EDP for her<small>TikTok Shop</small></td><td><div class="mt g"><div style="--k:0">Lattafa</div><div style="--k:1"><i class="sq"></i><b>Yara</b></div></div></td><td><div class="mt t"><div style="--k:0">Lattafa</div><div style="--k:1"><i class="sq"></i><b>Yara</b></div></div></td><td class="vd"><div><i data-ic="check" data-s="26" data-c="#1E9E6E"></i><span>Exact</span></div></td></tr></table>
+    <p class="evk"><b>Exact</b>: the same node as gold. <b>Right or shallower</b>: the right path, maybe stopped higher. <b>Harm</b>: a wrong node.<br>
+      Sealed fragrance, rules then an agent: <b>75%</b> exact, <b>85%</b> right or shallower, <b>15%</b> harm.</p>
+  </div>
+  <div class="pop">
+    <h2><span style="color:#7C8390">Silver:</span> the validator's labels, checked by a person.</h2>
+    <table class="evt"><tr><th>Fresh listing</th><th>Taxo placed it</th><th>The validator says</th><th>What happens</th></tr><tr><td class="li">Lattafa Khamrah Dukhan EDP 100ml<small>Amazon</small></td><td><div class="mt t"><div style="--k:0">Lattafa</div><div style="--k:1"><i class="sq"></i><b>Khamrah</b></div></div></td><td><div class="mt s"><div style="--k:0">Lattafa</div><div style="--k:1">Khamrah</div><div style="--k:2"><i class="sq"></i><b>Khamrah Dukhan</b></div></div></td><td class="vd"><div><i data-ic="flag" data-s="26" data-c="#D9622B"></i><span>Flagged. A person agrees with the validator: new gold, and an error for loop 1</span></div></td></tr><tr><td class="li">Lattafa Asad Bourbon Eau de Parfum 100 ml<small>Walmart</small></td><td><div class="mt t"><div style="--k:0">Lattafa</div><div style="--k:1">Asad</div><div style="--k:2"><i class="sq"></i><b>Asad Bourbon</b></div></div></td><td><div class="mt s"><div style="--k:0">Lattafa</div><div style="--k:1">Asad</div><div style="--k:2"><i class="sq"></i><b>Asad Bourbon</b></div></div></td><td class="vd"><div><i data-ic="check" data-s="26" data-c="#1E9E6E"></i><span>They agree: kept as silver</span></div></td></tr><tr><td class="li">Al Haramain Amber Oud Gold Edition 120ml<small>Mercado Libre</small></td><td><div class="mt t"><div style="--k:0">Al Haramain</div><div style="--k:1">Amber Oud</div><div style="--k:2"><i class="sq"></i><b>Gold Edition</b></div></div></td><td><div class="mt s"><div style="--k:0">Al Haramain</div><div style="--k:1"><i class="sq"></i><b>Amber Oud</b></div></div></td><td class="vd"><div><i data-ic="flag" data-s="26" data-c="#D9622B"></i><span>Flagged. A person says Taxo was right: the validator learns</span></div></td></tr><tr><td class="li">Lattafa Yara Moi EDP 100ml<small>TikTok Shop</small></td><td><div class="mt t"><div style="--k:0">Lattafa</div><div style="--k:1"><i class="sq"></i><b>Yara</b></div></div></td><td><div class="mt s"><div style="--k:0">Lattafa</div><div style="--k:1">Yara</div><div style="--k:2"><i class="sq"></i><b>Yara Moi</b></div></div></td><td class="vd"><div><i data-ic="search" data-s="26" data-c="#D9622B"></i><span>Not sure. A person settles it: new gold</span></div></td></tr></table>
+    <p class="evk">Round 1: the validator matched gold on <b>75%</b> of 40 fresh listings, and <b>82%</b> of its flags were real errors. Round 3: <b>85%</b>, and <b>every</b> flag was real.<br>
+      Each round it labels 40 more listings. The loop runs until silver matches gold.</p>
+  </div>
+  <aside class="notes">This is one domain, fragrance, on its own branch. Listings go through the rules first, for free, and the placer agent gets only the 11% the rules can't place. Loop 1: the proposer agent reads the errors on silver and gold and proposes one rule change, and a gate in code keeps it only if exact match on sealed gold rises. Loop 2: the validator agent checks fresh listings the rules have never seen, and a person labels what it flags. The improver agent makes the validator better from those labels, round after round, until its silver agrees with the person's gold. Those labels grow silver and gold, and the patterns behind them go to loop 1. Loop 3: every domain runs the same loops on its own branch, distil turns kept changes into lessons, and a lesson kept in two domains goes to all of them.</aside>
 </section>
 
-<!-- 5B · Architecture: the old panel, with the real agents and the branches -->
-<section class="slide" data-n="5" data-var="B">
-  <h2>Taxo: a solver, and three loops that improve it.</h2>
-  <div class="fill"><svg class="ch" id="archB"></svg></div>
-  <aside class="notes">We propose this architecture, and it is what runs today. In one domain, on its own branch, listings go through rules, and the placer agent gets only what rules can't settle; code checks its answer. The validator agent labels fresh listings blind: that's silver. A person settles every disagreement: that's gold. Loop 1: the proposer agent reads where the solver disagrees with silver and gold and proposes one rule change; a gate in code keeps it only if it scores better. Loop 2: the improver agent reads the validator's mistakes and proposes one change to the validator, kept only if it agrees more with gold. Loop 3: every domain runs on its own branch; distil reads them all, and a lesson kept in two domains goes global.</aside>
-</section>
-
-<!-- 5C · Architecture: one row, the loops as curves above and below, the branches at the bottom -->
-<section class="slide" data-n="5" data-var="C">
-  <h2>Taxo: a solver, and three loops that improve it.</h2>
-  <div class="fill"><svg class="ch" id="archC"></svg></div>
-  <aside class="notes">We propose this architecture, and it is what runs today. In one domain, on its own branch, listings go through rules, and the placer agent gets only what rules can't settle; code checks its answer. The validator agent labels fresh listings blind: that's silver. A person settles every disagreement: that's gold. Loop 1: the proposer agent reads where the solver disagrees with silver and gold and proposes one rule change; a gate in code keeps it only if it scores better. Loop 2: the improver agent reads the validator's mistakes and proposes one change to the validator, kept only if it agrees more with gold. Loop 3: every domain runs on its own branch; distil reads them all, and a lesson kept in two domains goes global.</aside>
-</section>
-
-<!-- 7 · Loop 1: one listing through the rules, with the file that decides each step -->
+<!-- 6 · Loop 1: one listing, in three steps: strip, count, place. No agent call -->
 <section class="slide" data-n="6">
-  <h2><span style="color:var(--ind)">Loop 1, induction:</span> a few labelled cases become rules.</h2>
-  <div class="trace">
-    <div class="tr first"><p class="rl">A Walmart listing</p><p class="tt">Lattafa Khamrah Qahwa Eau De Parfum 3.4 Oz Unisex Fragrance Lattafa</p></div>
-    <div class="tr"><p class="rl">Vocabulary</p>
-      <div><p class="tt"><s>Eau De Parfum</s> · <s>3.4 Oz</s> · <s>Unisex</s> · <s>Fragrance</s></p><p class="why">Variants, never names. What's left: <b>khamrah qahwa</b>.</p></div>
-<pre class="yml"><i># domains/fragrance/vocab.yaml</i>
-variant:
-  concentration: [eau de parfum, edp]
-  size: ['\d+(\.\d+)?\s?(ml|oz)']
-  audience: [unisex, for men]</pre></div>
-    <div class="tr"><p class="rl">Registry</p>
-      <div><p class="tt"><b>Lattafa › Khamrah › Khamrah Qahwa</b></p><p class="why">Lattafa's official lines include Khamrah Qahwa. Placed, with no agent call.</p></div>
-<pre class="yml"><i># registry/fragrance/lattafa.yaml</i>
-brand: Lattafa
-nodes:
-  - {level: family,  name: Khamrah}
-  - {level: product, name: Khamrah Qahwa}</pre></div>
-    <div class="tr dim"><p class="rl">Lattice</p>
-      <div><p class="tt">khamrah ×5 · khamrah qahwa ×2</p><p class="why">If the registry didn't know it: a name in two or more of the brand's titles is a product.</p></div>
-<pre class="yml"><i># counted over all of Lattafa's titles</i>
-khamrah         5   <em>family</em>
-khamrah qahwa   2   <em>product</em>
-khamrah dukhan  1   <i>unclear</i></pre></div>
-    <div class="tr dim"><p class="rl">Route</p>
-      <div><p class="tt">title → + description → + web search</p><p class="why">Only what's still unclear, to the cheapest agent that can settle it.</p></div>
-<pre class="yml"><i># rules/fragrance/route-no-barcode.yaml</i>
-when:
-  - {fact: listing.barcode, missing: true}
-  - {fact: placement.level, eq: brand}
-then: {route: agent_evidence}</pre></div>
+  <h2><span style="color:var(--ind)">Loop 1:</span> rules place a listing with no agent call.</h2>
+  <div class="l1">
+    <div class="l1-s">
+      <p class="l1-h"><b>1</b> Strip the words that are never a name <span class="l1-src"><svg class="wm" viewBox="0 0 24 6.8"><use href="#lg-walmart"/></svg> listing</span></p>
+      <div class="l1-t"><span class="w b"><span>Lattafa</span><em>brand</em></span><span class="w n"><span>Khamrah Qahwa</span><em>the name</em></span><span class="w v"><span>Eau De Parfum</span><em>concentration</em></span><span class="w v"><span>3.4 Oz</span><em>size</em></span><span class="w v"><span>Unisex</span><em>audience</em></span><span class="w v"><span>Fragrance</span><em>generic word</em></span><span class="w b"><span>Lattafa</span><em>brand</em></span></div>
+    </div>
+    <div class="l1-row">
+      <div class="l1-s">
+        <p class="l1-h"><b>2</b> Count the names in all of Lattafa's titles</p>
+        <div class="l1-c"><div class="r me"><span class="nm">Khamrah Qahwa</span><span class="sqs"><i></i><i></i></span><span class="lb">product</span></div><div class="r "><span class="nm">Khamrah</span><span class="sqs"><i></i><i></i></span><span class="lb">product</span></div><div class="r dim"><span class="nm">Khamrah Dukhan</span><span class="sqs"><i></i></span><span class="lb">seen once</span></div><div class="r dim"><span class="nm">Yara</span><span class="sqs"><i></i></span><span class="lb">seen once</span></div></div>
+        <p class="l1-k">In two or more titles: a product.<br>A name two products share: a family.</p>
+      </div>
+      <div class="l1-s">
+        <p class="l1-h"><b>3</b> Place it in the tree</p>
+        <div class="l1-tree tree">
+          <svg class="links"></svg>
+          <div class="nd" id="l1-lat" style="left:330px;top:0">Lattafa<small>brand</small></div>
+          <div class="nd sm" id="l1-khf" data-p="l1-lat" style="left:330px;top:118px">Khamrah<small>family</small></div>
+          <div class="nd sm" id="l1-kh" data-p="l1-khf" style="left:130px;top:236px">Khamrah<small>product</small></div>
+          <div class="nd sm l1-me" id="l1-kq" data-p="l1-khf" style="left:530px;top:236px">Khamrah Qahwa<small>product</small></div>
+        </div>
+        <p class="l1-ok"><i data-ic="check" data-s="30" data-c="#1E9E6E"></i>Placed, with no agent call</p>
+        <p class="l1-ag"><i data-ic="agent" data-s="26"></i>What the rules can't settle goes to an agent: 11% of listings.</p>
+      </div>
+    </div>
   </div>
-  <aside class="notes">Loop 1 starts from cases we labelled by hand, and induction turns them into rules. Each rule is a file you can read. Here is one title. The vocabulary file says which words are variants: "Eau De Parfum 3.4 Oz Unisex" is stripped, leaving khamrah qahwa. The registry file holds Lattafa's official lines, found once by an agent with web search and written down by code: Khamrah Qahwa is in it, so the listing is placed with no agent call. If it hadn't been, the lattice counts names across the brand's listings, and a route file sends whatever is still unclear to the cheapest agent that can settle it.</aside>
+  <aside class="notes">Here is what the rules do with one Walmart listing. Step one: strip the words that are never a name. The vocabulary says Eau de Parfum is a concentration, 3.4 ounces a size, unisex an audience. What's left is Khamrah Qahwa. Step two: do the same to all of Lattafa's titles and count the names. A name in two or more titles is a product, and the name two products share, Khamrah, is a family. Step three: the listing lands on Lattafa, Khamrah, Khamrah Qahwa, with no agent call. Only what the rules can't settle goes to an agent: 11% of fragrance listings. Each of these rules is a file you can read, and loop 1 is how they're learned.</aside>
 </section>
 
-<!-- 8 · Loop 1: how the lattice works -->
+<!-- 8 · Loop 1: one row per kept rule; exact match up, agent share and the bill down -->
 <section class="slide" data-n="7">
-  <h2><span style="color:var(--ind)">Loop 1:</span> the lattice finds products by counting.</h2>
-  <div class="fill"><svg class="ch" id="lattice"></svg></div>
-  <p class="bottom" style="font-size:28px;color:var(--ink2)">No word lists. A run shared by two products is a family. Add a word to the vocabulary and the count changes on the next run.</p>
-  <aside class="notes">This is how the lattice works, on six Lattafa titles. First strip the brand and the variant words. Then count every run of words across the brand's titles: khamrah appears in five, khamrah qahwa in two, khamrah dukhan and yara in one each. Each title joins its longest run seen at least twice. That gives two products, Khamrah and Khamrah Qahwa, and because they share "khamrah", Khamrah is a family. Dukhan and Yara are below the floor: the registry settles them if it knows them, otherwise an agent does. No word lists are involved.</aside>
-</section>
-
-<!-- 8 · Loop 1: F1 on gold as the rules are built -->
-<section class="slide" data-n="8">
-  <h2><span style="color:var(--ind)">Loop 1:</span> exact match on sealed gold, round by round.</h2>
-  <div class="fill chart"><div class="plot"><svg class="ch" id="figA"></svg></div></div>
-  <p class="bottom" style="font-size:28px;color:var(--ink2)">A gate in code keeps a change only if exact match on sealed gold rises. Meanwhile the agent's share fell from 30% to 11%.</p>
-  <p class="src">Fragrance. Sealed gold: 2,233 listings with Pedia's labels, read only by the gate. Rounds 4, 7 and 8 were dropped.</p>
-  <aside class="notes">Each round tries one change, and a gate in code keeps it only if exact match on sealed gold rises. On fragrance it went from 52% to 69% over six rounds, and the share of listings sent to the agent fell from 30% to 11%. The big step, round 3, looks the product up on the brand's own site. Round 6 came from loop 2: the validator found that most of its errors were short names seen only once. The gate dropped three rounds.</aside>
+  <h2><span style="color:var(--ind)">Loop 1:</span> each rule kept, more right and cheaper.</h2>
+  <div class="fill"><svg class="ch" id="figA"></svg></div>
+  <p class="src">Fragrance. Sealed gold: 2,233 listings with Pedia's labels. Bill: 632 tokens a listing at an assumed $3 per million.</p>
+  <aside class="notes">Each row is one rule we kept, written by hand, from the start down to round 6. The blue bar is exact match on sealed gold, and it grows from 52% to 69%. The dark bar is the share of listings that still go to an agent. It shrinks from 30% to 11%, so the bill for 2 million listings falls from about $1,100 to about $400. The big step is round 3: a listing sold on the brand's own store tells us the brand. Round 6 came from loop 2: most of the errors the validator found were one-word names like Yara. A gate in code keeps a rule only if it clearly helps, and it dropped three of eight.</aside>
 </section>
 
 <!-- 9 · Loop 2: validation -->
-<section class="slide" data-n="9">
-  <h2><span style="color:var(--val)">Loop 2, validation:</span> improve the eval itself.</h2>
-  <div class="vgrid" style="grid-template-columns:780px 1fr;gap:90px">
-    <div class="chart"><div class="plot"><svg class="ch" id="loop2"></svg></div><p class="ex"><b style="color:#B07F0C">Gold</b>: labelled by a person. <b style="color:#7C8390">Silver</b>: labelled by the validator, every disagreement settled by a person.</p><p class="ex">For example: 12 of the 16 errors it found were short names seen only once. That became a rule, kept in round 6.</p></div>
-    <div class="chart"><h3>F1 of the solver, on each round's eval</h3><div class="plot"><svg class="ch" id="figB"></svg></div></div>
-  </div>
-  <aside class="notes">A small gold set doesn't cover everything, so loop 2 improves the eval itself. Going round the loop: a validator agent checks listings nobody labelled. It flags errors, and cases it isn't confident about. A person settles them. Where the solver was wrong, the case joins gold: gold 2. The rest is kept as silver. From that come better rules, and a better validator. So each round there is more silver, and it is built better: the eval covers more and gets stricter. Then it asks what is going on: for example, 12 of the 16 errors it found were short product names seen only once; that became a rule, which the gate kept in round 6. That goes back into the rules, and into a stricter check, so confidence goes up. On the graph: as the checks get stricter, rule set 1 falls from [x] to [z]; after refining, rule set 2 gets back to [w]. We improve two things at once: the validation, and the solver underneath it.</aside>
+<section class="slide" data-n="8">
+  <h2><span style="color:var(--val)">Loop 2:</span> the eval grows until silver matches gold.</h2>
+  <div class="fill"><svg class="ch" id="l2fig"></svg></div>
+  <p class="bottom" style="font-size:28px;color:var(--ink2)">Each version climbs against gold; the kept version labels the next, bigger sample. Ground truth grows.</p>
+  <p class="src">Fragrance; Pedia's labels play the person. Measured: card v1 → v2 (later run), two candidates dropped, 4 rounds of 40. Later versions estimated. One listing = 2.5 points.</p>
+  <aside class="notes">Loop 2 makes the eval itself better. Each version of the validator climbs against gold: the improver agent writes a new version, and a gate keeps it only if it matches gold better. In a later run v2 beat v1, 85% against 82.5%, which is one listing in 40; today two tries at a v3 matched gold no better and did more harm, so the gate dropped them. The kept version, v2, labelled 40 fresh listings blind in each of four rounds, so silver grew from 40 to 160. A person settled every flag it raised, and those joined gold: 43 rows of gold 2 so far, and its flags went from 82% right to 100%. Each new version rates a bigger sample and gets closer to gold, so the ground truth keeps growing; the later versions on the slide are our estimate. The errors feed loop 1 too: short names seen once became rule 6.</aside>
 </section>
 
 <!-- 10 · Loop 3: meta -->
-<section class="slide" data-n="10">
-  <h2><span style="color:var(--meta)">Loop 3, meta:</span> lessons carry across branches, unevenly.</h2>
-  <div class="vgrid" style="grid-template-columns:720px 1fr">
-<pre class="mono"><i># lessons/brand-site-rung.yaml</i>
-<i># written by distil from the round</i>
-claim:  look the product up on
-        the brand's own site
-scope:  domain:fragrance
-record: round 3, kept
-        better 313, worse 45
-        exact     +11 points
-        to agent  -11 points</pre>
-    <div class="xfer">
-      <p class="hd">One lesson, whole_name, in two domains</p>
-      <div><p class="k">Food</p><p class="v">−789</p><p class="w">harmful placements</p></div>
-      <div><p class="k">Fragrance</p><p class="v">−41</p><p class="w">exact placements</p></div>
-      <div><p class="k">The rule</p><p class="v" style="color:var(--meta)">2</p><p class="w">domains must keep a lesson before it goes global</p></div>
+<section class="slide" data-n="9">
+  <h2><span style="color:var(--meta)">Loop 3:</span> lessons cross domains, but not both ways.</h2>
+  <p class="l3-flow"><span><i data-ic="branch" data-s="30" data-c="#1E9E6E"></i>Each domain on its own branch</span><span class="l3-ar">→</span><span><i data-ic="lesson" data-s="30" data-c="#1E9E6E"></i>Distil turns each kept change into a lesson</span><span class="l3-ar">→</span><span><i data-ic="gate" data-s="30" data-c="#1E9E6E"></i>Tried on the other domains' sealed gold</span></p>
+  <div class="l3-main">
+    <svg class="l3-mx" id="l3mx" role="img" aria-label="Cross-validation matrix: lessons from each domain, tried on each domain's sealed gold"></svg>
+    <div class="l3-ex">
+      <div>
+        <h3><i data-ic="check" data-s="34" data-c="#1E9E6E"></i>Food → Fragrance: helps</h3>
+        <p class="l3-w">Food's cleaning lessons carry: sizes, multipacks and shop noise go, and the shop's own store names the brand.</p>
+        <div class="l3-ba">
+          <p class="k">before</p><p class="t"><s>2 Pack</s> Khamrah Qahwa <s>100ml | Best Seller</s><small>sold by <u>lattafa_us</u></small></p>
+          <p class="k">after</p><p class="t"><u>Lattafa</u> › Khamrah Qahwa</p>
+        </div>
+      </div>
+      <div>
+        <h3><i data-ic="cross" data-s="34" data-c="#D9622B"></i>Fragrance → Food: doesn't</h3>
+        <p class="l3-w">A structure lesson: a flanker is a new product.</p>
+        <svg class="l3-tr" id="l3tr" role="img" aria-label="Oreo Double Stuf Golden: a new product under fragrance's lesson, a variant in food's gold"></svg>
+        <p class="l3-m">Food on fragrance's code and rules: 11.2% exact. The agent alone: 44.5%.</p>
+      </div>
+      <p class="l3-end"><i data-ic="globe" data-s="36" data-c="#1E9E6E"></i>A lesson goes global once two domains keep it.</p>
     </div>
   </div>
-  <aside class="notes">Every domain runs on its own branch, and every round leaves a record. Distil reads all the branches and writes lessons, each with its scope and its record. This one, look the product up on the brand's own site, came from fragrance round 3: 313 placements better, 45 worse, and eleven points fewer listings sent to the agent. Lessons carry unevenly. Whole-name matching cut food's harmful placements by 789, but cost fragrance 41 exact ones. So a lesson goes global only once two domains have kept it.</aside>
-</section>
-
-<!-- 11 · Results -->
-<section class="slide" data-n="11">
-  <h2>Results: what each loop adds, in each domain.</h2>
-  <div class="fill"><table class="res" id="res"></table></div>
-  <p class="src">Exact match against Pedia's labels (fragrance rules: 2,233 sealed listings). Beside it, $ per 1,000 listings, est. at $3 per million tokens.</p>
-  <aside class="notes">We have more under the hood, like the wiki the agents keep; happy to go into it after, there isn't time for the whole architecture now. Here is how each loop improves each domain. [Read the one row that matters most once the numbers are in.]</aside>
+  <p class="src">Measured: fragrance's and food's own loop 1, and food's cold start. Other cells illustrative.</p>
+  <aside class="notes">Every domain runs on its own branch, and distil, which is code, turns each change the gate keeps into a lesson with its scope and its record. Loop 3 tries each domain's lessons on every other domain's sealed gold. Food's cleaning lessons carry: dropping sizes, multipacks and shop noise, and reading the brand from the shop's own store, makes fragrance titles clean too. Fragrance's structure lessons don't carry back: a flanker like Khamrah Qahwa is a new product, but a new Oreo flavour is a variant. On fragrance's rules food starts at 11% exact, where the agent alone gets 45%. So a lesson goes global only once two domains have kept it. Fragrance's and food's own gains on the diagonal, and food's cold start, are measured; the other cells are illustrative.</aside>
 </section>
 
 <!-- 12 · Close -->
-<section class="slide closing" data-n="12">
+<section class="slide closing" data-n="10">
   <svg class="cloud" data-seed="11" aria-hidden="true"></svg>
   <h2 class="clear">Everything is in the evals.</h2>
   <p class="clear">As the system improves, the eval has to improve with it.</p>
@@ -389,29 +442,54 @@ record: round 3, kept
   const RESULTS = {
     // Every listing to an agent: F1 (0–1), dollars per 1,000 listings (the 2M bill on slide 4 is cost × 2,000),
     //   and hours to place all 2M listings.   e.g. agentOnly: { f1: …, cost: …, hours: … }
-    // f1: not measured yet. The validator's 120 of 160 is NOT agent-only (it is given the brand and its menu); the real
-    //   agent-only baseline lands in C:\Work\Kavak-Taxo-runs\RESULTS.md. cost and hours are estimates from the validator's
-    //   logs (fragrance-run): ~920 tokens and ~0.9 s per listing, 40 per call, over 840 listings. cost = $ per 1,000 listings
-    //   at an assumed $3 per million tokens (Codex on the ChatGPT login is not billed per token); hours = 2M x 0.92 s.
-    agentOnly: { f1: null, cost: 2.76, hours: 511 },
-    // Slide 8, loop 1 on fragrance: one entry per round, round 0 first. f1 on gold (0–1), kept: the rule kept that round.
-    //   e.g. A: { rounds: [{ f1: …, kept: null }, { f1: …, kept: 'registry' }, { f1: …, kept: 'lattice' }] }
-    // Fragrance, drive data: exact match on sealed gold (2,233 listings with Pedia's labels), the rounds the gate kept.
-    //   Rounds 4, 7 and 8 were dropped. From memory/rounds/fragrance on origin/distill/rounds.
-    A: { rounds: [{ f1: 0.524, kept: null, label: 'start' }, { f1: 0.528, kept: 'strip mist words', label: '1' },
-                  { f1: 0.538, kept: 'elixir, intense are names', label: '2' }, { f1: 0.651, kept: "the brand's own site", label: '3' },
-                  { f1: 0.660, kept: 'shop URLs', label: '5' }, { f1: 0.689, kept: 'short single names', label: '6' }] },
-    // Slide 9: F1 of rule set 1 and rule set 2 on gold, validation set 1 and validation set 2 (0–1).
-    //   e.g. B: { R1: { gold: …, V1: …, V2: … }, R2: { gold: …, V1: …, V2: … } }
-    B: null,
-    // Slide 10: rounds saved to reach the target F1, warm start against cold.
-    //   e.g. C: { saved: { 'food>fragrance': …, 'fragrance>food': …, 'fragrance>cars': … } }
-    C: null,
-    // Slide 11: F1 on fresh listings (0–1) and $ per 1,000 listings, per domain and system.
-    //   e.g. final: { fragrance: { agent: { f1, cost }, loop1: { f1, cost }, loop2: { f1, cost }, loop3: { f1, cost } }, food: {…}, cars: {…} }
-    // Fragrance only so far. agent: waiting for the agent-only baseline; loop1: sealed gold after round 6, with
-    //   11.1% of listings still sent to the agent (cost = 0.111 x the agent's $2.76).
-    final: { fragrance: { loop1: { f1: 0.689, cost: 0.31 } } },
+    // Measured (the run session, 400 random SEALED fragrance rows, one logged read): gpt-6.1-sol via Codex, scored against
+    //   Pedia's labels: 85.0% exact; 632 tokens and 1.03 s per listing. cost = $ per 1,000 listings at an assumed $3 per
+    //   million tokens (Codex on the ChatGPT login is not billed per token); hours = 2M x 1.03 s, one call at a time.
+    agentOnly: { f1: 0.85, cost: 1.90, hours: 572 },
+    // Slide 8, loop 1 on fragrance: one entry per round, in order, start first. f1: exact match on sealed gold (0–1);
+    //   agent: share of listings sent to the agent (0–1); better/worse: sealed rows the change fixed and broke;
+    //   rule, ex: the change in plain words and a tiny example, written for the slide (the run log names each change in
+    //   brackets); from: where the idea came from. dropped: the gate dropped that round; it is not drawn.
+    // Fragrance: sealed gold is 2,233 listings with Pedia's labels, read only by the gate. From Kavak-Taxo-runs RESULTS.md §2.
+    //   Rounds 1–6 were written by hand.
+    A: { rounds: [
+      { label: 'start', f1: 0.524, agent: 0.301, rule: 'The first rules', ex: 'variant words, counting names' },
+      // [strip mist/travel words; 'eau de perfume']
+      { label: '1', f1: 0.528, agent: 0.301, better: 26, worse: 11, rule: 'Hair, travel, mist are variant words', ex: 'Yara Hair Mist → Yara' },
+      // [elixir, intense are names]
+      { label: '2', f1: 0.538, agent: 0.301, better: 28, worse: 4, rule: 'Elixir, Intense are part of the name', ex: '"Sauvage Elixir" is a product, not Sauvage' },
+      // [brand rung: the shop is the brand's own store]
+      { label: '3', f1: 0.651, agent: 0.188, better: 313, worse: 45, rule: "The brand's own store names the brand", ex: 'sold on lattafa.com → brand is Lattafa' },
+      // [typed child when the form differs]: dropped on dev
+      { label: '4', dropped: true },
+      // [brand rung: catalog and shop URLs]
+      { label: '5', f1: 0.660, agent: 0.181, better: 32, worse: 6, rule: "The shop's URL names the brand", ex: 'walmart.com/…/lattafa-… → Lattafa', mono: true },
+      // [short single names get their own node], found by validator round V1
+      { label: '6', f1: 0.689, agent: 0.111, better: 93, worse: 33, rule: 'A one-word name is its own product', ex: '"Yara" alone is a product', from: 'from loop 2' },
+      // [concentration veto]: 69.1%, 8 better, 5 worse, not clear enough; [audience words]: 1 sealed row touched
+      { label: '7', dropped: true }, { label: '8', dropped: true }] },
+    // Slide 9, loop 2 on fragrance (Pedia's labels play the person). From C:\Work\Kavak-Taxo-runs\fragrance-run\runs\fragrance\loopb
+    //   (rounds V1–V4) and docs/fragrance-cycles/cycle1.md (climb). Every round ran validator card v2 on 40 fresh listings.
+    //   silver: listings it labelled; exact: validator exact vs Pedia on that round's 40 (not drawn: sample noise, one listing
+    //   = 2.5 points); added: gold rows added (settled flags); right: its flags right (0–1); found: solver errors found;
+    //   ab: the improver's A/B for a v3 try, dropped (same exact, more harm).
+    //   climb: the improver's kept step, from a later run: card v1 -> v2, exact on 40 human rows (harm 17.5% -> 15.0%).
+    B: { rounds: [{ silver: 40, exact: 0.75, added: 23, right: 0.824, found: 14 }, { silver: 40, exact: 0.825, ab: 'dropped' },
+                  { silver: 40, exact: 0.85, added: 20, right: 1.0, found: 16 }, { silver: 40, exact: 0.575, ab: 'dropped' }],
+         climb: [{ v: 'v1', exact: 0.825 }, { v: 'v2', exact: 0.85, kept: true }] },
+    // Slide 10, loop 3: the cross-validation matrix. A cell is the change in exact-match points on the column domain's
+    //   sealed gold, keyed 'from>to'. Only measured cells go here: fragrance's own loop 1 (52.4% → 68.9%) and food's
+    //   (11.2% → 16.8%). Every other cell is illustrative, kept in slide 10's own code and drawn without the measured dot.
+    //   A cell put here replaces the illustrative one and gets the dot; update slide 10's .src line to match.
+    C: { cells: { 'fragrance>fragrance': 16.5, 'food>food': 5.6 } },
+    // Results slide. Measured: three solvers on the same rows, exact match against Pedia's labels; cost = $ per 1,000 listings
+    //   from the measured tokens at an assumed $3 per million; share = listings sent to the agent. rows = which rows.
+    //   Both domains: 400 random sealed rows, one logged read each (run session, 2026-11-09; the rules are the final
+    //   pipelines). sealed: loop 1 on sealed gold, start and now (RESULTS.md sections 2 and 3, food round 9).
+    final: {
+      fragrance: { rows: '400 sealed listings', agent: { f1: 0.850, cost: 1.90 }, rules: { f1: 0.723, cost: 0 }, both: { f1: 0.748, cost: 0.21, share: 0.112 }, sealed: [0.524, 0.689] },
+      food:      { rows: '400 sealed listings', agent: { f1: 0.445, cost: 1.74 }, rules: { f1: 0.163, cost: 0 }, both: { f1: 0.200, cost: 0.48, share: 0.275 }, sealed: [0.112, 0.168] },
+    },
   };
 
   // Pedia replay pe2 (C:\Work\RSI\hackathon\runs\pe2\ledger.jsonl), listing task: % of the 245 held-out listings right,
@@ -446,6 +524,7 @@ record: round 3, kept
     if (R.agentOnly.f1 != null) V['AO.f1'] = pct(R.agentOnly.f1);
     if (R.agentOnly.cost != null) V['AO.cost2M'] = '≈ $' + (Math.round(R.agentOnly.cost * 2000 / 100) * 100).toLocaleString('en-US');
     if (R.agentOnly.hours != null) V['AO.hours'] = '≈ ' + Math.round(R.agentOnly.hours / 10) * 10 + ' h';
+    if (R.agentOnly.cost != null) V['AO.cost89'] = '≈ $' + Math.round(R.agentOnly.cost * 2000 * 0.112 / 100) * 100;
   }
   if (R.C && R.C.saved) for (const [k, v] of Object.entries(R.C.saved)) if (v != null) V['C.' + k] = String(v);
   document.querySelectorAll('[data-r]').forEach(e => { if (V[e.dataset.r] != null) { e.textContent = V[e.dataset.r]; e.classList.remove('ph'); } });
@@ -478,6 +557,34 @@ record: round 3, kept
   const put = (id, vb, s) => { const el = document.getElementById(id); if (!el) return; el.setAttribute('viewBox', vb); el.setAttribute('preserveAspectRatio', 'xMidYMid meet'); el.innerHTML = s; };
   const mean = rows => rows[0].map((_, i) => rows.reduce((a, r) => a + r[i], 0) / rows.length);
 
+  // ---------- icons: Lucide (ISC licence), 24x24, stroke only ----------
+  // Ic(name, x, y, size, colour) draws one inside an SVG, top-left at x,y. IcH(name, size, colour) gives an inline <svg> for HTML.
+  const ICON = {
+    agent: '<path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/>',
+    person: '<circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/>',
+    gate: '<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/>',
+    rules: '<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/>',
+    listings: '<path d="M3 6h.01"/><path d="M3 12h.01"/><path d="M3 18h.01"/><path d="M8 6h13"/><path d="M8 12h13"/><path d="M8 18h13"/>',
+    tree: '<rect x="16" y="16" width="6" height="6" rx="1"/><rect x="2" y="16" width="6" height="6" rx="1"/><rect x="9" y="2" width="6" height="6" rx="1"/><path d="M5 16v-3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3"/><path d="M12 12V8"/>',
+    eval: '<rect width="8" height="4" x="8" y="2" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14 2 2 4-4"/>',
+    flag: '<path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><path d="M4 22v-7"/>',
+    lesson: '<path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/>',
+    branch: '<path d="M6 3v12"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/>',
+    globe: '<circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/>',
+    cost: '<path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>',
+    time: '<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>',
+    target: '<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>',
+    check: '<path d="M20 6 9 17l-5-5"/>',
+    cross: '<path d="M18 6 6 18"/><path d="m6 6 12 12"/>',
+    search: '<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>',
+    wrench: '<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>',
+    shop: '<path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/>',
+  };
+  const Ic = (name, x, y, size = 32, c = C.ink, w = 2) => `<g transform="translate(${x} ${y}) scale(${size / 24})" fill="none" stroke="${c}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round">${ICON[name]}</g>`;
+  const IcH = (name, size = 28, c = 'currentColor', w = 2) => `<svg class="ic" viewBox="0 0 24 24" width="${size}" height="${size}" fill="none" stroke="${c}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICON[name]}</svg>`;
+  // HTML: <i data-ic="agent" data-s="28"></i> becomes that icon
+  document.querySelectorAll('i[data-ic]').forEach(e => { e.outerHTML = IcH(e.dataset.ic, +e.dataset.s || 28, e.dataset.c || 'currentColor'); });
+
   // ---------- 2 · its own eval, round by round, and the human check afterwards ----------
   (() => {
     const j = mean(PE2.judge), o = mean(PE2.owner);
@@ -501,87 +608,72 @@ record: round 3, kept
   const gold = t => `<tspan style="fill:${AG.gold};font-weight:600">${t}</tspan>`, silver = t => `<tspan style="fill:${AG.silv};font-weight:600">${t}</tspan>`;
   const DOMS = ['Fragrance', 'Food', 'Clothing', 'Footwear', 'Toys'];
 
-  // A · Harry's sketch: one flow top to bottom, the two loops on the left, the other branches top right
+  // the slide-5 picture. One strict grid: the solver in the middle row, loop 1 above it, loop 2 below it, all inside the
+  // fragrance panel; the other domains' panels are stacked behind it; loop 3 runs down the right. Every node is an icon,
+  // a name and one short line. Agents use the agent icon in their loop's colour.
   (() => {
     let s = '';
-    const X = 600, N = 1090;
-    const rows = [
-      ['Fragrance', 40, ''],
-      ['Listings', 165, '2 million, from every shop'],
-      [`<tspan style="fill:${C.ind}">Rules</tspan> + placer agent`, 290, "the agent gets only what rules can't settle"],
-      ['Taxonomy', 415, 'brand › product › variant'],
-      [`<tspan style="fill:${C.val}">Validator agent</tspan>`, 540, `labels fresh listings, blind: ${silver('silver')}`],
-      ['A person', 665, `settles every disagreement: ${gold('gold')}`],
-    ];
-    rows.forEach(([t, y, note], i) => {
-      s += Tx(X, y, t, { fs: 38, fw: 600, c: C.ink }) + (note ? Tx(N, y - 4, note, { fs: 24, c: C.mute }) : '');
-      if (i) s += Ar([[X + 30, rows[i - 1][1] + 18], [X + 30, y - 44]], C.wire);
-    });
-    s += Cu([X - 24, 524], [X - 280, 524], [X - 280, 276], [X - 24, 276], C.ind, 5);
-    s += Tx(X - 240, 368, 'Loop 1 · proposer agent', { a: 'end', fs: 28, fw: 600, c: C.ind })
-      + Tx(X - 240, 404, 'one rule change at a time;', { a: 'end', fs: 22, c: C.ind }) + Tx(X - 240, 432, 'a gate keeps it if it scores better', { a: 'end', fs: 22, c: C.ind });
-    s += Cu([X - 24, 652], [X - 150, 652], [X - 150, 546], [X - 24, 546], C.val, 5);
-    s += Tx(X - 140, 590, 'Loop 2 · improver agent', { a: 'end', fs: 28, fw: 600, c: C.val })
-      + Tx(X - 140, 626, 'one change to the validator,', { a: 'end', fs: 22, c: C.val }) + Tx(X - 140, 654, 'kept if it agrees more with gold', { a: 'end', fs: 22, c: C.val });
-    s += Ar([[X + 220, 26], [N - 22, 26]], C.meta, { w: 5 });
-    s += Tx(N, 38, 'Food · Clothing · Footwear · Toys', { fs: 30, fw: 600, c: C.meta })
-      + Tx(N, 76, 'Loop 3 · each domain on its own branch;', { fs: 22, c: C.meta }) + Tx(N, 104, 'a lesson kept in two goes global', { fs: 22, c: C.meta });
-    put('archA', '0 0 1664 700', s);
-    document.getElementById('archA').setAttribute('preserveAspectRatio', 'xMinYMid meet');
-  })();
+    const col = i => 112 + (i - 1) * 216;              // grid columns c1..c6
+    const R1 = 198, R0 = 374, R2 = 550;                 // icon centres: loop 1, the solver, loop 2
+    const PR = 1320, PT = 112, PB = 744, DX = 12, DY = 28;   // front panel: right edge, top, bottom; offset of each panel behind
+    const IS = 44, top = y => y - IS / 2 - 6, bot = y => y + 98;   // where arrows stop: above an icon, below a node's text
+    const node = (x, y, ic, ic_c, name, line) => Ic(ic, x - IS / 2, y - IS / 2, IS, ic_c, 1.8)
+      + Tx(x, y + 58, name, { a: 'middle', fs: 28, fw: 600, c: C.ink }) + Tx(x, y + 86, line, { a: 'middle', fs: 20, c: C.mute });
+    const right = (x1, x2, y, c, o) => Ar([[x1 + 32, y], [x2 - 32, y]], c, o);   // icon to icon, along a row
 
-  // B · the old panel: the solver in the middle, loop 1 above, loop 2 below; the branches on the right
-  (() => {
-    let s = '';
-    s += '<g transform="translate(1424 0)">';
-    s += Tx(0, 40, 'Loop 3', { fs: 26, fw: 600, c: C.meta }) + Tx(0, 68, 'across branches', { fs: 20, c: C.meta });
-    s += Ar([[30, 100], [30, 640]], C.meta, { w: 3 });
-    DOMS.forEach((t, i) => { const y = 150 + i * 100;
-      s += `<path d="M66 ${y - 8}C66 ${y + 28} 30 ${y + 14} 30 ${y + 52}" fill="none" stroke="${C.meta}" stroke-width="2.5"/><circle cx="66" cy="${y - 8}" r="7" fill="${C.meta}"/>`;
-      s += Tx(86, y, t, { fs: 26, fw: i ? 500 : 700, c: i ? C.ink2 : C.ink }); });
-    s += Tx(0, 676, 'kept in two domains,', { fs: 20, c: C.meta }) + Tx(0, 702, 'a lesson goes global', { fs: 20, c: C.meta });
-    s += '</g>';
-    s += `<path d="M1500 136L1264 30M1500 150L1264 716" stroke="${C.line}" stroke-width="2" fill="none"/>`;
-    s += `<rect x="0" y="30" width="1264" height="686" rx="28" fill="${C.panel}"/>`;
-    s += '<g transform="translate(-400 0)">';
-    s += Tx(1640, 76, 'one domain, on its own branch', { a: 'end', fs: 20, c: C.faint });
-    s += Nd(510, 382, 'Listings') + Nd(790, 384, 'Rules', ['free'], { fs: 34, c: C.ind }) + Nd(1100, 382, 'Placer agent', ['only what rules', "can't settle"]) + Nd(1470, 382, 'Taxonomy');
-    s += Ar([[580, 372], [730, 372]]) + Ar([[846, 372], [1000, 372]]) + Ar([[1200, 372], [1384, 372]]);
-    s += Tx(440, 100, 'Loop 1 · the rules', { fs: 24, fw: 600, c: C.ind });
-    s += Nd(570, 172, 'Silver + gold', ['from loop 2']) + Nd(900, 172, 'Proposer agent', ['one rule change']) + Nd(1230, 172, 'A gate in code', ['keeps it if it scores better']);
-    s += Ar([[680, 162], [783, 162]], C.ind) + Ar([[1017, 162], [1113, 162]], C.ind);
-    s += Ar([[1230, 238], [1230, 272], [810, 272], [810, 342]], C.ind) + Tx(1020, 262, 'new rule', { a: 'middle', fs: 19, c: C.ind });
-    s += Ar([[770, 342], [770, 306], [570, 306], [570, 236]], C.ind) + Tx(670, 298, 'scored on', { a: 'middle', fs: 19, c: C.ind });
-    s += Tx(440, 560, 'Loop 2 · the eval', { fs: 24, fw: 600, c: C.val });
-    s += Nd(1300, 622, 'Validator agent', [`labels fresh listings: ${silver('silver')}`]) + Nd(960, 622, 'A person', [`settles disagreements: ${gold('gold')}`]) + Nd(640, 622, 'Improver agent', ['one change to the validator']);
-    s += Ar([[1470, 404], [1470, 612], [1426, 612]], C.val) + Ar([[1176, 612], [1088, 612]], C.val) + Ar([[832, 612], [757, 612]], C.val);
-    s += Ar([[640, 668], [640, 696], [1300, 696], [1300, 668]], C.val, { dash: true }) + Tx(700, 688, 'a better validator', { fs: 19, c: C.val });
-    s += '</g>';
-    put('archB', '0 0 1664 730', s);
-  })();
+    // the other domains: panels stacked behind fragrance, each named on the strip that shows
+    const strip = (k, name, bold) => {
+      const x = k * DX, y = PT - k * DY, lx = x + PR - 176;
+      return Ic('branch', lx, y + 5, 18, C.meta, 2.2) + Tx(lx + 28, y + 20, name, { fs: 20, fw: bold ? 600 : 500, c: bold ? C.ink : C.ink2 });
+    };
+    for (let k = 4; k >= 1; k--) {
+      s += `<rect x="${k * DX}" y="${PT - k * DY}" width="${PR}" height="${PB - PT}" rx="24" fill="${C.panel}" stroke="#fff" stroke-width="3"/>`;
+      s += strip(k, DOMS[k]);
+    }
+    s += `<rect x="0" y="${PT}" width="${PR}" height="${PB - PT}" rx="24" fill="${C.panel}" stroke="#fff" stroke-width="3"/>`;
+    s += strip(0, DOMS[0], true);
 
-  // C · one row left to right; loop 2 arcs above, loop 1 below; the branches along the bottom
-  (() => {
-    let s = '';
-    const y = 300, nodes = [[80, 'Listings', ['2 million']], [330, 'Rules', ['free'], C.ind], [610, 'Placer agent', ['only what rules', "can't settle"]],
-      [900, 'Taxonomy', ['brand › product']], [1200, 'Validator agent', ['labels fresh listings', `blind: ${silver('silver')}`], C.val], [1500, 'A person', ['settles disagreements:', gold('gold')]]];
-    s += Tx(0, 40, 'Fragrance, on its own branch', { fs: 22, c: C.faint });
-    nodes.forEach(([x, t, sub, c]) => { s += Nd(x, y, t, sub, { fs: 30, c: c || C.ink }); });
-    [[150, 276], [386, 516], [722, 808], [992, 1062], [1334, 1428]].forEach(([a, b]) => { s += Ar([[a, y - 10], [b, y - 10]]); });
-    s += Cu([1500, 254], [1500, 150], [1200, 150], [1200, 254], C.val, 5);
-    s += Tx(1350, 82, 'Loop 2 · improver agent', { a: 'middle', fs: 26, fw: 600, c: C.val }) + Tx(1350, 114, 'a better validator, kept if it agrees more with gold', { a: 'middle', fs: 20, c: C.val });
-    s += Cu([1200, 378], [1200, 600], [330, 600], [330, 352], C.ind, 5);
-    s += Tx(765, 450, 'Loop 1 · proposer agent', { a: 'middle', fs: 26, fw: 600, c: C.ind }) + Tx(765, 482, 'one rule change at a time;', { a: 'middle', fs: 20, c: C.ind })
-      + Tx(765, 508, 'a gate keeps it if it scores better', { a: 'middle', fs: 20, c: C.ind });
-    // loop 3: the domains as branches joining one line of lessons
-    const by = 690, bx = i => 420 + i * 230;
-    s += Tx(0, 660, 'Loop 3', { fs: 26, fw: 600, c: C.meta }) + Tx(0, 690, 'across branches', { fs: 20, c: C.meta });
-    s += Ar([[330, by], [1560, by]], C.meta, { w: 3 });
-    DOMS.forEach((t, i) => { const x = bx(i);
-      s += `<path d="M${x} ${by - 46}C${x} ${by - 20} ${x + 30} ${by} ${x + 60} ${by}" fill="none" stroke="${C.meta}" stroke-width="2.5"/><circle cx="${x}" cy="${by - 46}" r="7" fill="${C.meta}"/>`;
-      s += Tx(x + 16, by - 40, t, { fs: 22, fw: i ? 500 : 700, c: i ? C.ink2 : C.ink }); });
-    s += Tx(1576, by + 7, 'global', { fs: 22, fw: 600, c: C.meta });
-    put('archC', '0 0 1664 720', s);
+    // the solver, left to right
+    s += node(col(1), R0, 'listings', C.ink2, 'Listings', '2 million');
+    s += node(col(2), R0, 'rules', C.ind, 'Rules', 'place 89%, free');
+    s += node(col(3), R0, 'agent', C.ink, 'Placer agent', 'places the other 11%');
+    s += node(col(4), R0, 'tree', C.ink2, 'Taxonomy', 'the product trees');
+    s += node(col(5), R0, 'eval', C.ink2, `${silver('Silver')} + ${gold('gold')}`, 'the eval');
+    for (let i = 1; i < 5; i++) s += right(col(i), col(i + 1), R0, C.wire);
+
+    // loop 1, rule induction: the eval's errors -> the proposer -> the gate -> a new rule
+    s += Tx(40, 152, 'Loop 1 · rule induction', { fs: 24, fw: 600, c: C.ind });
+    s += node(col(5), R1, 'agent', C.ind, 'Proposer agent', 'proposes one rule');
+    s += node(col(2), R1, 'gate', C.ind, 'Gate, in code', 'keeps it if sealed gold rises');
+    s += Ar([[col(5), top(R0)], [col(5), bot(R1)]], C.ind) + Tx(col(5) - 12, 328, 'errors', { a: 'end', fs: 20, c: C.ind });
+    s += Ar([[col(5) - 32, R1], [col(2) + 32, R1]], C.ind);
+    s += Ar([[col(2), bot(R1)], [col(2), top(R0)]], C.ind) + Tx(col(2) + 12, 328, 'new rule', { fs: 20, c: C.ind });
+
+    // loop 2, validation: fresh listings -> the validator -> a person -> the improver -> round again, until silver agrees with gold
+    s += Tx(40, R2 + 8, 'Loop 2 · validation', { fs: 24, fw: 600, c: C.val });
+    s += node(col(4), R2, 'agent', C.val, 'Validator agent', 'flags likely errors');
+    s += node(col(5), R2, 'person', C.val, 'A person', 'labels its flags');
+    s += node(col(6), R2, 'agent', C.val, 'Improver agent', 'improves the validator');
+    s += Ar([[col(4), bot(R0)], [col(4), top(R2)]], C.val) + Tx(col(4) - 12, 504, 'fresh listings', { a: 'end', fs: 20, c: C.val });
+    s += right(col(4), col(5), R2, C.val) + right(col(5), col(6), R2, C.val);
+    s += Ar([[col(6), bot(R2)], [col(6), 682], [col(4), 682], [col(4), bot(R2)]], C.val);
+    s += Tx(col(5), 714, `round again, until ${silver('silver')} agrees with ${gold('gold')}`, { a: 'middle', fs: 20, c: C.val });
+    // what loop 2 hands on: more silver and gold to the eval, and the patterns behind the new labels to loop 1
+    const LX = col(5) + 136, JY = 497;
+    s += Ar([[col(5), top(R2)], [col(5), bot(R0)]], C.val) + Tx(col(5) - 12, 504, `more ${silver('silver')} + ${gold('gold')}`, { a: 'end', fs: 20, c: C.val });
+    s += Ar([[col(5), JY], [LX, JY], [LX, R1], [col(5) + 32, R1]], C.val) + `<circle cx="${col(5)}" cy="${JY}" r="6" fill="${C.val}"/>`;
+    s += Tx(col(5) + 14, 328, 'patterns', { fs: 20, c: C.val });
+
+    // loop 3, across domains: kept changes leave every branch, distil makes lessons, a lesson kept twice goes to all
+    const X3 = 1531, SE = PR + 4 * DX;
+    s += Tx(X3 - 133, 152, 'Loop 3 · lessons', { fs: 24, fw: 600, c: C.meta });
+    s += node(X3, R1, 'wrench', C.meta, 'Distil, in code', 'kept changes → lessons');
+    s += node(X3, R0, 'lesson', C.meta, 'A lesson', 'kept in two domains');
+    s += node(X3, R2, 'globe', C.meta, 'Every domain', 'gets the lesson');
+    s += Ar([[SE + 2, R1], [X3 - 32, R1]], C.meta);
+    s += Ar([[X3, bot(R1)], [X3, top(R0)]], C.meta) + Ar([[X3, bot(R0)], [X3, top(R2)]], C.meta);
+    s += Ar([[X3 - 32, R2], [SE + 6, R2]], C.meta);
+    put('arch', '0 0 1664 749', s);
   })();
 
   // ---------- 4 · one small picture per axis, drawn like the cloud ----------
@@ -590,7 +682,7 @@ record: round 3, kept
     const grid = (ox, oy, nx, ny, col, z = 22, g = 9) => { let s = ''; for (let j = 0; j < ny; j++) for (let i = 0; i < nx; i++) s += sq(ox + i * (z + g), oy + j * (z + g), col(i, j), z); return s; };
     const fit = (id, s) => { put(id, '0 0 340 250', s); document.getElementById(id).setAttribute('preserveAspectRatio', 'xMinYMid meet'); };
     // 2 · rules settle most, an agent the rest
-    const ag = new Set(['3,0', '8,1', '1,3', '6,3', '4,5', '9,6']);
+    const ag = new Set(['3,0', '8,1', '1,3', '6,3', '4,5', '9,6', '7,4', '2,6']);
     fit('cv2', grid(0, 16, 10, 7, (i, j) => ag.has(i + ',' + j) ? C.ink : '#B9D5EC'));
     // 3 · its own eval climbs, a person's check barely moves (Pedia, mean of 6 runs)
     (() => {
@@ -614,61 +706,8 @@ record: round 3, kept
     })();
   })();
 
-  // ---------- 8 · the lattice: strip, count, build ----------
-  (() => {
-    let s = '';
-    const H3 = (x, n, t) => Tx(x, 30, `<tspan style="fill:${C.ind}">${n}</tspan>  ${t}`, { fs: 25, fw: 600, c: C.ink });
-    s += H3(0, '1', 'Strip the brand and the variants') + H3(760, '2', 'Count every run of words') + H3(1270, '3', 'Build the tree');
-    const titles = [
-      [['Lattafa', 'b'], ['Khamrah', 'n'], ['Eau de Parfum 100ml Unisex', 'v']],
-      [['Lattafa', 'b'], ['Khamrah', 'n'], ['EDP Spray 3.4 oz', 'v']],
-      [['Lattafa', 'b'], ['Khamrah Qahwa', 'n'], ['Eau de Parfum 100 ml', 'v']],
-      [['Khamrah Qahwa', 'n'], ['by Lattafa', 'b'], ['EDP 3.4oz for men', 'v']],
-      [['Lattafa', 'b'], ['Khamrah Dukhan', 'n'], ['EDP 100ml', 'v']],
-      [['Lattafa', 'b'], ['Yara', 'n'], ['Eau de Parfum for Women 100ml', 'v']],
-    ];
-    const ty = i => 110 + i * 96;
-    const seg = ([t, k]) => k === 'n' ? `<tspan style="fill:${C.ink};font-weight:600">${t}</tspan>`
-      : `<tspan style="fill:${C.faint}${k === 'v' ? ';text-decoration:line-through' : ''}">${t}</tspan>`;
-    titles.forEach((t, i) => { s += `<text x="0" y="${ty(i) + 8}" style="${F(23)}">${t.map(seg).join(' ')}</text>`; });
-    // runs, each next to the titles that join it
-    const runs = [['khamrah', 5, (ty(0) + ty(1)) / 2, [0, 1]], ['khamrah qahwa', 2, (ty(2) + ty(3)) / 2, [2, 3]], ['khamrah dukhan', 1, ty(4), [4]], ['yara', 1, ty(5), [5]]];
-    const SX = 1010, SQ = 26, GAP = 6;
-    runs.forEach(([name, n, y, from]) => {
-      const ok = n >= 2, c = ok ? C.ind : C.faint;
-      from.forEach(i => { const y0 = ty(i); s += `<path d="M655 ${y0}C 705 ${y0}, 705 ${y}, 752 ${y}" fill="none" stroke="${c}" stroke-width="2"${ok ? '' : ' stroke-dasharray="6 6"'} opacity="${ok ? .6 : 1}"/>`; });
-      s += `<text x="765" y="${y + 8}" style="font:${ok ? 500 : 400} 22px 'JetBrains Mono',monospace;fill:${ok ? C.ink : C.mute}">${name}</text>`;
-      for (let k = 0; k < n; k++) s += `<rect x="${SX + k * (SQ + GAP)}" y="${y - SQ / 2}" width="${SQ}" height="${SQ}" rx="4" fill="${ok ? C.ind : C.line}"/>`;
-      s += Tx(SX + n * (SQ + GAP) + 8, y + 8, String(n), { fs: 22, fw: 600, c: ok ? C.ink : C.faint });
-    });
-    const fx = SX + 2 * (SQ + GAP) - GAP / 2;
-    s += `<line x1="${fx}" x2="${fx}" y1="70" y2="${ty(5) + 30}" stroke="${C.val}" stroke-width="2" stroke-dasharray="7 6"/>` + Tx(fx + 10, 80, 'floor: in 2+ titles', { fs: 19, c: C.val });
-    // the tree it builds
-    const E = (x1, y1, x2, y2) => `<path d="M${x1} ${y1}V${(y1 + y2) / 2}H${x2}V${y2}" fill="none" stroke="${C.wire}" stroke-width="2"/>`;
-    s += Nd(1465, 125, 'Lattafa', ['brand'], { fs: 32 });
-    s += E(1465, 172, 1465, 232) + Nd(1465, 265, 'Khamrah', ['family'], { fs: 30 });
-    s += E(1465, 310, 1365, 372) + E(1465, 310, 1575, 372);
-    s += Nd(1365, 405, 'Khamrah', ['product'], { fs: 27, c: C.ind }) + Nd(1575, 405, 'Khamrah Qahwa', ['product'], { fs: 27, c: C.ind });
-    s += Tx(1290, 540, 'Unclear: Khamrah Dukhan, Yara', { fs: 22, c: C.mute }) + Tx(1290, 572, '→ the registry, or an agent', { fs: 22, c: C.faint });
-    put('lattice', '0 0 1664 640', s);
-    document.getElementById('lattice').setAttribute('preserveAspectRatio', 'xMinYMid meet');
-  })();
-
-  // ---------- 10 · loop 2, drawn as a loop ----------
+  // ---------- 9 · loop 2: gold and silver colours (the slide itself is drawn after the line charts) ----------
   const GOLD = '#E3AC2A', GOLD_T = '#B07F0C', SILV = '#C3C8D0', SILV_T = '#7C8390';
-  (() => {
-    let s = '';
-    const cx = 400, cy = 330, r = 175;
-    [[-76, -14], [14, 76], [104, 166], [194, 256]].forEach(([a, b]) => { s += arc(cx, cy, r, a, b, C.val, 5); });
-    [[cx, cy - r], [cx + r, cy], [cx, cy + r], [cx - r, cy]].forEach(([x, y]) => { s += `<circle cx="${x}" cy="${y}" r="11" fill="${C.val}"/>`; });
-    s += Nd(cx, cy - r - 70, 'A validator', ['labels fresh listings, blind'], { fs: 34, sfs: 22 });
-    s += Nd(cx + r + 34, cy - 16, 'Flags', ['where it and the', 'solver disagree'], { fs: 34, sfs: 22, a: 'start' });
-    s += Nd(cx, cy + r + 64, 'A person settles them', [`<tspan style="fill:${GOLD_T};font-weight:600">gold 2</tspan>, and <tspan style="fill:${SILV_T};font-weight:600">more silver</tspan>`], { fs: 34, sfs: 22 });
-    s += Nd(cx - r - 34, cy - 16, 'Better rules', [`and a <tspan style="fill:${C.val};font-weight:600">better validator</tspan>`], { fs: 34, sfs: 22, a: 'end' });
-    s += Tx(cx, cy - 30, 'each round', { a: 'middle', fs: 24, c: C.mute }) + Tx(cx, cy + 8, 'more silver,', { a: 'middle', fs: 32, fw: 600, c: SILV_T })
-      + Tx(cx, cy + 46, 'built better', { a: 'middle', fs: 32, fw: 600, c: C.val });
-    put('loop2', '0 40 800 640', s);
-  })();
 
   // ---------- line charts ----------
   function chart(id, o) {
@@ -699,47 +738,226 @@ record: round 3, kept
   }
   const ticks01 = lo => [lo, (lo + 1) / 2, 1].map(v => +v.toFixed(2));
 
-  // 8 · Figure A
-  const rounds = R.A && R.A.rounds && R.A.rounds.length ? R.A.rounds : null;
-  if (rounds) {
-    const fv = rounds.map(r => r.f1), lo = Math.max(0, Math.floor(Math.min(...fv.filter(v => v != null)) * 10) / 10 - .1);
-    const hi = Math.ceil(Math.max(...fv) * 10) / 10, lo2 = Math.floor(Math.min(...fv) * 10) / 10;
-    chart('figA', { xs: rounds.map((r, i) => r.label ? (r.label === 'start' ? 'start' : 'round ' + r.label) : (i ? 'round ' + i : 'start')),
-      ymin: lo2 - .05, ymax: hi + .03, ticks: Array.from({ length: Math.round((hi - lo2) * 10) + 1 }, (_, k) => +(lo2 + k / 10).toFixed(1)), fmt: pct,
-      series: [{ v: fv, c: C.ind, label: pct(fv[fv.length - 1]), notes: rounds.map(r => r.kept ? '+ ' + r.kept : null) }] });
-  } else chart('figA', { r: 40, xs: ['start', 'rule 1', 'rule 2', 'rule 3', '…'], ph: "waiting for today's run" });
-
-  // 9 · Figure B
-  const sets = ['start', 'round 1', 'round 2'];
-  // under each round: gold (grows with what a person settles), silver (grows), and the validator that built it (gets better)
-  const grows = { l: 230, h: 440, footH: 230, foot: (x, h) => {
-    let s = ''; const z = 20, st = 25, y0 = h + 18, lx = i => x(i) - 40;
-    const lab = (y, t, c) => Tx(170, y, t, { a: 'end', fs: 26, fw: 600, c });
-    s += lab(y0 + 19, 'gold', GOLD_T) + lab(y0 + 82, 'silver', SILV_T) + lab(y0 + 170, 'validator', C.val);
-    const gold = [4, 6, 8], silver = [0, 6, 12], val = ['', 'v1', 'v2, better'];
-    for (let i = 0; i < 3; i++) {
-      for (let k = 0; k < gold[i]; k++) s += `<rect x="${lx(i) + k * st}" y="${y0}" width="${z}" height="${z}" rx="3" fill="${GOLD}"/>`;
-      for (let k = 0; k < silver[i]; k++) s += `<rect x="${lx(i) + (k % 6) * st}" y="${y0 + 63 + Math.floor(k / 6) * st}" width="${z}" height="${z}" rx="3" fill="${SILV}"/>`;
-      if (!silver[i]) s += Tx(lx(i), y0 + 82, 'none yet', { fs: 24, c: C.faint });
-      s += Tx(lx(i), y0 + 170, val[i] || 'none yet', { fs: 26, fw: val[i] ? 600 : 400, c: val[i] ? C.val : C.faint });
-    }
-    return s; } };
-  if (R.B && R.B.R1) {
-    const g = rs => ['gold', 'V1', 'V2'].map(k => rs[k] ?? null), r1 = g(R.B.R1), r2 = R.B.R2 ? g(R.B.R2) : null;
-    const all = [...r1, ...(r2 || [])].filter(v => v != null), lo = Math.max(0, Math.floor(Math.min(...all) * 10) / 10 - .1);
-    chart('figB', { w: 900, r: 210, ...grows, xs: sets, ymin: lo, ymax: 1, ticks: ticks01(lo), fmt: f1,
-      series: [{ v: r1, c: C.ink, label: 'rule set 1' }, ...(r2 ? [{ v: r2, c: C.val, label: 'rule set 2' }] : [])] });
-  } else chart('figB', { w: 900, r: 160, ...grows, xs: sets, ph: "waiting for today's run" });
-
-  // 11 · results table
+  // 8 · Figure A: loop 1 as a staircase of rows, one per kept rule, read top to bottom. Each row: the rule and a tiny
+  //   example; exact match on sealed gold (blue bar, 0–80%); the share sent to the agent (dark bar, 0–35%) with the bill
+  //   for 2M listings beside it. Under each bar, a pale ghost of the row above, so each step shows. No axes.
   (() => {
-    const D = [['fragrance', 'Fragrance'], ['food', 'Food'], ['cars', 'Cars']];
-    const S = [['agent', 'An agent on everything'], ['loop1', 'After loop 1: rules'], ['loop2', 'After loop 2: checks'], ['loop3', "With loop 3's head start"]];
-    const cell = v => v && v.f1 != null ? `<span class="f">${pct(v.f1)}</span><span class="c">${v.cost != null ? usd(v.cost) : ''}</span>`
+    const rs = R.A && R.A.rounds ? R.A.rounds.filter(r => !r.dropped && r.f1 != null) : [];
+    if (!rs.length) { chart('figA', { r: 40, xs: ['start', 'rule 1', 'rule 2', 'rule 3', '…'], ph: "waiting for today's run" }); return; }
+    // the bill for 2M listings: 632 tokens a listing (measured, sealed run) at $3 per million tokens (assumed), to the nearest $10
+    const bill = sh => '$' + (Math.round(sh * 2e6 * 632 * 3 / 1e6 / 10) * 10).toLocaleString('en-US');
+    const p1 = v => (v * 100).toFixed(1) + '%';
+    const T = (x, y, t, o = {}) => `<text x="${x}" y="${y}" text-anchor="${o.a || 'start'}" style="font:${o.fw || 400} ${o.fs || 20}px ${o.mono ? "'JetBrains Mono',monospace" : 'Inter,system-ui,sans-serif'};fill:${o.c || C.mute}">${t}</text>`;
+    // a bar from the left, flat at its start and rounded at its end
+    const hb = (x, y, w, h, c, r = 5) => `<path d="M${x} ${y}H${x + w - r}Q${x + w} ${y} ${x + w} ${y + r}V${y + h - r}Q${x + w} ${y + h} ${x + w - r} ${y + h}H${x}Z" fill="${c}"/>`;
+    const VW = 1664, XR = 24, XT = 150, XE = 760, XA = 1240, LE = 380, LA = 290, EMAX = .8, AMAX = .35;
+    const TOP = 46, RH = 106, GE = '#B9D5EC', GA = '#D3D7DD';
+    let s = '';
+    s += T(XT, 26, 'Rule kept', { fs: 21, c: C.faint }) + T(XE, 26, 'Exact match on sealed gold', { fs: 21, c: C.faint })
+      + T(XA, 26, 'Sent to an agent · bill for 2M listings', { fs: 21, c: C.faint });
+    rs.forEach((r, i) => {
+      const top = TOP + i * RH, cy = top + RH / 2, last = i === rs.length - 1, pv = i ? rs[i - 1] : null;
+      // the last row is the result: a light panel behind it, bigger numbers
+      if (last) s += `<rect x="0" y="${top + 6}" width="${VW}" height="${RH - 8}" rx="16" fill="${C.panel}"/>`;
+      else s += `<line x1="0" x2="${VW}" y1="${top}" y2="${top}" stroke="${C.line}" stroke-width="2"/>`;
+      s += T(XR, cy - 6, r.label === 'start' ? 'Start' : 'Round ' + r.label, { fs: 20, fw: 600, c: C.faint });
+      s += T(XT, cy - 6, esc(r.rule), { fs: 26, fw: 600, c: C.ink });
+      s += T(XT, cy + 24, esc(r.ex || '') + (r.from ? `<tspan dx="16" style="font:600 19px Inter,system-ui,sans-serif;fill:${C.val}">${r.from}</tspan>` : ''), { fs: 19, mono: r.mono, c: C.faint });
+      const fs = last ? 34 : 24, dy = last ? 12 : 8;
+      // exact match: the blue bar, the row above as a pale ghost under it, the % at its end
+      const we = LE * r.f1 / EMAX;
+      if (pv) s += hb(XE, cy + 19, LE * pv.f1 / EMAX, 7, GE, 3.5);
+      s += hb(XE, cy - 15, we, 30, C.ind) + T(XE + we + 14, cy + dy, p1(r.f1), { fs, fw: 600, c: C.ink });
+      // sent to the agent: the dark bar with its share on it, the ghost under it, the bill beside it
+      const wa = LA * r.agent / AMAX;
+      if (pv) s += hb(XA, cy + 19, LA * pv.agent / AMAX, 7, GA, 3.5);
+      s += hb(XA, cy - 15, wa, 30, C.ink2) + T(XA + 10, cy + 6, p1(r.agent), { fs: 18, fw: 600, c: '#fff' });
+      s += T(XA + wa + 14, cy + dy, bill(r.agent), { fs, fw: 600, c: C.ink });
+    });
+    // the gate, one quiet line
+    const gy = TOP + rs.length * RH + 44;
+    s += Ic('gate', XR - 2, gy - 22, 28, C.mute) + T(XR + 38, gy, 'A gate in code keeps a rule only if it clearly helps. It dropped 3 of 8.', { fs: 21, c: C.mute });
+    put('figA', `0 0 ${VW} 745`, s);
+  })();
+
+  // 9 · loop 2. Top: the validator's versions against gold (kept solid, dropped hollow, estimates dashed).
+  //   Bottom: the rounds, each a bigger sample labelled by the kept version, and the gold its settled flags add.
+  (() => {
+    const B = R.B;
+    if (!B || !B.rounds || !B.climb) return;
+    const TGT = 0.90;
+    const rd = B.rounds.slice(0, 4), [cv1, cv2] = B.climb;
+    // not measured: the next kept versions, towards the target
+    const EST = [{ v: 'v3', exact: 0.88 }, { v: 'v4', exact: 0.91 }];
+    const NC = rd.length + 1, L0 = 210, CW = (1664 - L0) / NC;
+    const Lx = i => Math.round(L0 + i * CW), x0 = i => Lx(i) + 24, cx = i => Math.round(L0 + (i + .5) * CW);
+    const y = v => 240 - (v * 100 - 80) * 15, YV = y(cv2.exact);
+    const SG = (x, yy, t, fs, c, a = 'start') => `<text x="${x}" y="${yy}" text-anchor="${a}" style="font:600 ${fs}px 'Space Grotesk',Inter,sans-serif;fill:${c}">${t}</text>`;
+    const sq = (x, yy, z, c, op = 1) => `<rect x="${x}" y="${yy}" width="${z}" height="${z}" rx="3" fill="${c}" fill-opacity="${op}"/>`;
+    const ln = (pts, o = {}) => `<path d="M${pts.map(p => p.join(' ')).join('L')}" fill="none" stroke="${o.c || C.val}" stroke-width="${o.w || 4}" stroke-linecap="round" stroke-linejoin="round"${o.dash ? ' stroke-dasharray="9 8"' : ''}/>`;
+    const dot = (x, yy, kind) => kind === 'drop' ? `<circle cx="${x}" cy="${yy}" r="8" fill="#fff" stroke="${C.wire}" stroke-width="3"/>`
+      : `<circle cx="${x}" cy="${yy}" r="${kind === 'small' ? 7 : 9}" fill="${C.val}" fill-opacity="${kind === 'est' ? .5 : 1}" stroke="#fff" stroke-width="2"/>`;
+    const pc1 = v => (v * 100).toFixed(1) + '%';
+    let s = '';
+
+    // ----- top: the versions -----
+    rd.forEach((r, i) => { s += Tx(cx(i), 26, `Round ${i + 1}`, { a: 'middle', fs: 24, fw: 600, c: C.ink }); });
+    s += Tx(cx(NC - 1), 26, `Next<tspan style="fill:${C.faint};font-weight:400"> · est.</tspan>`, { a: 'middle', fs: 24, fw: 600, c: C.ink });
+    s += `<line x1="${L0}" x2="1664" y1="${y(TGT)}" y2="${y(TGT)}" stroke="${C.ink2}" stroke-width="2" stroke-dasharray="8 7"/>`;
+    s += Tx(L0 + 16, y(TGT) - 12, `loop until silver matches gold: ${pct(TGT)}`, { fs: 22, fw: 600, c: C.ink });
+
+    // apart, on the left: the kept step, from a later run
+    s += Ic('agent', 0, 6, 28, C.val) + Tx(38, 28, 'Validator', { fs: 26, fw: 600, c: C.ink }) + Tx(0, 56, 'match with gold', { fs: 20, c: C.mute });
+    const ax = 44, bx = 150;
+    s += ln([[ax, y(cv1.exact)], [bx, y(cv1.exact)], [bx, YV]]) + dot(ax, y(cv1.exact)) + dot(bx, YV);
+    s += SG(ax, y(cv1.exact) + 36, pc1(cv1.exact), 24, C.ink2, 'middle') + Tx(ax, y(cv1.exact) + 64, cv1.v, { a: 'middle', fs: 20, fw: 600, c: C.val });
+    s += Tx(bx, YV - 50, cv2.v + ' kept', { a: 'middle', fs: 20, fw: 600, c: C.val }) + SG(bx, YV - 20, pc1(cv2.exact), 24, C.ink2, 'middle');
+    s += Tx(0, 290, 'later run', { fs: 20, fw: 600, c: C.mute });
+    s += `<line x1="198" x2="198" y1="${y(TGT) + 20}" y2="296" stroke="${C.line}" stroke-width="2"/>`;
+
+    // today: the kept version, v2, in every round; the improver's v3 tries, dropped
+    s += ln([[L0, YV], [Lx(NC - 1), YV]]) + Tx(Lx(0) + 20, YV - 16, cv2.v + ' labels every round', { fs: 20, c: C.mute });
+    rd.forEach((r, i) => {
+      s += dot(cx(i), YV, 'small');
+      if (r.ab) s += dot(cx(i) + 40, YV, 'drop') + ['v3 try dropped:', 'same match,', 'more harm'].map((t, k) => Tx(cx(i) + 40, YV + 34 + k * 24, t, { a: 'middle', fs: 20, fw: k ? 400 : 600, c: k ? C.mute : C.ink2 })).join('');
+    });
+    // the improver, once, under round 1
+    const ix = Lx(0) + 60;
+    s += Ic('agent', ix, YV + 16, 24, C.val) + Tx(ix + 30, YV + 34, 'improver agent', { fs: 20, fw: 600, c: C.val })
+      + ['tries a v3 from gold 2,', 'kept only if it matches', 'gold better'].map((t, k) => Tx(ix, YV + 58 + k * 24, t, { fs: 20, c: C.mute })).join('');
+    // next: estimated versions, towards the target
+    const e = Lx(NC - 1), e1 = e + 70, e2 = e + 170;
+    s += ln([[e, YV], [e1, YV], [e1, y(EST[0].exact)], [e2, y(EST[0].exact)], [e2, y(EST[1].exact)], [e2 + 26, y(EST[1].exact)]], { dash: true });
+    s += dot(e1, y(EST[0].exact), 'est') + dot(e2, y(EST[1].exact), 'est');
+    s += Tx(e1 - 20, y(EST[0].exact) + 7, EST[0].v, { a: 'end', fs: 20, fw: 600, c: C.val }) + Tx(e2 - 20, y(EST[1].exact) + 7, EST[1].v, { a: 'end', fs: 20, fw: 600, c: C.val });
+    s += `<rect x="${e2 + 30}" y="${y(EST[1].exact) - 22}" width="86" height="34" fill="#fff"/>` + SG(e2 + 34, y(EST[1].exact) + 9, '≈ ' + pct(EST[1].exact), 26, C.ink);
+
+    // ----- bottom: the rounds -----
+    const row = (yy, icon, name, c, sub) => { s += icon + Tx(36, yy, name, { fs: 24, fw: 600, c }) + sub.map((t, k) => Tx(36, yy + 26 + k * 24, t, { fs: 20, c: C.mute })).join(''); };
+    row(372, sq(4, 354, 20, SILV), 'Silver', SILV_T, ['40 fresh listings', 'a round, by v2']);
+    row(470, Ic('person', 0, 448, 28, C.ink), 'A person', C.ink, ['settles each flag']);
+    row(548, sq(4, 530, 20, GOLD), 'Gold 2', GOLD_T, ['settled flags']);
+    row(628, Ic('rules', 0, 606, 28, C.ind), 'To loop 1', C.ind, ['errors → rules']);
+
+    // silver: one layer of 40 a round, piling up; the next layer (estimated) by the next kept version
+    const base = 430, sh = 32, step = 22, dx = 8, sw = 150;
+    const layers = i => {
+      let t = '';
+      for (let k = 0; k <= i; k++) {
+        const sx = x0(i) + k * dx, sy = base - sh - k * step, top = k === i, est = i === NC - 1 && top;
+        t += `<rect x="${sx}" y="${sy}" width="${sw}" height="${sh}" rx="5" fill="${est ? '#fff' : top ? SILV : '#E1E4E8'}" stroke="${est ? SILV : '#fff'}" stroke-width="2"${est ? ' stroke-dasharray="6 5"' : ''}/>`;
+        t += `<text x="${sx + 12}" y="${sy + 22}" style="${F(18, top ? 600 : 400)};fill:${top && !est ? C.ink : C.mute}">S${k + 1}${top ? ` · by <tspan style="fill:${C.val};font-weight:600">${est ? EST[0].v : cv2.v}</tspan>` : ''}</text>`;
+      }
+      return t;
+    };
+    let silver = 0;
+    for (let i = 0; i < NC; i++) {
+      const est = i === NC - 1;
+      silver += est ? rd[rd.length - 1].silver : rd[i].silver;
+      s += layers(i) + SG(x0(i) + 188, 412, silver, 34, est ? C.faint : SILV_T) + Tx(x0(i) + 188, 440, 'in silver', { fs: 18, c: C.mute });
+    }
+
+    // a person settles each flag; the settled flags join gold 2 (faded: earlier rounds; full: this round)
+    let gold = 0;
+    rd.forEach((r, i) => {
+      const prev = gold; gold += r.added || 0;
+      s += r.added ? Ic('flag', x0(i), 452, 22, C.val) + Tx(x0(i) + 30, 470, `${r.added} settled, ${pc1(r.right).replace('.0%', '%')} right`, { fs: 20, c: C.ink2 })
+                   : Ic('gate', x0(i), 452, 22, C.faint) + Tx(x0(i) + 30, 470, 'A/B of a v3 try', { fs: 20, c: C.faint });
+      const per = 10, z = 13, g = 3, gy = 494;
+      for (let k = 0; k < gold; k++) s += sq(x0(i) + (k % per) * (z + g), gy + Math.floor(k / per) * (z + g), z, GOLD, k < prev ? .38 : 1);
+      s += SG(x0(i) + 176, 528, gold, 34, GOLD_T) + Tx(x0(i) + 176, 556, 'in gold 2', { fs: 18, c: C.mute });
+    });
+
+    // what the errors became in loop 1 (measured: r6 kept; r7, r8 dropped by the gate)
+    const blue = t => `<tspan style="fill:${C.ind}">${t}</tspan>`;
+    s += Tx(x0(0), 628, `short names seen once ${blue('→ rule r6, kept by the gate')}`, { fs: 21, c: C.ink2 })
+      + Tx(x0(2), 628, `concentration, audience words ${blue('→ r7, r8, dropped')}`, { fs: 21, c: C.ink2 });
+
+    // the improver takes gold 2 into the next try: after rounds that added gold, and into the estimate
+    rd.forEach((r, i) => {
+      const j = i + 1;
+      if (!(j < rd.length ? rd[j].ab : j === NC - 1)) return;
+      const src = rd.slice(0, j).map(q => q.added || 0).reduce((a, b) => a + b, 0) > 0 ? i : null;
+      if (src == null) return;
+      const vx = Lx(j) + 8, sy = 522, tip = YV + 12;
+      s += `<path d="M${Lx(i) + 286} ${sy}H${vx - 12}Q${vx} ${sy} ${vx} ${sy - 12}V${tip + 14}" fill="none" stroke="${C.val}" stroke-width="3" stroke-dasharray="9 7"/>` + head(vx, tip, -Math.PI / 2, C.val);
+      s += `<rect x="${vx - 15}" y="284" width="30" height="30" fill="#fff"/>` + Ic('agent', vx - 12, 287, 24, C.val);
+    });
+    put('l2fig', '0 0 1664 660', s);
+  })();
+
+  // 11 · results table (the slide is cut; this draws nothing while #res is missing)
+  (() => {
+    if (!document.getElementById('res')) return;
+    const D = [['fragrance', 'Fragrance'], ['food', 'Food']];
+    const S = [['agent', 'An agent on every listing'], ['rules', 'Rules only'], ['both', 'Rules, then the agent on the rest']];
+    const p1 = v => (v * 100).toFixed(1) + '%';
+    const cell = v => v && v.f1 != null ? `<span class="f">${p1(v.f1)}</span><span class="c">${v.cost ? usd(v.cost) : 'free'}${v.share != null ? ' · ' + Math.round(v.share * 100) + '% to the agent' : ''}</span>`
                                         : `<span class="f ph">[%]</span><span class="c ph">[$]</span>`;
     const fin = R.final || {};
-    document.getElementById('res').innerHTML = `<tr><th></th>${D.map(([, n]) => `<th>${n}</th>`).join('')}</tr>` +
+    document.getElementById('res').innerHTML = `<tr><th></th>${D.map(([d, n]) => `<th>${n}</th>`).join('')}</tr>` +
       S.map(([k, n]) => `<tr><td>${n}</td>${D.map(([d]) => `<td>${cell(fin[d] && fin[d][k])}</td>`).join('')}</tr>`).join('');
+    const sl = D.filter(([d]) => fin[d] && fin[d].sealed).map(([d, n]) => `${n.toLowerCase()} ${pct(fin[d].sealed[0])} → <b>${pct(fin[d].sealed[1])}</b>`);
+    if (sl.length) document.getElementById('resl').innerHTML = 'Loop 1 on sealed gold so far: ' + sl.join(', ') + '.';
+  })();
+
+  // ---------- 10 · loop 3: the cross-validation matrix, and the Oreo example ----------
+  (() => {
+    const D = ['fragrance', 'food', 'clothing', 'footwear'], NM = ['Fragrance', 'Food', 'Clothing', 'Footwear'];
+    // Rows: whose lessons. Columns: whose sealed gold they are tried on. Change in exact-match points.
+    // ILLUSTRATIVE values, except where RESULTS.C.cells has a measured one (fragrance>fragrance 52.4% → 68.9%,
+    // food>food 11.2% → 16.8%): a measured cell replaces the value here and gets the dot.
+    const ILL = [[16.5, -1.6, 0.4, 1.2],
+                 [4.1, 5.6, 2.6, 2.2],
+                 [-0.6, 0.8, 8.4, 4.6],
+                 [0.2, -0.3, 3.7, 7.1]];
+    const meas = (R.C && R.C.cells) || {};
+    const mix = (hex, t) => { const n = parseInt(hex.slice(1), 16);
+      return 'rgb(' + [n >> 16, n >> 8 & 255, n & 255].map(v => Math.round(v * t + 255 * (1 - t))).join(',') + ')'; };
+    const NEU = '#ECEEF1';
+    const tint = v => Math.abs(v) < 1 ? NEU : mix(v > 0 ? C.meta : C.val, .16 + .44 * Math.min(Math.abs(v) / 8, 1));
+    const fmt = v => (v < 0 ? '−' : '+') + Math.abs(v).toFixed(1);
+    const Tn = (x, y, t, fs, c) => `<text x="${x}" y="${y}" text-anchor="middle" style="font:600 ${fs}px 'Space Grotesk',Inter,sans-serif;fill:${c}">${t}</text>`;
+    const halo = (n, x, y, sz, c) => Ic(n, x, y, sz, '#fff', 7) + Ic(n, x, y, sz, c, 3);
+    const X = j => 230 + j * 160, Y = i => 96 + i * 124, cw = 150, chh = 116;
+    let s = '';
+    s += Tx(230, 26, 'tried on: change in exact-match points on its sealed gold', { fs: 20, c: C.mute });
+    s += Tx(0, 72, 'lessons from', { fs: 20, c: C.mute });
+    NM.forEach((n, j) => { s += Tx(X(j) + cw / 2, 72, n, { a: 'middle', fs: 24, fw: 600, c: C.ink }); });
+    NM.forEach((n, i) => { s += Ic('branch', 0, Y(i) + 43, 26, C.meta) + Tx(38, Y(i) + 66, n, { fs: 24, fw: 600, c: C.ink }); });
+    D.forEach((a, i) => D.forEach((b, j) => {
+      const k = a + '>' + b, m = meas[k] != null, v = m ? meas[k] : ILL[i][j], x = X(j), y = Y(i);
+      s += `<rect x="${x}" y="${y}" width="${cw}" height="${chh}" rx="6" fill="${tint(v)}"${i === j ? ` stroke="${C.ink}" stroke-width="3"` : ''}/>`;
+      s += Tn(x + cw / 2, y + 71, fmt(v), 38, Math.abs(v) < 1 ? C.ink2 : C.ink);
+      if (m) s += `<circle cx="${x + 18}" cy="${y + 18}" r="6" fill="${C.ink}"/>`;
+      if (k === 'food>fragrance') s += halo('check', x + cw - 34, y + 8, 26, C.meta);
+      if (k === 'fragrance>food') s += halo('cross', x + cw - 34, y + 8, 26, C.val);
+    }));
+    // key: the colour scale, the diagonal, the measured dot
+    const ly = Y(3) + chh + 56;
+    s += `<defs><linearGradient id="l3g"><stop offset="0" stop-color="${mix(C.val, .6)}"/><stop offset=".42" stop-color="${NEU}"/>` +
+         `<stop offset=".58" stop-color="${NEU}"/><stop offset="1" stop-color="${mix(C.meta, .6)}"/></linearGradient></defs>`;
+    s += Tx(230, ly, 'hurts', { fs: 20, c: C.mute }) + `<rect x="290" y="${ly - 17}" width="170" height="20" rx="4" fill="url(#l3g)"/>` + Tx(472, ly, 'helps', { fs: 20, c: C.mute });
+    s += `<rect x="572" y="${ly - 21}" width="26" height="26" rx="4" fill="none" stroke="${C.ink}" stroke-width="3"/>` + Tx(608, ly, 'own loop 1', { fs: 20, c: C.mute });
+    s += `<circle cx="752" cy="${ly - 8}" r="6" fill="${C.ink}"/>` + Tx(766, ly, 'measured', { fs: 20, c: C.mute });
+    put('l3mx', `0 0 880 ${ly + 12}`, s);
+
+    // Oreo Double Stuf Golden: under fragrance's structure lesson, and in food's gold
+    const lvl = t => `<tspan dx="12" style="font-size:18px;font-weight:400;fill:${C.faint}">${t}</tspan>`;
+    const nd = (x, y, name, lv, c = C.ink2, fw = 500) => `<text x="${x}" y="${y}" style="${F(22, fw)};fill:${c}">${name}${lv ? lvl(lv) : ''}</text>`;
+    const el = (x, y0, y1, x1) => `<path d="M${x} ${y0}V${y1}H${x1}" fill="none" stroke="${C.wire}" stroke-width="2"/>`;
+    const sq = (x, y, c) => `<rect x="${x}" y="${y - 7}" width="14" height="14" rx="2" fill="${c}"/>`;
+    let t = '';
+    t += Ic('cross', 0, 0, 24, C.val, 3) + Tx(34, 20, "with fragrance's lesson", { fs: 20, c: C.mute });
+    t += nd(0, 64, 'Oreo', 'brand', C.ink, 600);
+    t += el(10, 74, 99, 28) + el(10, 99, 143, 28) + sq(24, 99, C.wire) + sq(24, 143, C.val);
+    t += nd(48, 106, 'Double Stuf', 'product') + nd(48, 150, 'Double Stuf Golden', 'product', C.ink, 600);
+    const r0 = 400;
+    t += Ic('check', r0, 0, 24, C.meta, 3) + Tx(r0 + 34, 20, "food's gold", { fs: 20, c: C.mute });
+    t += nd(r0, 64, 'Oreo', 'brand', C.ink, 600);
+    t += el(r0 + 10, 74, 99, r0 + 28) + sq(r0 + 24, 99, C.wire) + nd(r0 + 48, 106, 'Double Stuf', 'product');
+    t += el(r0 + 58, 116, 143, r0 + 76) + sq(r0 + 72, 143, C.meta) + nd(r0 + 96, 150, 'Golden', 'variant', C.ink, 600);
+    put('l3tr', '0 0 714 158', t);
   })();
 
   // ---------- trees: connect each [data-p] to its parent ----------
@@ -821,10 +1039,13 @@ record: round 3, kept
 
   // ---------- navigation ----------
   const bar = document.querySelector('.progress'), notesEl = document.querySelector('.notes-panel'), hint = document.querySelector('.hint');
-  let cur = 0;
+  let cur = 0, step = 0;
+  const pops = i => [...slides[i].querySelectorAll('.pop')];
+  const showStep = () => pops(cur).forEach((p, k) => p.classList.toggle('on', k === step - 1));
   function go(i) {
     i = Math.max(0, Math.min(N - 1, i));
     frames[cur].classList.remove('active');
+    step = 0; showStep();
     cur = i;
     frames[cur].classList.add('active');
     history.replaceState(null, '', location.pathname + location.search + '#' + (cur + 1));
@@ -832,7 +1053,9 @@ record: round 3, kept
     const a = slides[cur].querySelector('aside.notes'), v = slides[cur].dataset.var;
     notesEl.innerHTML = `<b>NOTES · SLIDE ${slides[cur].dataset.n}${v ? ' · VARIANT ' + v : ''}</b>` + (a ? esc(a.textContent.trim()) : '');
   }
-  const next = () => { if (cur < N - 1) go(cur + 1); }, prev = () => { if (cur > 0) go(cur - 1); };
+  // a slide with k pop-ups takes k + 1 extra presses: each pop-up in turn, then none, then the next slide
+  const next = () => { const k = pops(cur).length; if (k && step <= k) { step++; showStep(); } else if (cur < N - 1) go(cur + 1); };
+  const prev = () => { if (step > 0) { step--; showStep(); } else if (cur > 0) go(cur - 1); };
   function overview(on) {
     body.classList.toggle('overview', on);
     if (on) frames[cur].scrollIntoView({ block: 'center' });
