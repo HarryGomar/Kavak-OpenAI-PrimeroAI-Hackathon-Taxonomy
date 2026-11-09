@@ -308,6 +308,41 @@ def write_jsonl(path, items):
     path.write_text("".join(json.dumps(i, ensure_ascii=False, sort_keys=True) + "\n" for i in items), encoding="utf-8")
 
 
+def gold_index():
+    """listing_id -> owner gold row (scaffold gold YAML in TAXO_DATA_DIR/electronics/gold). Notes written in place of a
+    path are skipped. Sealed rows are only marked here; their paths are read by score_shared(sealed=True) alone."""
+    from taxo import gold as goldmod
+    gdir = config.data_dir() / DOMAIN / "gold"
+    out = {}
+    for f in sorted(gdir.glob("*.yaml")) if gdir.exists() else []:
+        for r in yaml.safe_load(f.read_text(encoding="utf-8")) or []:
+            path = r.get("expected_path") or []
+            if not path or r.get("brand") in (None, "(none)") or (len(path) == 1 and len(path[0].split()) > 2):
+                continue
+            out.setdefault(r["listing_id"], {"id": r["id"], "brand": r["brand"], "path": path, "file": f.name,
+                                             "sealed": goldmod.is_sealed(r["brand"])})
+    return out
+
+
+def score_shared(placements, gidx, sealed=False, purpose=""):
+    """Dev (or, once and logged, sealed) gold scored with the electronics judge, in taxo.score.Report's summary shape
+    so taxo.kpis can read it."""
+    from domains.electronics import judge
+    from taxo import gold as goldmod
+    rows = [(k, g) for k, g in gidx.items() if g["sealed"] == sealed]
+    if sealed:
+        goldmod.Gold([], OUT / "sealed-reads.jsonl")      # same log file as the gate
+        with open(OUT / "sealed-reads.jsonl", "a", encoding="utf-8") as fh:
+            fh.write(json.dumps({"ts": time.strftime("%Y-%m-%dT%H:%M:%S"), "purpose": purpose, "rows": len(rows)}) + "\n")
+    by = {p["listing_id"]: p for p in placements}
+    c = Counter(judge.classify(by.get(k, {}).get("path", []), g["path"]) for k, g in rows)
+    n = max(len(rows), 1)
+    return {"accept_rows": len(rows), **{k: c[k] for k in ("exact", "shallower", "deeper", "wrong", "wrong_brand", "no_brand")},
+            "exact_rate": round(c["exact"] / n, 3), "right_or_shallower": round((c["exact"] + c["shallower"]) / n, 3),
+            "harm_rate": round((c["deeper"] + c["wrong"] + c["wrong_brand"]) / n, 3), "levels": {},
+            "reject_rows": 0, "rejects_held": 0}
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--agent-calls", type=int, default=0, help="max agent calls (codex: batches of 40 listings)")
@@ -315,6 +350,13 @@ def main():
                     help="codex = local Codex CLI (ChatGPT sign-in); openai = Agents SDK with OPENAI_API_KEY")
     ap.add_argument("--model", default=None, help="model override for the agent backend")
     args = ap.parse_args()
+    run(args.agent_calls, args.agent, args.model)
+
+
+def run(agent_calls=0, backend="codex", model=None, sealed_purpose=None):
+    """Steps 1-6, outputs in runs/electronics/. Also writes the shared shapes taxo.loopb / taxo.kpis read: each placement
+    carries id, brand, url, gold, and the owner's gold path as pedia_path (the reviewer label, as Pedia's is for
+    fragrance); metrics carry dev (and, with sealed_purpose, one logged sealed read), shares_subset, listings."""
     t0 = time.time()
     timings = {}
     rows, _ = load()
@@ -330,11 +372,18 @@ def main():
     tnodes = tree(nodes, edges, cats)
     placements = place(rows, previews, nodes, gplacements, cats, tnodes)                          # 5 route
     t = time.time()
-    agent = agent_step(placements, tnodes, args.agent_calls, args.agent, args.model)                                      # 6
+    agent = agent_step(placements, tnodes, agent_calls, backend, model)                                      # 6
     timings["agent"] = round(time.time() - t, 2)
     labels = config.data_dir() / DOMAIN / "listings" / "public_match_labels.csv"
     pairs = graph.evaluate(labels, {p["mention_id"]: p for p in gplacements}, nodes) if labels.exists() else None
 
+    gidx = gold_index()
+    for p in placements:                                  # shared fields (taxo.loopb, taxo.validate, taxo.kpis)
+        g = gidx.get(p["listing_id"])
+        p.update(id=p["listing_id"], brand=p["path"][0] if p["path"] else None, url=None,
+                 gold=[f"owner:{g['id']}"] if g else [],
+                 pedia_path=g["path"] if g and not g["sealed"] else [],
+                 pedia_brand=g["brand"] if g and not g["sealed"] else None)
     OUT.mkdir(parents=True, exist_ok=True)
     tree_list = sorted(tnodes.values(), key=lambda n: n["id"])
     write_jsonl(OUT / "nodes.jsonl", tree_list)
@@ -365,6 +414,19 @@ def main():
         "seconds": round(time.time() - t0, 1), "timings": timings,
         "tree_sha256": hashlib.sha256(json.dumps(tree_list, sort_keys=True).encode()).hexdigest(),
     }
+    lat = sum(1 for p in in_scope if p["step"] == "lattice")
+    ag = sum(1 for p in in_scope if p["step"] == "agent")
+    routed = sum(1 for p in in_scope if p["route"] in ("agent_title", "agent_evidence"))
+    files = Counter(g["file"] for g in gidx.values())
+    metrics.update({                                      # the shared metrics shape (taxo.kpis.row)
+        "listings": len(in_scope), "listings_total": n, "data": "deepmatcher",
+        "dev": score_shared(placements, gidx), "sealed": score_shared(placements, gidx, True, sealed_purpose)
+        if sealed_purpose else None, "gold_by_origin": dict(files),
+        "shares_subset": {"placed_by_lattice": [lat, round(lat / max(len(in_scope), 1), 3)],
+                          "to_agent": [routed + ag, round((routed + ag) / max(len(in_scope), 1), 3)],
+                          "placed_by_agent": [ag, round(ag / max(len(in_scope), 1), 3)]},
+        "agent_calls": agent.get("calls", 0), "secs": metrics["seconds"],
+        "sealed_reads_logged": sum(1 for _ in open(OUT / "sealed-reads.jsonl")) if (OUT / "sealed-reads.jsonl").exists() else 0})
     (OUT / "metrics.json").write_text(json.dumps(metrics, indent=2) + "\n", encoding="utf-8")
     from taxo.core.ledger import Ledger
     Ledger(OUT / "ledger.jsonl").append("pipeline_run", domain=DOMAIN, **{k: metrics[k] for k in (
@@ -377,6 +439,7 @@ def main():
     if pairs:
         v = pairs["validation"]
         print("benchmark pairs, validation: precision", v["config_precision"], "recall", v["config_recall_resolved"])
+    return metrics
 
 
 if __name__ == "__main__":

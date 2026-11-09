@@ -200,6 +200,9 @@ def register_validator_versions():
 
 
 def improve_validator(rnd):
+    """Superseded on main: the shared cycle (python -m taxo.loop electronics) improves the shared validator
+    (validator.yaml questions) with the team's improver and A/B. Kept for the round 01-03 record."""
+    raise SystemExit("use: uv run python -m taxo.loop electronics  (shared Loop B); see rounds/electronics/")
     ledger = Ledger(OUT / "ledger.jsonl")
     doc = register_validator_versions()
     versions = doc.setdefault("versions", [])

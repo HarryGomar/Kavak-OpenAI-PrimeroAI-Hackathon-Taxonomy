@@ -88,3 +88,32 @@ changes:
     config_recall_resolved:
     - 0.8068
     - 0.8068
+- name: recognize_singleton_title_brands
+  ops:
+  - op: set
+    path: brand.title_prefix_min_listings
+    value: 1
+  rationale: Garmin and Apple manufacturer-leading titles lack paths, while Atrend-Bbox
+    is assigned to Ford despite its existing alias. Requiring two listings may suppress
+    valid title-prefix brand evidence.
+  expected_effect: Recover missing or misassigned brands where singleton support is
+    the blocker, without broadening model aliasing.
+  proposed_by: codex
+  at: '2026-11-09T16:20:19'
+  status: dropped
+  decision: drop (dev)
+  listings_changed: 89
+  dev_gold:
+    exact_rate:
+    - 0.72
+    - 0.7
+    harm_rate:
+    - 0.12
+    - 0.14
+  dev_pairs:
+    config_precision:
+    - 0.9404
+    - 0.9383
+    config_recall_resolved:
+    - 0.8068
+    - 0.8172

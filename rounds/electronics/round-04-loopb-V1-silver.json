@@ -1,0 +1,29 @@
+{
+ "version": "V1",
+ "validator": "codex-agent:gpt-6-luna/card-v1",
+ "reviewer": "owner",
+ "reviewed": 13,
+ "agreement": 0.72,
+ "flag_precision": 0.286,
+ "spot_agreed_held": "5/6",
+ "pipeline_wrong_found": 3,
+ "verdicts": {
+  "both_wrong": 3,
+  "pipeline_right": 10,
+  "spot:pipeline_right": 5,
+  "spot:both_wrong": 1
+ },
+ "validator_vs_pedia": {
+  "n": 25,
+  "exact": 16,
+  "exact_rate": 0.64,
+  "harm_rate": 0.32,
+  "classes": {
+   "exact": 16,
+   "shallower": 1,
+   "deeper": 2,
+   "wrong": 5,
+   "wrong_brand": 1
+  }
+ }
+}

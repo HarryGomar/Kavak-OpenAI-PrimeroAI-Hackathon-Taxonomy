@@ -31,6 +31,14 @@ class Domain:
         return self.adapter.load_taxonomy()
 
 
+def hook(name: str, module: str):
+    """A domain's optional module (domains/<name>/<module>.py), or None. Lets shared code use a domain's own judge,
+    validator tools or loop steps without knowing the domain; domains without the module keep the shared default."""
+    if not (DOMAINS_DIR / name / f"{module}.py").is_file():
+        return None
+    return importlib.import_module(f"domains.{name}.{module}")
+
+
 def load(name: str) -> Domain:
     if name not in DOMAINS:
         raise ValueError(f"unknown domain {name!r}; known: {DOMAINS}")

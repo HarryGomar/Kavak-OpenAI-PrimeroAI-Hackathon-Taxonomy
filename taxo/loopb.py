@@ -21,6 +21,7 @@ from pathlib import Path
 
 from taxo import gold as goldmod, kpis, score
 from taxo.core.config import ROOT, RUNS_DIR
+from taxo.core.domain import hook
 from taxo.lattice.vocab import tokens
 
 N_PLACED, N_AGENT, N_SPOT, MENU = 25, 15, 6, 40
@@ -46,7 +47,7 @@ def sample(domain: str, version: str, seed: int | None = None, pool: str = "unla
             menu[p["brand"]][" > ".join(p["path"])] += 1
     if pool == "pedia-dev":
         fresh = [p for p in P if p["pedia_path"] and p["brand"] and p["title"] and not goldmod.is_sealed(p["pedia_brand"])
-                 and any(g.startswith("pedia:") for g in p["gold"])]
+                 and any(g.startswith(("pedia:", "owner:")) for g in p["gold"])]   # owner: a person's gold row
     else:
         fresh = [p for p in P if not p["gold"] and p["brand"] and p["title"]]
     seen = {json.loads(x)["id"] for f in _dir(domain).glob("V*-blind.jsonl") if f.name != f"{version}-blind.jsonl"
@@ -66,8 +67,12 @@ def sample(domain: str, version: str, seed: int | None = None, pool: str = "unla
     return out
 
 
-def same(a: list[str] | None, b: list[str] | None) -> bool:
-    """Two paths name the same node: same brand, same name words (the scorer's reduction)."""
+def same(a: list[str] | None, b: list[str] | None, domain: str | None = None) -> bool:
+    """Two paths name the same node: same brand, same name words (the scorer's reduction). A domain with its own
+    judge (domains/<d>/judge.py: same(a, b)) decides instead, e.g. where part numbers carry the identity."""
+    j = hook(domain, "judge") if domain else None
+    if j is not None:
+        return j.same(a, b)
     if not a or not b:
         return a == b
     if tokens(a[0]) != tokens(b[0]):
@@ -89,7 +94,7 @@ def compare(domain: str, version: str) -> Path:
         row = {"id": b["id"], "title": b["title"], "source": b["source"], "url": b["url"], "pipeline": p["path"],
                "pipeline_step": p["step"] if p["level"] == "product" else p["reason"], "validator": v["path"],
                "why": v.get("why", "")}
-        (agreed if same(p["path"], v["path"]) else items).append(row)
+        (agreed if same(p["path"], v["path"], domain) else items).append(row)
     spot = random.Random(11).sample(agreed, min(N_SPOT, len(agreed)))
     for r in spot:
         r["spot_check"] = True
@@ -110,11 +115,16 @@ def pedia_verdicts(domain: str, version: str) -> Path:
         gb, gp = p["pedia_brand"], p["pedia_path"]
         bt = set(tokens(gp[0]))
 
+        j = hook(domain, "judge")
+
         def exact(path):
+            if j is not None:
+                return j.classify(path, gp) == "exact"
             return bool(path) and tokens(path[0]) == tokens(gp[0]) and                 score.judge(gb, path, gb, gp, bt).cls == "exact"
         pe, ve = exact(it["pipeline"]), exact(it["validator"])
         verdict = "pipeline_right" if pe else "validator_right" if ve else "both_wrong"
-        out.append({"id": it["id"], "verdict": verdict, "path": gp, "by": "pedia"})
+        out.append({"id": it["id"], "verdict": verdict, "path": gp,
+                    "by": "owner" if any(g.startswith("owner:") for g in p.get("gold", [])) else "pedia"})
     f = _dir(domain) / f"{version}-verdicts.json"
     f.write_text(json.dumps(out, indent=1, ensure_ascii=False), encoding="utf-8")
     return f
@@ -130,7 +140,9 @@ def validator_vs_pedia(domain: str, version: str, suffix: str = "") -> dict:
         if not p["pedia_path"]:
             continue
         gp = p["pedia_path"]
-        c[score.judge(p["pedia_brand"], v["path"], p["pedia_brand"], gp, set(tokens(gp[0]))).cls] += 1
+        j = hook(domain, "judge")
+        c[j.classify(v["path"], gp) if j is not None else
+          score.judge(p["pedia_brand"], v["path"], p["pedia_brand"], gp, set(tokens(gp[0]))).cls] += 1
     n = sum(c.values()) or 1
     return {"n": sum(c.values()), "exact": c["exact"], "exact_rate": round(c["exact"] / n, 3),
             "harm_rate": round((c["deeper"] + c["wrong"] + c["wrong_brand"]) / n, 3), "classes": dict(c)}
@@ -172,7 +184,7 @@ def settle(domain: str, version: str, verdicts: Path) -> dict:
               "flag_precision": round(flags_right / max(len(flagged), 1), 3),
               "spot_agreed_held": f"{c['spot:pipeline_right']}/{sum(1 for it in review['items'] if it.get('spot_check'))}",
               "pipeline_wrong_found": pipe_wrong, "verdicts": dict(c)}
-    if "pedia" in by:
+    if by & {"pedia", "owner"}:
         silver["validator_vs_pedia"] = validator_vs_pedia(domain, version)
     (d / f"{version}-silver.json").write_text(json.dumps(silver, indent=1), encoding="utf-8")
     m = json.loads((RUNS_DIR / domain / "metrics.json").read_text(encoding="utf-8"))
