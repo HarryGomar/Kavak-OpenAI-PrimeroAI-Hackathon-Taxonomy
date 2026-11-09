@@ -1,8 +1,8 @@
 <!doctype html>
 <!--
   The pitch deck. One file, no build step. Open it in a browser (it needs internet for the fonts and product photos).
-  12 slides (PRESENTATION.md, slide by slide). Where a slide has variants (3A/3B, 6A/6B/6C, 7A/7B) they sit next to
-  each other; delete the ones not chosen.
+  12 slides (PRESENTATION.md, slide by slide). Slide 6, the architecture, has variants A-F next to each other:
+  keep one and delete the rest.
 
   Keys:  → Space  next   ← back   Home / End   F fullscreen   O or Esc overview   N speaker notes
   URL:   #5 opens the 5th page.  ?all turns off the fade (for screenshots).
@@ -26,7 +26,6 @@
 <style>
   :root {
     --bg: #FFFFFF; --ink: #0B0D12; --ink2: #3A3F4A; --mute: #6B7280; --faint: #A3A8B3; --line: #E2E5EA; --tile: #F5F6F8;
-    --wire: #C5CAD3;
     --ind: #0070C0; --val: #D9622B; --meta: #1E9E6E;
     --sans: 'Inter', system-ui, sans-serif; --disp: 'Space Grotesk', 'Inter', sans-serif; --mono: 'JetBrains Mono', ui-monospace, monospace;
     --ease: cubic-bezier(.2, .7, .2, 1);
@@ -41,126 +40,121 @@
   .static .frame { transition: none; }
 
   /* ---------- the slide ---------- */
-  .slide { position: absolute; inset: 0; padding: 96px 128px 120px; display: flex; flex-direction: column; gap: 44px;
+  .slide { position: absolute; inset: 0; padding: 96px 128px 120px; display: flex; flex-direction: column; gap: 48px;
            background: var(--bg); overflow: hidden; }
-  h2 { font: 600 62px/1.08 var(--disp); letter-spacing: -.022em; margin: 0; max-width: 1560px; }
-  .lede { font: 400 30px/1.4 var(--sans); color: var(--ink2); margin: -18px 0 0; max-width: 1400px; }
+  h2 { font: 600 62px/1.08 var(--disp); letter-spacing: -.022em; margin: 0; max-width: 1600px; }
   .fill { position: relative; flex: 1; min-height: 0; }
   .pgn { position: absolute; right: 128px; bottom: 54px; margin: 0; font: 500 18px var(--sans); color: var(--faint); }
   .vtag { position: absolute; left: 128px; bottom: 54px; margin: 0; font: 600 18px var(--sans); color: var(--val); }
-  .note { font: 400 24px/1.45 var(--sans); color: var(--mute); margin: 0; }
+  .src { position: absolute; left: 128px; bottom: 54px; margin: 0; font: 400 18px var(--sans); color: var(--faint); }
   .ph { color: var(--mute); border-bottom: 2px dashed var(--faint); }
   b, strong { font-weight: 600; }
   aside.notes { display: none; }
-  code, pre { font-family: var(--mono); }
-  pre.y { margin: 0; padding: 26px 30px; background: var(--tile); border-radius: 14px; font: 400 21px/1.55 var(--mono); color: var(--ink2); white-space: pre; }
-  pre.y i { font-style: normal; color: var(--faint); }
-  pre.y em { font-style: normal; color: var(--ind); }
+  .bottom { font: 500 34px/1.35 var(--sans); margin: 0; }
+  .mono { margin: 0; font: 400 26px/1.65 var(--mono); color: var(--ink2); white-space: pre; }
+  .mono i { font-style: normal; color: var(--faint); }
 
-  /* ---------- cover ---------- */
+  /* ---------- point cloud ---------- */
+  svg.cloud { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+  .clear { position: relative; z-index: 1; }
+
+  /* ---------- cover / close ---------- */
   .cover { justify-content: center; gap: 0; padding-left: 160px; }
-  .cover h1 { font: 600 220px/0.9 var(--disp); letter-spacing: -.045em; margin: 0 0 40px -8px; }
-  .cover .subt { font: 400 54px/1.2 var(--sans); letter-spacing: -.015em; margin: 0; max-width: 1200px; }
-  .cover .ev { font: 500 24px var(--sans); color: var(--mute); margin: 64px 0 0; }
+  .cover h1 { font: 600 220px/0.9 var(--disp); letter-spacing: -.045em; margin: 0 0 40px -8px; align-self: flex-start; }
+  .cover .subt { font: 400 54px/1.2 var(--sans); letter-spacing: -.015em; margin: 0; max-width: 1100px; align-self: flex-start; }
+  .cover .ev { font: 500 24px var(--sans); color: var(--mute); margin: 64px 0 0; align-self: flex-start; }
+  .closing { justify-content: center; gap: 40px; padding-left: 160px; }
+  .closing h2 { font-size: 120px; line-height: 1; letter-spacing: -.035em; align-self: flex-start; }
+  .closing p { font: 400 38px/1.35 var(--sans); color: var(--ink2); margin: 0; max-width: 1150px; align-self: flex-start; }
 
   /* ---------- photos ---------- */
   .pic { position: absolute; margin: 0; }
-  .pic .im { width: 100%; aspect-ratio: 1; border-radius: 14px; background: #fff; border: 1px solid var(--line); overflow: hidden;
-             display: flex; align-items: center; justify-content: center; position: relative; }
-  .pic img { width: 100%; height: 100%; object-fit: contain; padding: 10px; }
+  .pic .im { width: 100%; aspect-ratio: 1; display: flex; align-items: center; justify-content: center; }
+  .pic img { width: 100%; height: 100%; object-fit: contain; }
   .pic.noimg img { display: none; }
   .pic.noimg .im::after { content: "photo did not load"; font: 500 16px var(--sans); color: var(--faint); }
-  .pic figcaption { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 14px;
-                    font: 500 19px/1.2 var(--sans); color: var(--mute); text-align: center; }
+  .pic figcaption { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 10px;
+                    font: 500 19px/1.2 var(--sans); color: var(--mute); }
   .pic figcaption svg { height: 22px; width: auto; flex: none; }
   .pic figcaption svg.wm { height: 18px; }
 
   /* ---------- trees ---------- */
   .tree svg.links { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
-  .nd { position: absolute; width: 400px; margin-left: -200px; text-align: center; font: 600 38px/1.1 var(--disp); letter-spacing: -.01em; }
+  .nd { position: absolute; width: 400px; margin-left: -200px; text-align: center; font: 600 36px/1.1 var(--disp); letter-spacing: -.01em; }
   .nd small { display: block; font: 400 19px var(--sans); color: var(--mute); letter-spacing: 0; margin-top: 6px; }
-  .nd.sm { font-size: 32px; }
+  .nd.sm { font-size: 30px; }
   .nd.dim { color: var(--faint); }
-  .lvl { position: absolute; left: 0; font: 500 20px var(--sans); color: var(--faint); }
 
-  /* ---------- the hard ones ---------- */
-  .hard { display: grid; grid-template-columns: 440px 1fr; gap: 80px; align-items: start; }
-  .big { font: 600 240px/0.85 var(--disp); letter-spacing: -.05em; }
-  .hard .big + p { font: 400 30px/1.35 var(--sans); color: var(--ink2); margin: 28px 0 0; }
-  .traps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 48px; }
-  .trap .pic { position: static; }
-  .trap p { font: 400 25px/1.4 var(--sans); color: var(--ink2); margin: 10px 0 0; }
-  .trap p b { color: var(--ink); }
+  /* ---------- 2 · evals ---------- */
+  .say p { font: 400 30px/1.4 var(--sans); color: var(--ink2); margin: 0 0 30px; }
+  .say b { color: var(--ink); }
 
-  /* ---------- two columns split by a rule ---------- */
-  .split { display: grid; grid-template-columns: 1fr 1fr; gap: 0; flex: 1; min-height: 0; }
-  .split > div { padding-right: 80px; display: flex; flex-direction: column; gap: 22px; }
-  .split > div + div { padding: 0 0 0 80px; border-left: 2px solid var(--line); }
-  .split h3 { font: 600 32px/1.2 var(--sans); margin: 0; }
-  .eq { font: 400 40px/1.3 var(--sans); color: var(--ink2); margin: 0; }
-  .num { font: 600 112px/1 var(--disp); letter-spacing: -.03em; margin: 0; }
-  .num small { font: 400 30px var(--sans); color: var(--ink2); letter-spacing: 0; }
-  .split p.t { font: 400 28px/1.4 var(--sans); color: var(--ink2); margin: 0; }
-  .pair { display: grid; grid-template-columns: 220px 1fr; gap: 28px; align-items: baseline; }
-  .pair .num { font-size: 88px; }
-  .bottom { font: 500 32px/1.35 var(--sans); margin: 0; padding-top: 30px; border-top: 2px solid var(--line); }
+  /* ---------- 4 · accuracy, cost, speed ---------- */
+  .axes { display: grid; grid-template-columns: repeat(3, 1fr); flex: 1; min-height: 0; }
+  .axes > div { padding: 0 60px; display: flex; flex-direction: column; }
+  .axes > div:first-child { padding-left: 0; }
+  .axes > div + div { border-left: 2px solid var(--line); }
+  .axes h3 { font: 600 52px/1 var(--disp); letter-spacing: -.02em; margin: 0 0 14px; }
+  .axes .m { font: 400 26px/1.35 var(--sans); color: var(--ink2); margin: 0; min-height: 72px; }
+  .axes .k { font: 500 21px var(--sans); color: var(--faint); margin: 44px 0 6px; }
+  .axes .v { font: 600 96px/1 var(--disp); margin: 0; }
+  .axes .w { font: 400 25px/1.4 var(--sans); color: var(--mute); margin: 26px 0 0; }
 
-  /* ---------- induction worked example ---------- */
-  .ltitle { font: 400 40px/1.3 var(--sans); margin: 0; }
-  .ltitle .b { border-bottom: 5px solid var(--ind); }
-  .ltitle .p { border-bottom: 5px solid var(--ink); font-weight: 600; }
-  .ltitle s { color: var(--faint); text-decoration-thickness: 2px; }
-  .ltitle + .note { margin-top: -30px; font-size: 21px; }
-  .steps4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; }
-  .steps4 > div { border-top: 3px solid var(--ink); padding-top: 22px; display: flex; flex-direction: column; gap: 14px; }
-  .steps4 h3 { font: 600 28px var(--sans); margin: 0; }
-  .steps4 h3 span { color: var(--faint); margin-right: 10px; }
-  .steps4 p { font: 400 23px/1.4 var(--sans); color: var(--ink2); margin: 0; }
-  .steps4 pre.y { font-size: 17px; padding: 18px 20px; line-height: 1.5; }
-  .result { font: 600 36px var(--disp); margin: 0; }
-  .result span { font: 400 26px var(--sans); color: var(--mute); margin-left: 18px; }
+  /* ---------- 5 · constraints ---------- */
+  .cons { display: grid; grid-template-columns: 1fr 1fr 200px; column-gap: 60px; margin-top: 10px; }
+  .cons p { margin: 0; padding: 30px 0; border-top: 2px solid var(--line); font: 400 34px/1.3 var(--sans); }
+  .cons p:nth-child(3n+2) { color: var(--ink2); }
+  .cons p.hd { border: 0; padding: 0 0 16px; font: 500 22px var(--sans); color: var(--faint); }
+  .cons p.lp { font: 600 26px/1.6 var(--sans); text-align: right; }
 
-  .round { display: flex; flex-direction: column; gap: 0; }
-  .round li { list-style: none; display: grid; grid-template-columns: 70px 1fr; align-items: baseline; padding: 20px 0;
-              border-bottom: 1px solid var(--line); font: 400 30px/1.35 var(--sans); }
-  .round li:first-child { border-top: 1px solid var(--line); }
-  .round li span { font: 600 30px var(--disp); color: var(--ind); }
-  .round ul { margin: 0; padding: 0; }
+  /* ---------- 7 · loop 1, one listing through the rules ---------- */
+  .trace { display: flex; flex-direction: column; }
+  .tr { display: grid; grid-template-columns: 240px 1fr; column-gap: 40px; padding: 22px 0; border-top: 2px solid var(--line); align-items: baseline; }
+  .tr .rl { margin: 0; font: 600 24px var(--sans); color: var(--ind); }
+  .tr .tt { margin: 0; font: 400 36px/1.25 var(--sans); }
+  .tr .tt s { color: var(--faint); text-decoration-thickness: 2px; }
+  .tr .tt b { color: var(--ind); }
+  .tr .why { margin: 6px 0 0; font: 400 23px var(--sans); color: var(--mute); }
+  .tr.first .rl { color: var(--mute); }
+  .tr.dim .rl, .tr.dim .tt { color: var(--faint); }
 
   /* ---------- charts ---------- */
   svg.ch { width: 100%; height: 100%; display: block; overflow: visible; }
-  .charts2 { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; flex: 1; min-height: 0; }
-  .charts2 h3, .chart h3 { font: 600 28px var(--sans); margin: 0 0 6px; }
-  .charts2 > div, .chart { display: flex; flex-direction: column; min-height: 0; }
-  .charts2 .plot, .chart .plot { flex: 1; min-height: 0; }
-  .sub3 { font: 400 22px var(--sans); color: var(--mute); margin: 0 0 18px; }
+  .chart { display: flex; flex-direction: column; min-height: 0; }
+  .chart h3 { font: 600 28px var(--sans); margin: 0 0 18px; }
+  .chart .plot { flex: 1; min-height: 0; }
 
-  /* ---------- validation ---------- */
-  .vgrid { display: grid; grid-template-columns: 640px 1fr; gap: 100px; flex: 1; min-height: 0; }
-  .flow { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; }
-  .flow li { font: 400 29px/1.35 var(--sans); color: var(--ink2); padding: 0 0 0 0; }
-  .flow li b { color: var(--ink); }
-  .flow li + li::before { content: "↓"; display: block; color: var(--val); font: 400 34px/1 var(--sans); margin: 16px 0 14px; }
-  .flow li:last-child::before { color: var(--ind); }
+  /* ---------- 9 · loop 2 ---------- */
+  .vgrid { display: grid; grid-template-columns: 700px 1fr; gap: 110px; flex: 1; min-height: 0; }
+  .steps { margin: 0; padding: 0; list-style: none; counter-reset: s; }
+  .steps li { counter-increment: s; display: grid; grid-template-columns: 56px 1fr; padding: 24px 0; border-top: 2px solid var(--line);
+              font: 400 30px/1.35 var(--sans); }
+  .steps li::before { content: counter(s); font: 600 30px var(--disp); color: var(--val); }
+  .steps li .ph { font-size: 24px; }
 
-  /* ---------- meta matrix ---------- */
-  .mx { border-collapse: collapse; font-family: var(--sans); }
-  .mx th { font: 500 22px var(--sans); color: var(--mute); text-align: left; padding: 0 0 16px; }
-  .mx td { border-top: 2px solid var(--line); padding: 28px 40px 28px 0; vertical-align: top; width: 360px; }
-  .mx td.rh { font: 600 34px var(--disp); width: 240px; }
-  .mx .n { font: 600 64px/1 var(--disp); letter-spacing: -.02em; }
-  .mx .n small { font: 400 22px var(--sans); color: var(--mute); letter-spacing: 0; margin-left: 8px; }
-  .mx p { font: 400 23px/1.4 var(--sans); color: var(--ink2); margin: 12px 0 0; }
-  .mx .self { color: var(--faint); font: 400 40px var(--sans); }
+  /* ---------- 10 · loop 3 ---------- */
+  .xfer { display: flex; flex-direction: column; }
+  .xfer .hd { font: 500 22px var(--sans); color: var(--faint); margin: 0 0 14px; }
+  .xfer > div { display: grid; grid-template-columns: 330px 150px 1fr; column-gap: 30px; align-items: baseline; padding: 26px 0; border-top: 2px solid var(--line); }
+  .xfer .k { margin: 0; font: 600 30px var(--sans); }
+  .xfer .v { margin: 0; font: 600 50px/1 var(--disp); }
+  .xfer .w { margin: 0; font: 400 24px/1.35 var(--sans); color: var(--ink2); }
 
-  /* ---------- close ---------- */
-  .closing { justify-content: center; gap: 64px; }
-  .closing h2 { font-size: 84px; line-height: 1.08; max-width: 1500px; }
-  .closing h2 span { color: var(--mute); }
-  .cols2 { display: grid; grid-template-columns: 1fr 1fr; gap: 100px; }
-  .cols2 h3 { font: 600 22px var(--sans); color: var(--mute); margin: 0 0 14px; }
-  .cols2 ul { margin: 0; padding: 0; list-style: none; }
-  .cols2 li { font: 400 28px/1.35 var(--sans); padding: 14px 0; border-top: 1px solid var(--line); }
+  /* ---------- 11 · results ---------- */
+  .res { border-collapse: collapse; width: 100%; }
+  .res th { font: 500 22px var(--sans); color: var(--faint); text-align: left; padding: 0 0 16px; }
+  .res th:first-child { width: 520px; }
+  .res td { border-top: 2px solid var(--line); padding: 26px 0; font: 400 30px var(--sans); vertical-align: baseline; }
+  .res td:first-child { font-weight: 500; }
+  .res .f { font: 600 46px/1 var(--disp); }
+  .res .c { font: 400 22px var(--sans); color: var(--mute); margin-left: 14px; }
+
+  /* ---------- 6E · layers ---------- */
+  .layers > div { display: grid; grid-template-columns: 300px 1fr; column-gap: 40px; padding: 34px 0; border-top: 2px solid var(--line); align-items: baseline; }
+  .layers h3 { margin: 0; font: 600 30px var(--sans); }
+  .layers p { margin: 0; font: 400 32px/1.35 var(--sans); color: var(--ink2); }
+  .layers p b { color: var(--ink); }
+  .layers p span { color: var(--faint); margin: 0 10px; }
 
   /* ---------- HUD, overview, print ---------- */
   .progress { position: fixed; left: 0; bottom: 0; height: 3px; width: 0; background: var(--ink); z-index: 20; transition: width .3s var(--ease); }
@@ -205,291 +199,196 @@
 
 <!-- 1 · Title -->
 <section class="slide cover" data-n="1">
-  <h1 data-name>Taxo</h1>
-  <p class="subt">Learning to build product trees for any commerce domain</p>
-  <p class="ev">Kavak × OpenAI × Primero hackathon · 9 November 2026</p>
-  <aside class="notes">We're going to show you Taxo: a system that learns how to turn messy marketplace listings into clean product trees, and gets faster at it with every domain it sees.</aside>
+  <svg class="cloud" data-seed="7" aria-hidden="true"></svg>
+  <h1 class="clear" data-name>Taxo</h1>
+  <p class="subt clear">Learning to build product trees for any commerce domain</p>
+  <p class="ev clear">Kavak × OpenAI × Primero hackathon · 9 November 2026</p>
+  <aside class="notes">We're going to show you Taxo: a system that keeps improving at a task with no ground truth.</aside>
 </section>
 
-<!-- 2 · Hill-climbing is hard -->
+<!-- 2 · Evals drive performance -->
 <section class="slide" data-n="2">
-  <h2>A system that grades its own work climbs the wrong hill.</h2>
-  <p class="lede">In our last project, Pedia, an LLM judge scored every round of rule changes. The owner's labels told a different story.</p>
-  <div class="fill" style="display:grid;grid-template-columns:1fr 460px;gap:90px;align-items:center">
-    <div class="chart" style="height:100%">
-      <h3>Share of 245 sealed listings placed right</h3>
-      <div class="plot"><svg class="ch" id="pe2"></svg></div>
-    </div>
-    <div>
-      <p class="num">15 <small>of 48</small></p>
-      <p class="t" style="font:400 30px/1.4 var(--sans);color:var(--ink2);margin:18px 0 0">changes made the judge happier and the labels worse. The loop kept all 15.</p>
-      <p class="t" style="font:600 30px/1.4 var(--sans);margin:40px 0 0">To improve a system, you need a score it can't move by itself.</p>
+  <h2>A system improves only as far as its eval.</h2>
+  <div class="fill" style="display:grid;grid-template-columns:1fr 600px;gap:90px;align-items:center">
+    <div class="chart" style="height:100%"><div class="plot"><svg class="ch" id="evals"></svg></div></div>
+    <div class="say">
+      <p><b>It climbed its own eval.</b> A human check afterwards found a third of the gain. 15 of the 48 changes it kept made our labels worse.</p>
+      <p>Where a task checks itself, like a loss or a test suite, that's enough: Karpathy's autoresearch can hill-climb on its own.</p>
+      <p>Most useful tasks have no such check. <b>So the eval itself needs a method to improve:</b> what counts as right, and how we check it.</p>
     </div>
   </div>
-  <aside class="notes">Before the problem, the lesson that shaped Taxo. Self-improving systems are easy to build and hard to trust. In Pedia, our last project, a loop changed its own rules and an LLM judge scored each round. The judge went from 78% to 87%. The owner's hand labels went from 81% to 84%. 15 of the 48 changes made the judge happier and the labels worse, and the loop kept every one. Hill-climbing only works if the score can't be moved by the system itself. That is the design constraint for everything that follows.
-Data: Pedia replay pe2, 245 sealed listings, mean of 6 runs (faint lines are the runs).</aside>
+  <p class="src">Pedia, our last project · 245 held-out listings · mean of 6 runs</p>
+  <aside class="notes">Hill-climbing is hard, and continual learning is not a solved problem. Evals are what drive performance. In our last project a loop improved its own rules and climbed its own eval, an LLM judge, from 78% to 87%. When we checked by hand afterwards, it had gone from 81% to 84%: a third of the gain. 15 of the 48 changes it kept made our labels worse. Where a task checks itself, a loss or a test suite, that's enough: Karpathy's autoresearch hill-climbs on its own. Most useful tasks have no such check. So the eval itself needs a method to improve: what counts as right, and how we check it. That's what this talk is about.</aside>
 </section>
 
-<!-- 3A · Listings into a tree (one product, many shops) -->
-<section class="slide" data-n="3" data-var="A">
-  <h2>Understanding a market means connecting its listings into a tree.</h2>
-  <div class="fill tree">
-    <svg class="links"></svg>
-    <p class="lvl" style="top:6px">brand</p>
-    <p class="lvl" style="top:152px">product</p>
-    <p class="lvl" style="top:300px">listings</p>
-    <div class="nd" id="a-lat" style="left:1135px;top:0">Lattafa</div>
-    <div class="nd" id="a-kh" data-p="a-lat" style="left:770px;top:146px">Khamrah</div>
-    <div class="nd" id="a-kq" data-p="a-lat" style="left:1500px;top:146px">Khamrah Qahwa<small>a flanker: its own product</small></div>
-    <figure class="pic" data-p="a-kh" style="left:239px;top:300px;width:190px"><div class="im"><img referrerpolicy="no-referrer" alt="Lattafa Khamrah on the brand's site" src="https://cdn.shopify.com/s/files/1/0754/4936/8799/files/Khamrah-1_0ffa4f52-30e3-4dea-9399-9bae4b8cb4af.png?v=1747421472&width=500"></div><figcaption>lattafa.com</figcaption></figure>
-    <figure class="pic" data-p="a-kh" style="left:457px;top:300px;width:190px"><div class="im"><img referrerpolicy="no-referrer" alt="Khamrah on Amazon" src="https://m.media-amazon.com/images/I/41y4j5kGFML._AC_SL500_.jpg"></div><figcaption><svg viewBox="0 0 24 24"><use href="#lg-amazon"/></svg>Amazon</figcaption></figure>
-    <figure class="pic" data-p="a-kh" style="left:675px;top:300px;width:190px"><div class="im"><img referrerpolicy="no-referrer" alt="Khamrah on Walmart" src="https://i5.walmartimages.com/seo/Lattafa-Khamrah-3-4-oz-EDP-Spray_cf860d92-b02d-4aa7-87c6-820430d33edc.79ad3221c1ca65ae1b0f38f85e7f2c3b.jpeg?odnHeight=400&odnWidth=400&odnBg=FFFFFF"></div><figcaption><svg class="wm" viewBox="0 0 24 6.8"><use href="#lg-walmart"/></svg></figcaption></figure>
-    <figure class="pic" data-p="a-kh" style="left:893px;top:300px;width:190px"><div class="im"><img referrerpolicy="no-referrer" alt="Khamrah on TikTok Shop, Oudphoria" src="https://p16-oec-general-useast5.ttcdn-us.com/tos-useast5-i-omjb5zjo8w-tx/4885fed045bf46b3963691a4e108aded~tplv-fhlh96nyum-crop-webp:800:800.webp?dr=12190&t=555f072d&ps=933b5bde&shp=c940a200&shcp=9b759fb9&idc=useast5&from=3376456192"></div><figcaption><svg viewBox="0 0 24 24"><use href="#lg-tiktok"/></svg>Oudphoria</figcaption></figure>
-    <figure class="pic" data-p="a-kh" style="left:1111px;top:300px;width:190px"><div class="im"><img referrerpolicy="no-referrer" alt="Khamrah on TikTok Shop, Fragrant Villa" src="https://p16-oec-general-useast5.ttcdn-us.com/tos-useast5-i-omjb5zjo8w-tx/f9ac660d486c0a55156179cf3cdbe843~tplv-fhlh96nyum-crop-webp:800:800.webp?dr=12190&t=555f072d&ps=933b5bde&shp=c940a200&shcp=9b759fb9&idc=useast5&from=3376456192"></div><figcaption><svg viewBox="0 0 24 24"><use href="#lg-tiktok"/></svg>Fragrant Villa</figcaption></figure>
-    <figure class="pic" data-p="a-kq" style="left:1405px;top:300px;width:190px"><div class="im"><img referrerpolicy="no-referrer" alt="Khamrah Qahwa on Walmart" src="https://i5.walmartimages.com/seo/Lattafa-Khamrah-Qahwa-Eau-De-Parfum-3-4-Oz-Unisex-Fragrance-Lattafa_97970d71-3809-466a-86c2-a6622eb2052b.847378a05cda93ada488988400606dbb.jpeg?odnHeight=400&odnWidth=400&odnBg=FFFFFF"></div><figcaption><svg class="wm" viewBox="0 0 24 6.8"><use href="#lg-walmart"/></svg></figcaption></figure>
-    <p class="note" style="position:absolute;left:0;bottom:0;max-width:1500px">Five shops, five titles, one product. Until you know they're the same, you can't add up its price, its reviews or its demand. A size or a gift set is never a new node.</p>
-  </div>
-  <aside class="notes">To understand a commerce market you have to connect listings across marketplaces. This is one perfume, Lattafa Khamrah: the brand's own site, Amazon, Walmart and two TikTok Shop sellers. Five titles, one product. Until you know they're the same, you can't add up its price, its reviews or its demand. The way to connect them is a tree: brand, product, listings. A size or a gift set is never a new node; a flanker like Khamrah Qahwa is.</aside>
-</section>
-
-<!-- 3B · Two trees with photos -->
-<section class="slide" data-n="3" data-var="B">
-  <h2>Understanding a market means connecting its listings into a tree, in every domain.</h2>
+<!-- 4 · The task: listings into trees -->
+<section class="slide" data-n="3">
+  <h2>Seemingly easy, deceptively hard: connect a market's listings into product trees.</h2>
   <div class="fill tree">
     <svg class="links"></svg>
     <div class="nd" id="b-oreo" style="left:380px;top:0">Oreo<small>brand</small></div>
     <div class="nd sm dim" id="b-orig" data-p="b-oreo" style="left:110px;top:150px">Original</div>
     <div class="nd sm" id="b-ds" data-p="b-oreo" style="left:380px;top:150px">Double Stuf<small>product</small></div>
     <div class="nd sm dim" id="b-th" data-p="b-oreo" style="left:650px;top:150px">Thins</div>
-    <div class="nd sm dim" id="b-choc" data-p="b-ds" style="left:200px;top:300px">Chocolate</div>
+    <div class="nd sm dim" id="b-choc" data-p="b-ds" style="left:220px;top:300px">Chocolate</div>
     <div class="nd sm" id="b-gold" data-p="b-ds" style="left:500px;top:300px">Golden<small>variant</small></div>
-    <figure class="pic" data-p="b-gold" style="left:395px;top:440px;width:210px"><div class="im"><img referrerpolicy="no-referrer" alt="Oreo Double Stuf Golden on Amazon" src="https://m.media-amazon.com/images/I/713KTU5Cw1L._SL500_.jpg"></div><figcaption><svg viewBox="0 0 24 24"><use href="#lg-amazon"/></svg>Amazon</figcaption></figure>
+    <figure class="pic" data-p="b-gold" style="left:390px;top:440px;width:220px"><div class="im"><img referrerpolicy="no-referrer" alt="Oreo Double Stuf Golden on Amazon" src="https://m.media-amazon.com/images/I/713KTU5Cw1L._SL500_.jpg"></div><figcaption><svg viewBox="0 0 24 24"><use href="#lg-amazon"/></svg>Amazon</figcaption></figure>
 
     <div class="nd" id="b-lat" style="left:1240px;top:0">Lattafa<small>brand</small></div>
     <div class="nd sm" id="b-khf" data-p="b-lat" style="left:1120px;top:150px">Khamrah<small>family</small></div>
     <div class="nd sm dim" id="b-yara" data-p="b-lat" style="left:1500px;top:150px">Yara</div>
     <div class="nd sm" id="b-kh" data-p="b-khf" style="left:920px;top:300px">Khamrah<small>product</small></div>
     <div class="nd sm" id="b-kq" data-p="b-khf" style="left:1320px;top:300px">Khamrah Qahwa<small>product</small></div>
-    <figure class="pic" data-p="b-kh" style="left:815px;top:440px;width:210px"><div class="im"><img referrerpolicy="no-referrer" alt="Lattafa Khamrah on the brand's site" src="https://cdn.shopify.com/s/files/1/0754/4936/8799/files/Khamrah-1_0ffa4f52-30e3-4dea-9399-9bae4b8cb4af.png?v=1747421472&width=500"></div><figcaption>lattafa.com</figcaption></figure>
-    <figure class="pic" data-p="b-kq" style="left:1215px;top:440px;width:210px"><div class="im"><img referrerpolicy="no-referrer" alt="Khamrah Qahwa on Walmart" src="https://i5.walmartimages.com/seo/Lattafa-Khamrah-Qahwa-Eau-De-Parfum-3-4-Oz-Unisex-Fragrance-Lattafa_97970d71-3809-466a-86c2-a6622eb2052b.847378a05cda93ada488988400606dbb.jpeg?odnHeight=400&odnWidth=400&odnBg=FFFFFF"></div><figcaption><svg class="wm" viewBox="0 0 24 6.8"><use href="#lg-walmart"/></svg></figcaption></figure>
+    <figure class="pic" data-p="b-kh" style="left:810px;top:440px;width:220px"><div class="im"><img referrerpolicy="no-referrer" alt="Lattafa Khamrah on the brand's site" src="https://cdn.shopify.com/s/files/1/0754/4936/8799/files/Khamrah-1_0ffa4f52-30e3-4dea-9399-9bae4b8cb4af.png?v=1747421472&width=500"></div><figcaption>lattafa.com</figcaption></figure>
+    <figure class="pic" data-p="b-kq" style="left:1210px;top:440px;width:220px"><div class="im"><img referrerpolicy="no-referrer" alt="Khamrah Qahwa on Walmart" src="https://i5.walmartimages.com/seo/Lattafa-Khamrah-Qahwa-Eau-De-Parfum-3-4-Oz-Unisex-Fragrance-Lattafa_97970d71-3809-466a-86c2-a6622eb2052b.847378a05cda93ada488988400606dbb.jpeg?odnHeight=400&odnWidth=400&odnBg=FFFFFF"></div><figcaption><svg class="wm" viewBox="0 0 24 6.8"><use href="#lg-walmart"/></svg></figcaption></figure>
   </div>
-  <aside class="notes">The way to connect listings is a tree, in every domain. In food, a brand has products and products have variants: Oreo has Double Stuf, and Double Stuf comes in Golden. Fragrance has one more level: Lattafa has the Khamrah family, and Khamrah Qahwa is a product inside it. Each leaf is where the listings from every shop attach. A size or a 12-pack is never a new node.</aside>
+  <aside class="notes">The task we tried this on comes from our own work. To understand a market you have to match and connect its listings into product trees: Oreo, Double Stuf, Golden; Lattafa, the Khamrah family, Khamrah Qahwa. Until you know listings are one product you can't add up its price, its reviews or its demand. It looks trivial for a person and is surprisingly hard for an agent: a size or a 12-pack is never a new product, a flanker like Khamrah Qahwa is.</aside>
 </section>
 
-<!-- 4 · Hard -->
+<!-- 4 · What we want to improve -->
 <section class="slide" data-n="4">
-  <h2>Four million listings, and the hard ones look easy.</h2>
-  <div class="fill hard">
-    <div>
-      <div class="big">4M</div>
-      <p>listings to place. The same product is written fifty different ways.</p>
-    </div>
-    <div class="traps">
-      <div class="trap"><figure class="pic"><div class="im"><img referrerpolicy="no-referrer" alt="Cookie variety pack on Walmart" src="https://i5.walmartimages.com/seo/Cookie-Variety-Pack-3-Flavors-30-Original-Oreo-20-Chips-Ahoy-10-Golden-Vanilla-Oreo-Individually-Wrapped-Packs-Sweet-Treat-Snack-60-Total_0259ce30-0a06-4fd4-85f0-7bdfc9c03351.9e42956bc41d6ccd6bcccb5949c82f9f.jpeg?odnHeight=400&odnWidth=400&odnBg=FFFFFF"></div><figcaption><svg class="wm" viewBox="0 0 24 6.8"><use href="#lg-walmart"/></svg></figcaption></figure>
-        <p><b>Muchai</b> is the shop, not the brand.</p></div>
-      <div class="trap"><figure class="pic"><div class="im"><img referrerpolicy="no-referrer" alt="Khamrah 2-piece gift set on Amazon" src="https://m.media-amazon.com/images/I/411L14HlHEL._AC_SL500_.jpg"></div><figcaption><svg viewBox="0 0 24 24"><use href="#lg-amazon"/></svg>Amazon</figcaption></figure>
-        <p>A <b>gift set</b> is still Lattafa Khamrah.</p></div>
-      <div class="trap"><figure class="pic"><div class="im"><img referrerpolicy="no-referrer" alt="Oreo Minis Golden 12-pack on Amazon" src="https://m.media-amazon.com/images/I/816bTRzo9gL._SL500_.jpg"></div><figcaption><svg viewBox="0 0 24 24"><use href="#lg-amazon"/></svg>Amazon</figcaption></figure>
-        <p>A <b>12-pack</b> is not a new product.</p></div>
-    </div>
+  <h2>What we want the system to improve, by itself.</h2>
+  <div class="axes">
+    <div><h3>Accuracy</h3><p class="m">F1 on gold, and on listings nobody labelled</p><p class="k">an agent on everything</p><p class="v"><span class="ph" data-r="AO.f1">[f]</span></p><p class="w">No ground truth beyond a small gold set.</p></div>
+    <div><h3>Cost</h3><p class="m">dollars to place all 2 million listings</p><p class="k">an agent on everything</p><p class="v"><span class="ph" data-r="AO.cost2M">[$C]</span></p><p class="w">Paid again on every refresh, and in every new domain.</p></div>
+    <div><h3>Speed</h3><p class="m">time to place all 2 million listings</p><p class="k">an agent on everything</p><p class="v"><span class="ph" data-r="AO.hours">[h]</span></p><p class="w">Rules are near-instant; each agent call takes seconds.</p></div>
   </div>
-  <aside class="notes">Doing this is hard, and with four million listings it gets really complicated. The same product is written fifty different ways. Shops pose as brands: Muchai is a shop. A gift set belongs to its maker's product. A 12-pack is not a new product, but a flanker like Khamrah Qahwa is. Labelling four million listings by hand doesn't scale.</aside>
+  <p class="bottom">Cost and speed check themselves. Accuracy doesn't, so that's where the loops do their work.</p>
+  <aside class="notes">This is what we want the system to improve by itself, on three fronts. Accuracy: F1 on our gold set and on listings nobody labelled; an agent on everything gets [f]. Cost: placing all two million listings with an agent costs [$C], again on every refresh and in every new domain. Speed: [h] to place them all; rules are near-instant, an agent call takes seconds. Cost and speed check themselves. Accuracy doesn't, so that's where the loops do their work. It's a good task for self-improvement precisely because one axis can't be checked directly.</aside>
 </section>
 
-<!-- 5 · Why not just an agent -->
+<!-- 5 · Constraints -->
 <section class="slide" data-n="5">
-  <h2>Why not send every listing to an agent?</h2>
-  <div class="split">
-    <div>
-      <h3>It costs</h3>
-      <p class="eq">4M listings × <span class="ph" data-r="AO.cost">[$c]</span> per 1,000</p>
-      <p class="num">= <span class="ph" data-r="AO.cost4M">[$C]</span></p>
-      <p class="t">for one pass. Again for every refresh, and again for every new domain.</p>
-    </div>
-    <div>
-      <h3>And it's wrong without saying so</h3>
-      <div class="pair"><p class="num"><span class="ph" data-r="AO.f1">[f]</span></p><p class="t">F1 of the agent alone on the gold set.</p></div>
-      <div class="pair"><p class="num">59%</p><p class="t">of the food listings our earlier agent set aside as unplaceable were real products.</p></div>
-    </div>
+  <h2>Over 2 million listings, and every constraint points to rules.</h2>
+  <div class="cons">
+    <p class="hd">The problem</p><p class="hd">What we do</p><p class="hd"></p>
+    <p>Little time to label cases</p><p>Learn rules from a small labelled set</p><p class="lp" style="color:var(--ind)">Loop 1</p>
+    <p>Agents cost too much to run on everything</p><p>Rules are free; agents get only the rest</p><p class="lp">The solver</p>
+    <p>We don't know if we're improving</p><p>Check on listings nobody labelled</p><p class="lp" style="color:var(--val)">Loop 2</p>
+    <p>Each new domain starts from zero</p><p>Carry what worked to the next one</p><p class="lp" style="color:var(--meta)">Loop 3</p>
   </div>
-  <p class="bottom">Rules are free, and you can read and test them. Taxo sends an agent only what the rules can't settle.</p>
-  <aside class="notes">The obvious answer is to send every listing to an agent. At [$c] per thousand listings, four million cost [$C] for one pass, and again for every refresh and every new domain. And it is wrong in ways you can't see: on gold the agent alone scores [f]; in Pedia, 59% of the food listings the agent set aside as unplaceable were real products. So this is not over-engineering a labeller. Rules are free, readable and testable; the agent gets only what they can't settle.</aside>
+  <aside class="notes">We work with over two million listings. We have little time to label cases. Agents are too expensive to run on all of them: [$C] for one pass. We don't even know if we are improving, and we want this to work across domains without starting from zero each time. That's why we want rules: they are free, you can read and test them, and they carry over. Each constraint is one part of the system.</aside>
 </section>
 
-<!-- 6A · Architecture: pipeline in the middle, loops around it -->
+<!-- 6A · Architecture: zoom into one domain -->
 <section class="slide" data-n="6" data-var="A">
-  <h2>Taxo: a pipeline of free rules, and three loops that improve it.</h2>
+  <h2>Taxo: a solver, and three loops that improve it.</h2>
   <div class="fill"><svg class="ch" id="archA"></svg></div>
-  <aside class="notes">This is the system. In the middle, the pipeline: listings go through free rules (parse, brand, registry, lattice), and only what they can't settle goes to an agent, paid per call. Above it, the induction loop: run on the hand-labelled gold set, an agent reads the errors and proposes one rule, and a gate in code keeps it only if F1 on sealed gold rises. Below it, the validation loop: a validator agent labels fresh listings blind; where it disagrees with the pipeline a person settles it, and that becomes new gold. On the right, the meta loop: what worked, with its scope, starts the next domain.</aside>
+  <aside class="notes">We propose this architecture. Across domains on the left; one domain opened up on the right. In the middle the solver: listings go through free rules, and an agent gets only what they can't settle. Loop 1 above: errors on the gold set, an agent proposes a rule, a gate in code keeps it only if F1 on gold rises. Loop 2 below: a validator checks listings nobody labelled, a person labels what it flags, and that goes back into the rules and the checks. Loop 3 on the left: lessons carry to the next domain. We'll go through each loop with an example.</aside>
 </section>
 
-<!-- 6B · Architecture: two folds, zoom into one domain -->
+<!-- 6B · Architecture: three loops -->
 <section class="slide" data-n="6" data-var="B">
-  <h2>Taxo is two-fold: loops inside one domain, and a loop across domains.</h2>
+  <h2>Taxo: a solver, and three loops that improve it.</h2>
   <div class="fill"><svg class="ch" id="archB"></svg></div>
-  <aside class="notes">Taxo is two-fold. Inside one domain (zoomed in on the right): induction turns gold into rules, the pipeline runs them with an agent for what's left, and validation finds the errors gold can't show, settled by a person. Across domains (on the left): the meta loop carries the lessons from food to fragrance to cars.</aside>
+  <aside class="notes">The solver places listings with rules and an agent for the rest. Three loops improve it: induction turns labelled cases into rules; validation turns doubts on unlabelled listings into new labels; meta carries what worked to the next domain.</aside>
 </section>
 
-<!-- 6C · Architecture: who does what -->
+<!-- 6C · Architecture: rings around the solver -->
 <section class="slide" data-n="6" data-var="C">
-  <h2>Code does the work, agents do the judgment, a person decides what's true.</h2>
+  <h2>Taxo: a solver, and three loops that improve it.</h2>
   <div class="fill"><svg class="ch" id="archC"></svg></div>
-  <aside class="notes">Read it by column. Placing listings: code settles most of them, the cheapest agent gets the rest. Induction: a person labels gold, an agent proposes rules, code gates them on sealed gold. Validation: an agent labels fresh listings blind, a person settles every disagreement and teaches the validator. Meta: code keeps what worked, with its scope, and the next domain starts from it. No step lets a system grade itself.</aside>
+  <aside class="notes">At the centre, the solver: rules, and an agent for the rest. Around it, three loops, each wider than the last: induction on the gold set, validation on listings nobody labelled, and meta across domains.</aside>
 </section>
 
-<!-- 7A · Induction: one listing through the rules -->
-<section class="slide" data-n="7" data-var="A">
-  <h2>Induction turns the gold set into rules you can read.</h2>
-  <p class="ltitle"><span class="b">Lattafa</span> <span class="p">Khamrah Qahwa</span> <s>Eau De Parfum 3.4 Oz Unisex Fragrance</s> <span class="b">Lattafa</span></p>
-  <p class="note">A Walmart title, through the four free rules</p>
-  <div class="steps4">
-    <div><h3><span>1</span>Vocabulary</h3><p>Sizes, concentrations and audiences are variants, never names.</p>
-<pre class="y">concentration:
-  [eau de parfum, edp]
-size: '\d+(\.\d+)?\s?(ml|oz)'
-audience: [unisex, for men]</pre></div>
-    <div><h3><span>2</span>Registry</h3><p>An agent finds each brand's official lines once; code writes them down.</p>
-<pre class="y">brand: Lattafa
-nodes:
-- {level: family,
-   name: Khamrah}
-- {level: product,
-   name: Khamrah Qahwa}</pre></div>
-    <div><h3><span>3</span>Lattice</h3><p>Count word runs across all the brand's listings. No word lists.</p>
-<pre class="y">khamrah        5  <i>family</i>
-khamrah qahwa  2  <i>product</i>
-khamrah dukhan 1  <i>unclear</i>
-yara           1  <i>unclear</i></pre></div>
-    <div><h3><span>4</span>Route</h3><p>Only the unclear go to the cheapest agent that can settle them.</p>
-<pre class="y">title only
-+ description
-+ sibling listings
-+ web search</pre></div>
+<!-- 6D · Architecture: one line, three feedback loops -->
+<section class="slide" data-n="6" data-var="D">
+  <h2>Taxo: a solver, and three loops that improve it.</h2>
+  <div class="fill"><svg class="ch" id="archD"></svg></div>
+  <aside class="notes">The solver is one line: listings, free rules, an agent for the rest, the product tree. Loop 1 improves the rules from the gold set. Loop 2 checks the output on listings nobody labelled and feeds new labels back. Loop 3 carries what worked to the next domain.</aside>
+</section>
+
+<!-- 6E · Architecture: four lines -->
+<section class="slide" data-n="6" data-var="E">
+  <h2>Taxo: a solver, and three loops that improve it.</h2>
+  <div class="layers">
+    <div><h3>The solver</h3><p>Listings<span>→</span>rules, free<span>→</span>an agent, only for the rest<span>→</span><b>product tree</b></p></div>
+    <div><h3 style="color:var(--ind)">Loop 1 · Induction</h3><p>Gold set<span>→</span>an agent proposes a rule<span>→</span>kept if F1 on gold rises<span>→</span><b>better rules</b></p></div>
+    <div><h3 style="color:var(--val)">Loop 2 · Validation</h3><p>Listings nobody labelled<span>→</span>validator flags doubts<span>→</span>a person labels<span>→</span><b>better gold and checks</b></p></div>
+    <div><h3 style="color:var(--meta)">Loop 3 · Meta</h3><p>What worked<span>→</span>lessons<span>→</span><b>a head start in the next domain</b></p></div>
   </div>
-  <p class="result">Lattafa › Khamrah › Khamrah Qahwa<span>settled by rules, no agent call</span></p>
-  <aside class="notes">Here is what a rule looks like, on one real title. The vocabulary strips sizes, concentrations and audiences: they are variants, never names. The registry holds the brand's official lines, found once by an agent with web search and written down by code. The lattice counts word sequences across all of the brand's listings: Khamrah in five titles, Khamrah Qahwa in two, so Khamrah is a family and Khamrah Qahwa a product. Only the unclear ones go to an agent, the cheapest that can settle them. Induction learns these files: each round an agent reads the errors on gold and proposes one change, and a gate in code keeps it only if F1 on sealed gold rises.</aside>
+  <aside class="notes">Four lines. The solver places listings. Loop 1 turns the gold set into better rules. Loop 2 turns doubts on unlabelled listings into better gold and stricter checks. Loop 3 turns what worked into a head start in the next domain.</aside>
 </section>
 
-<!-- 7B · Induction: the round, and a rule -->
-<section class="slide" data-n="7" data-var="B">
-  <h2>Induction turns the gold set into rules you can read.</h2>
-  <div class="fill" style="display:grid;grid-template-columns:1fr 760px;gap:100px">
-    <div class="round"><ul>
-      <li><span>1</span>Run the rules on the hand-labelled gold set.</li>
-      <li><span>2</span>An agent reads the errors.</li>
-      <li><span>3</span>It proposes one change: a rule, a registry entry, a route.</li>
-      <li><span>4</span>A gate in code tests it on sealed gold nobody tuned on.</li>
-      <li><span>5</span>Kept only if F1 rises and the cost doesn't.</li>
-    </ul></div>
-<pre class="y" style="align-self:start"><i># a kept rule is a file you can read</i>
-<i># registry/fragrance/lattafa.yaml</i>
-brand: Lattafa
-aliases: [lattafa, lattafa perfumes]
-nodes:
-  - {level: family,  name: Khamrah}
-  - {level: product, name: Khamrah Qahwa,
-     parent: Khamrah}
-basis:
-  Khamrah Qahwa: {source: official,
-                  ref: lattafa.com}
+<!-- 6F · Architecture: who does what -->
+<section class="slide" data-n="6" data-var="F">
+  <h2>Code does the work, agents do the judgment, a person decides what's true.</h2>
+  <div class="fill"><svg class="ch" id="archF"></svg></div>
+  <aside class="notes">Read it by column. Placing listings: code settles most of them, the cheapest agent gets the rest. Induction: a person labels gold, an agent proposes rules, code gates them. Validation: an agent checks listings nobody labelled, a person settles its doubts. Meta: code keeps what worked, with its scope, and the next domain starts from it.</aside>
+</section>
 
-<i># the lattice, over all of Lattafa's titles</i>
-khamrah        5   <em>→ family</em>
-khamrah qahwa  2   <em>→ product</em>
-khamrah dukhan 1   <em>→ unclear: registry or agent</em></pre>
+<!-- 7 · Loop 1: one listing through the rules -->
+<section class="slide" data-n="7">
+  <h2><span style="color:var(--ind)">Loop 1, induction:</span> a few labelled cases become rules.</h2>
+  <div class="trace">
+    <div class="tr first"><p class="rl">A Walmart listing</p><div><p class="tt">Lattafa Khamrah Qahwa Eau De Parfum 3.4 Oz Unisex Fragrance Lattafa</p></div></div>
+    <div class="tr"><p class="rl">Vocabulary</p><div><p class="tt">Lattafa Khamrah Qahwa <s>Eau De Parfum 3.4 Oz Unisex Fragrance Lattafa</s></p><p class="why">Sizes, concentrations and audiences are variants, never names.</p></div></div>
+    <div class="tr"><p class="rl">Registry</p><div><p class="tt"><b>Lattafa › Khamrah › Khamrah Qahwa</b></p><p class="why">Lattafa's official lines include Khamrah Qahwa. Placed, with no agent call.</p></div></div>
+    <div class="tr dim"><p class="rl">Lattice</p><div><p class="tt">khamrah ×5 · khamrah qahwa ×2</p><p class="why">If the registry didn't know it: a name seen in two or more of the brand's titles is a product.</p></div></div>
+    <div class="tr dim"><p class="rl">Agent</p><div><p class="tt">title → + description → + web search</p><p class="why">Only what is still unclear, to the cheapest agent that can settle it.</p></div></div>
   </div>
-  <aside class="notes">Inside one domain we start from a gold set a person labelled by hand. Each round: run the rules on gold, an agent reads the errors and proposes one change, a gate in code tests it on sealed gold nobody tuned on, and it is kept only if F1 rises and cost doesn't. What it keeps is a file you can read, like this registry for Lattafa, and the lattice counts that turn titles into families and products.</aside>
+  <aside class="notes">Loop 1 starts from cases we labelled by hand. Induction turns them into a decision tree of rules. Here is one title. The vocabulary strips "Eau De Parfum 3.4 Oz Unisex". The registry knows Lattafa makes Khamrah Qahwa, so it is placed with no agent call. If it didn't, the lattice checks whether the name appears across the brand's listings. Only what is left goes to an agent. Each rule is a file you can read.</aside>
 </section>
 
-<!-- 8 · What induction buys -->
+<!-- 8 · Loop 1: F1 on gold as the rules are built -->
 <section class="slide" data-n="8">
-  <h2>What induction buys, round by round.</h2>
-  <div class="charts2">
-    <div><h3>F1 on sealed gold</h3><p class="sub3">higher is better</p><div class="plot"><svg class="ch" id="figA1"></svg></div></div>
-    <div><h3>Cost per 1,000 listings</h3><p class="sub3">against sending every listing to an agent</p><div class="plot"><svg class="ch" id="figA2"></svg></div></div>
-  </div>
-  <p class="bottom">At four million listings: an agent alone <span class="ph" data-r="AO.cost4M">[$C]</span>, Taxo <span class="ph" data-r="A.cost4M.last">[$B]</span>. <span class="ph" data-r="A.share.last">[p]</span> of listings never see an agent.</p>
-  <aside class="notes">This is the induction loop on fragrance. Each round keeps one rule. F1 on sealed gold goes from [x] to [y], while the cost per thousand listings falls from [$a] to [$b]. At four million listings the agent alone costs [$C]; Taxo costs [$B], and [p] of listings never see an agent. None of it costs accuracy: the gate refuses any rule that lowers F1 on sealed gold.</aside>
+  <h2><span style="color:var(--ind)">Loop 1:</span> F1 on the gold set, as each rule is added.</h2>
+  <div class="fill chart"><div class="plot"><svg class="ch" id="figA"></svg></div></div>
+  <p class="bottom" style="font-size:28px;color:var(--ink2)">Each round an agent proposes one rule. A gate in code keeps it only if F1 on gold rises.</p>
+  <aside class="notes">Each round an agent proposes one rule, and a gate in code keeps it only if F1 on gold rises. F1 on gold goes from [x] to [y] as the rules are built.</aside>
 </section>
 
-<!-- 9 · Gold doesn't cover everything -->
+<!-- 9 · Loop 2: validation -->
 <section class="slide" data-n="9">
-  <h2>Gold doesn't cover everything.</h2>
-  <p class="lede">A person chose those cases. They can't contain every error a rule will make.</p>
+  <h2><span style="color:var(--val)">Loop 2, validation:</span> improve the eval itself.</h2>
   <div class="vgrid">
-    <ul class="flow">
-      <li><b>Fresh listings</b>, never seen by the rules</li>
-      <li>A <b>validator agent</b> labels them blind, with more budget than the pipeline</li>
-      <li>Where it disagrees with the rules, <b>a person settles it</b></li>
-      <li>A new frozen validation set, and <b>new errors for induction</b></li>
-    </ul>
-    <div class="chart"><h3>Rule set 1, F1</h3><p class="sub3">on gold, then on two fresh validation sets</p><div class="plot"><svg class="ch" id="figB"></svg></div></div>
+    <ol class="steps">
+      <li>A validator agent runs on listings nobody labelled.</li>
+      <li>It flags errors, and cases it isn't sure about.</li>
+      <li>A person labels them, and what counts as right gets sharper.</li>
+      <li><span>It asks what's going on, and that becomes a rule and a stricter check. <span class="ph">[example from the run]</span></span></li>
+    </ol>
+    <div class="chart"><h3>F1 of the solver as the checks get stricter</h3><div class="plot"><svg class="ch" id="figB"></svg></div></div>
   </div>
-  <aside class="notes">But gold doesn't cover everything. Even with a clean test split we can't say the rules generalise: a person chose those cases. So the validation loop: an agent labels fresh listings on its own, with more budget than the pipeline, and brings up the errors the system is making. Where it disagrees, a person settles it. Each round gives a new frozen validation set. Rule set 1 scores [x] on gold, [y] on validation set 1 and [z] on validation set 2: fresh listings find errors gold never showed us.</aside>
+  <aside class="notes">A small gold set doesn't cover everything, so loop 2 checks the solver on listings nobody labelled. A validator agent raises errors and cases it isn't confident about, and brings them to us to label. We change the labels. Then it asks what is going on: for example [confirm from the run: small houses with no barcode name the product only in the description]. That goes back into the rules, and into a stricter check, so confidence goes up. On the graph: as the checks get stricter, rule set 1 falls from [x] to [z]; after refining, rule set 2 gets back to [w]. We improve two things at once: the validation, and the solver underneath it.</aside>
 </section>
 
-<!-- 10 · Iterate, and teach the validator -->
+<!-- 10 · Loop 3: meta -->
 <section class="slide" data-n="10">
-  <h2>So we iterate, and a person teaches the validator.</h2>
-  <div class="split">
-    <div>
-      <h3>The new errors become new rules</h3>
-<pre class="y"><i># rules/fragrance/route-no-barcode-description.yaml</i>
-when:
-  - {fact: listing.barcode, missing: true}
-  - {fact: listing.description_words, ge: 40}
-  - {fact: placement.level, eq: brand}
-then: {route: agent_evidence}
-found_by: validation/V2</pre>
-      <p class="t" style="font-size:24px;color:var(--mute)">The case: <span class="ph">[confirm from the run: small houses with no barcode name the product only in the description]</span></p>
-      <p class="num" style="font-size:80px;margin-top:auto"><span class="ph" data-r="B.R1.V2">[z]</span> → <span class="ph" data-r="B.R2.V2">[w]</span></p>
-      <p class="t">F1 on validation set 2, rule set 1 → rule set 2</p>
-    </div>
-    <div>
-      <h3>A person teaches the validator what to look for</h3>
-      <p class="t">The validator proposed searching the web for each brand's official lines. We approved it, and it found gold cases we were missing.</p>
-      <p class="t">When it's wrong, the person tells it why. Each new version re-reads what earlier ones accepted.</p>
-      <p class="num" style="font-size:80px;margin-top:auto"><span class="ph" data-r="B.gold.first">[n]</span> → <span class="ph" data-r="B.gold.last">[m]</span></p>
-      <p class="t">gold cases</p>
+  <h2><span style="color:var(--meta)">Loop 3, meta:</span> the next domain starts from what this one learned.</h2>
+  <div class="vgrid" style="grid-template-columns:720px 1fr">
+<pre class="mono"><i># a lesson, kept with its scope</i>
+lesson: strip-variants-first
+scope:  global
+claim:  Strip size, pack and
+        audience before counting
+        names, or every size
+        becomes a product.</pre>
+    <div class="xfer">
+      <p class="hd">Rounds saved against a cold start</p>
+      <div><p class="k">Food → fragrance</p><p class="v"><span class="ph" data-r="C.food>fragrance">[n]</span></p><p class="w">Carried.</p></div>
+      <div><p class="k">Fragrance → food</p><p class="v"><span class="ph" data-r="C.fragrance>food">[m]</span></p><p class="w">Not much.</p></div>
+      <div><p class="k">Fragrance → cars</p><p class="v"><span class="ph" data-r="C.fragrance>cars">[k]</span></p><p class="w">Cars have a published catalogue, so the registry does the work.</p></div>
     </div>
   </div>
-  <aside class="notes">So we iterate. New rules come from those errors; we join more brands and look for the pattern underneath, not the single case. For example [confirm from the run]: small fragrance houses with no barcode name the product only in the description, and our rules stopped at the brand. Induction turned that into a route to the agent that reads the description. Rule set 2 recovers on validation set 2: [z] to [w]. Human feedback improves the validator: it proposed searching the web for each brand's official products, we approved it, and it found gold cases we were missing. Gold grows from [n] to [m] cases.</aside>
+  <aside class="notes">The last loop distils what worked, with its scope, into lessons for the next domain. A domain that starts from those lessons gets there in fewer rounds. Food to fragrance carried; fragrance to food, not much. Cars have a published catalogue, so there the registry does the work.</aside>
 </section>
 
-<!-- 11 · Meta loop -->
+<!-- 11 · Results -->
 <section class="slide" data-n="11">
-  <h2>Across domains, what worked carries over.</h2>
-  <p class="lede">The next domain's induction starts from the last one's lessons. Rounds saved to reach the target F1, against a cold start:</p>
-  <div class="fill">
-    <table class="mx">
-      <tr><th>from ↓ · to →</th><th>Food</th><th>Fragrance</th><th>Cars</th></tr>
-      <tr><td class="rh">Food</td><td><span class="self">—</span></td>
-          <td><span class="n"><span class="ph" data-r="C.food>fragrance">[n]</span><small>rounds</small></span><p>There was learning.</p></td>
-          <td><span class="self">—</span><p>not run</p></td></tr>
-      <tr><td class="rh">Fragrance</td>
-          <td><span class="n"><span class="ph" data-r="C.fragrance>food">[m]</span><small>rounds</small></span><p>Not much.</p></td>
-          <td><span class="self">—</span></td>
-          <td><span class="n"><span class="ph" data-r="C.fragrance>cars">[k]</span><small>rounds</small></span><p>Clear: make, model and version are published and a VIN decodes them, so the registry does the work.</p></td></tr>
-    </table>
-  </div>
-  <aside class="notes">This is the meta loop: we take which rules worked, with which validation, and apply them to the next domain, and its induction gets there faster. It doesn't transfer equally. From food to fragrance there was learning: [n] rounds saved. From fragrance to food, not much: [m]. From fragrance to cars it's clear why: cars have a much more defined catalogue. Make, model and version are published and a VIN decodes them, so the registry does the work there, not the lattice.</aside>
+  <h2>Results: what each loop adds, in each domain.</h2>
+  <div class="fill"><table class="res" id="res"></table></div>
+  <p class="src">F1 on fresh listings; cost per 1,000 listings beside it</p>
+  <aside class="notes">We have more under the hood, like the wiki the agents keep; happy to go into it after, there isn't time for the whole architecture now. Here is how each loop improves each domain. [Read the one row that matters most once the numbers are in.]</aside>
 </section>
 
 <!-- 12 · Close -->
 <section class="slide closing" data-n="12">
-  <h2>Systems will always say they're right. <span>Taxo doesn't take their word for it.</span></h2>
-  <div class="cols2">
-    <div><h3>The method</h3><ul>
-      <li>Turn agent judgment into rules you can read, test and run for free.</li>
-      <li>Never let a system grade itself: agents hunt errors, a person decides.</li>
-      <li>Keep what worked, with its scope, so the next problem starts ahead.</li></ul></div>
-    <div><h3>The tree is the first task. Next:</h3><ul>
-      <li>Matching the same product across shops</li>
-      <li>Cars at Kavak: make, model, version and trim decide the price</li>
-      <li>Demand and trends, once search terms roll up to a product</li>
-      <li>Any agent work that has to be trusted at scale</li></ul></div>
-  </div>
-  <aside class="notes">This is not a labelling system. The tree is the first task; the method is the point: turn agent judgment into rules you can read, test and run for free; never let a system grade itself, so agents hunt for errors and a person decides what is true; keep what worked, with its scope, so the next problem starts ahead. It goes to matching across shops, cars at Kavak, demand and trends, and any agent work that has to be trusted at scale. Systems will always say they're right. Taxo doesn't take their word for it.</aside>
+  <svg class="cloud" data-seed="11" aria-hidden="true"></svg>
+  <h2 class="clear">Everything is in the evals.</h2>
+  <p class="clear">We improved a task that isn't directly verifiable by improving how we check it, with feedback.</p>
+  <p class="clear" style="color:var(--mute)">Next: customer-feedback models, and any task without a ground truth.</p>
+  <aside class="notes">What matters here is that we improved a task that isn't directly verifiable. We showed different kinds of verification, and improved that evaluation with feedback. We believe it extends to other tasks, like customer-feedback models. Everything is in the evals: as we improve the system, we have to improve the evals.</aside>
 </section>
 
 </div></div>
@@ -505,23 +404,25 @@ found_by: validation/V2</pre>
   // ===== Results from today's runs. Paste them here; the charts and every [bracket] that depends on them update. =====
   // Leave an entry null until there is a number. Never put a guess here: it is drawn as a result.
   const RESULTS = {
-    // Every listing to the agent: F1 on sealed gold (0–1) and dollars per 1,000 listings. The 4M bill is cost × 4,000.
-    //   e.g. agentOnly: { f1: …, cost: … }
+    // Every listing to an agent: F1 (0–1), dollars per 1,000 listings (the 2M bill on slide 4 is cost × 2,000),
+    //   and hours to place all 2M listings.   e.g. agentOnly: { f1: …, cost: …, hours: … }
     agentOnly: null,
-    // Induction on fragrance, one entry per round, round 0 (the first pipeline) first.
-    //   f1 (0–1), cost ($ per 1,000), kept: the rule kept that round, share: listings settled without an agent (0–1)
-    //   e.g. A: { rounds: [{ f1: …, cost: …, kept: null, share: … }, { f1: …, cost: …, kept: 'lattice', share: … }] }
+    // Slide 8, loop 1 on fragrance: one entry per round, round 0 first. f1 on gold (0–1), kept: the rule kept that round.
+    //   e.g. A: { rounds: [{ f1: …, kept: null }, { f1: …, kept: 'registry' }, { f1: …, kept: 'lattice' }] }
     A: null,
-    // Rule sets on gold and fresh validation sets (0–1), and gold's size before and after the validation rounds.
-    //   e.g. B: { R1: { gold: …, V1: …, V2: … }, R2: { V2: … }, goldCases: [before, after] }
+    // Slide 9: F1 of rule set 1 and rule set 2 on gold, validation set 1 and validation set 2 (0–1).
+    //   e.g. B: { R1: { gold: …, V1: …, V2: … }, R2: { gold: …, V1: …, V2: … } }
     B: null,
-    // Rounds saved to reach the target F1, warm start against cold, keyed 'source>target'.
+    // Slide 10: rounds saved to reach the target F1, warm start against cold.
     //   e.g. C: { saved: { 'food>fragrance': …, 'fragrance>food': …, 'fragrance>cars': … } }
     C: null,
+    // Slide 11: F1 on fresh listings (0–1) and $ per 1,000 listings, per domain and system.
+    //   e.g. final: { fragrance: { agent: { f1, cost }, loop1: { f1, cost }, loop2: { f1, cost }, loop3: { f1, cost } }, food: {…}, cars: {…} }
+    final: null,
   };
 
-  // Pedia replay pe2 (C:\Work\RSI\hackathon\runs\pe2\ledger.jsonl), listing task: % of the 245 sealed listings right,
-  // by the LLM judge and by the owner's labels, after rounds 0-4. One series per run (6). The chart draws the mean.
+  // Pedia replay pe2 (C:\Work\RSI\hackathon\runs\pe2\ledger.jsonl), listing task: % of the 245 held-out listings right,
+  // by the LLM judge and by our labels, after rounds 0-4. One series per run (6). Slide 3 draws the mean, start and end.
   const PE2 = {
     judge: [[78.4, 81.2, 85.3, 87.8, 89.8], [78.4, 82.9, 85.7, 87.3, 89.8], [78.4, 81.2, 82.4, 82.4, 82.4],
             [78.4, 81.2, 85.7, 87.3, 87.3], [78.4, 82.4, 83.7, 86.9, 89.4], [78.4, 81.2, 82.9, 84.9, 85.7]],
@@ -531,7 +432,7 @@ found_by: validation/V2</pre>
 
   const W = 1920, H = 1080;
   const C = { ink: '#0B0D12', ink2: '#3A3F4A', mute: '#6B7280', faint: '#A3A8B3', line: '#E2E5EA', grid: '#EEF0F3', wire: '#9AA1AD',
-              ind: '#0070C0', val: '#D9622B', meta: '#1E9E6E' };
+              ind: '#0070C0', val: '#D9622B', meta: '#1E9E6E', panel: '#F6F7F9' };
   const esc = s => String(s).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
   const body = document.body, stage = document.querySelector('.stage');
 
@@ -545,24 +446,12 @@ found_by: validation/V2</pre>
 
   // ---------- numbers from the runs: fill the brackets ----------
   const f1 = v => v.toFixed(2), usd = v => '$' + (v < 10 ? v.toFixed(2) : v.toFixed(0));
-  const usd4M = perK => '$' + Math.round(perK * 4000).toLocaleString('en-US'), pct = v => Math.round(v * 100) + '%';
+  const usd2M = perK => '$' + Math.round(perK * 2000).toLocaleString('en-US');
   const V = {}, R = RESULTS;
   if (R.agentOnly) {
     if (R.agentOnly.f1 != null) V['AO.f1'] = f1(R.agentOnly.f1);
-    if (R.agentOnly.cost != null) { V['AO.cost'] = usd(R.agentOnly.cost); V['AO.cost4M'] = usd4M(R.agentOnly.cost); }
-  }
-  const rounds = R.A && R.A.rounds && R.A.rounds.length ? R.A.rounds : null;
-  if (rounds) {
-    const a = rounds[0], b = rounds[rounds.length - 1];
-    if (a.f1 != null) V['A.f1.first'] = f1(a.f1);
-    if (b.f1 != null) V['A.f1.last'] = f1(b.f1);
-    if (a.cost != null) V['A.cost.first'] = usd(a.cost);
-    if (b.cost != null) { V['A.cost.last'] = usd(b.cost); V['A.cost4M.last'] = usd4M(b.cost); }
-    if (b.share != null) V['A.share.last'] = pct(b.share);
-  }
-  if (R.B) {
-    for (const rs of ['R1', 'R2']) for (const k of ['gold', 'V1', 'V2']) if (R.B[rs] && R.B[rs][k] != null) V[`B.${rs}.${k}`] = f1(R.B[rs][k]);
-    if (R.B.goldCases) { V['B.gold.first'] = String(R.B.goldCases[0]); V['B.gold.last'] = String(R.B.goldCases[1]); }
+    if (R.agentOnly.cost != null) V['AO.cost2M'] = usd2M(R.agentOnly.cost);
+    if (R.agentOnly.hours != null) V['AO.hours'] = Math.round(R.agentOnly.hours) + ' h';
   }
   if (R.C && R.C.saved) for (const [k, v] of Object.entries(R.C.saved)) if (v != null) V['C.' + k] = String(v);
   document.querySelectorAll('[data-r]').forEach(e => { if (V[e.dataset.r] != null) { e.textContent = V[e.dataset.r]; e.classList.remove('ph'); } });
@@ -570,185 +459,199 @@ found_by: validation/V2</pre>
   // ---------- SVG helpers ----------
   const F = (fs, fw = 400) => `font:${fw} ${fs}px Inter,system-ui,sans-serif`;
   const Tx = (x, y, s, o = {}) => `<text x="${x}" y="${y}" text-anchor="${o.a || 'start'}" style="${F(o.fs || 20, o.fw || 400)};fill:${o.c || C.mute}">${s}</text>`;
-  // a box with centred lines of text: the first line is the name, the rest are smaller and muted
-  function Bx(x, y, w, h, lines, o = {}) {
-    lines = [].concat(lines);
-    const fs = o.fs || 24, sfs = o.sfs || 19, gap = 8;
-    const hs = lines.map((_, i) => i ? sfs * 1.25 : fs * 1.2), tot = hs.reduce((a, b) => a + b, 0) + (lines.length > 1 ? gap : 0);
-    let ty = y + h / 2 - tot / 2, s = `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="12" fill="${o.fill || '#fff'}" stroke="${o.c || C.wire}" stroke-width="${o.sw || 2}"${o.dash ? ' stroke-dasharray="8 7"' : ''}/>`;
-    lines.forEach((t, i) => { ty += hs[i] - (i ? sfs * .25 : fs * .25) + (i === 1 ? gap : 0);
-      s += Tx(x + w / 2, ty, t, { a: 'middle', fs: i ? sfs : fs, fw: i ? 400 : 600, c: i ? C.mute : C.ink }); ty += i ? sfs * .25 : fs * .25; });
-    return s;
-  }
-  // an arrow through points [[x,y],...], arrowhead at the last point
+  // a node: a name, and optional smaller lines under it. No box.
+  const Nd = (x, y, name, sub, o = {}) => Tx(x, y, name, { a: o.a || 'middle', fs: o.fs || 28, fw: o.fw || 600, c: o.c || C.ink }) +
+    [].concat(sub || []).map((t, i) => Tx(x, y + 34 + i * 27, t, { a: o.a || 'middle', fs: o.sfs || 20, c: o.sc || C.mute })).join('');
+  const head = (x, y, ang, c, L = 16, w = 8) => { const bx = x - L * Math.cos(ang), by = y - L * Math.sin(ang);
+    return `<path d="M${x} ${y}L${bx + w * Math.sin(ang)} ${by - w * Math.cos(ang)}L${bx - w * Math.sin(ang)} ${by + w * Math.cos(ang)}Z" fill="${c}"/>`; };
+  // an arrow through points, head at the last point
   function Ar(pts, c = C.wire, o = {}) {
-    const [x1, y1] = pts[pts.length - 2], [x2, y2] = pts[pts.length - 1], a = Math.atan2(y2 - y1, x2 - x1), L = 15, w = 7.5;
-    const bx = x2 - L * Math.cos(a), by = y2 - L * Math.sin(a);
-    const line = pts.slice(0, -1).concat([[bx, by]]);
-    return `<path d="M${line.map(p => p.join(' ')).join('L')}" fill="none" stroke="${c}" stroke-width="${o.w || 2.5}" stroke-linejoin="round"${o.dash ? ' stroke-dasharray="9 7"' : ''}/>` +
-      `<path d="M${x2} ${y2}L${bx + w * Math.sin(a)} ${by - w * Math.cos(a)}L${bx - w * Math.sin(a)} ${by + w * Math.cos(a)}Z" fill="${c}"/>`;
+    const [x1, y1] = pts[pts.length - 2], [x2, y2] = pts[pts.length - 1], a = Math.atan2(y2 - y1, x2 - x1), L = 16;
+    const line = pts.slice(0, -1).concat([[x2 - L * Math.cos(a), y2 - L * Math.sin(a)]]);
+    return `<path d="M${line.map(p => p.join(' ')).join('L')}" fill="none" stroke="${c}" stroke-width="${o.w || 3}" stroke-linejoin="round"${o.dash ? ' stroke-dasharray="9 7"' : ''}/>` + head(x2, y2, a, c);
+  }
+  // a curved arrow (cubic), head at the end
+  const Cu = (p0, c1, c2, p1, c, w = 4) => `<path d="M${p0}C${c1} ${c2} ${p1}" fill="none" stroke="${c}" stroke-width="${w}" stroke-linecap="round"/>` +
+    head(p1[0], p1[1], Math.atan2(p1[1] - c2[1], p1[0] - c2[0]), c, 20, 10);
+  // a clockwise arc with an arrowhead at its end (degrees, 0 = 3 o'clock)
+  function arc(cx, cy, r, a0, a1, c, w = 6) {
+    const rad = d => d * Math.PI / 180, P = d => [cx + r * Math.cos(rad(d)), cy + r * Math.sin(rad(d))];
+    const L = 22, back = L / r * 180 / Math.PI, [x0, y0] = P(a0), [x1, y1] = P(a1 - back), [xe, ye] = P(a1);
+    const t = rad(a1);
+    return `<path d="M${x0} ${y0}A${r} ${r} 0 ${a1 - back - a0 > 180 ? 1 : 0} 1 ${x1} ${y1}" fill="none" stroke="${c}" stroke-width="${w}" stroke-linecap="round"/>` +
+      head(xe, ye, Math.atan2(Math.cos(t), -Math.sin(t)), c, L, 12);
   }
   const put = (id, vb, s) => { const el = document.getElementById(id); if (!el) return; el.setAttribute('viewBox', vb); el.setAttribute('preserveAspectRatio', 'xMidYMid meet'); el.innerHTML = s; };
+  const mean = rows => rows[0].map((_, i) => rows.reduce((a, r) => a + r[i], 0) / rows.length);
 
-  // ---------- 6A: pipeline in the middle, the loops around it ----------
+  // ---------- 2 · its own eval, round by round, and the human check afterwards ----------
   (() => {
+    const j = mean(PE2.judge), o = mean(PE2.owner);
+    const w = 1100, h = 640, L = 80, Rr = 300, T = 30, Bm = 80;
+    const x = i => L + (w - L - Rr) * i / 4, y = v => T + (h - T - Bm) * (1 - (v - 76) / 14);
     let s = '';
-    s += Tx(80, 24, 'Induction loop', { fs: 22, fw: 600, c: C.ind });
-    s += Tx(80, 254, 'Pipeline, per listing', { fs: 22, fw: 600, c: C.ink });
-    s += Tx(370, 504, 'Validation loop', { fs: 22, fw: 600, c: C.val });
-    s += Tx(1500, 24, 'Meta loop', { fs: 22, fw: 600, c: C.meta });
-    // induction row
-    s += Bx(80, 40, 250, 90, ['Gold set', 'labelled by hand'], { c: C.ink });
-    s += Bx(420, 40, 230, 90, ['Errors on gold'], { c: C.ind });
-    s += Bx(740, 40, 270, 90, ['Agent', 'proposes one rule'], { c: C.ind });
-    s += Bx(1100, 40, 320, 90, ['Gate, in code', 'keeps it if sealed F1 rises'], { c: C.ind });
-    s += Ar([[330, 85], [420, 85]], C.ind) + Ar([[650, 85], [740, 85]], C.ind) + Ar([[1010, 85], [1100, 85]], C.ind);
-    s += Ar([[1260, 130], [1260, 200], [700, 200], [700, 268]], C.ind) + Tx(1272, 178, 'new rule', { fs: 19, c: C.ind });
-    s += Ar([[535, 268], [535, 132]], C.ind) + Tx(547, 178, 'run on gold', { fs: 19, c: C.ind });
-    // pipeline row
-    s += Bx(80, 270, 200, 100, ['Listings', 'from every shop']);
-    s += Bx(370, 270, 480, 100, ['Rules · free', 'parse · brand · registry · lattice'], { c: C.ind, sw: 3, fill: '#F3F8FC' });
-    s += Bx(940, 270, 360, 100, ['Agent · paid per call', "only what rules can't settle"]);
-    s += Bx(1390, 270, 170, 100, ['Product', 'tree'], { c: C.ink, sw: 3 });
-    s += Ar([[280, 320], [370, 320]]) + Ar([[850, 320], [940, 320]]) + Ar([[1300, 320], [1390, 320]]);
-    s += Ar([[610, 370], [610, 420], [1475, 420], [1475, 372]]) + Tx(1040, 410, 'settled by rules', { fs: 19, a: 'middle' });
-    // validation row
-    s += Bx(370, 520, 360, 90, ['Validator agent', 'labels fresh listings blind'], { c: C.val });
-    s += Bx(820, 520, 300, 90, ['Disagrees', 'with the pipeline?'], { c: C.val });
-    s += Bx(1210, 520, 250, 90, ['A person', 'settles it'], { c: C.ink });
-    s += Ar([[180, 370], [180, 565], [370, 565]], C.val) + Ar([[730, 565], [820, 565]], C.val) + Ar([[1120, 565], [1210, 565]], C.val);
-    s += Ar([[1335, 610], [1335, 680], [30, 680], [30, 85], [78, 85]], C.val) + Tx(700, 672, 'new gold cases, and new errors for induction', { fs: 19, a: 'middle', c: C.val });
-    s += Ar([[1260, 610], [1260, 640], [550, 640], [550, 612]], C.val, { dash: true }) + Tx(905, 632, 'teaches it what to look for', { fs: 19, a: 'middle', c: C.val });
-    // meta
-    s += Bx(1500, 40, 164, 90, ['Lessons', 'next domain'], { c: C.meta, sw: 3 });
-    s += Ar([[1420, 85], [1500, 85]], C.meta);
-    put('archA', '0 0 1664 700', s);
+    [80, 85, 90].forEach(t => { s += `<line x1="${L}" x2="${w - Rr}" y1="${y(t)}" y2="${y(t)}" stroke="${C.grid}" stroke-width="2"/>` + Tx(L - 14, y(t) + 7, t + '%', { a: 'end', fs: 22, c: C.faint }); });
+    ['start', '1', '2', '3', '4'].forEach((t, i) => { s += Tx(x(i), h - Bm + 40, t, { a: 'middle', fs: 22, c: C.mute }); });
+    s += Tx(x(2), h - 4, 'rounds of self-improvement', { a: 'middle', fs: 22, c: C.faint });
+    s += `<path d="M${j.map((v, i) => x(i) + ' ' + y(v)).join('L')}" fill="none" stroke="${C.val}" stroke-width="5" stroke-linejoin="round"/>`;
+    j.forEach((v, i) => { s += `<circle cx="${x(i)}" cy="${y(v)}" r="8" fill="${C.val}" stroke="#fff" stroke-width="2"/>`; });
+    s += `<path d="M${x(0)} ${y(o[0])}L${x(4)} ${y(o[4])}" fill="none" stroke="${C.ink}" stroke-width="4" stroke-dasharray="10 9"/>`;
+    s += `<circle cx="${x(0)}" cy="${y(o[0])}" r="10" fill="#fff" stroke="${C.ink}" stroke-width="4"/><circle cx="${x(4)}" cy="${y(o[4])}" r="11" fill="${C.ink}"/>`;
+    s += Tx(x(4) + 24, y(j[4]) - 4, 'Its own eval', { fs: 26, fw: 600, c: C.val }) + Tx(x(4) + 24, y(j[4]) + 28, Math.round(j[0]) + '% → ' + Math.round(j[4]) + '%, +' + Math.round(j[4] - j[0]), { fs: 24, c: C.ink2 });
+    s += Tx(x(4) + 24, y(o[4]) + 10, 'Human check, after', { fs: 26, fw: 600, c: C.ink }) + Tx(x(4) + 24, y(o[4]) + 42, Math.round(o[0]) + '% → ' + Math.round(o[4]) + '%, +' + Math.round(o[4] - o[0]), { fs: 24, c: C.ink2 });
+    put('evals', `0 0 ${w} ${h}`, s);
   })();
 
-  // ---------- 6B: two folds, zoomed into one domain ----------
+  // ---------- 6A · zoom into one domain ----------
   (() => {
     let s = '';
-    s += Tx(0, 24, 'Across domains', { fs: 22, fw: 600, c: C.meta });
-    s += Bx(0, 60, 250, 110, ['Food'], { c: C.meta, fs: 28 });
-    s += Bx(0, 300, 250, 110, ['Fragrance'], { c: C.ink, sw: 3, fs: 28 });
-    s += Bx(0, 540, 250, 110, ['Cars'], { c: C.meta, fs: 28 });
-    s += Ar([[125, 170], [125, 298]], C.meta) + Tx(140, 242, 'lessons', { fs: 19, c: C.meta });
-    s += Ar([[125, 410], [125, 538]], C.meta) + Tx(140, 482, 'lessons', { fs: 19, c: C.meta });
-    // zoom wedge
-    s += `<path d="M250 300L380 0M250 410L380 700" stroke="${C.line}" stroke-width="2" fill="none"/>`;
-    s += `<rect x="380" y="0" width="1284" height="700" rx="18" fill="none" stroke="${C.line}" stroke-width="2"/>`;
-    s += Tx(420, 52, 'Inside one domain', { fs: 22, fw: 600, c: C.ink });
-    // induction
-    s += Tx(690, 112, 'Induction', { fs: 20, fw: 600, c: C.ind });
-    s += Bx(440, 130, 200, 90, ['Gold set', 'by hand'], { c: C.ink });
-    s += Bx(720, 130, 290, 90, ['Agent', 'proposes one rule'], { c: C.ind });
-    s += Bx(1090, 130, 280, 90, ['Gate, in code', 'sealed gold'], { c: C.ind });
-    s += Ar([[640, 175], [720, 175]], C.ind) + Ar([[1010, 175], [1090, 175]], C.ind);
-    s += Ar([[1230, 220], [1230, 270], [860, 270], [860, 318]], C.ind) + Tx(1242, 256, 'keep', { fs: 19, c: C.ind });
-    s += Ar([[790, 318], [790, 222]], C.ind) + Tx(700, 276, 'errors', { fs: 19, c: C.ind });
-    // pipeline
-    s += Bx(440, 320, 200, 100, ['Listings']);
-    s += Bx(720, 320, 290, 100, ['Rules', 'free'], { c: C.ind, sw: 3, fill: '#F3F8FC' });
-    s += Bx(1090, 320, 280, 100, ['Agent', 'paid, only the rest']);
-    s += Bx(1450, 320, 170, 100, ['Tree'], { c: C.ink, sw: 3 });
-    s += Ar([[640, 370], [720, 370]]) + Ar([[1010, 370], [1090, 370]]) + Ar([[1370, 370], [1450, 370]]);
-    // validation
-    s += Tx(720, 512, 'Validation', { fs: 20, fw: 600, c: C.val });
-    s += Bx(720, 530, 290, 90, ['Validator agent', 'labels fresh listings'], { c: C.val });
-    s += Bx(1090, 530, 280, 90, ['A person', 'settles disagreements'], { c: C.ink });
-    s += Ar([[540, 420], [540, 575], [720, 575]], C.val) + Ar([[1010, 575], [1090, 575]], C.val);
-    s += Ar([[1230, 620], [1230, 665], [410, 665], [410, 175], [438, 175]], C.val) + Tx(820, 657, 'new gold', { fs: 19, a: 'middle', c: C.val });
-    put('archB', '0 0 1664 700', s);
+    s += Tx(0, 44, 'Loop 3 · Meta', { fs: 24, fw: 600, c: C.meta });
+    s += Nd(110, 175, 'Food', null, { fs: 34, fw: 500, c: C.ink2 }) + Nd(110, 395, 'Fragrance', null, { fs: 36, fw: 700 }) + Nd(110, 615, 'Cars', null, { fs: 34, fw: 500, c: C.ink2 });
+    s += Ar([[110, 200], [110, 352]], C.meta) + Tx(126, 284, 'lessons', { fs: 20, c: C.meta });
+    s += Ar([[110, 420], [110, 572]], C.meta) + Tx(126, 504, 'lessons', { fs: 20, c: C.meta });
+    s += `<path d="M215 372L400 30M215 400L400 700" stroke="${C.line}" stroke-width="2" fill="none"/>`;
+    s += `<rect x="400" y="30" width="1264" height="670" rx="28" fill="${C.panel}"/>`;
+    s += Tx(1630, 76, 'inside one domain', { a: 'end', fs: 20, c: C.faint });
+    // the solver
+    s += Nd(530, 382, 'Listings') + Nd(840, 384, 'Rules', ['free'], { fs: 36, c: C.ind }) + Nd(1150, 382, 'Agent', ['only what rules', "can't settle"]) + Nd(1500, 382, 'Product tree');
+    s += Ar([[608, 372], [772, 372]]) + Ar([[910, 372], [1082, 372]]) + Ar([[1218, 372], [1408, 372]]);
+    // loop 1
+    s += Tx(440, 100, 'Loop 1 · Induction', { fs: 24, fw: 600, c: C.ind });
+    s += Nd(560, 172, 'Errors on gold', ['cases labelled by hand']) + Nd(885, 172, 'An agent', ['proposes one rule']) + Nd(1215, 172, 'A gate in code', ['keeps it if F1 on gold rises']);
+    s += Ar([[672, 162], [818, 162]], C.ind) + Ar([[955, 162], [1108, 162]], C.ind);
+    s += Ar([[1215, 238], [1215, 272], [870, 272], [870, 342]], C.ind) + Tx(1040, 262, 'new rule', { a: 'middle', fs: 19, c: C.ind });
+    s += Ar([[810, 342], [810, 306], [560, 306], [560, 236]], C.ind) + Tx(685, 298, 'run on gold', { a: 'middle', fs: 19, c: C.ind });
+    // loop 2
+    s += Tx(440, 560, 'Loop 2 · Validation', { fs: 24, fw: 600, c: C.val });
+    s += Nd(1200, 622, 'A validator agent', ['checks listings nobody labelled']) + Nd(840, 622, 'A person', ['labels what it flags']);
+    s += Ar([[1500, 400], [1500, 612], [1365, 612]], C.val) + Ar([[1040, 612], [928, 612]], C.val);
+    s += Ar([[840, 590], [840, 452]], C.val) + Tx(856, 528, 'new labels, stricter checks', { fs: 19, c: C.val });
+    put('archA', '0 0 1664 720', s);
   })();
 
-  // ---------- 6C: who does what ----------
+  // ---------- 6B · three loops ----------
   (() => {
-    const cols = [['Place listings', C.ink], ['Induction', C.ind], ['Validation', C.val], ['Meta loop', C.meta]];
+    let s = '';
+    s += Tx(832, 40, 'The solver:  listings  →  rules  →  an agent, only for the rest  →  product tree', { a: 'middle', fs: 30, fw: 500, c: C.ink });
+    s += `<line x1="140" x2="1524" y1="78" y2="78" stroke="${C.line}" stroke-width="2"/>`;
+    const L = [[290, C.ind, 'Loop 1 · Induction', 'labelled cases', '→ rules', ['an agent proposes rules;', 'kept if F1 on gold rises']],
+               [832, C.val, 'Loop 2 · Validation', 'unlabelled listings', '→ new labels', ['the validator flags doubts;', 'a person labels them']],
+               [1374, C.meta, 'Loop 3 · Meta', 'what worked', '→ next domain', ['lessons, with their scope,', 'start the next domain']]];
+    L.forEach(([cx, c, name, a, b, sub]) => {
+      s += Tx(cx, 168, name, { a: 'middle', fs: 28, fw: 600, c });
+      s += arc(cx, 370, 150, -55, 235, c, 6);
+      s += Tx(cx, 360, a, { a: 'middle', fs: 26, c: C.ink2 }) + Tx(cx, 402, b, { a: 'middle', fs: 30, fw: 600, c: C.ink });
+      s += sub.map((t, i) => Tx(cx, 590 + i * 32, t, { a: 'middle', fs: 23, c: C.mute })).join('');
+    });
+    put('archB', '0 0 1664 720', s);
+  })();
+
+  // ---------- 6C · rings around the solver ----------
+  (() => {
+    const cx = 430, cy = 380;
+    let s = `<circle cx="${cx}" cy="${cy}" r="105" fill="${C.panel}"/>` + Tx(cx, cy - 2, 'Solver', { a: 'middle', fs: 32, fw: 600, c: C.ink }) + Tx(cx, cy + 30, 'rules + agent', { a: 'middle', fs: 20, c: C.mute });
+    [[165, C.ind, '1'], [235, C.val, '2'], [305, C.meta, '3']].forEach(([r, c, n]) => {
+      s += arc(cx, cy, r, -72, 252, c, 7);
+      s += Tx(cx, cy - r + 9, n, { a: 'middle', fs: 28, fw: 700, c });
+    });
+    const items = [[150, C.ind, '1  Induction', ['A small gold set becomes rules,', 'kept only if F1 on gold rises.']],
+                   [350, C.val, '2  Validation', ['An agent checks listings nobody labelled;', 'a person labels its doubts.']],
+                   [550, C.meta, '3  Meta', ['What worked carries', 'to the next domain.']]];
+    items.forEach(([y, c, t, sub]) => { s += Tx(880, y, t, { fs: 34, fw: 600, c }) + sub.map((l, i) => Tx(880, y + 44 + i * 36, l, { fs: 28, c: C.ink2 })).join(''); });
+    put('archC', '0 0 1664 720', s);
+  })();
+
+  // ---------- 6D · one line, three feedback loops ----------
+  (() => {
+    let s = '';
+    s += Nd(170, 380, 'Listings') + Nd(640, 382, 'Rules', ['free'], { fs: 36, c: C.ind }) + Nd(1080, 380, 'Agent', ['only the rest']) + Nd(1500, 380, 'Product tree');
+    s += Ar([[250, 370], [572, 370]]) + Ar([[710, 370], [1015, 370]]) + Ar([[1148, 370], [1408, 370]]);
+    // loop 1: a loop over the rules
+    s += Cu([612, 330], [470, 110], [810, 110], [668, 332], C.ind);
+    s += Tx(640, 70, 'Loop 1 · Induction', { a: 'middle', fs: 26, fw: 600, c: C.ind }) + Tx(830, 200, 'gold set → rules', { fs: 22, c: C.ind });
+    // loop 2: from the output back to the rules
+    s += Cu([1500, 405], [1500, 660], [640, 660], [640, 438], C.val);
+    s += Tx(1070, 660, 'Loop 2 · Validation', { a: 'middle', fs: 26, fw: 600, c: C.val }) + Tx(1070, 694, 'doubts on unlabelled listings → new labels', { a: 'middle', fs: 22, c: C.val });
+    // loop 3: out to the next domain
+    s += Ar([[1500, 342], [1500, 190]], C.meta, { w: 4 }) + Nd(1500, 160, 'Next domain', null, { c: C.meta });
+    s += Tx(1520, 280, 'Loop 3 · Meta', { fs: 22, fw: 600, c: C.meta }) + Tx(1520, 306, 'lessons', { fs: 20, c: C.meta });
+    put('archD', '0 0 1664 720', s);
+  })();
+
+  // ---------- 6F · who does what ----------
+  (() => {
+    const cols = [['Place listings', C.ink], ['Loop 1 · Induction', C.ind], ['Loop 2 · Validation', C.val], ['Loop 3 · Meta', C.meta]];
     const X0 = 250, CW = 353, rows = [['Code', 'free, testable'], ['Agents', 'paid per call'], ['A person', 'decides what is true']];
-    const RY = [80, 290, 500], RH = 200;
+    const RY = [80, 290, 500];
     const cells = [
-      [['Parse, brand, registry', 'and lattice settle', 'most listings'], ['Gate keeps a rule only', 'if F1 on sealed gold', 'rises'], ['Freezes each round as', 'a validation set'], ['Keeps what worked,', 'with its scope']],
-      [['The cheapest agent', "settles what's left"], ['Reads the errors on', 'gold, proposes', 'one rule'], ['Labels fresh listings', 'blind, flags', 'disagreements'], ["Starts the next domain's", 'induction from', 'the lessons']],
-      [[], ['Labels the gold set', 'by hand'], ['Settles each', 'disagreement, teaches', 'the validator'], []],
+      [['Rules settle', 'most listings'], ['Gate keeps a rule only', 'if F1 on gold rises'], ['Freezes each round as', 'a validation set'], ['Keeps what worked,', 'with its scope']],
+      [['The cheapest agent', "settles what's left"], ['Reads the errors,', 'proposes one rule'], ['Checks listings nobody', 'labelled, flags doubts'], ["Starts the next domain", 'from the lessons']],
+      [[], ['Labels the gold set'], ['Labels what the', 'validator flags'], []],
     ];
     let s = '';
-    cols.forEach(([t, c], j) => { const x = X0 + j * CW; s += `<rect x="${x + 12}" y="0" width="${CW - 24}" height="4" fill="${c}"/>` + Tx(x + 12, 46, t, { fs: 26, fw: 600, c: C.ink }); });
+    cols.forEach(([t, c], j) => { s += Tx(X0 + j * CW + 12, 46, t, { fs: 26, fw: 600, c }); });
     rows.forEach(([t, sub], i) => {
       s += `<line x1="0" x2="1664" y1="${RY[i]}" y2="${RY[i]}" stroke="${C.line}" stroke-width="2"/>`;
-      s += Tx(0, RY[i] + 52, t, { fs: 28, fw: 600, c: C.ink }) + Tx(0, RY[i] + 84, sub, { fs: 20 });
-      cells[i].forEach((lines, j) => { lines.forEach((l, k) => { s += Tx(X0 + j * CW + 12, RY[i] + 52 + k * 33, l, { fs: 24, c: C.ink2 }); }); });
+      s += Tx(0, RY[i] + 56, t, { fs: 30, fw: 600, c: C.ink }) + Tx(0, RY[i] + 90, sub, { fs: 20 });
+      cells[i].forEach((lines, j) => { lines.forEach((l, k) => { s += Tx(X0 + j * CW + 12, RY[i] + 56 + k * 36, l, { fs: 27, c: C.ink2 }); }); });
     });
-    // the flow: a person labels gold -> an agent proposes -> code gates -> rules place listings
-    const ix = X0 + CW + CW - 40;
-    s += Ar([[ix, 620], [ix, 492]], C.ind) + Ar([[ix, 410], [ix, 284]], C.ind);
-    s += Ar([[X0 + CW + 4, 140], [X0 + CW - 20, 140]], C.ind);
-    // validation: agent flags -> person settles -> new gold
-    const vx = X0 + 3 * CW - 40;
-    s += Ar([[vx, 410], [vx, 494]], C.val);
-    s += Ar([[X0 + 2 * CW + 4, 640], [X0 + 2 * CW - 20, 640]], C.val) + Tx(X0 + 2 * CW - 30, 676, 'new gold', { fs: 18, a: 'end', c: C.val });
-    put('archC', '0 0 1664 700', s);
+    put('archF', '0 0 1664 720', s);
   })();
 
   // ---------- line charts ----------
-  // o: { w, h, xs: labels, ymin, ymax, ticks, fmt, series: [{ v, c, label, w, op }], ph: 'text' when there is no data }
   function chart(id, o) {
-    const w = o.w || 900, h = o.h || 520, L = o.l || 80, Rr = o.r || 200, T = 20, Bm = 60;
+    const w = o.w || 1500, h = o.h || 560, L = o.l || 90, Rr = o.r || 220, T = 20, Bm = 60;
     const n = o.xs.length, x = i => L + (w - L - Rr) * (n === 1 ? .5 : i / (n - 1));
     const y = v => T + (h - T - Bm) * (1 - (v - o.ymin) / (o.ymax - o.ymin));
     let s = '';
     if (o.ph) {
       s += `<rect x="${L}" y="${T}" width="${w - L - Rr}" height="${h - T - Bm}" rx="10" fill="none" stroke="${C.line}" stroke-width="2" stroke-dasharray="10 9"/>`;
-      s += Tx(L + (w - L - Rr) / 2, T + (h - T - Bm) / 2 + 8, o.ph, { a: 'middle', fs: 24, c: C.faint });
+      s += Tx(L + (w - L - Rr) / 2, T + (h - T - Bm) / 2 + 9, o.ph, { a: 'middle', fs: 26, c: C.faint });
     } else {
       (o.ticks || []).forEach(t => { s += `<line x1="${L}" x2="${w - Rr}" y1="${y(t)}" y2="${y(t)}" stroke="${C.grid}" stroke-width="2"/>` + Tx(L - 14, y(t) + 7, o.fmt(t), { a: 'end', fs: 20, c: C.faint }); });
       o.series.forEach(sr => {
         const pts = sr.v.map((v, i) => v == null ? null : [x(i), y(v)]);
         let d = '', pen = false;
         pts.forEach(p => { if (!p) { pen = false; return; } d += (pen ? 'L' : 'M') + p[0].toFixed(1) + ' ' + p[1].toFixed(1); pen = true; });
-        s += `<path d="${d}" fill="none" stroke="${sr.c}" stroke-width="${sr.w || 4}" stroke-linejoin="round" stroke-linecap="round" opacity="${sr.op || 1}"${sr.dash ? ' stroke-dasharray="10 8"' : ''}/>`;
-        if (!sr.thin) pts.forEach(p => { if (p) s += `<circle cx="${p[0]}" cy="${p[1]}" r="7" fill="${sr.c}" stroke="#fff" stroke-width="2"/>`; });
-        if (sr.label) { const li = pts.map((p, i) => p ? i : -1).filter(i => i >= 0).pop(); const p = pts[li];
-          s += Tx(p[0] + 18, p[1] + 8 + (sr.dy || 0), sr.label, { fs: 24, fw: 600, c: C.ink }); }
-        if (sr.notes) sr.notes.forEach((t, i) => { if (t && pts[i]) s += Tx(pts[i][0], pts[i][1] - 18, esc(t), { a: 'middle', fs: 17, c: C.mute }); });
+        s += `<path d="${d}" fill="none" stroke="${sr.c}" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>`;
+        pts.forEach(p => { if (p) s += `<circle cx="${p[0]}" cy="${p[1]}" r="8" fill="${sr.c}" stroke="#fff" stroke-width="2"/>`; });
+        if (sr.label) { const li = pts.map((p, i) => p ? i : -1).filter(i => i >= 0).pop(), p = pts[li];
+          s += Tx(p[0] + 20, p[1] + 9, sr.label, { fs: 26, fw: 600, c: C.ink }); }
+        if (sr.notes) sr.notes.forEach((t, i) => { if (t && pts[i]) s += Tx(pts[i][0], pts[i][1] - 22, esc(t), { a: 'middle', fs: 20, c: C.mute }); });
       });
     }
-    o.xs.forEach((t, i) => { s += Tx(x(i), h - Bm + 40, t, { a: 'middle', fs: 20, c: C.mute }); });
+    o.xs.forEach((t, i) => { s += Tx(x(i), h - Bm + 42, t, { a: 'middle', fs: 22, c: C.mute }); });
     put(id, `0 0 ${w} ${h}`, s);
   }
-  const mean = rows => rows[0].map((_, i) => rows.reduce((a, r) => a + r[i], 0) / rows.length);
-
-  // 2 · pe2: the judge against the owner's labels
-  chart('pe2', { w: 1100, h: 560, r: 260, xs: ['start', 'round 1', 'round 2', 'round 3', 'round 4'], ymin: 76, ymax: 92, ticks: [80, 85, 90], fmt: t => t + '%',
-    series: [
-      ...PE2.judge.map(v => ({ v, c: C.val, w: 2, op: .18, thin: true })),
-      ...PE2.owner.map(v => ({ v, c: C.ink, w: 2, op: .12, thin: true })),
-      { v: mean(PE2.judge), c: C.val, label: 'LLM judge ' + Math.round(mean(PE2.judge)[4]) + '%' },
-      { v: mean(PE2.owner), c: C.ink, label: "Owner's labels " + Math.round(mean(PE2.owner)[4]) + '%' },
-    ] });
+  const ticks01 = lo => [lo, (lo + 1) / 2, 1].map(v => +v.toFixed(2));
 
   // 8 · Figure A
+  const rounds = R.A && R.A.rounds && R.A.rounds.length ? R.A.rounds : null;
   if (rounds) {
-    const xs = rounds.map((_, i) => i ? 'round ' + i : 'start'), kept = rounds.map(r => r.kept || null);
-    const fv = rounds.map(r => r.f1), cv = rounds.map(r => r.cost);
-    const fmin = Math.max(0, Math.floor(Math.min(...fv.filter(v => v != null)) * 10) / 10 - .1);
-    chart('figA1', { w: 820, h: 520, r: 120, xs, ymin: fmin, ymax: 1, ticks: [fmin, (fmin + 1) / 2, 1].map(v => +v.toFixed(2)), fmt: v => v.toFixed(2),
-      series: [{ v: fv, c: C.ind, label: V['A.f1.last'], notes: kept }] });
-    const ao = R.agentOnly && R.agentOnly.cost, cmax = Math.max(ao || 0, ...cv.filter(v => v != null)) * 1.1;
-    chart('figA2', { w: 820, h: 520, r: 160, xs, ymin: 0, ymax: cmax, ticks: [0, cmax / 2, cmax].map(v => +v.toFixed(2)), fmt: usd,
-      series: [...(ao ? [{ v: xs.map(() => ao), c: C.faint, w: 2, thin: true, dash: true, label: 'agent alone' }] : []), { v: cv, c: C.ind, label: V['A.cost.last'] }] });
-  } else {
-    chart('figA1', { w: 820, h: 520, r: 40, xs: ['start', 'round 1', 'round 2', 'round 3', '…'], ph: "waiting for today's run" });
-    chart('figA2', { w: 820, h: 520, r: 40, xs: ['start', 'round 1', 'round 2', 'round 3', '…'], ph: "waiting for today's run" });
-  }
+    const fv = rounds.map(r => r.f1), lo = Math.max(0, Math.floor(Math.min(...fv.filter(v => v != null)) * 10) / 10 - .1);
+    chart('figA', { xs: rounds.map((_, i) => i ? 'round ' + i : 'start'), ymin: lo, ymax: 1, ticks: ticks01(lo), fmt: f1,
+      series: [{ v: fv, c: C.ind, label: f1(fv[fv.length - 1]), notes: rounds.map(r => r.kept ? '+ ' + r.kept : null) }] });
+  } else chart('figA', { r: 40, xs: ['start', 'rule 1', 'rule 2', 'rule 3', '…'], ph: "waiting for today's run" });
 
   // 9 · Figure B
-  const sets = ['gold', 'validation set 1', 'validation set 2'];
+  const sets = ['gold', 'checks 1', 'checks 2'];
   if (R.B && R.B.R1) {
-    const r1 = ['gold', 'V1', 'V2'].map(k => R.B.R1[k] ?? null), r2 = R.B.R2 ? ['gold', 'V1', 'V2'].map(k => R.B.R2[k] ?? null) : null;
+    const g = rs => ['gold', 'V1', 'V2'].map(k => rs[k] ?? null), r1 = g(R.B.R1), r2 = R.B.R2 ? g(R.B.R2) : null;
     const all = [...r1, ...(r2 || [])].filter(v => v != null), lo = Math.max(0, Math.floor(Math.min(...all) * 10) / 10 - .1);
-    chart('figB', { w: 900, h: 520, r: 200, xs: sets, ymin: lo, ymax: 1, ticks: [lo, (lo + 1) / 2, 1].map(v => +v.toFixed(2)), fmt: v => v.toFixed(2),
-      series: [{ v: r1, c: C.ink, label: 'rule set 1' }, ...(r2 ? [{ v: r2, c: C.ind, label: 'rule set 2' }] : [])] });
-  } else chart('figB', { w: 900, h: 520, r: 40, xs: sets, ph: "waiting for today's run" });
+    chart('figB', { w: 900, h: 560, r: 210, xs: sets, ymin: lo, ymax: 1, ticks: ticks01(lo), fmt: f1,
+      series: [{ v: r1, c: C.ink, label: 'rule set 1' }, ...(r2 ? [{ v: r2, c: C.val, label: 'rule set 2' }] : [])] });
+  } else chart('figB', { w: 900, h: 560, r: 40, xs: sets, ph: "waiting for today's run" });
+
+  // 11 · results table
+  (() => {
+    const D = [['fragrance', 'Fragrance'], ['food', 'Food'], ['cars', 'Cars']];
+    const S = [['agent', 'An agent on everything'], ['loop1', 'After loop 1: rules'], ['loop2', 'After loop 2: checks'], ['loop3', "With loop 3's head start"]];
+    const cell = v => v && v.f1 != null ? `<span class="f">${f1(v.f1)}</span><span class="c">${v.cost != null ? usd(v.cost) : ''}</span>`
+                                        : `<span class="f ph">[F1]</span><span class="c ph">[$]</span>`;
+    const fin = R.final || {};
+    document.getElementById('res').innerHTML = `<tr><th></th>${D.map(([, n]) => `<th>${n}</th>`).join('')}</tr>` +
+      S.map(([k, n]) => `<tr><td>${n}</td>${D.map(([d]) => `<td>${cell(fin[d] && fin[d][k])}</td>`).join('')}</tr>`).join('');
+  })();
 
   // ---------- trees: connect each [data-p] to its parent ----------
   function linkTrees() {
@@ -762,6 +665,45 @@ found_by: validation/V2</pre>
       });
       svg.innerHTML = `<path d="${d}" fill="none" stroke="${C.wire}" stroke-width="2" stroke-linejoin="round"/>`;
     });
+  }
+
+  // ---------- the point cloud: Gaussian clusters of small squares, kept clear of anything marked .clear ----------
+  const PAL = { pink: ['#E0457B', '#EA6F96', '#C7336A'], teal: ['#12A07F', '#2DBE98', '#0A7C63'],
+                gold: ['#F0A71B', '#E9B84E', '#D58F0A'], blue: ['#3C7FE6', '#5E9CF1', '#2462C8'] };
+  const LAYOUT = { scatter: [1300, 0, 0, 1920, 1080], clusters: [
+    ['pink', 820, 30, 150, 95, 4200], ['teal', 1850, 420, 190, 300, 7200], ['gold', 280, 880, 330, 220, 1900, .32], ['blue', 960, 1075, 120, 75, 2800]] };
+  function rng(a) { return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+  function cloud(svg) {
+    const slide = svg.closest('.slide'), Rn = rng(+svg.dataset.seed || 1);
+    svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+    const g = () => { let u = 0, v = 0; while (!u) u = Rn(); while (!v) v = Rn(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); };
+    const keep = [...slide.querySelectorAll('.clear')].map(el => {
+      let x = 0, y = 0, e = el;
+      while (e && e !== slide) { x += e.offsetLeft; y += e.offsetTop; e = e.offsetParent; }
+      return [x, y, x + el.offsetWidth, y + el.offsetHeight];
+    });
+    const buckets = new Map(), alphas = [.45, .7, .95];
+    const add = (x, y, sz, col, a) => {
+      if (x < -12 || y < -12 || x > W + 12 || y > H + 12) return;
+      for (const [x0, y0, x1, y1] of keep) {
+        const dd = Math.hypot(Math.max(x0 - x, 0, x - x1), Math.max(y0 - y, 0, y - y1));
+        if (dd < 26 || (dd < 96 && Rn() > (dd - 26) / 70)) return;
+      }
+      const key = col + '|' + a;
+      if (!buckets.has(key)) buckets.set(key, []);
+      buckets.get(key).push(`M${x.toFixed(1)} ${y.toFixed(1)}h${sz}v${sz}h-${sz}z`);
+    };
+    for (const [name, cx, cy, sx, sy, n, big = .03] of LAYOUT.clusters) {
+      const shades = PAL[name];
+      for (let i = 0; i < n; i++) {
+        const wide = Rn() < .14 ? 2.3 : 1, sz = (Rn() < big ? 6 + Rn() * 6 : 2.4 + Rn() * 2.2).toFixed(1);
+        add(cx + g() * sx * wide, cy + g() * sy * wide, sz, shades[(Rn() * 3) | 0], alphas[(Rn() * 3) | 0]);
+      }
+    }
+    const [n, x0, y0, x1, y1] = LAYOUT.scatter, allc = Object.values(PAL).flat();
+    for (let i = 0; i < n; i++) add(x0 + Rn() * (x1 - x0), y0 + Rn() * (y1 - y0), (2.4 + Rn() * 3).toFixed(1), allc[(Rn() * allc.length) | 0], alphas[(Rn() * 3) | 0]);
+    svg.innerHTML = [...buckets].map(([k, arr]) => { const [c, a] = k.split('|'); return `<path fill="${c}" fill-opacity="${a}" d="${arr.join('')}"/>`; }).join('');
   }
 
   // ---------- frames, page numbers, variant tags ----------
@@ -781,8 +723,9 @@ found_by: validation/V2</pre>
     }
     return f;
   });
-  linkTrees();
-  if (document.fonts) document.fonts.ready.then(linkTrees);
+  const layout = () => { linkTrees(); document.querySelectorAll('svg.cloud').forEach(cloud); };
+  layout();
+  if (document.fonts) document.fonts.ready.then(layout);
 
   const fit = () => stage.style.setProperty('--s', Math.min(innerWidth / W, innerHeight / H));
   addEventListener('resize', fit); fit();
