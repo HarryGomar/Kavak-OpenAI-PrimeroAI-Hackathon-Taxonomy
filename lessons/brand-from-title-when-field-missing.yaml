@@ -1,0 +1,20 @@
+# Written by taxo.distill from memory/rounds/. Edit the claim or kind; the record is regenerated.
+id: lesson/brand-from-title-when-field-missing
+kind: rule_shape
+scope: null
+status: dropped
+claim: auto-recognize_singleton_title_brands
+record:
+- domain: electronics
+  loop: A
+  round: 9
+  branch: electronics-on-main
+  author: Diego Mendez
+  keep: false
+  decided_on: sealed
+  better: null
+  worse: null
+  delta_exact: -0.02
+  delta_harm: 0.02
+  delta_agent: null
+  record: a62e36bb4d

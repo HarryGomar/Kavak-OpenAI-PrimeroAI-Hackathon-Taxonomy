@@ -1,0 +1,20 @@
+# Written by taxo.distill from memory/rounds/. Edit the claim or kind; the record is regenerated.
+id: lesson/version-names-carry-the-gearbox
+kind: rule_shape
+scope: domain:cars
+status: active
+claim: version-label-gearbox
+record:
+- domain: cars
+  loop: A
+  round: 2
+  branch: cars-pipeline
+  author: Diego Mendez
+  keep: true
+  decided_on: dev+sealed
+  better: null
+  worse: null
+  delta_exact: 0.0572
+  delta_harm: -0.0286
+  delta_agent: null
+  record: 2167b54376

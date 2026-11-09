@@ -1,0 +1,20 @@
+# Written by taxo.distill from memory/rounds/. Edit the claim or kind; the record is regenerated.
+id: lesson/typo-snaps-to-catalogue-spelling
+kind: rule_shape
+scope: domain:cars
+status: active
+claim: trim-typo-to-catalogue
+record:
+- domain: cars
+  loop: A
+  round: 2
+  branch: cars-pipeline
+  author: Diego Mendez
+  keep: true
+  decided_on: dev+sealed
+  better: null
+  worse: null
+  delta_exact: 0.0095
+  delta_harm: -0.0095
+  delta_agent: null
+  record: 525ac3c7ec

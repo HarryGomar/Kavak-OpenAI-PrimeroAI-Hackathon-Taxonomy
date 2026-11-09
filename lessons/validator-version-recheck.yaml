@@ -1,0 +1,20 @@
+# Written by taxo.distill from memory/rounds/. Edit the claim or kind; the record is regenerated.
+id: lesson/validator-version-recheck
+kind: validator_check
+scope: null
+status: dropped
+claim: validator v2 vs v1
+record:
+- domain: electronics
+  loop: B
+  round: 13
+  branch: electronics-on-main
+  author: Diego Mendez
+  keep: false
+  decided_on: sealed
+  better: null
+  worse: null
+  delta_exact: -0.008
+  delta_harm: 0.008
+  delta_agent: null
+  record: 8fd3eae6dc

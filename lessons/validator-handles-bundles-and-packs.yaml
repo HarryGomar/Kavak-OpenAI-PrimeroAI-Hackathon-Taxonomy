@@ -1,0 +1,21 @@
+# Written by taxo.distill from memory/rounds/. Edit the claim or kind; the record is regenerated.
+id: lesson/validator-handles-bundles-and-packs
+kind: validator_check
+scope: domain:electronics
+status: active
+claim: The validator places bundles, kits, multipacks and refurbished items on the product they contain; extras never change
+  the model.
+record:
+- domain: electronics
+  loop: B
+  round: 12
+  branch: electronics-on-main
+  author: Diego Mendez
+  keep: true
+  decided_on: sealed
+  better: null
+  worse: null
+  delta_exact: 0.08
+  delta_harm: -0.02
+  delta_agent: null
+  record: '8104957221'

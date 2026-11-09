@@ -1,0 +1,20 @@
+# Written by taxo.distill from memory/rounds/. Edit the claim or kind; the record is regenerated.
+id: lesson/audience-for-everyone-n-a-loop-b-v2
+kind: null
+scope: null
+status: dropped
+claim: audience += for everyone, n a (Loop B V2)
+record:
+- domain: fragrance
+  loop: A
+  round: 8
+  branch: claude/fragrance-run-d587d6
+  author: Rafael Harry Gomar Dawson
+  keep: false
+  decided_on: sealed
+  better: 1
+  worse: 0
+  delta_exact: 0.001
+  delta_harm: 0.0
+  delta_agent: 0.0
+  record: fec0225989

@@ -1,0 +1,20 @@
+# Written by taxo.distill from memory/rounds/. Edit the claim or kind; the record is regenerated.
+id: lesson/brand-site-rung
+kind: null
+scope: domain:fragrance
+status: active
+claim: brand_site rung
+record:
+- domain: fragrance
+  loop: A
+  round: 3
+  branch: claude/fragrance-run-d587d6
+  author: Rafael Harry Gomar Dawson
+  keep: true
+  decided_on: sealed
+  better: 313
+  worse: 45
+  delta_exact: 0.113
+  delta_harm: 0.017
+  delta_agent: -0.113
+  record: 3774f7a760

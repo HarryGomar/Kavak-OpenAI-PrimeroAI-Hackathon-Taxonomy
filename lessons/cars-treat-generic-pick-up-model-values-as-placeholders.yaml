@@ -1,0 +1,20 @@
+# Written by taxo.distill from memory/rounds/. Edit the claim or kind; the record is regenerated.
+id: lesson/cars-treat-generic-pick-up-model-values-as-placeholders
+kind: rule_shape
+scope: null
+status: dropped
+claim: Treat generic Pick Up model values as placeholders
+record:
+- domain: cars
+  loop: A
+  round: 4
+  branch: cars-pipeline
+  author: Diego Mendez
+  keep: false
+  decided_on: silver+dev
+  better: null
+  worse: null
+  delta_exact: 0.0
+  delta_harm: 0.0
+  delta_agent: null
+  record: 491d4cb585

@@ -1,0 +1,20 @@
+# Written by taxo.distill from memory/rounds/. Edit the claim or kind; the record is regenerated.
+id: lesson/settle-short-single-names-loop-b-v1
+kind: null
+scope: domain:fragrance
+status: active
+claim: settle short single names (Loop B V1)
+record:
+- domain: fragrance
+  loop: A
+  round: 6
+  branch: claude/fragrance-run-d587d6
+  author: Rafael Harry Gomar Dawson
+  keep: true
+  decided_on: sealed
+  better: 93
+  worse: 33
+  delta_exact: 0.029
+  delta_harm: 0.014
+  delta_agent: -0.07
+  record: e05fb55fb1

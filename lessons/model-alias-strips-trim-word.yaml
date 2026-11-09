@@ -1,0 +1,46 @@
+# Written by taxo.distill from memory/rounds/. Edit the claim or kind; the record is regenerated.
+id: lesson/model-alias-strips-trim-word
+kind: rule_shape
+scope: domain:cars
+status: active
+claim: Normalize Mini Cooper Convertible to Cooper
+record:
+- domain: cars
+  loop: A
+  round: 3
+  branch: cars-pipeline
+  author: Diego Mendez
+  keep: true
+  decided_on: dev+sealed
+  better: null
+  worse: null
+  delta_exact: 0.0052
+  delta_harm: 0.0
+  delta_agent: null
+  record: 919796921a
+- domain: cars
+  loop: A
+  round: 4
+  branch: cars-pipeline
+  author: Diego Mendez
+  keep: false
+  decided_on: silver+dev
+  better: null
+  worse: null
+  delta_exact: 0.0
+  delta_harm: 0.0
+  delta_agent: null
+  record: 429f0657ab
+- domain: cars
+  loop: A
+  round: 4
+  branch: cars-pipeline
+  author: Diego Mendez
+  keep: false
+  decided_on: silver+dev
+  better: null
+  worse: null
+  delta_exact: 0.0
+  delta_harm: 0.0
+  delta_agent: null
+  record: 9b8d39b03e

@@ -1,0 +1,33 @@
+# Written by taxo.distill from memory/rounds/. Edit the claim or kind; the record is regenerated.
+id: lesson/validator-checklist-from-gold-mistakes
+kind: validator_check
+scope: null
+status: dropped
+claim: validator-checklist-from-mistakes
+record:
+- domain: cars
+  loop: B
+  round: 2
+  branch: cars-pipeline
+  author: Diego Mendez
+  keep: false
+  decided_on: dev
+  better: null
+  worse: null
+  delta_exact: 0.0101
+  delta_harm: 0.0101
+  delta_agent: null
+  record: 0dd48424b0
+- domain: cars
+  loop: B
+  round: 3
+  branch: cars-pipeline
+  author: Diego Mendez
+  keep: false
+  decided_on: dev
+  better: null
+  worse: null
+  delta_exact: 0.04
+  delta_harm: 0.0228
+  delta_agent: null
+  record: 7460ec6807

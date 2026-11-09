@@ -1,0 +1,34 @@
+# Written by taxo.distill from memory/rounds/. Edit the claim or kind; the record is regenerated.
+id: lesson/validator-reads-structured-fields
+kind: validator_check
+scope: global
+status: active
+claim: The validator must read the listing's own structured fields (model / version / brand fields), not only the title; it
+  was the largest validator gain in both electronics (v1->v3) and cars (v2).
+record:
+- domain: cars
+  loop: B
+  round: 1
+  branch: cars-pipeline
+  author: Diego Mendez
+  keep: true
+  decided_on: dev
+  better: null
+  worse: null
+  delta_exact: 0.0
+  delta_harm: null
+  delta_agent: null
+  record: 19d4f4b742
+- domain: electronics
+  loop: B
+  round: 8
+  branch: electronics-on-main
+  author: Diego Mendez
+  keep: true
+  decided_on: sealed
+  better: null
+  worse: null
+  delta_exact: 0.222
+  delta_harm: 0.0
+  delta_agent: null
+  record: be9ff5b7f6

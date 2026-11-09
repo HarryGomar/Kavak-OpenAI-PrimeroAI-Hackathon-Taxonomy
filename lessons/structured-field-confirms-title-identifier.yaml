@@ -1,0 +1,34 @@
+# Written by taxo.distill from memory/rounds/. Edit the claim or kind; the record is regenerated.
+id: lesson/structured-field-confirms-title-identifier
+kind: rule_shape
+scope: domain:electronics
+status: active
+claim: A structured field (model / part number) confirms an identifier the title also states, even when the title states it
+  late (after 'with ...'); title-only tokens are weaker.
+record:
+- domain: electronics
+  loop: A
+  round: 4
+  branch: electronics-on-main
+  author: Diego Mendez
+  keep: true
+  decided_on: sealed
+  better: null
+  worse: null
+  delta_exact: 0.0
+  delta_harm: -0.111
+  delta_agent: null
+  record: b2b19f4fb3
+- domain: electronics
+  loop: A
+  round: 5
+  branch: electronics-on-main
+  author: Diego Mendez
+  keep: false
+  decided_on: sealed
+  better: null
+  worse: null
+  delta_exact: 0.0
+  delta_harm: 0.111
+  delta_agent: null
+  record: 55587c9dcf

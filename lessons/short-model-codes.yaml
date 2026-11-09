@@ -1,0 +1,33 @@
+# Written by taxo.distill from memory/rounds/. Edit the claim or kind; the record is regenerated.
+id: lesson/short-model-codes
+kind: rule_shape
+scope: domain:cars
+status: active
+claim: Short model codes (H17, 'Jac 2') need a context guard before they are used as models; allowing them blindly hurts precision.
+record:
+- domain: electronics
+  loop: A
+  round: 6
+  branch: electronics-on-main
+  author: Diego Mendez
+  keep: false
+  decided_on: sealed
+  better: null
+  worse: null
+  delta_exact: 0.0
+  delta_harm: 0.0
+  delta_agent: null
+  record: aebe2de184
+- domain: cars
+  loop: A
+  round: 3
+  branch: cars-pipeline
+  author: Diego Mendez
+  keep: true
+  decided_on: dev+sealed
+  better: null
+  worse: null
+  delta_exact: 0.0103
+  delta_harm: -0.0052
+  delta_agent: null
+  record: ce7a64b656

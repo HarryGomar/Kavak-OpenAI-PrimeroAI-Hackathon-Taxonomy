@@ -1,0 +1,72 @@
+# Written by taxo.distill from memory/rounds/. Edit the claim or kind; the record is regenerated.
+id: lesson/sibling-part-numbers-stay-apart
+kind: rule_shape
+scope: null
+status: dropped
+claim: Codes that differ only in their last characters (CE250A / CE250X) are different products unless the listing says otherwise.
+record:
+- domain: cars
+  loop: A
+  round: 1
+  branch: cars-pipeline
+  author: Diego Mendez
+  keep: false
+  decided_on: dev
+  better: null
+  worse: null
+  delta_exact: null
+  delta_harm: null
+  delta_agent: null
+  record: 99121f2705
+- domain: electronics
+  loop: A
+  round: 7
+  branch: electronics-on-main
+  author: Diego Mendez
+  keep: false
+  decided_on: sealed
+  better: null
+  worse: null
+  delta_exact: 0.0
+  delta_harm: 0.0
+  delta_agent: null
+  record: c39e630fda
+- domain: cars
+  loop: A
+  round: 2
+  branch: cars-pipeline
+  author: Diego Mendez
+  keep: false
+  decided_on: dev
+  better: null
+  worse: null
+  delta_exact: -0.0095
+  delta_harm: 0.0095
+  delta_agent: null
+  record: 87a7dc4448
+- domain: cars
+  loop: A
+  round: 3
+  branch: cars-pipeline
+  author: Diego Mendez
+  keep: false
+  decided_on: dev
+  better: null
+  worse: null
+  delta_exact: -0.0051
+  delta_harm: 0.0052
+  delta_agent: null
+  record: aca2be18ea
+- domain: cars
+  loop: A
+  round: 3
+  branch: cars-pipeline
+  author: Diego Mendez
+  keep: false
+  decided_on: dev
+  better: null
+  worse: null
+  delta_exact: -0.0052
+  delta_harm: 0.0052
+  delta_agent: null
+  record: 1a2d8334c3

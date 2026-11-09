@@ -1,0 +1,20 @@
+# Written by taxo.distill from memory/rounds/. Edit the claim or kind; the record is regenerated.
+id: lesson/make-rebrand-by-model-year
+kind: rule_shape
+scope: domain:cars
+status: active
+claim: brand/rebrand-by-year
+record:
+- domain: cars
+  loop: A
+  round: 1
+  branch: cars-pipeline
+  author: Diego Mendez
+  keep: true
+  decided_on: dev-retro
+  better: null
+  worse: null
+  delta_exact: 0.0103
+  delta_harm: -0.0104
+  delta_agent: null
+  record: 709992b714

@@ -1,0 +1,20 @@
+# Written by taxo.distill from memory/rounds/. Edit the claim or kind; the record is regenerated.
+id: lesson/typed-child-when-the-form-differs
+kind: null
+scope: null
+status: dropped
+claim: typed child when the form differs
+record:
+- domain: fragrance
+  loop: A
+  round: 4
+  branch: claude/fragrance-run-d587d6
+  author: Rafael Harry Gomar Dawson
+  keep: false
+  decided_on: dev
+  better: null
+  worse: null
+  delta_exact: null
+  delta_harm: null
+  delta_agent: null
+  record: 29dd327da5

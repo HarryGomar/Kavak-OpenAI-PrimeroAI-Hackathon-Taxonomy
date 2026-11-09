@@ -1,0 +1,59 @@
+# Written by taxo.distill from memory/rounds/. Edit the claim or kind; the record is regenerated.
+id: lesson/spec-tokens-are-not-model-names
+kind: rule_shape
+scope: domain:electronics
+status: active
+claim: Sizes and specs (capacities like 64gb, focal ranges like 18-55, displacement, gearbox) are never model or version names.
+record:
+- domain: electronics
+  loop: A
+  round: 11
+  branch: electronics-on-main
+  author: Diego Mendez
+  keep: true
+  decided_on: sealed
+  better: null
+  worse: null
+  delta_exact: 0.0
+  delta_harm: -0.02
+  delta_agent: null
+  record: 6a174524cb
+- domain: electronics
+  loop: A
+  round: 14
+  branch: electronics-on-main
+  author: Diego Mendez
+  keep: false
+  decided_on: sealed
+  better: null
+  worse: null
+  delta_exact: 0.0
+  delta_harm: -0.002
+  delta_agent: null
+  record: 3a42d62bdf
+- domain: electronics
+  loop: A
+  round: 15
+  branch: electronics-on-main
+  author: Diego Mendez
+  keep: true
+  decided_on: sealed
+  better: null
+  worse: null
+  delta_exact: 0.002
+  delta_harm: -0.002
+  delta_agent: null
+  record: 4e92b5dc43
+- domain: electronics
+  loop: A
+  round: 16
+  branch: electronics-on-main
+  author: Diego Mendez
+  keep: false
+  decided_on: sealed
+  better: null
+  worse: null
+  delta_exact: -0.004
+  delta_harm: -0.002
+  delta_agent: null
+  record: 004dda35fe
