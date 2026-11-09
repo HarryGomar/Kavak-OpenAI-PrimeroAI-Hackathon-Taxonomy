@@ -7,10 +7,10 @@ reject rate drifting (a validator that rejects everything catches everything).
 """
 from __future__ import annotations
 
-from agents import Agent
 from pydantic import BaseModel, Field
 
-from taxo.core import config
+from taxo.roles.runtime import CliAgent
+
 
 
 class SetupChange(BaseModel):
@@ -28,6 +28,6 @@ lines, compare the stated size with the product's sizes) over general advice. Ne
 step: the step must work on listings you have not seen."""
 
 
-def make_improver(domain: str) -> Agent:
-    return Agent(name=f"improver-{domain}", instructions=INSTRUCTIONS.format(domain=domain),
-                 model=config.model("improver"), output_type=SetupChange)
+def make_improver(domain: str) -> CliAgent:
+    return CliAgent(name=f"improver-{domain}", instructions=INSTRUCTIONS.format(domain=domain),
+                    domain=domain, output_type=SetupChange)
