@@ -176,3 +176,18 @@ def test_url_rung():
     assert b.url("https://perfumania.com/products/gucci-guilty-pour-homme-by-gucci-for-men-eau-de-parfum-spray") == "gucci"
     assert b.find(parse("Daydream Perfume"), url="https://perfumania.com/products/daydream-by-ghost-for-women") == ("ghost", "url")
     assert b.url("https://example.com/p/123") is None
+
+
+def test_validators_built_at_once_share_their_tools():
+    """Two A/B arms build validators in parallel; each tool must stay servable by the Codex runner."""
+    from concurrent.futures import ThreadPoolExecutor
+
+    from taxo.core.codex import _tool_ref
+    from taxo.roles.validator import load_setup, make_validator
+    s = load_setup("fragrance")
+    with ThreadPoolExecutor(4) as pool:
+        agents = list(pool.map(lambda _: make_validator("fragrance", s), range(4)))
+    for a in agents:
+        for t in a.tools:
+            if getattr(t, "name", "") == "brand_products":
+                assert _tool_ref(t)["attr"] == "brand_products"

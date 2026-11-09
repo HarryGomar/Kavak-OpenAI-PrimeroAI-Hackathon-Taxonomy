@@ -1,7 +1,7 @@
 """Both loops, end to end, no one in between (SPEC §5): many cheap rule rounds on silver, then one human round that
 checks the rules and improves the validator, then again.
 
-    uv run python -m taxo.loop fragrance --cycles 2 --rule-rounds 6
+    uv run python -m taxo.loop fragrance --cycles 3          per cycle: 3 rule rounds on silver, then 1 validator change
 
 One cycle:
   1. rules     taxo.climb phase on the current silver set: hill-climb vocab edits and rule on/off, gated on silver
@@ -26,6 +26,9 @@ from taxo.core.codex import Runner
 from taxo.core.config import DOMAINS_DIR, ROOT, RUNS_DIR
 from taxo.lattice.vocab import tokens
 from taxo.roles.improver import make_improver
+
+RULE_ROUNDS, VB_MISSES, VB_AB = 3, 60, 120   # per cycle: 3 rule rounds, then 1 validator change
+
 
 def _say(msg: str) -> None:
     print(msg, flush=True)
@@ -72,8 +75,16 @@ def propose_change(domain: str, misses: list[dict], log: Path) -> dict | None:
     s = validator.card(domain)
     qs = [{k: q.get(k) for k in ("id", "ask", "tools", "then")} for q in s.get("questions") or []
           if q.get("status") in ("admitted", "shadow")]
+    closed = closed_questions(domain)
     text = ("Current questions:\n" + json.dumps(qs, ensure_ascii=False, indent=0)
+            + ("\n\nClosed questions: the owner decided these. Never write a question or tool that brings them back "
+               "in any form:\n" + json.dumps(closed, ensure_ascii=False) if closed else "")
             + "\n\nTools: similar_brands, ask_person, brand_products" + (", web_search" if s.get("web") else "")
+            + "\n\nA new tool: `code` is one Python function decorated with @function_tool (imported already, with "
+              "RunContextWrapper and ValidateContext; ctx.context has .brands (all brand names) and .menus "
+              "(brand -> its known product names)). `fires_on` and `quiet_on` are JSON objects of the function's "
+              "arguments; code runs both and keeps the tool only if both run and give different results. Say in "
+              "`ask` which question uses it."
             + "\n\nMistakes (listing, the validator's answer and trace, the person's answer):\n"
             + json.dumps(misses[:30], ensure_ascii=False, indent=0))
     try:
@@ -86,9 +97,29 @@ def propose_change(domain: str, misses: list[dict], log: Path) -> dict | None:
     return change
 
 
-def apply_change(s: dict, ch: dict, origin: str) -> dict | None:
-    """A question change applied to a copy of the setup (next version); other kinds are not applied yet."""
-    if ch.get("kind") != "question" or not ch.get("question_id") or not ch.get("ask"):
+def closed_questions(domain: str) -> list[dict]:
+    f = DOMAINS_DIR / domain / "memory" / "closed_questions.yaml"
+    return (yaml.safe_load(f.read_text(encoding="utf-8")) or []) if f.exists() else []
+
+
+def reopens_closed(domain: str, ch: dict) -> str | None:
+    """The closed-question phrase a change's question text uses, if any (single words are too common to judge by)."""
+    text = f" {ch.get('ask') or ''} {ch.get('then') or ''} ".lower()
+    for q in closed_questions(domain):
+        for w in q.get("words") or []:
+            if " " in w and w.lower() in text:
+                return f"{q['question_id']}: '{w}'"
+    if " mist" in text and "preserve_product_name_tokens" in {q.get("question_id") for q in closed_questions(domain)}:
+        return "preserve_product_name_tokens: 'mist'"
+    return None
+
+
+def apply_change(s: dict, ch: dict, origin: str, domain: str = "fragrance") -> dict | None:
+    """A question change applied to a copy of the setup (next version); other kinds are not applied yet. A change that
+    brings back a closed question is refused."""
+    if not ch.get("question_id") or not ch.get("ask"):   # judged by content: the improver may mislabel the kind
+        return None
+    if reopens_closed(domain, ch):
         return None
     q = {"id": ch["question_id"], "ask": ch["ask"], "tools": ch.get("tools") or [], "then": ch.get("then"),
          "status": "admitted", "origin": origin}
@@ -120,12 +151,21 @@ def improve_validator(domain: str, cyc: int) -> dict:
         _row(domain, "B", cyc * 100 + 2, f"validator improver cycle {cyc}: nothing testable",
              {"version": v, "validator": "codex-agent", "reviewer": "pedia", "agreement": None, "change": ch})
         return {"round": v, "kept": False, "human": s, "change": ch}
+    return ab_test(domain, cyc, v, ch, cand, c) | {"human": s}
+
+
+def ab_test(domain: str, cyc: int, v: str, ch: dict, cand: dict, c: dict) -> dict:
+    """The improver's change, A/B on a fresh dev human sample: current setup vs candidate, same listings."""
+    d = RUNS_DIR / domain / "loopb"
     steps = [ch]
     ab = _next_v(domain)
     loopb.sample(domain, ab, pool="pedia-dev")
     items = [json.loads(x) for x in open(d / f"{ab}-blind.jsonl", encoding="utf-8")]
-    cur = validator.label(domain, items, d / f"{ab}-validator.log")
-    new = validator.label(domain, items, d / f"{ab}-validator-cand.log", c=cand)
+    from concurrent.futures import ThreadPoolExecutor
+    with ThreadPoolExecutor(2) as pool:   # current and candidate label the same listings at the same time
+        fa = pool.submit(validator.label, domain, items, d / f"{ab}-validator.log")
+        fb = pool.submit(validator.label, domain, items, d / f"{ab}-validator-cand.log", False, 600, cand)
+        cur, new = fa.result(), fb.result()
     (d / f"{ab}-validator.jsonl").write_text("".join(json.dumps(x, ensure_ascii=False) + "\n" for x in cur), "utf-8")
     (d / f"{ab}-validator-cand.jsonl").write_text("".join(json.dumps(x, ensure_ascii=False) + "\n" for x in new), "utf-8")
     a, b = loopb.validator_vs_pedia(domain, ab), loopb.validator_vs_pedia(domain, ab, "-cand")
@@ -155,33 +195,100 @@ def cycle(domain: str, cyc: int, silver: str, rounds: int, skip_rules: bool = Fa
     _say(f"cycle {cyc}: 2. human checkpoint")
     out["checkpoint"] = climb.checkpoint(domain, cyc)
     _say(f"  checkpoint: {out['checkpoint']}")
-    _say(f"cycle {cyc}: 3-4. human round and validator improvement")
-    out["validator"] = improve_validator(domain, cyc)
-    nxt = _next_s(domain)
-    _say(f"cycle {cyc}: 5. fresh silver set {nxt} with the current validator")
-    climb.label(domain, nxt, seed=100 + cyc)
+    _say(f"cycle {cyc}: 3-4. one validator change: human round, improver, A/B on fresh dev human rows")
+    from taxo import improve   # one iteration per cycle: 3 rule rounds, then 1 validator change
+    out["validator"] = improve.iteration(domain, cyc, VB_MISSES, VB_AB)
+    if (out["validator"] or {}).get("kept"):
+        nxt = _next_s(domain)
+        _say(f"cycle {cyc}: 5. the validator changed: fresh silver set {nxt} with it")
+        climb.label(domain, nxt, seed=100 + cyc)
+    else:   # same validator: its silver is still valid; relabelling would only cost calls
+        nxt = silver
+        _say(f"cycle {cyc}: 5. the validator is unchanged: the next cycle reuses silver {nxt}")
     out["next_silver"] = nxt
     (RUNS_DIR / domain / f"cycle{cyc}.json").write_text(json.dumps(out, indent=1, ensure_ascii=False), encoding="utf-8")
+    (RUNS_DIR / domain / f"cycle{cyc}-report.md").write_text(report(domain, cyc), encoding="utf-8")
     return out
+
+
+def report(domain: str, cyc: int) -> str:
+    """The cycle's report, built only from what the run wrote (no estimates)."""
+    R = RUNS_DIR / domain
+    c = json.loads((R / f"cycle{cyc}.json").read_text(encoding="utf-8"))
+    L = [f"# Cycle {cyc} (silver {c['silver']})", ""]
+    rounds = json.loads((R / "silver" / f"phase{cyc}-rounds.json").read_text(encoding="utf-8"))         if (R / "silver" / f"phase{cyc}-rounds.json").exists() else []
+    kept = c.get("rules") or []
+    start = next((ln for ln in (R / "silver" / f"phase{cyc}-start.txt").read_text(encoding="utf-8").splitlines()), "")         if (R / "silver" / f"phase{cyc}-start.txt").exists() else ""
+    L += ["## Rule phase (gated on silver)", f"- start: {start}",
+          f"- end: silver exact {kept[-1]['silver_exact']} harm {kept[-1]['silver_harm']}" if kept else "- end: unchanged",
+          f"- proposer calls: {sum(1 for r in rounds if r.get('proposal') is not None)} of {len(rounds)} rounds"]
+    for r in rounds:
+        p = r.get("proposal") or {}
+        g = r.get("proposal_gate")
+        fate = ("kept" if r.get("proposed_by") == "proposer-agent" else
+                f"dropped by the gate {g}" if g and not g.get("passed") else
+                "passed but a code-search change won" if g else "not testable this round (recorded)")
+        L.append(f"  - round {r['round']}: {p.get('kind')} `{p.get('id')}`: {p.get('description', '')[:160]} -> {fate}")
+    for k in kept:
+        L.append(f"  - KEPT round {k['round']} [{k['proposed_by']}]: {k['change']} (better {k['better']}, worse "
+                 f"{k['worse']}, exact {k['exact'][0]} -> {k['exact'][1]})")
+    v = c.get("validator") or {}
+    L += ["", "## Validator (human round, improver, A/B)"]
+    if "ab" in v or "outcome" in v:   # a taxo.improve iteration
+        ch = v.get("change") or {}
+        L += [f"- human round {v.get('human_round')}: {v.get('misses')} misses of {v.get('of')} (validator "
+              f"v{v.get('card_before')}); improver: {ch.get('kind')} `{ch.get('question_id') or ch.get('tool_name')}`: "
+              f"{ch.get('text')}"]
+        if v.get("tool_test"):
+            L.append(f"- tool test: {v['tool_test']}")
+        if "ab" in v:
+            for m in ("exact", "harm", "abstain"):
+                x = v["ab"][m]
+                L.append(f"- {m}: {x['current']} {x['current_ci']} -> {x['candidate']} {x['candidate_ci']}, "
+                         f"delta {x['delta']} {x['delta_ci']} (n={v['ab']['n']}, {x['changed']} changed)")
+            L.append(f"- {'KEPT: validator v' + str(v['card_before']) + ' -> v' + str(v['card_after']) + ' ' + str(v.get('commit', '')) if v['kept'] else 'dropped: validator stays v' + str(v['card_before'])}")
+        else:
+            L.append(f"- {v.get('outcome')}")
+        v = {}
+    h = v.get("human") or {}
+    if v.get("current"):
+        L += [f"- improver change: {(v.get('steps') or [{}])[0].get('kind')} "
+              f"`{(v.get('steps') or [{}])[0].get('question_id')}`: {(v.get('steps') or [{}])[0].get('text')}",
+              f"- A/B on dev human rows ({v['round']}): current exact {v['current']['exact_rate']} harm "
+              f"{v['current']['harm_rate']} abstain {v['current'].get('abstain_rate')} -> candidate "
+              f"{v['candidate']['exact_rate']} / {v['candidate']['harm_rate']} / {v['candidate'].get('abstain_rate')}",
+              f"- validator card: {v.get('card')} ({'KEPT' if v.get('kept') else 'dropped'})"]
+    elif v:
+        L.append(f"- improver: nothing testable ({(v.get('change') or {}).get('kind')}: {(v.get('change') or {}).get('text')})")
+    ck = c.get("checkpoint") or {}
+    pl = ck.get("placer") or {}
+    L += ["", "## Dev checkpoint (human labels; sealed not read)",
+          f"- dev exact {ck.get('dev')} harm {ck.get('dev_harm')}; human dev exact {ck.get('human_dev')}; "
+          f"to agent {ck.get('to_agent')}",
+          f"- placer: {pl.get('calls')} calls, {pl.get('placed')} placed, {pl.get('abstained')} abstained, "
+          f"{pl.get('refused')} refused, {pl.get('failed')} failed, {pl.get('tool_calls')} tool calls, {pl.get('secs')} s"]
+    return "\n".join(L) + "\n"
 
 
 def main() -> None:
     ap = argparse.ArgumentParser(prog="taxo.loop")
     ap.add_argument("domain")
     ap.add_argument("--cycles", type=int, default=2)
-    ap.add_argument("--rule-rounds", type=int, default=6)
+    ap.add_argument("--rule-rounds", type=int, default=RULE_ROUNDS)
     ap.add_argument("--start", type=int, default=1, help="number of the first cycle")
     ap.add_argument("--silver", default="S1", help="silver set for the first cycle's rule phase")
     ap.add_argument("--skip-first-rules", action="store_true", help="the first cycle's rule phase already ran")
+    ap.add_argument("--final-sealed", action="store_true", help="after the last cycle, read sealed gold once")
     a = ap.parse_args()
     silver = a.silver
     for k in range(a.start, a.start + a.cycles):
         res = cycle(a.domain, k, silver, a.rule_rounds, skip_rules=a.skip_first_rules and k == a.start)
         silver = res["next_silver"]
-    _say("final: one sealed read")
-    fin = climb.pipeline_run(a.domain, 999, f"final after {a.cycles} cycles: one sealed read", sealed=True)
-    _say(f"  final: {fin}")
-    (RUNS_DIR / a.domain / "loop-final.json").write_text(json.dumps(fin, indent=1), encoding="utf-8")
+    if a.final_sealed:
+        _say("final: one sealed read")
+        fin = climb.pipeline_run(a.domain, 999, f"final after cycle {a.start + a.cycles - 1}: one sealed read", sealed=True)
+        _say(f"  final: {fin}")
+        (RUNS_DIR / a.domain / "loop-final.json").write_text(json.dumps(fin, indent=1), encoding="utf-8")
     print(kpis.table(kpis.history(a.domain)[-16:]))
 
 

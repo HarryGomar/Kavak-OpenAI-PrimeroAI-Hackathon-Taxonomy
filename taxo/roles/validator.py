@@ -18,6 +18,7 @@ import difflib
 import importlib.util
 import json
 import sys
+import threading
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 
@@ -85,16 +86,24 @@ def load_setup(domain: str) -> dict:
     return yaml.safe_load((config.DOMAINS_DIR / domain / "validator.yaml").read_text(encoding="utf-8"))
 
 
+_TOOLS_LOCK = threading.Lock()
+
+
 def domain_tools(domain: str) -> dict:
     """Tools the improver wrote for this domain and code kept: domains/<d>/validator_tools.py, list TOOLS."""
     f = config.DOMAINS_DIR / domain / "validator_tools.py"
     if not f.exists():
         return {}
     name = f"validator_tools_{domain}"
-    spec = importlib.util.spec_from_file_location(name, f)
-    mod = importlib.util.module_from_spec(spec)
-    sys.modules[name] = mod  # so the Codex runner can serve these tools from another process
-    spec.loader.exec_module(mod)
+    stamp = (f.stat().st_mtime_ns, f.stat().st_size)
+    with _TOOLS_LOCK:   # load once per file version: reloading would orphan tool objects agents already hold
+        mod = sys.modules.get(name)
+        if mod is None or getattr(mod, "__taxo_stamp__", None) != stamp:
+            spec = importlib.util.spec_from_file_location(name, f)
+            mod = importlib.util.module_from_spec(spec)
+            sys.modules[name] = mod  # so the Codex runner can serve these tools from another process
+            spec.loader.exec_module(mod)
+            mod.__taxo_stamp__ = stamp
     return {t.name: t for t in getattr(mod, "TOOLS", [])}
 
 

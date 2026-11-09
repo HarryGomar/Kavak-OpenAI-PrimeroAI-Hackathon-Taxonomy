@@ -36,7 +36,7 @@ def _placements(domain: str) -> list[dict]:
     return [json.loads(x) for x in open(RUNS_DIR / domain / "placements.jsonl", encoding="utf-8")]
 
 
-def sample(domain: str, version: str, seed: int | None = None, pool: str = "unlabelled") -> Path:
+def sample(domain: str, version: str, seed: int | None = None, pool: str = "unlabelled", n: int = 40) -> Path:
     """Some listings the lattice placed, some it sent to the agent. pool "unlabelled": no gold row (where gold is thin);
     "pedia-dev": a Pedia label, dev brands only (Pedia reviews them; sealed stays unread)."""
     P = _placements(domain)
@@ -49,13 +49,14 @@ def sample(domain: str, version: str, seed: int | None = None, pool: str = "unla
                  and any(g.startswith("pedia:") for g in p["gold"])]
     else:
         fresh = [p for p in P if not p["gold"] and p["brand"] and p["title"]]
-    seen = {json.loads(x)["id"] for f in _dir(domain).glob("V*-blind.jsonl") if f.name != f"{version}-blind.jsonl"
+    seen = {json.loads(x)["id"] for f in _dir(domain).glob("[VF]*-blind.jsonl") if f.name != f"{version}-blind.jsonl"
             for x in open(f, encoding="utf-8")}          # a listing is sampled in one round only
     fresh = [p for p in fresh if p["id"] not in seen]
     rnd = random.Random(7 if seed is None and version == "V1" else seed if seed is not None else version)
     placed = [p for p in fresh if p["level"] == "product"]
     agent = [p for p in fresh if p["route"] == "agent_title"]
-    pick = rnd.sample(placed, min(N_PLACED, len(placed))) + rnd.sample(agent, min(N_AGENT, len(agent)))
+    n_placed = round(n * N_PLACED / (N_PLACED + N_AGENT))
+    pick = rnd.sample(placed, min(n_placed, len(placed))) + rnd.sample(agent, min(n - n_placed, len(agent)))
     rnd.shuffle(pick)
     out = _dir(domain) / f"{version}-blind.jsonl"
     with open(out, "w", encoding="utf-8") as f:
