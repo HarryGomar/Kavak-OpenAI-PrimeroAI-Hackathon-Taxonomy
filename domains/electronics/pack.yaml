@@ -12,3 +12,4 @@ conventions: |
   - Packs, bundles and refurbished/remanufactured items never merge with the single new product (trade items, not nodes).
   - Punctuation and merchant prefixes ("VER97185" = "97185") are spelling, not identity; different part numbers (CE250A vs CE250X) are different products.
   - A listing with a brand but no model number stops at the brand; a correct shallower node beats a wrong deeper one.
+loopb_sample: {placed: 12, agent: 0}   # owner gold is 50 dev rows: 12 per Loop B sample leaves room for A/B rounds

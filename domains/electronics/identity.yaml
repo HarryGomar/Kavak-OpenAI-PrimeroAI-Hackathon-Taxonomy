@@ -1,6 +1,6 @@
 schema_version: 1
 scope: electronics
-version: 0.5.0
+version: 0.6.0
 status: draft
 purpose: >
   Draft identity-construction rules for the first electronics graph build.
@@ -25,6 +25,9 @@ brand:
     atrend: [atrend-bbox, atrend bbox]
   not_brands: [compatible, generic, oem, unbranded, n/a, na, unknown, new]
   title_prefix_min_listings: 2
+  # round 05 (owner gold r01, gate kept): a field brand found only after "for/compatible with" is a compatibility
+  # brand (atrend-bbox ... for ford f150): the title's own brand wins.
+  field_brand_reference_only_yields: true
 model:
   rule_ids:
     field_confirmed: model/source-field-in-title
@@ -55,6 +58,7 @@ model:
     - '^\d*pairs?$'
     - '^gb-s$'
     - '^(?:sata|usb|ata|scsi|pci|pcie)[-\d.]*\w*$'
+    - '^\d{2,3}-\d{2,3}(?:mm)?(?:-?is)?$'   # round 05 (gate kept): a lens focal range (18-55-is) is not a model
   # Short supply numbers like "hp 60" or "kodak 10" directly after the brand.
   supply_number_categories: [electronics.printing]
   supply_number_pattern: '^\d{1,3}[a-z]{0,2}$'

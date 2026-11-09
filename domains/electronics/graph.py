@@ -170,7 +170,13 @@ def extract(row, prev, ident, brand_vocab, cat_ancestors):
             title_brand = {"key": cand, "raw": " ".join(title.split()[:n]), "field": "title"}
             break
     bk = ident.brand_key(row["brand_manufacturer"])
-    if bk and title_brand and title_brand["key"] != bk and ident.raw_key(row["brand_manufacturer"]) not in alnum(title):
+    ref_only = (ident.cfg["brand"].get("field_brand_reference_only_yields", False) and bk and title_brand
+                and title_brand["key"] != bk and ident.raw_key(row["brand_manufacturer"]) in alnum(prev.get("reference_text") or "")
+                and ident.raw_key(row["brand_manufacturer"]) not in alnum(prev.get("subject_text") or ""))
+    if ref_only:            # policy: a compatibility brand is a reference, never the sold item's brand
+        claims["brand"] = {**title_brand, "rule": ident.rid(brule["title_overrides_field"]),
+                           "overridden_field": row["brand_manufacturer"], "reason": "field brand only in reference text"}
+    elif bk and title_brand and title_brand["key"] != bk and ident.raw_key(row["brand_manufacturer"]) not in alnum(title):
         claims["brand"] = {**title_brand, "rule": ident.rid(brule["title_overrides_field"]),
                            "overridden_field": row["brand_manufacturer"]}
     elif bk:

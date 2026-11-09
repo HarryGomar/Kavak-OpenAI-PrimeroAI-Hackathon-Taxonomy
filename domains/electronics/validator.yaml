@@ -2,40 +2,64 @@
 # the tools that answer it (built-ins similar_brands, ask_person, web_search; domains/electronics/validator_tools.py).
 # Seeded from what electronics validators v1-v4 learned (rounds/electronics/validator-v1-v4-history.yaml): read the
 # model field, the part number is the product's name, choose existing products when they match.
-version: 1
+version: 2
 model: gpt-6-luna
 web: false
 use_proposals: false
-inputs: [title, brand, source]
-input: |
-  Listing title: {title}
+inputs:
+- title
+- brand
+- source
+input: 'Listing title: {title}
+
   Brand given: {brand}
+
   Shop: {source}
 
+
   Give the path brand first: the brand, the product type (e.g. External hard drives, Headphones, Ink cartridges), then
+
   the manufacturer model (its part number), then a colour or capacity only if that model comes in several. Stop at the
+
   deepest level you are sure of: a correct shorter path beats a wrong longer one. No proposed path is given: answer
+
   abstain only if you cannot place it at all, otherwise accept.
+
+  '
 questions:
-  - id: who_makes_it
-    ask: Who makes the item sold? Start from the brand given and the listing's own brand field; a brand after "for" or
-      "compatible with" is a reference, not the maker.
-    tools: [listing_fields, similar_brands]
-    then: Keep the brand given unless the listing clearly names another maker. Put the brand first in the path.
-    status: admitted
-    origin: electronics validator v3 (round 02) - brand field as evidence
-  - id: product_type
-    ask: What kind of product is it (the item sold, not what it fits)?
-    tools: [listing_fields]
-    then: Use a short plural product type as the second level, e.g. "Ink cartridges", "Headphones".
-    status: admitted
-    origin: owner review r01 - product type belongs in the path
-  - id: model_number
-    ask: Which manufacturer model or part number identifies the item? Check the title and the listing's model field,
-      then the brand's existing products.
-    tools: [listing_fields, brand_products]
-    then: The part number is the product's name; a series name is an alias. Reuse an existing product when it has the
-      same part number. A part number after "for" or "compatible with" is a compatibility reference, never the
-      product. If neither the title nor the model field names a model, stop at the product type.
-    status: admitted
-    origin: electronics validator v2-v4 (rounds 02-03); owner review r01 convention
+- id: who_makes_it
+  ask: Who makes the item sold? Start from the brand given and the listing's own brand field; a brand after "for" or "compatible
+    with" is a reference, not the maker.
+  tools:
+  - listing_fields
+  - similar_brands
+  then: Keep the brand given unless the listing clearly names another maker. Put the brand first in the path.
+  status: admitted
+  origin: electronics validator v3 (round 02) - brand field as evidence
+- id: product_type
+  ask: What kind of product is it (the item sold, not what it fits)?
+  tools:
+  - listing_fields
+  then: Use a short plural product type as the second level, e.g. "Ink cartridges", "Headphones".
+  status: admitted
+  origin: owner review r01 - product type belongs in the path
+- id: bundle_or_pack
+  ask: Is the listing a bundle, kit, multipack or refurbished item rather than one new product?
+  tools:
+  - listing_fields
+  then: Place it on the main product it contains (that product's model); kit extras, the pack count and the condition never
+    change the model, and an included accessory's code is never the model.
+  status: admitted
+  origin: electronics validator v4 checklist (round 03, kept on owner review gold)
+- id: model_number
+  ask: Which manufacturer model or part number identifies the item? Check the title and the listing's model field, then the
+    brand's existing products.
+  tools:
+  - listing_fields
+  - brand_products
+  then: The part number is the product's name; a series name is an alias. Reuse an existing product when it has the same part
+    number. A part number after "for" or "compatible with" is a compatibility reference, never the product. If neither the
+    title nor the model field names a model, stop at the product type. Prefer an existing product of this brand when its part
+    number or model name matches the listing; never invent a model the listing does not state.
+  status: admitted
+  origin: electronics validator v2-v4 (rounds 02-03); owner review r01 convention

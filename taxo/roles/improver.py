@@ -42,7 +42,9 @@ Find the question in the traces where it went wrong, and propose ONE change that
 these mistakes: a new, reworded, reordered or branched question, or a new tool that answers a question better (look
 up brands with similar names, read the stated size, find the brand's official product lines).
 A new tool must say an input it fires on and a known-good input it stays quiet on, and must never read labels.
-Never paste a specific answer into a question or a tool: it must work on listings you have not seen."""
+Never paste a specific answer into a question or a tool: it must work on listings you have not seen.
+Rewording, reordering or branching an existing question is kind "question" with that question's id as question_id and
+the full new ask/then: only question and tool changes can be tested."""
 
 
 def make_improver(domain: str) -> Agent:

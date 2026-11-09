@@ -21,9 +21,15 @@ def _types():
     return frozenset(_n(c["label"]) for c in Categories().categories.values())
 
 
+def _is_type(x):
+    """A product-type label, also singular or lower case as people write it ("ink cartridge" for "Ink cartridges")."""
+    t = _types()
+    return x in t or x + "s" in t or x + "es" in t or (x.endswith("s") and x[:-1] in t)
+
+
 def _strip(path):
     p = [_n(x) for x in (path or []) if _n(x)]
-    return [x for i, x in enumerate(p) if not (i == 1 and x in _types())]
+    return [x for i, x in enumerate(p) if not (i == 1 and _is_type(x))]
 
 
 def classify(pred, gold):

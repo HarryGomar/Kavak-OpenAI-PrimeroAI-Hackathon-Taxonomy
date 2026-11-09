@@ -1,0 +1,4826 @@
+{
+ "label": "v1 vs v2 (bundle/pack question, reuse existing products)",
+ "current_version": 1,
+ "candidate_version": 2,
+ "current": {
+  "n": 50,
+  "classes": {
+   "exact": 34,
+   "shallower": 4,
+   "deeper": 3,
+   "wrong": 8,
+   "wrong_brand": 1,
+   "no_answer": 0
+  },
+  "exact": {
+   "k": 34,
+   "n": 50,
+   "p": 0.68,
+   "lo": 0.542,
+   "hi": 0.792
+  },
+  "not_harmful": {
+   "k": 38,
+   "n": 50,
+   "p": 0.76,
+   "lo": 0.626,
+   "hi": 0.857
+  },
+  "exact_rate": 0.68,
+  "harm_rate": 0.24
+ },
+ "candidate": {
+  "n": 50,
+  "classes": {
+   "exact": 38,
+   "deeper": 2,
+   "wrong": 8,
+   "shallower": 1,
+   "wrong_brand": 1,
+   "no_answer": 0
+  },
+  "exact": {
+   "k": 38,
+   "n": 50,
+   "p": 0.76,
+   "lo": 0.626,
+   "hi": 0.857
+  },
+  "not_harmful": {
+   "k": 39,
+   "n": 50,
+   "p": 0.78,
+   "lo": 0.648,
+   "hi": 0.872
+  },
+  "exact_rate": 0.76,
+  "harm_rate": 0.22
+ },
+ "kept": true,
+ "seconds": 211.6,
+ "current_labels": [
+  {
+   "id": "abt_buy:A:1050",
+   "path": [
+    "panasonic",
+    "Memory cards",
+    "RP-SDV04GU1K"
+   ],
+   "why": "The title identifies Panasonic as the maker and names part number RP-SDV04GU1K; the brand’s existing products list contains that same part number under Memory cards.",
+   "decision": "accept",
+   "confidence": 0.98,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The listing fields name no alternate maker, and the brand matches Panasonic."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The item sold is a 4GB SDHC memory card, so its product type is Memory cards."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "RP-SDV04GU1K is the model named in the title and matches the existing Panasonic Memory cards product, so use that model path without adding a color or capacity variant."
+    }
+   ],
+   "tool_calls": [
+    "listing_fields",
+    "similar_brands",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v1",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "abt_buy:A:278",
+   "path": [
+    "sony",
+    "Speakers",
+    "SRS-A212"
+   ],
+   "why": "The listing describes a Sony active speaker system, and the title identifies the SRS-A212 model; “BK” denotes the black variant, but no evidence shows this model comes in multiple color variants in the tree.",
+   "decision": "accept",
+   "confidence": 0.88,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The title identifies Sony as the maker, the listing’s brand and manufacturer fields are blank, and the similar-brand results include Sony."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The description says this is an active speaker system, so the product type is Speakers."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "The title gives SRSA212BK, which identifies the Sony SRS-A212 speaker model; the existing Sony products returned no matching part number."
+    }
+   ],
+   "tool_calls": [
+    "listing_fields",
+    "similar_brands",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v1",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "abt_buy:A:287",
+   "path": [
+    "sony",
+    "Headphones",
+    "mdrq68lw"
+   ],
+   "why": "Sony is the named maker, the item is headphones, and the Sony catalog already contains the exact MDRQ68LW model.",
+   "decision": "accept",
+   "confidence": 0.98,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The listing fields have no separate maker value, and the title identifies Sony with no alternate maker, so I kept Sony."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The description identifies clip-on headphones as the item sold, so the product type is Headphones."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "The title names MDRQ68LW and the Sony catalog already lists that exact model under Headphones, so I reused it."
+    }
+   ],
+   "tool_calls": [
+    "listing_fields",
+    "similar_brands",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v1",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "abt_buy:A:40",
+   "path": [
+    "sony",
+    "Audio and AV receivers",
+    "str-de197"
+   ],
+   "why": "The listing identifies a Sony stereo receiver, and Sony’s existing products include the matching model STR-DE197 under Audio and AV receivers.",
+   "decision": "accept",
+   "confidence": 0.97,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The listing’s own brand field is blank, but its title names Sony and no other maker, so retain Sony as the brand."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The item sold is a stereo audio receiver, matching the product type Audio and AV receivers."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "The title names model STRDE197, which matches Sony’s existing product STR-DE197, so reuse that product."
+    }
+   ],
+   "tool_calls": [
+    "listing_fields",
+    "similar_brands",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v1",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "abt_buy:A:464",
+   "path": [
+    "sony",
+    "Camcorders",
+    "dcr-hc52"
+   ],
+   "why": "The title identifies a Sony Handycam camcorder, and Sony’s existing products include the same DCR-HC52 part number.",
+   "decision": "accept",
+   "confidence": 0.97,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The listing gives no alternate maker in its structured brand field or description, so I kept the given brand Sony."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The item is a MiniDV Handycam camcorder, so the product type is Camcorders."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "The title names DCRHC52, matching Sony’s existing DCR-HC52 product, so I reused that model path and stopped before adding a color."
+    }
+   ],
+   "tool_calls": [
+    "listing_fields",
+    "similar_brands",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v1",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "abt_buy:A:595",
+   "path": [
+    "panasonic",
+    "Cameras",
+    "DMC-TZ5",
+    "Silver"
+   ],
+   "why": "The listing is a Panasonic Lumix digital camera; DMC-TZ5S identifies the silver variant of the existing DMC-TZ5 model.",
+   "decision": "accept",
+   "confidence": 0.89,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The listing fields do not name another maker, and the title identifies Panasonic, so Panasonic is the maker."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The item sold is a digital camera, so the product type is Cameras."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "The title names DMC-TZ5S, matching the existing DMC-TZ5 camera model with an S suffix indicating the silver variant."
+    }
+   ],
+   "tool_calls": [
+    "listing_fields",
+    "similar_brands",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v1",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "abt_buy:A:93",
+   "path": [
+    "canon",
+    "Ink cartridges",
+    "cli8pc"
+   ],
+   "why": "The listing names Canon and CLI8PC as the cyan photo ink cartridge; “compatible with the Pixma IP6600D” describes the printer it fits, not the item sold.",
+   "decision": "accept",
+   "confidence": 0.96,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The listing field has no separate manufacturer, and the description identifies a Canon cyan photo ink cartridge, so I kept Canon as the maker."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The item sold is an ink cartridge, so the product type is Ink cartridges."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "CLI8PC is named as the cartridge model in the listing; the existing Canon product results did not show that part number, so I used it as the product name."
+    }
+   ],
+   "tool_calls": [
+    "listing_fields",
+    "similar_brands",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v1",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "abt_buy:A:964",
+   "path": [
+    "canon",
+    "Printers",
+    "MP480"
+   ],
+   "why": "The listing identifies a Canon all-in-one printer and names MP480 as its model; no color or capacity variant is specified.",
+   "decision": "accept",
+   "confidence": 0.95,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The listing fields do not provide a maker, and the title names Canon as the printer brand, so retain Canon."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The title describes a photo all-in-one printer, so the product type is Printers."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "The title names MP480 as the model, and the existing Canon products did not show an exact match, so use MP480 as the product name."
+    }
+   ],
+   "tool_calls": [
+    "listing_fields",
+    "similar_brands",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v1",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "abt_buy:A:985",
+   "path": [
+    "panasonic",
+    "Cameras",
+    "dmc-fs3",
+    "silver"
+   ],
+   "why": "The listing names a Panasonic digital camera, and the brand’s existing tree has the same DMC-FS3 model with a silver variant.",
+   "decision": "accept",
+   "confidence": 0.98,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The listing identifies Panasonic as the maker, with no other manufacturer named."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The item sold is a digital camera, fitting the Cameras product type."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "The title’s DMCFS3S corresponds to the existing Panasonic DMC-FS3 model, and the listing specifies silver."
+    }
+   ],
+   "tool_calls": [
+    "listing_fields",
+    "similar_brands",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v1",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "abt_buy:B:1066",
+   "path": [
+    "apple",
+    "External DVD Drives",
+    "MB397G/A"
+   ],
+   "why": "The title identifies an Apple external DVD-RW drive and gives MB397G/A as its part number; the listing fields do not name another maker or model, and no existing Apple product entry was returned.",
+   "decision": "accept",
+   "confidence": 0.89,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The listing fields do not name another maker, so retain Apple as the brand."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The listing description says USB external and DVD-RW, indicating an external DVD drive."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "The title identifies MB397G/A as the model part number, and no existing Apple products were returned for reuse."
+    }
+   ],
+   "tool_calls": [
+    "listing_fields",
+    "similar_brands",
+    "listing_fields",
+    "similar_brands",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v1",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "abt_buy:B:238",
+   "path": [
+    "panasonic",
+    "Printers",
+    "kx-flb801"
+   ],
+   "why": "The title identifies a Panasonic multifunction printer, and Panasonic’s existing products include the exact model number KX-FLB801 under Printers.",
+   "decision": "accept",
+   "confidence": 0.97,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The listing fields name no alternate maker, so I kept the given brand Panasonic."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The title and description identify the item as a multifunction laser printer, so its product type is Printers."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "The title names KX-FLB801, and Panasonic’s existing products list that exact model under Printers, so I reused it."
+    }
+   ],
+   "tool_calls": [
+    "listing_fields",
+    "similar_brands",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v1",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "abt_buy:B:312",
+   "path": [
+    "sony",
+    "Camcorder batteries",
+    "NP-FH70"
+   ],
+   "why": "The title identifies a Sony InfoLITHIUM H-series camcorder battery and names NP-FH70 as its part number; the listing fields do not indicate another maker or model, and no same-number Sony product appeared in the returned product list.",
+   "decision": "accept",
+   "confidence": 0.87,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The listing fields do not identify a different maker, and the title names Sony, so I kept Sony as the brand."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The listing description says it is an 8.4 V lithium-ion photo battery and the title specifies a camcorder battery, so I classified it as Camcorder batteries."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "NP-FH70 is the battery part number named in the title, and no same-number Sony product appeared in the existing product list."
+    }
+   ],
+   "tool_calls": [
+    "listing_fields",
+    "similar_brands",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v1",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "abt_buy:B:399",
+   "path": [
+    "nikon",
+    "Camera bags and cases",
+    "5811"
+   ],
+   "why": "The title identifies a Nikon leather camera case, and Nikon’s existing products include part number 5811 under Camera bags and cases.",
+   "decision": "accept",
+   "confidence": 0.97,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The listing fields do not name another maker, so retain Nikon as the brand."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The item sold is a leather camera case, fitting the product type Camera bags and cases."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "Nikon already has model 5811 under Camera bags and cases, so reuse that model path."
+    }
+   ],
+   "tool_calls": [
+    "listing_fields",
+    "similar_brands",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v1",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "abt_buy:B:443",
+   "path": [
+    "sony",
+    "Camera batteries",
+    "NP-FD1"
+   ],
+   "why": "The listing identifies a Sony camera battery and names NP-FD1 as its model part number.",
+   "decision": "accept",
+   "confidence": 0.94,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The listing fields do not name another maker, so retain the given brand Sony."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The description identifies a lithium-ion photo battery, making Camera batteries the product type."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "The title names NP-FD1 as the battery model, and no existing Sony product with that part number appeared in the checked results."
+    }
+   ],
+   "tool_calls": [
+    "listing_fields",
+    "similar_brands",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v1",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "abt_buy:B:536",
+   "path": [
+    "nikon",
+    "Cameras",
+    "s550"
+   ],
+   "why": "The listing is a Nikon Coolpix S550 digital camera, and Nikon's existing products include the matching S550 model; graphite black is a color variant, but the evidence does not establish that this model has multiple color options requiring that level.",
+   "decision": "accept",
+   "confidence": 0.96,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The title names Nikon and the similar-brand results include Nikon; the listing fields provide no conflicting maker."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The title identifies the item sold as a digital camera, so the product type is Cameras."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "The title identifies the Nikon Coolpix S550, and the brand catalog has an existing Cameras > s550 product; no separate model was supplied in structured fields."
+    }
+   ],
+   "tool_calls": [
+    "listing_fields",
+    "brand_products",
+    "similar_brands"
+   ],
+   "retried": false,
+   "card": "v1",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "abt_buy:B:577",
+   "path": [
+    "sony",
+    "Camcorders",
+    "dcr-sr45"
+   ],
+   "why": "The title identifies a Sony Handycam digital camcorder, and Sony's existing products include the same DCR-SR45 model under Camcorders.",
+   "decision": "accept",
+   "confidence": 0.99,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The listing fields do not name another maker, so the brand given, Sony, remains the maker."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The title identifies the item sold as a digital camcorder, so its product type is Camcorders."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "The title names DCR-SR45, and Sony's existing Camcorders products include the same dcr-sr45 model."
+    }
+   ],
+   "tool_calls": [
+    "similar_brands",
+    "listing_fields",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v1",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "abt_buy:B:609",
+   "path": [
+    "nikon",
+    "Cameras",
+    "d60"
+   ],
+   "why": "The listing identifies a Nikon D60 digital SLR camera; the lens is included with the camera, and no evidence identifies another maker or a distinct camera part number.",
+   "decision": "accept",
+   "confidence": 0.97,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The listing field has no separate manufacturer value, but its description names a Nikon D60 camera and the similar-brand results include Nikon, so Nikon remains the maker."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The item sold is a digital SLR camera, so the product type is Cameras."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "The title identifies D60 as the camera model; the listing field has no model value and the existing Nikon products list does not show D60, so the sure path ends at Nikon > Cameras > d60."
+    }
+   ],
+   "tool_calls": [
+    "similar_brands",
+    "listing_fields",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v1",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "abt_buy:B:950",
+   "path": [
+    "ihome",
+    "Speakers",
+    "ih70src"
+   ],
+   "why": "The listing names iHome as the brand, sells computer speakers, and identifies ih70src as the model; the same model already exists under iHome Speakers.",
+   "decision": "accept",
+   "confidence": 0.99,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The structured brand field is blank and similar-brand results include ihome; the title identifies iHome, with no other maker named."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The item sold is a set of computer speakers, so the product type is Speakers."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "The title identifies ih70src as the model, and iHome's existing products include Speakers > ih70src."
+    }
+   ],
+   "tool_calls": [
+    "listing_fields",
+    "similar_brands",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v1",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "amazon_google:B:1588",
+   "path": [
+    "epson",
+    "Ink cartridges",
+    "S020089"
+   ],
+   "why": "The title identifies a compatible color ink cartridge and names S020089; Epson remains the listed brand, and Epson’s existing products include that same part number.",
+   "decision": "accept",
+   "confidence": 0.87,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The listing fields provide no brand or alternate manufacturer, so I kept the given brand Epson."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The item sold is a color ink cartridge, so the product type is Ink cartridges."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "The title names S020089, and Epson’s existing products include that same part number, so I reused it as the model."
+    }
+   ],
+   "tool_calls": [
+    "similar_brands",
+    "listing_fields",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v1",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "amazon_google:B:1957",
+   "path": [
+    "garmin",
+    "Navigation maps and charts",
+    "XPC023R"
+   ],
+   "why": "The listing identifies a Garmin BlueChart microSD chart product and names XPC023R as its model; no matching existing Garmin product was returned.",
+   "decision": "accept",
+   "confidence": 0.87,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The listing fields are blank and no alternate maker is named, so I kept Garmin as the brand given."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The title describes a BlueChart microSD chart card, which belongs under Navigation maps and charts."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "XPC023R is the named model/part number, and Garmin's existing product list returned no matches."
+    }
+   ],
+   "tool_calls": [
+    "listing_fields",
+    "similar_brands",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v1",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "amazon_google:B:1988",
+   "path": [
+    "ibm"
+   ],
+   "why": "IBM is the stated brand, but the listing fields are empty and the title’s “model 84” does not settle whether to reuse the existing DS4800 product or which product type convention applies; a person was asked to resolve it.",
+   "decision": "abstain",
+   "confidence": 0.98,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The listing fields provide no alternate maker, and the title identifies IBM TotalStorage, so I kept IBM as the brand."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The title describes a hard drive array, but the fields do not resolve whether it belongs under existing “Hard drives” or a separate array type."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products",
+      "ask_person"
+     ],
+     "answer": "The brand’s existing products include “Hard drives > ds4800,” but it is unclear whether “model 84” specifies a distinct manufacturer model; I asked a person whether to reuse DS4800 and which product type to use."
+    }
+   ],
+   "tool_calls": [
+    "listing_fields",
+    "similar_brands",
+    "brand_products",
+    "ask_person"
+   ],
+   "retried": false,
+   "card": "v1",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "amazon_google:B:1989",
+   "path": [
+    "ibm",
+    "Hard drives",
+    "ds4800"
+   ],
+   "why": "The listing identifies an IBM DS4800 hard drive array, and IBM already has a product with the same model number in the tree; reuse that product entry.",
+   "decision": "accept",
+   "confidence": 0.78,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The listing fields do not name another manufacturer, and the similar-brand results include IBM, so the given brand IBM remains the maker."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The title identifies the item sold as a hard drive array, and the existing IBM entry classifies DS4800 under Hard drives."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "The title names DS4800, and IBM’s existing products include the same model number, so I reused its existing product entry."
+    }
+   ],
+   "tool_calls": [
+    "listing_fields",
+    "similar_brands",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v1",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "walmart_amazon:A:1728",
+   "path": [
+    "scosche",
+    "Audio accessories",
+    "sa68"
+   ],
+   "why": "The listing identifies Scosche as maker, sells a speaker adapter, and its model field SA68 matches an existing Scosche Audio accessories product.",
+   "decision": "accept",
+   "confidence": 0.97,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The listing fields name Scosche as the manufacturer, and the similar-brand results show no evidence of another maker."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The title and source category indicate a speaker adapter, which fits Audio accessories."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "The model field identifies SA68, which matches the existing Scosche Audio accessories product sa68."
+    }
+   ],
+   "tool_calls": [
+    "listing_fields",
+    "similar_brands",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v1",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "walmart_amazon:A:2003",
+   "path": [
+    "olympus",
+    "Camera and camcorder lenses",
+    "zuiko 8mm f3 .5"
+   ],
+   "why": "The listing is an Olympus Zuiko fisheye lens, and the brand already has a matching Zuiko 8mm f3.5 lens product in the tree.",
+   "decision": "accept",
+   "confidence": 0.94,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The listing’s brand field is olympus, matching the given brand, and similar-brand results do not indicate a different maker."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The item sold is a camera lens, so its product type is Camera and camcorder lenses."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "The listing names Zuiko 8mm f3.5 and its model field is 261010; the brand’s existing products include a matching Zuiko 8mm f3.5 lens, which I reused."
+    }
+   ],
+   "tool_calls": [
+    "listing_fields",
+    "similar_brands",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v1",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "walmart_amazon:A:2206",
+   "path": [
+    "canon",
+    "Cameras",
+    "1000D"
+   ],
+   "why": "The listing is a Canon DSLR; “EOS Digital Rebel XS” identifies the camera model, also known as the Canon EOS 1000D. The listing gives no color-specific model variant.",
+   "decision": "accept",
+   "confidence": 0.82,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The listing fields name Canon as the brand, and the title does not identify another maker."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The item sold is a digital SLR camera, so the product type is Cameras."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "The title identifies the camera as the EOS Digital Rebel XS, corresponding to Canon model 1000D; the model field is blank and the existing Canon products returned no matching model."
+    }
+   ],
+   "tool_calls": [
+    "similar_brands",
+    "listing_fields",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v1",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "walmart_amazon:A:2513",
+   "path": [
+    "mach speed",
+    "Audio players",
+    "cartunesmax"
+   ],
+   "why": "The listing identifies Mach Speed as the maker and names model cartunesmax, which matches an existing Mach Speed audio player.",
+   "decision": "accept",
+   "confidence": 0.93,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The listing's brand field is mach speed, and no different maker is named."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The title describes an FM transmitter MP3 player, and the listing's mp3 category plus existing matching product support Audio players."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "The manufacturer model is cartunesmax, matching the existing Mach Speed product Audio players > cartunesmax."
+    }
+   ],
+   "tool_calls": [
+    "listing_fields",
+    "similar_brands",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v1",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "walmart_amazon:A:297",
+   "path": [
+    "plantronics",
+    "Headsets",
+    "gamecom 367"
+   ],
+   "why": "The listing identifies Plantronics as the maker, a gaming headset as the item sold, and GameCom 367 as the model; the brand already has that model under Headsets.",
+   "decision": "accept",
+   "confidence": 0.99,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The listing names Plantronics as its manufacturer and does not identify another maker."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The item sold is a closed-ear gaming headset, classified as Headsets."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "GameCom 367 is the manufacturer model and matches an existing Plantronics product under Headsets."
+    }
+   ],
+   "tool_calls": [
+    "listing_fields",
+    "similar_brands",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v1",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "walmart_amazon:A:355",
+   "path": [
+    "jwin",
+    "Headphones",
+    "ihp605blk"
+   ],
+   "why": "The listing identifies jwin as the maker, its item is headphones, and the model field gives ihp605blk, which matches an existing jwin headphones product.",
+   "decision": "accept",
+   "confidence": 0.98,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The listing’s brand field is jwin, and the similar-brand results provide no evidence of another maker."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The title identifies the item sold as headphones."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "The model field gives ihp605blk, matching an existing jwin headphones product."
+    }
+   ],
+   "tool_calls": [
+    "listing_fields",
+    "similar_brands",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v1",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "walmart_amazon:A:422",
+   "path": [
+    "sabrent",
+    "Drive enclosures",
+    "ec-35uk"
+   ],
+   "why": "The listing identifies Sabrent as the maker and names model EC-35UK; the brand’s existing products list confirms it under Drive enclosures.",
+   "decision": "accept",
+   "confidence": 0.99,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The listing’s brand field is sabrent, consistent with the given brand, and there is no evidence of another maker."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The item is a 3.5-inch SATA HDD enclosure, so its product type is Drive enclosures."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "The listing model field gives EC-35UK, and Sabrent’s existing products list confirms it as a Drive enclosures model."
+    }
+   ],
+   "tool_calls": [
+    "similar_brands",
+    "listing_fields",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v1",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "walmart_amazon:A:672",
+   "path": [
+    "iosafe",
+    "External hard drives",
+    "pa50250u5yr"
+   ],
+   "why": "The listing identifies iosafe as the maker, describes a portable external hard drive, and names pa50250u5yr, which matches an existing iosafe product.",
+   "decision": "accept",
+   "confidence": 0.98,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The listing’s brand field is iosafe, and the listing gives no other maker."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The item sold is a portable external hard drive."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "The model field gives pa50250u5yr, which matches an existing iosafe External hard drives product."
+    }
+   ],
+   "tool_calls": [
+    "similar_brands",
+    "listing_fields",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v1",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "walmart_amazon:A:816",
+   "path": [
+    "atrend",
+    "Speakers",
+    "a361-10cp"
+   ],
+   "why": "The listing names atrend as maker and a361-10cp as the model; the brand’s existing products confirm the same model under Speakers.",
+   "decision": "accept",
+   "confidence": 0.98,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The listing’s brand field says atrend, and no other maker is named."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The item is a speaker enclosure, and the brand’s existing tree classifies this product type as Speakers."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "The model is a361-10cp, which matches an existing atrend product."
+    }
+   ],
+   "tool_calls": [
+    "listing_fields",
+    "similar_brands",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v1",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "walmart_amazon:A:99",
+   "path": [
+    "canon",
+    "Cameras",
+    "a3300"
+   ],
+   "why": "The listing identifies Canon as maker and names the PowerShot A3300; Canon’s existing products include Cameras > a3300, matching the model part number, so the path stops there.",
+   "decision": "accept",
+   "confidence": 0.98,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The listing’s structured brand is canon, matching the given brand, and no other maker is named."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The item sold is a digital camera, so its product type is Cameras."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "The title names A3300, the structured model is 5035b001aa, and Canon’s existing product list contains Cameras > a3300, which matches the title’s model."
+    }
+   ],
+   "tool_calls": [
+    "listing_fields",
+    "similar_brands",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v1",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "walmart_amazon:B:10024",
+   "path": [
+    "asus",
+    "Headsets",
+    "hs-101",
+    "white"
+   ],
+   "why": "The listing identifies ASUS as maker and HS-101 as the model; ASUS already has the matching HS-101 headset product with white as a variant.",
+   "decision": "accept",
+   "confidence": 0.99,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The listing’s manufacturer brand is asus, with no evidence naming another maker."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The source category identifies a headset, so the product type is Headsets."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "The model is HS-101, and ASUS’s existing products confirm a white HS-101 headset variant."
+    }
+   ],
+   "tool_calls": [
+    "listing_fields",
+    "similar_brands",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v1",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "walmart_amazon:B:10333",
+   "path": [
+    "atrend",
+    "Speakers",
+    "a342-12cp"
+   ],
+   "why": "The title identifies Atrend B-Box as the seller’s product and Ford F-150 as the fitment reference; the listing’s Ford brand field conflicts with the title, but Atrend’s existing products include the exact A342-12CP model under Speakers.",
+   "decision": "accept",
+   "confidence": 0.98,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The title identifies the item as an Atrend B-Box product for a Ford F-150; the Ford field appears to describe fitment, so Atrend is the maker."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The title describes a dual speaker enclosure, so the product type is Speakers."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "A342-12CP appears in the title and matches Atrend’s existing Speakers model exactly."
+    }
+   ],
+   "tool_calls": [
+    "listing_fields",
+    "similar_brands",
+    "similar_brands",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v1",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "walmart_amazon:B:13877",
+   "path": [
+    "a-data",
+    "USB flash drives",
+    "4gs805bk"
+   ],
+   "why": "The listing identifies a-data as the maker, USB flash drive as the product type, and 4gs805bk as its model; the existing tree contains that same part number.",
+   "decision": "accept",
+   "confidence": 0.99,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The listing’s brand and manufacturer fields both identify a-data, and no evidence names another maker."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The source category and title identify the item as a USB flash drive."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "The manufacturer model field gives 4gs805bk, which matches an existing a-data USB flash drive product."
+    }
+   ],
+   "tool_calls": [
+    "listing_fields",
+    "similar_brands",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v1",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "walmart_amazon:B:15101",
+   "path": [
+    "ep memory",
+    "USB flash drives",
+    "epclw/16gb -2.0"
+   ],
+   "why": "The listing identifies EP Memory as the maker, describes a USB flash drive, and names epclw/16gb -2.0, which matches an existing EP Memory product; the evidence does not establish that this model has multiple color variants.",
+   "decision": "accept",
+   "confidence": 0.96,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The listing’s brand field is ep memory and no alternate maker appears, so EP Memory is the manufacturer."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The source category says USB flash drives, matching the item sold."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "The model field epclw/16gb -2.0 matches an existing EP Memory USB flash drive, so use that part number as the product name."
+    }
+   ],
+   "tool_calls": [
+    "listing_fields",
+    "similar_brands",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v1",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "walmart_amazon:B:20020",
+   "path": [
+    "primera technology",
+    "Ink cartridges",
+    "53331"
+   ],
+   "why": "The listing identifies Primera Technology as the maker and a tri-color ink cartridge as the item; its title gives no model, but the brand's existing product 53331 is not supported as the same part number, so stop at the product type.",
+   "decision": "accept",
+   "confidence": 0.9,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The listing's manufacturer brand is primera technology, and there is no evidence naming a different maker."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The item sold is a tri-color ink cartridge, so its product type is Ink cartridges."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "Neither the title nor the listing model field names a model; the existing 53331 product cannot be reused based on this evidence, so stop at Ink cartridges."
+    }
+   ],
+   "tool_calls": [
+    "listing_fields",
+    "similar_brands",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v1",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "walmart_amazon:B:21445",
+   "path": [
+    "lexmark",
+    "Ink cartridges",
+    "18c0532"
+   ],
+   "why": "The listing fields identify Lexmark as the maker and 18c0532 as the manufacturer model; the title says it is a twin pack of ink cartridges, and the model is not among Lexmark’s existing products.",
+   "decision": "accept",
+   "confidence": 0.96,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The listing’s brand field is lexmark, and there is no evidence naming another maker."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The title describes a twin pack of ink cartridges, so the product type is Ink cartridges."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "The manufacturer model is 18c0532, which is the part number named in the title and model field; no existing Lexmark product has that same part number."
+    }
+   ],
+   "tool_calls": [
+    "listing_fields",
+    "similar_brands",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v1",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "walmart_amazon:B:21488",
+   "path": [
+    "sandisk",
+    "USB flash drives",
+    "SDCZ4-8192-A11"
+   ],
+   "why": "The listing identifies SanDisk as the maker, describes a USB flash drive, and its model field matches an existing SanDisk product with the same part number.",
+   "decision": "accept",
+   "confidence": 0.95,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The listing brand field is SanDisk, with no evidence naming another maker."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The source category and listing title identify the item as a USB flash drive."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "The model is SDCZ4-8192-A11, and the brand's product list contains that same part number under USB flash drives."
+    }
+   ],
+   "tool_calls": [
+    "similar_brands",
+    "listing_fields",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v1",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "walmart_amazon:B:3747",
+   "path": [
+    "panasonic",
+    "Headphones",
+    "rp-hc-55-s"
+   ],
+   "why": "The listing fields identify Panasonic as maker and rp-hc-55-s as the manufacturer model; the source category and title indicate headphones, with no evidence that a color level is needed.",
+   "decision": "accept",
+   "confidence": 0.93,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The listing brand field is Panasonic, and the similar-brand results reveal no evidence of another maker."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The item is noise-cancelling earbud headphones, so the product type is Headphones."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "The model field gives rp-hc-55-s; Panasonic’s existing products have no matching part number, so use that model as the product name."
+    }
+   ],
+   "tool_calls": [
+    "listing_fields",
+    "similar_brands",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v1",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "walmart_amazon:B:410",
+   "path": [
+    "audio-technica",
+    "Headphones",
+    "ath-cks70"
+   ],
+   "why": "The listing fields identify audio-technica as maker and ath-cks70 as the model; the title and source category support Headphones, and the brand already has that model in the tree.",
+   "decision": "accept",
+   "confidence": 0.98,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The listing names audio-technica as both the given brand and maker, with no indication of another manufacturer."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The listing describes an in-ear headphone, so its product type is Headphones."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "The model is ath-cks70, which matches an existing audio-technica product in the Headphones tree."
+    }
+   ],
+   "tool_calls": [
+    "listing_fields",
+    "similar_brands",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v1",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "walmart_amazon:B:4113",
+   "path": [
+    "siig",
+    "Memory card readers",
+    "ce-e01012-s1"
+   ],
+   "why": "The listing identifies SIIG as the maker, describes an 11-in-1 card reader/writer, and gives model CE-E01012-S1, which matches an existing SIIG Memory card readers product.",
+   "decision": "accept",
+   "confidence": 0.98,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "Listing fields name SIIG as manufacturer and the similar-brand results reveal no clearly different maker."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The title describes a card reader/writer, so the product type is Memory card readers."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "The model field gives CE-E01012-S1, and the SIIG catalog already lists that exact part number under Memory card readers."
+    }
+   ],
+   "tool_calls": [
+    "listing_fields",
+    "similar_brands",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v1",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "walmart_amazon:B:5119",
+   "path": [
+    "epson",
+    "Ink cartridges"
+   ],
+   "why": "The title names T009201, while the listing’s manufacturer model field says rm009201; I asked for clarification because the model evidence conflicts.",
+   "decision": "abstain",
+   "confidence": 0.98,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The listing’s brand field says Epson, and nothing identifies another maker."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The title and source category identify the item as an ink cartridge."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products",
+      "ask_person"
+     ],
+     "answer": "The title says T009201, but the manufacturer model field says rm009201; Epson’s returned products did not establish which model is correct, so I asked a person and abstained."
+    }
+   ],
+   "tool_calls": [
+    "listing_fields",
+    "similar_brands",
+    "brand_products",
+    "ask_person"
+   ],
+   "retried": false,
+   "card": "v1",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "walmart_amazon:B:5123",
+   "path": [
+    "4inkjets",
+    "Ink cartridges"
+   ],
+   "why": "The listing identifies 4inkjets as the seller brand and describes a compatible ink cartridge; the Epson part numbers are compatibility references, and no model number for the cartridge itself is given.",
+   "decision": "accept",
+   "confidence": 0.92,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The listing fields identify 4inkjets as the brand, and the title presents Epson as the compatible printer brand rather than the cartridge maker."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The item sold is a black compatible ink cartridge, so its product type is Ink cartridges."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "The listing model field is blank, and S020108 and S189108 appear as compatibility references; no cartridge model is established, so the path stops at Ink cartridges."
+    }
+   ],
+   "tool_calls": [
+    "listing_fields",
+    "similar_brands",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v1",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "walmart_amazon:B:6527",
+   "path": [
+    "vanguard",
+    "Tripods and supports",
+    "vs-80"
+   ],
+   "why": "The listing identifies Vanguard as maker, a tabletop digital camera tripod as the item, and VS-80 as its model; the brand catalog has an existing VS-82 but no exact VS-80 match.",
+   "decision": "accept",
+   "confidence": 0.94,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The listing’s manufacturer field says Vanguard and no alternate maker is named."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The item sold is a tabletop camera tripod, fitting the existing product type “Tripods and supports.”"
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "The title and manufacturer model field identify VS-80; the catalog has VS-82 but no VS-80, so use VS-80 as the model."
+    }
+   ],
+   "tool_calls": [
+    "listing_fields",
+    "similar_brands",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v1",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "walmart_amazon:B:6595",
+   "path": [
+    "lexmark",
+    "Toner cartridges",
+    "c540a1mg"
+   ],
+   "why": "The listing identifies Lexmark as the maker and names a magenta toner cartridge; its model field gives the item’s part number, c540a1mg, while C54x and X543/X544 are product-series or compatibility references.",
+   "decision": "accept",
+   "confidence": 0.96,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The structured brand field is Lexmark and the listing gives no other maker, so the maker is Lexmark."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The listing category identifies laser printer toner, and the title specifies a toner cartridge, so the product type is Toner cartridges."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "The model field names c540a1mg; existing Lexmark products include a broader c54x entry, but the listing’s explicit part number supports naming this item c540a1mg."
+    }
+   ],
+   "tool_calls": [
+    "listing_fields",
+    "similar_brands",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v1",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "walmart_amazon:B:8457",
+   "path": [
+    "jwin",
+    "Portable media players",
+    "jxmp264"
+   ],
+   "why": "The listing identifies JWIN as the maker and names model JXMP264, which already appears under Portable media players for JWIN.",
+   "decision": "accept",
+   "confidence": 0.95,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The listing brand field is jwin, and the title gives no other maker; the similar-brand results include jwin."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The item sold is an MP3 player, classified in the existing tree as Portable media players."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "The model field identifies JXMP264, which matches an existing JWIN product under Portable media players."
+    }
+   ],
+   "tool_calls": [
+    "similar_brands",
+    "listing_fields",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v1",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "walmart_amazon:B:919",
+   "path": [
+    "kanguru solutions",
+    "USB flash drives",
+    "kdfb-16g"
+   ],
+   "why": "The listing names Kanguru Solutions as maker, identifies the item as a USB flash drive, and gives part number KDFB-16G, which already exists under that brand.",
+   "decision": "accept",
+   "confidence": 0.99,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The listing’s own brand field is Kanguru Solutions, and no other maker is named."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The item sold is a USB flash drive."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "KDFB-16G is the manufacturer model and matches an existing Kanguru Solutions USB flash drive product."
+    }
+   ],
+   "tool_calls": [
+    "listing_fields",
+    "similar_brands",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v1",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "walmart_amazon:B:9716",
+   "path": [
+    "kingston",
+    "Solid-state drives",
+    "snvp325-s2b",
+    "64 GB"
+   ],
+   "why": "The listing identifies Kingston as the maker, describes a solid-state drive, and names SNVP325-S2B with 64 GB capacity; no existing product has that same part number.",
+   "decision": "accept",
+   "confidence": 0.95,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The listing’s brand field is Kingston, and the title names no different maker."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The item sold is a solid-state drive, so the product type is Solid-state drives."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "The manufacturer part number is SNVP325-S2B; 64 GB is listed separately as capacity, and no existing Kingston product has that part number."
+    }
+   ],
+   "tool_calls": [
+    "listing_fields",
+    "similar_brands",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v1",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "walmart_amazon:B:9975",
+   "path": [
+    "coby",
+    "Headphones",
+    "cve91",
+    "white"
+   ],
+   "why": "The listing identifies Coby as maker, sells earphones, and names CVE91; an existing Coby CVE91 variant is listed in black, so the white color distinguishes this version.",
+   "decision": "accept",
+   "confidence": 0.97,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The listing’s brand field is Coby and no other maker is named, so the maker is Coby."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The item sold is stereo earphones, which fit the Headphones product type."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "The manufacturer model is CVE91, and an existing CVE91 black variant indicates color distinguishes versions, so this listing is the white variant."
+    }
+   ],
+   "tool_calls": [
+    "listing_fields",
+    "similar_brands",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v1",
+   "validator": "codex-agent:gpt-6-luna"
+  }
+ ],
+ "candidate_labels": [
+  {
+   "id": "abt_buy:A:1050",
+   "path": [
+    "panasonic",
+    "Memory cards",
+    "rp-sdv04gu1k"
+   ],
+   "why": "The listing identifies a Panasonic 4GB SDHC memory card with part number RP-SDV04GU1K, and that exact model already exists under Panasonic memory cards.",
+   "decision": "accept",
+   "confidence": 0.98,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The listing fields name no alternate maker, and the title identifies Panasonic, so Panasonic is the maker."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The item sold is an SDHC memory card."
+    },
+    {
+     "question_id": "bundle_or_pack",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The description indicates one new memory card, with no bundle, multipack, or refurbished condition stated."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "RP-SDV04GU1K is the listed part number and matches the existing Panasonic product under Memory cards, so no additional colour or capacity level is needed."
+    }
+   ],
+   "tool_calls": [
+    "listing_fields",
+    "similar_brands",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v2",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "abt_buy:A:278",
+   "path": [
+    "sony",
+    "Speakers",
+    "SRS-A212BK"
+   ],
+   "why": "The listing identifies Sony as the maker and describes an active speaker system; its title names model SRS-A212BK, and the listing gives no indication of a bundle or refurbished item.",
+   "decision": "accept",
+   "confidence": 0.91,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The listing fields do not specify another maker, and the title identifies a Sony speaker system, so Sony is the brand."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The item sold is an active speaker system, classified as Speakers."
+    },
+    {
+     "question_id": "bundle_or_pack",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The listing describes a single speaker system and gives no indication that it is a bundle, multipack, kit, or refurbished item."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "The title names SRS-A212BK as the model; no matching Sony product entry was found in the returned products, so the title's model is used."
+    }
+   ],
+   "tool_calls": [
+    "listing_fields",
+    "similar_brands",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v2",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "abt_buy:A:287",
+   "path": [
+    "sony",
+    "Headphones",
+    "mdrq68lw"
+   ],
+   "why": "The listing identifies Sony clip-on headphones, and its stated model MDRQ68LW matches an existing Sony headphone product.",
+   "decision": "accept",
+   "confidence": 0.99,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The brand field is blank and the listing names no different maker, so the maker remains Sony."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The item sold is a pair of headphones."
+    },
+    {
+     "question_id": "bundle_or_pack",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The description indicates one new headphone product, with no bundle, kit, multipack, or refurbished condition."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "The title states MDRQ68LW, which matches the existing Sony Headphones > mdrq68lw product."
+    }
+   ],
+   "tool_calls": [
+    "listing_fields",
+    "brand_products",
+    "similar_brands"
+   ],
+   "retried": false,
+   "card": "v2",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "abt_buy:A:40",
+   "path": [
+    "sony",
+    "Audio and AV receivers",
+    "STR-DE197"
+   ],
+   "why": "The title identifies Sony stereo audio receiver model STRDE197, and Sony's existing products include the matching STR-DE197 receiver.",
+   "decision": "accept",
+   "confidence": 0.98,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The title names Sony and the listing fields provide no conflicting maker; similar-brand results include Sony."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The description says stereo audio receiver, so the product type is Audio and AV receivers."
+    },
+    {
+     "question_id": "bundle_or_pack",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The description presents one receiver and mentions no bundle, kit, multipack, or refurbished condition."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "The title states STRDE197, matching Sony's existing Audio and AV receivers product STR-DE197."
+    }
+   ],
+   "tool_calls": [
+    "listing_fields",
+    "similar_brands",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v2",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "abt_buy:A:464",
+   "path": [
+    "sony",
+    "Camcorders",
+    "dcr-hc52"
+   ],
+   "why": "The listing is a Sony MiniDV Handycam camcorder, and its title names DCRHC52, matching Sony’s existing DCR-HC52 product.",
+   "decision": "accept",
+   "confidence": 0.98,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The listing’s brand field is blank, and nothing in its title suggests another maker, so I kept the given brand Sony."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The listing describes a Handycam camcorder, so the product type is Camcorders."
+    },
+    {
+     "question_id": "bundle_or_pack",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The listing describes one camcorder and does not indicate a bundle, kit, multipack, or refurbished condition."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "The title names DCRHC52, which matches Sony’s existing DCR-HC52 product; the path uses that model without a colour level."
+    }
+   ],
+   "tool_calls": [
+    "listing_fields",
+    "similar_brands",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v2",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "abt_buy:A:595",
+   "path": [
+    "panasonic",
+    "Cameras",
+    "DMC-TZ5S"
+   ],
+   "why": "The listing sells a Panasonic Lumix digital camera and names DMC-TZ5S as its model; the silver finish does not need a separate level without evidence of color variants under this exact model.",
+   "decision": "accept",
+   "confidence": 0.82,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The listing identifies Panasonic Lumix, with no other maker named; similar-brand results support Panasonic as the brand."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The item sold is a digital camera, so the product type is Cameras."
+    },
+    {
+     "question_id": "bundle_or_pack",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The listing describes one new camera and gives no indication of a bundle, kit, multipack, or refurbished condition."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "The title names DMC-TZ5S, and Panasonic’s existing products include the related DMC-TZ5 but not the same stated part number, so the path uses DMC-TZ5S."
+    }
+   ],
+   "tool_calls": [
+    "listing_fields",
+    "similar_brands",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v2",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "abt_buy:A:93",
+   "path": [
+    "canon",
+    "Ink cartridges",
+    "cli8pc"
+   ],
+   "why": "The listing identifies a Canon cyan photo ink cartridge with part number CLI8PC, which matches Canon’s existing product entry.",
+   "decision": "accept",
+   "confidence": 0.98,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The title names Canon and the description only references a compatible Pixma printer, so Canon is the maker."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The item sold is an ink cartridge."
+    },
+    {
+     "question_id": "bundle_or_pack",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The listing describes one cartridge and gives no indication of a bundle, multipack, kit, or refurbished condition."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "CLI8PC is the stated part number and matches Canon’s existing Ink cartridges > cli8pc product."
+    }
+   ],
+   "tool_calls": [
+    "listing_fields",
+    "similar_brands",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v2",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "abt_buy:A:964",
+   "path": [
+    "canon",
+    "Printers",
+    "MP480"
+   ],
+   "why": "The title identifies a Canon all-in-one printer and states MP480 as its model; no bundle or condition detail changes the model path.",
+   "decision": "accept",
+   "confidence": 0.96,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The listing names Canon and gives no other maker, so Canon is the brand."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The item is an all-in-one printer, so the product type is Printers."
+    },
+    {
+     "question_id": "bundle_or_pack",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "No bundle, kit, multipack, or refurbished status is indicated."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "MP480 is stated in the title as the printer model, and no matching MP480 product appeared in Canon’s existing products, so the path ends at MP480."
+    }
+   ],
+   "tool_calls": [
+    "listing_fields",
+    "similar_brands",
+    "brand_products",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v2",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "abt_buy:A:985",
+   "path": [
+    "panasonic",
+    "Cameras",
+    "dmc-fs3",
+    "silver"
+   ],
+   "why": "The title identifies a Panasonic digital camera and names DMCFS3S; Panasonic’s existing product record matches the DMC-FS3 model in silver.",
+   "decision": "accept",
+   "confidence": 0.99,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The listing fields do not provide another maker, and Panasonic is the given brand, so the maker is Panasonic."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The description identifies an 8.1-megapixel digital camera, so the product type is Cameras."
+    },
+    {
+     "question_id": "bundle_or_pack",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The listing describes a single silver camera and does not indicate a kit, multipack, or refurbished item."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "The title gives DMCFS3S and Panasonic’s existing product record matches it as dmc-fs3, with silver as a listed variant."
+    }
+   ],
+   "tool_calls": [
+    "listing_fields",
+    "similar_brands",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v2",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "abt_buy:B:1066",
+   "path": [
+    "apple",
+    "External DVD drives",
+    "MB397G/A"
+   ],
+   "why": "The title identifies an Apple external 8× DVD-RW drive and gives MB397G/A as its part number; the listing fields add no conflicting maker or model, and no existing Apple products were returned for reuse.",
+   "decision": "accept",
+   "confidence": 0.91,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The listing fields contain no alternate manufacturer, and the title names no maker other than the given Apple brand."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The description says USB external DVD drive, so the product type is External DVD drives."
+    },
+    {
+     "question_id": "bundle_or_pack",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "Nothing in the listing fields suggests a bundle, kit, multipack, or refurbished item."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "MB397G/A is the part number stated in the title, and no existing Apple product was returned to reuse."
+    }
+   ],
+   "tool_calls": [
+    "listing_fields",
+    "similar_brands",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v2",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "abt_buy:B:238",
+   "path": [
+    "panasonic",
+    "Printers",
+    "kx-flb801"
+   ],
+   "why": "The title identifies Panasonic as maker and names the KX-FLB801 multifunction printer; the existing Panasonic tree contains that exact model under Printers.",
+   "decision": "accept",
+   "confidence": 0.98,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The listing’s brand field is blank, but its title names Panasonic as the maker and similar-brand results include Panasonic."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The title calls the item a multifunction printer, and the description calls it an all-in-one flatbed laser fax, so the product type is Printers."
+    },
+    {
+     "question_id": "bundle_or_pack",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The listing fields provide no evidence that this is a bundle, kit, multipack, or refurbished item."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "The title names KX-FLB801, and Panasonic’s existing products include the matching Printers > kx-flb801 entry."
+    }
+   ],
+   "tool_calls": [
+    "listing_fields",
+    "similar_brands",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v2",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "abt_buy:B:312",
+   "path": [
+    "sony",
+    "Camcorder Batteries",
+    "NP-FH70"
+   ],
+   "why": "The listing identifies Sony NP-FH70 as the battery being sold; Sony’s product information confirms NP-FH70 is its InfoLITHIUM H Series camcorder battery.",
+   "decision": "accept",
+   "confidence": 0.92,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "web search"
+     ],
+     "answer": "The listing names Sony as the brand and gives no different maker; Sony identifies NP-FH70 as its own battery."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "web search"
+     ],
+     "answer": "Sony describes NP-FH70 as an InfoLITHIUM H Series camcorder battery, so the product type is Camcorder Batteries."
+    },
+    {
+     "question_id": "bundle_or_pack",
+     "tools_used": [
+      "web search"
+     ],
+     "answer": "The title gives no indication of a bundle, kit, multipack, or refurbished condition."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "web search"
+     ],
+     "answer": "NP-FH70 is the named model and part number for the battery; no color or capacity variant is stated."
+    }
+   ],
+   "tool_calls": [],
+   "retried": false,
+   "card": "v2",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "abt_buy:B:399",
+   "path": [
+    "nikon",
+    "Camera bags and cases",
+    "5811"
+   ],
+   "why": "The title identifies a Nikon leather camera case, and Nikon’s existing products include model 5811 under Camera bags and cases; the listing describes a single case, with no evidence of a bundle or model color variants.",
+   "decision": "accept",
+   "confidence": 0.99,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The brand field is blank, and nothing in the listing indicates another maker, so I kept the given brand Nikon."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The item sold is a leather camera case, which belongs under Camera bags and cases."
+    },
+    {
+     "question_id": "bundle_or_pack",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The listing describes one leather camera case, with no bundle, multipack, kit, or refurbished condition indicated."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "The title names 5811, and Nikon’s existing products include Camera bags and cases > 5811, so I reused that model."
+    }
+   ],
+   "tool_calls": [
+    "listing_fields",
+    "similar_brands",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v2",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "abt_buy:B:443",
+   "path": [
+    "sony",
+    "Camera Batteries",
+    "NP-FD1"
+   ],
+   "why": "The title identifies a Sony camera battery, and NP-FD1 is the battery’s own model number; there is no indication of a bundle or alternate maker.",
+   "decision": "accept",
+   "confidence": 0.96,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The title names Sony as the maker, with no evidence of a different manufacturer."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The item is a lithium-ion digital camera battery, so the product type is Camera Batteries."
+    },
+    {
+     "question_id": "bundle_or_pack",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The listing describes one battery and gives no indication of a bundle, kit, multipack, or refurbished condition."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "NP-FD1 is the model stated in the title; the structured model field is blank and the returned existing Sony products show no matching entry."
+    }
+   ],
+   "tool_calls": [
+    "listing_fields",
+    "similar_brands",
+    "listing_fields",
+    "listing_fields",
+    "listing_fields",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v2",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "abt_buy:B:536",
+   "path": [
+    "nikon",
+    "Cameras",
+    "s550",
+    "black"
+   ],
+   "why": "The listing is a Nikon Coolpix S550 camera, and Nikon’s existing products include the S550 in black; the 26108 suffix does not override the stated model.",
+   "decision": "accept",
+   "confidence": 0.98,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The listing names Nikon and no other maker, while its brand field is blank, so I kept Nikon as the maker."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The title and description identify a digital camera, so the product type is Cameras."
+    },
+    {
+     "question_id": "bundle_or_pack",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "No bundle, kit, multipack, or refurbished condition is indicated, so this is a single camera."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "The stated model is Coolpix S550, and Nikon’s existing products contain S550 entries including black, so I used that model and colour."
+    }
+   ],
+   "tool_calls": [
+    "listing_fields",
+    "similar_brands",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v2",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "abt_buy:B:577",
+   "path": [
+    "sony",
+    "Camcorders",
+    "dcr-sr45"
+   ],
+   "why": "The title identifies a Sony digital camcorder and names model DCR-SR45, which matches an existing Sony camcorder product.",
+   "decision": "accept",
+   "confidence": 0.98,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The listing names Sony as the maker, and the listing fields provide no different brand."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The item sold is a digital camcorder, so its product type is Camcorders."
+    },
+    {
+     "question_id": "bundle_or_pack",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The listing describes one camcorder and gives no indication of a bundle, kit, multipack, or refurbished condition."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "The title names DCR-SR45, and Sony's existing products include Camcorders > dcr-sr45."
+    }
+   ],
+   "tool_calls": [
+    "listing_fields",
+    "similar_brands",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v2",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "abt_buy:B:609",
+   "path": [
+    "nikon",
+    "Cameras",
+    "D60"
+   ],
+   "why": "The listing identifies Nikon as the maker and explicitly names the D60 camera model; the trailing 25438 appears to be a listing code, and the lens is included with the camera.",
+   "decision": "accept",
+   "confidence": 0.9,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The structured brand field is blank, but the title identifies Nikon and the similar-brand results include Nikon; there is no named alternate maker."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The item sold is a digital SLR camera, so the product type is Cameras."
+    },
+    {
+     "question_id": "bundle_or_pack",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The camera is sold with an 18–55 mm lens, but it remains a camera listing and the included lens does not change the model."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "The title explicitly names the Nikon D60 model, while 25438 is not established as its manufacturer model; existing Nikon products have no D60 entry to reuse."
+    }
+   ],
+   "tool_calls": [
+    "listing_fields",
+    "similar_brands",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v2",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "abt_buy:B:950",
+   "path": [
+    "ihome",
+    "Speakers",
+    "ih70src"
+   ],
+   "why": "The title identifies an iHome speaker with model ih70src, and that exact model already appears under Speakers in iHome’s products; the dock is a feature of the product, not a separate bundle item.",
+   "decision": "accept",
+   "confidence": 0.99,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The listing names iHome as the maker and gives no evidence of a different manufacturer."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The item sold is a set of computer speakers, so the product type is Speakers."
+    },
+    {
+     "question_id": "bundle_or_pack",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The title describes one speaker product with an iPod dock and does not indicate a bundle, multipack, kit, or refurbished condition."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "The title names ih70src, and iHome’s existing products include Speakers > ih70src, so that exact model is used."
+    }
+   ],
+   "tool_calls": [
+    "listing_fields",
+    "similar_brands",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v2",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "amazon_google:B:1588",
+   "path": [
+    "epson",
+    "Ink cartridges",
+    "s020089"
+   ],
+   "why": "The listing names an Epson-compatible color ink cartridge and explicitly gives part number S020089; Epson already has that same part number under Ink cartridges.",
+   "decision": "accept",
+   "confidence": 0.96,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The listing fields are blank and the title says only “compatible”; no alternate maker is named, so I retain the given brand Epson."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The item sold is an ink cartridge."
+    },
+    {
+     "question_id": "bundle_or_pack",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "There is no evidence of a bundle, multipack, kit, or refurbished condition."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "The title names S020089, which matches the existing Epson Ink cartridges product s020089."
+    }
+   ],
+   "tool_calls": [
+    "listing_fields",
+    "similar_brands",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v2",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "amazon_google:B:1957",
+   "path": [
+    "garmin",
+    "Marine Charts",
+    "XPC023R"
+   ],
+   "why": "The title identifies Garmin BlueChart New Zealand chart data on microSD and names XPC023R; the microSD format and region do not add a deeper level.",
+   "decision": "accept",
+   "confidence": 0.77,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The listing fields are blank, but its title names Garmin BlueChart and the given brand is Garmin, with no alternate maker stated."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "This is a Garmin BlueChart marine chart product supplied on microSD, so Marine Charts is the product type."
+    },
+    {
+     "question_id": "bundle_or_pack",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "No bundle, kit, multipack, or refurbished condition is indicated; it is a chart product on microSD."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "The title states XPC023R as the chart model; no existing Garmin products were returned, and I retained the listed identifier without inferring a different one."
+    }
+   ],
+   "tool_calls": [
+    "listing_fields",
+    "similar_brands",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v2",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "amazon_google:B:1988",
+   "path": [
+    "ibm",
+    "Hard drives",
+    "ds4800"
+   ],
+   "why": "The title identifies an IBM TotalStorage DS4800 hard drive array, and IBM already has the matching DS4800 product under Hard drives; the listing fields are blank, but the title supplies the product and model.",
+   "decision": "accept",
+   "confidence": 0.79,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The listing fields are blank, and the title names IBM with no alternate maker, so retain IBM as the brand."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The item sold is a hard drive array, placed in the existing Hard drives product type."
+    },
+    {
+     "question_id": "bundle_or_pack",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The title describes one hard drive array and gives no indication it is a bundle, kit, multipack, or refurbished item."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "The title names DS4800 Model 84, and IBM's existing DS4800 product matches the stated DS4800 model, so reuse it."
+    }
+   ],
+   "tool_calls": [
+    "listing_fields",
+    "similar_brands",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v2",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "amazon_google:B:1989",
+   "path": [
+    "ibm",
+    "Hard drives",
+    "ds4800"
+   ],
+   "why": "The title identifies an IBM TotalStorage DS4800 hard drive array, and IBM already has a matching DS4800 product in the tree.",
+   "decision": "accept",
+   "confidence": 0.84,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The listing fields are blank and the title names IBM as the maker, so retain IBM."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The item sold is a hard drive array, which fits the existing Hard drives product type."
+    },
+    {
+     "question_id": "bundle_or_pack",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "There is no evidence of a bundle, kit, multipack, or refurbished condition."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "The title names DS4800, and IBM's existing products include Hard drives > ds4800, so reuse that model."
+    }
+   ],
+   "tool_calls": [
+    "listing_fields",
+    "similar_brands",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v2",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "walmart_amazon:A:1728",
+   "path": [
+    "scosche",
+    "Audio accessories",
+    "sa68"
+   ],
+   "why": "The listing identifies Scosche as the maker, describes a speaker adapter, and provides model SA68, which matches an existing Scosche product.",
+   "decision": "accept",
+   "confidence": 0.95,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The listing field names Scosche as the manufacturer, and the title does not name another maker."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The title identifies the item sold as a speaker adapter, fitting the existing product type Audio accessories."
+    },
+    {
+     "question_id": "bundle_or_pack",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The listing gives no indication of a bundle, kit, multipack, or refurbished condition."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "The listing model field gives SA68, matching the existing Scosche Audio accessories product sa68."
+    }
+   ],
+   "tool_calls": [
+    "listing_fields",
+    "similar_brands",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v2",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "walmart_amazon:A:2003",
+   "path": [
+    "olympus",
+    "Camera and camcorder lenses",
+    "zuiko 8mm f3 .5"
+   ],
+   "why": "The listing is an Olympus Zuiko fisheye camera lens, and its stated model name matches an existing Olympus lens product.",
+   "decision": "accept",
+   "confidence": 0.98,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The listing names Olympus as both the given brand and manufacturer, with no evidence of another maker."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The item sold is a camera lens, categorized as Camera and camcorder lenses."
+    },
+    {
+     "question_id": "bundle_or_pack",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The listing fields give no indication that this is a bundle, kit, multipack, or refurbished item."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "The listing identifies model 261010 and names the Zuiko 8mm f/3.5 lens; the existing Olympus product `Camera and camcorder lenses > zuiko 8mm f3 .5` matches the named model."
+    }
+   ],
+   "tool_calls": [
+    "listing_fields",
+    "similar_brands",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v2",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "walmart_amazon:A:2206",
+   "path": [
+    "canon",
+    "Cameras",
+    "EOS Digital Rebel XS"
+   ],
+   "why": "Canon is the listed maker, and the title identifies a Rebel XS DSLR; the lens and tripod are bundle extras and do not change the camera model.",
+   "decision": "accept",
+   "confidence": 0.89,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The listing’s brand field says canon and nothing names another maker, so the maker is canon."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The item sold is a digital SLR camera, so its product type is Cameras."
+    },
+    {
+     "question_id": "bundle_or_pack",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "This is a value bundle with a lens and tripod, so the main product remains the camera."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "The title names EOS Digital Rebel XS as the camera model; no matching Rebel XS part number appears among the listed existing Canon products, and no other model number is stated."
+    }
+   ],
+   "tool_calls": [
+    "listing_fields",
+    "similar_brands",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v2",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "walmart_amazon:A:2513",
+   "path": [
+    "mach speed",
+    "Audio players",
+    "cartunesmax"
+   ],
+   "why": "The listing identifies Mach Speed as the maker, describes an MP3 player/FM transmitter, and names cartunesmax as its model; that exact model already appears under Audio players for this brand.",
+   "decision": "accept",
+   "confidence": 0.9,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The listing’s maker and brand field are Mach Speed, with no alternate maker named."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "It is an MP3 player/FM transmitter, best placed under Audio players."
+    },
+    {
+     "question_id": "bundle_or_pack",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The listing gives no indication that this is a bundle, multipack, kit, or refurbished item."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "The model is cartunesmax, and the brand’s existing products list already places that model under Audio players."
+    }
+   ],
+   "tool_calls": [
+    "listing_fields",
+    "similar_brands",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v2",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "walmart_amazon:A:297",
+   "path": [
+    "plantronics",
+    "Headsets",
+    "gamecom 367"
+   ],
+   "why": "The listing identifies Plantronics as maker and GameCom 367 as the model; the existing brand product matches that part number.",
+   "decision": "accept",
+   "confidence": 0.99,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The listing names Plantronics as both the given brand and maker, with no alternate manufacturer indicated."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The item sold is a gaming headset, so its product type is Headsets."
+    },
+    {
+     "question_id": "bundle_or_pack",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The listing describes one headset and gives no indication of a bundle, multipack, kit, or refurbished condition."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "The stated model is GameCom 367, and Plantronics already has a matching product under Headsets."
+    }
+   ],
+   "tool_calls": [
+    "similar_brands",
+    "listing_fields",
+    "brand_products",
+    "listing_fields"
+   ],
+   "retried": false,
+   "card": "v2",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "walmart_amazon:A:355",
+   "path": [
+    "jwin",
+    "Headphones",
+    "ihp605blk"
+   ],
+   "why": "The listing identifies JWIN as the brand and gives model IHP605BLK, which is already listed under JWIN headphones.",
+   "decision": "accept",
+   "confidence": 0.99,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The listing brand field is jwin, with no evidence naming another maker."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The item is headphones, as stated in the title and confirmed by the existing product entry."
+    },
+    {
+     "question_id": "bundle_or_pack",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "No bundle, multipack, kit, or refurbished condition is indicated."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "The listing model field gives IHP605BLK, and that exact model already exists under JWIN Headphones."
+    }
+   ],
+   "tool_calls": [
+    "listing_fields",
+    "similar_brands",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v2",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "walmart_amazon:A:422",
+   "path": [
+    "sabrent",
+    "Drive enclosures",
+    "ec-35uk"
+   ],
+   "why": "The listing identifies Sabrent as the maker, describes a USB 3.0 SATA HDD enclosure, and names EC-35UK, which matches an existing Sabrent drive enclosure.",
+   "decision": "accept",
+   "confidence": 0.98,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The listing’s brand field says sabrent, and no evidence identifies another maker."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The title describes a 3.5-inch USB 3.0 SATA HDD enclosure, so the product type is Drive enclosures."
+    },
+    {
+     "question_id": "bundle_or_pack",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The listing describes one enclosure and provides no evidence of a bundle, multipack, or refurbished condition."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "The listing names model EC-35UK, which matches the existing Sabrent product Drive enclosures > ec-35uk."
+    }
+   ],
+   "tool_calls": [
+    "similar_brands",
+    "listing_fields",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v2",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "walmart_amazon:A:672",
+   "path": [
+    "iosafe",
+    "External hard drives",
+    "pa50250u5yr"
+   ],
+   "why": "The listing identifies iosafe as the maker, calls it a portable external hard drive, and gives model PA50250U5YR, which matches an existing iosafe product.",
+   "decision": "accept",
+   "confidence": 0.98,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The listing's brand_manufacturer field is iosafe, so keep iosafe as the maker."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The item is an external hard drive, matching the source category and description in the title."
+    },
+    {
+     "question_id": "bundle_or_pack",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "No bundle, kit, multipack, or refurbished condition is indicated."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "The model field PA50250U5YR matches an existing iosafe product under External hard drives."
+    }
+   ],
+   "tool_calls": [
+    "listing_fields",
+    "similar_brands",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v2",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "walmart_amazon:A:816",
+   "path": [
+    "atrend",
+    "Speakers",
+    "a361-10cp"
+   ],
+   "why": "The listing identifies atrend as the maker, describes a single speaker, and names a361-10cp, which matches an existing atrend product.",
+   "decision": "accept",
+   "confidence": 0.97,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The listing’s brand field names atrend as the maker, and the similar-brand results include atrend."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The title describes a single speaker, so the product type is Speakers."
+    },
+    {
+     "question_id": "bundle_or_pack",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The title indicates one speaker and no bundle, kit, multipack, or refurbished condition."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "The listing names a361-10cp, which matches an existing atrend product under Speakers."
+    }
+   ],
+   "tool_calls": [
+    "listing_fields",
+    "similar_brands",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v2",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "walmart_amazon:A:99",
+   "path": [
+    "canon",
+    "Cameras",
+    "a3300"
+   ],
+   "why": "Listing identifies Canon PowerShot A3300 IS, and Canon’s existing product list includes Cameras > a3300, matching that model.",
+   "decision": "accept",
+   "confidence": 0.99,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The listing fields identify Canon as manufacturer and show no alternate maker; the title names Canon PowerShot."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The listing is for a digital camera, so the product type is Cameras."
+    },
+    {
+     "question_id": "bundle_or_pack",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The bonus prints are promotional extras, while the main item remains one new camera; these extras do not change the model placement."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "The title states PowerShot A3300 IS and Canon’s existing Cameras > a3300 entry matches that model, so reuse a3300."
+    }
+   ],
+   "tool_calls": [
+    "listing_fields",
+    "similar_brands",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v2",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "walmart_amazon:B:10024",
+   "path": [
+    "asus",
+    "Headsets",
+    "hs-101",
+    "white"
+   ],
+   "why": "The listing identifies ASUS as maker, describes a headset, and names HS-101; the existing ASUS tree has HS-101 in white, matching the title.",
+   "decision": "accept",
+   "confidence": 0.98,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The listing brand field says ASUS and provides no evidence of another maker."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The title and source category identify the item as a computer headset, so the product type is Headsets."
+    },
+    {
+     "question_id": "bundle_or_pack",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The listing gives no indication that this is a bundle, kit, multipack, or refurbished item."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "The listing model field names HS-101, and ASUS already has HS-101 products in the tree, including a white variant matching the title."
+    }
+   ],
+   "tool_calls": [
+    "listing_fields",
+    "similar_brands",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v2",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "walmart_amazon:B:10333",
+   "path": [
+    "atrend",
+    "Speakers",
+    "a342-12cp"
+   ],
+   "why": "The title identifies Atrend B-Box and model A342-12CP; Ford F-150 is the compatibility reference, and Atrend’s existing products list includes that model under Speakers.",
+   "decision": "accept",
+   "confidence": 0.94,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The maker is Atrend: the title names Atrend B-Box, while Ford refers to the vehicle it fits; the structured Ford brand field conflicts with the title."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "This is an Atrend speaker product for a Ford F-150, and the existing product tree categorizes it as Speakers."
+    },
+    {
+     "question_id": "bundle_or_pack",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The title describes a dual-speaker B-Box product; any bundle details do not change the product model."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "The title names A342-12CP, and Atrend’s existing products include Speakers > a342-12cp, so that exact model is reused."
+    }
+   ],
+   "tool_calls": [
+    "listing_fields",
+    "similar_brands",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v2",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "walmart_amazon:B:13877",
+   "path": [
+    "a-data",
+    "USB flash drives",
+    "4gs805bk"
+   ],
+   "why": "The listing identifies a-data as maker, calls the item a USB flash drive, and states model 4gs805bk; the same model already exists for this brand.",
+   "decision": "accept",
+   "confidence": 0.96,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The structured brand field says a-data, consistent with the brand given; no alternate maker is indicated."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The source category and title identify the sold item as a USB flash drive."
+    },
+    {
+     "question_id": "bundle_or_pack",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The listing describes one new USB flash drive and gives no bundle, kit, multipack, or refurbished evidence."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "The listing's model field gives 4gs805bk, and the existing a-data products include USB flash drives > 4gs805bk."
+    }
+   ],
+   "tool_calls": [
+    "brand_products",
+    "listing_fields",
+    "similar_brands"
+   ],
+   "retried": false,
+   "card": "v2",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "walmart_amazon:B:15101",
+   "path": [
+    "ep memory",
+    "USB Flash Drives",
+    "epclw/16gb -2.0"
+   ],
+   "why": "The listing identifies ep memory as the maker, describes a single USB flash drive, and names a part number that matches an existing product; the white color does not need a deeper level for this model.",
+   "decision": "accept",
+   "confidence": 0.97,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The listing’s brand/manufacturer field says ep memory, and no other maker is clearly named."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The source category and title identify the item as a USB flash drive."
+    },
+    {
+     "question_id": "bundle_or_pack",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The listing describes one new flash drive, with no bundle, multipack, kit, or refurbished condition indicated."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "The model field gives epclw/16gb -2.0, which exactly matches an existing ep memory USB flash drive product."
+    }
+   ],
+   "tool_calls": [
+    "listing_fields",
+    "similar_brands",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v2",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "walmart_amazon:B:20020",
+   "path": [
+    "primera technology",
+    "Ink cartridges"
+   ],
+   "why": "The listing identifies a Primera tri-color ink cartridge but gives no manufacturer model number, so the safe placement stops at the product type.",
+   "decision": "accept",
+   "confidence": 0.94,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The listing's brand field identifies Primera Technology as the maker, and the similar-brand results contain no reason to change it."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The item sold is an ink cartridge, so its product type is Ink cartridges."
+    },
+    {
+     "question_id": "bundle_or_pack",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The title and listing fields do not indicate a bundle, kit, multipack, or refurbished item."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "No model number appears in the title or model field; although Primera Technology has an existing 53331 product, the listing does not state that part number, so the path stops at Ink cartridges."
+    }
+   ],
+   "tool_calls": [
+    "similar_brands",
+    "listing_fields",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v2",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "walmart_amazon:B:21445",
+   "path": [
+    "lexmark",
+    "Ink cartridges",
+    "18c0532"
+   ],
+   "why": "The listing identifies Lexmark as the maker and 18c0532 as the cartridge pack’s part number; twin-pack packaging does not change the product model.",
+   "decision": "accept",
+   "confidence": 0.96,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The listing’s brand and manufacturer fields both identify lexmark, with no other maker named."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The item sold is ink cartridges."
+    },
+    {
+     "question_id": "bundle_or_pack",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "It is a twin pack, so place it under the cartridges’ model and omit pack count from the path."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "The title and manufacturer model field identify 18c0532; no existing Lexmark product entry matches that part number, so use the stated model."
+    }
+   ],
+   "tool_calls": [
+    "listing_fields",
+    "similar_brands",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v2",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "walmart_amazon:B:21488",
+   "path": [
+    "sandisk",
+    "USB flash drives",
+    "sdcz4-8192-a11"
+   ],
+   "why": "The listing identifies a SanDisk 8 GB Cruzer Micro flash drive, and its manufacturer model matches an existing SanDisk USB flash drive product.",
+   "decision": "accept",
+   "confidence": 0.98,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The listing's brand field identifies SanDisk as the maker, with no evidence of another manufacturer."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The source category identifies the item as a USB flash drive."
+    },
+    {
+     "question_id": "bundle_or_pack",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The listing describes a single flash drive and gives no indication of a kit, multipack, or refurbished condition."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "The model field gives sdcz4-8192-a11, which matches an existing SanDisk USB flash drive product."
+    }
+   ],
+   "tool_calls": [
+    "listing_fields",
+    "similar_brands",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v2",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "walmart_amazon:B:3747",
+   "path": [
+    "panasonic",
+    "Headphones",
+    "rp-hc-55-s"
+   ],
+   "why": "The listing identifies Panasonic as maker and RP-HC-55-S as the item’s model; headphones is the product type, and no evidence establishes a separate color level.",
+   "decision": "accept",
+   "confidence": 0.94,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The listing’s brand field names Panasonic, and the title provides no alternate maker."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The source category is headphones, so the product type is Headphones."
+    },
+    {
+     "question_id": "bundle_or_pack",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The available listing fields give no indication that this is a bundle, kit, multipack, or refurbished item."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "The listing names RP-HC-55-S as its manufacturer model, and no existing Panasonic product returned has that same part number."
+    }
+   ],
+   "tool_calls": [
+    "listing_fields",
+    "similar_brands",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v2",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "walmart_amazon:B:410",
+   "path": [
+    "audio-technica",
+    "Headphones",
+    "ath-cks70"
+   ],
+   "why": "The listing identifies audio-technica as the maker, names headphones as the product type, and gives ATH-CKS70 as the model; that part number is already present in the brand’s products.",
+   "decision": "accept",
+   "confidence": 0.97,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The listing’s brand field is audio-technica, consistent with the given brand, and no alternate maker is named."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The source category is headphones, so the product type is Headphones."
+    },
+    {
+     "question_id": "bundle_or_pack",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The listing provides no indication of a bundle, kit, multipack, or refurbished condition."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "The model field names ATH-CKS70, and the brand’s existing products include Headphones > ath-cks70."
+    }
+   ],
+   "tool_calls": [
+    "listing_fields",
+    "similar_brands",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v2",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "walmart_amazon:B:4113",
+   "path": [
+    "siig",
+    "Memory card readers",
+    "ce-e01012-s1"
+   ],
+   "why": "The listing is a SIIG ExpressCard 11-in-1 card reader; its model field matches an existing SIIG memory card reader product.",
+   "decision": "accept",
+   "confidence": 0.97,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The listing field names SIIG as the manufacturer, and the title does not identify another maker."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The item sold is a card reader/writer, which fits the product type Memory card readers."
+    },
+    {
+     "question_id": "bundle_or_pack",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The title describes one card reader with 11-in-1 functionality, not a bundle or multipack."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "The model field gives ce-e01012-s1, which matches the existing SIIG Memory card readers product with that part number."
+    }
+   ],
+   "tool_calls": [
+    "listing_fields",
+    "similar_brands",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v2",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "walmart_amazon:B:5119",
+   "path": [
+    "epson",
+    "Ink cartridges"
+   ],
+   "why": "The listing is an Epson ink cartridge, but its title gives T009201 while the structured model field gives RM009201; I asked a person to resolve the conflicting part numbers.",
+   "decision": "abstain",
+   "confidence": 0.99,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The listing identifies Epson as its maker in both the given brand and its brand field."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The source category and title indicate that the item is an ink cartridge."
+    },
+    {
+     "question_id": "bundle_or_pack",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "No bundle, multipack, kit, or refurbished condition is indicated."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products",
+      "ask_person"
+     ],
+     "answer": "The title states T009201, but the model field states RM009201, and no matching part number appears among the listed Epson products, so I asked a person to resolve the conflict."
+    }
+   ],
+   "tool_calls": [
+    "listing_fields",
+    "similar_brands",
+    "brand_products",
+    "ask_person"
+   ],
+   "retried": false,
+   "card": "v2",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "walmart_amazon:B:5123",
+   "path": [
+    "4inkjets"
+   ],
+   "why": "The title’s leading “LD” conflicts with the listing’s 4inkjets brand field, and the maker is unresolved; a person was asked to clarify.",
+   "decision": "abstain",
+   "confidence": 0.96,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands",
+      "ask_person"
+     ],
+     "answer": "The listing fields name 4inkjets, but the title begins with “LD,” leaving the actual maker unclear; I asked a person to resolve the brand convention."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The source category and title indicate an ink cartridge, so the product type is Ink cartridges."
+    },
+    {
+     "question_id": "bundle_or_pack",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The listing describes one compatible ink cartridge, with no indication of a bundle, kit, multipack, or refurbished item."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "The title contains Epson part numbers S020108 and S189108 in a compatibility context, and the model field is blank, so neither identifies the cartridge being sold."
+    }
+   ],
+   "tool_calls": [
+    "similar_brands",
+    "listing_fields",
+    "brand_products",
+    "ask_person"
+   ],
+   "retried": false,
+   "card": "v2",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "walmart_amazon:B:6527",
+   "path": [
+    "vanguard",
+    "Tripods and supports",
+    "vs-80"
+   ],
+   "why": "The listing identifies Vanguard as the maker and VS-80 as the model; it is a tabletop camera tripod, and Vanguard’s existing catalog has the matching model under Tripods and supports.",
+   "decision": "accept",
+   "confidence": 0.98,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The listing brand field is vanguard, and the title names no other maker, so Vanguard is the maker."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The item sold is a camera tripod, matching Vanguard’s existing product type Tripods and supports."
+    },
+    {
+     "question_id": "bundle_or_pack",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The listing describes a tabletop tripod with no indication of a kit, multipack, or refurbished condition."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "The listing names model VS-80, and Vanguard’s existing products include VS-80 under Tripods and supports."
+    }
+   ],
+   "tool_calls": [
+    "listing_fields",
+    "similar_brands",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v2",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "walmart_amazon:B:6595",
+   "path": [
+    "lexmark",
+    "Toner cartridges",
+    "C540A1MG"
+   ],
+   "why": "The listing identifies Lexmark as maker and C540A1MG as its toner cartridge model; “return prog” describes the cartridge program, and the color is already encoded by the model.",
+   "decision": "accept",
+   "confidence": 0.93,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The listing’s brand/manufacturer field is Lexmark, and the similar-brand check gave no reason to identify another maker."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The source category and title identify the item as a toner cartridge, so its product type is Toner cartridges."
+    },
+    {
+     "question_id": "bundle_or_pack",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The listing describes one return-program magenta toner cartridge, with no evidence of a bundle, multipack, kit, or refurbished condition."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "The structured manufacturer model is C540A1MG; existing Lexmark products include the broader C54x model, but not this same part number, so use C540A1MG as the product name."
+    }
+   ],
+   "tool_calls": [
+    "listing_fields",
+    "similar_brands",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v2",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "walmart_amazon:B:8457",
+   "path": [
+    "jwin",
+    "Portable media players",
+    "jxmp264"
+   ],
+   "why": "The listing is a Jwin MP3/video player, and both its model field and an existing Jwin product identify the model as JXMP264.",
+   "decision": "accept",
+   "confidence": 0.98,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The listing's own brand field says jwin, supporting jwin as the maker."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The title and source category indicate a portable media player, so the product type is Portable media players."
+    },
+    {
+     "question_id": "bundle_or_pack",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "No bundle, kit, multipack, or refurbished condition is indicated; it is a single player."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "The model field gives JXMP264, and the brand's existing products include Portable media players > jxmp264."
+    }
+   ],
+   "tool_calls": [
+    "similar_brands",
+    "listing_fields",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v2",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "walmart_amazon:B:919",
+   "path": [
+    "kanguru solutions",
+    "USB flash drives",
+    "kdfb-16g"
+   ],
+   "why": "The listing identifies Kanguru Solutions as the maker and names KDFB-16G as the model, which matches an existing product for this brand.",
+   "decision": "accept",
+   "confidence": 0.98,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The listing brand field is Kanguru Solutions, and the title does not identify another maker."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The source category and title identify the item sold as a USB flash drive."
+    },
+    {
+     "question_id": "bundle_or_pack",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "It is a single new flash drive, with no bundle, multipack, kit, or refurbished status indicated."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "The model field gives KDFB-16G, matching Kanguru Solutions’ existing KDFB-16G USB flash drive product."
+    }
+   ],
+   "tool_calls": [
+    "listing_fields",
+    "similar_brands",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v2",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "walmart_amazon:B:9716",
+   "path": [
+    "kingston",
+    "Solid-state drives",
+    "snvp325-s2b / 64gb"
+   ],
+   "why": "The listing identifies Kingston as maker and sells an SSD; the notebook upgrade kit is a bundle, and the stated manufacturer model is SNVP325-S2B / 64GB.",
+   "decision": "accept",
+   "confidence": 0.94,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The structured brand is Kingston and the title gives no other maker, so keep Kingston."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The item sold is a solid-state drive, which matches Kingston’s existing “Solid-state drives” product type."
+    },
+    {
+     "question_id": "bundle_or_pack",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The title describes a notebook upgrade kit bundle, so classify it on the SSD it contains and disregard kit extras."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "The title and model field identify SNVP325-S2B / 64GB; Kingston’s existing entries include other SSD models but no matching part number."
+    }
+   ],
+   "tool_calls": [
+    "similar_brands",
+    "listing_fields",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v2",
+   "validator": "codex-agent:gpt-6-luna"
+  },
+  {
+   "id": "walmart_amazon:B:9975",
+   "path": [
+    "coby",
+    "Headphones",
+    "cve91",
+    "White"
+   ],
+   "why": "The listing identifies Coby as maker and cve91 as model; it sells stereo earphones, and Coby already has a cve91blk headphone entry indicating color variants. The title specifies white.",
+   "decision": "accept",
+   "confidence": 0.88,
+   "trace": [
+    {
+     "question_id": "who_makes_it",
+     "tools_used": [
+      "listing_fields",
+      "similar_brands"
+     ],
+     "answer": "The listing brand field is coby, matching the given brand, with no alternate maker named."
+    },
+    {
+     "question_id": "product_type",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The item sold is stereo earphones, which fit the Headphones product type."
+    },
+    {
+     "question_id": "bundle_or_pack",
+     "tools_used": [
+      "listing_fields"
+     ],
+     "answer": "The listing describes a single new earphones product, with no bundle, multipack, kit, or refurbished indication."
+    },
+    {
+     "question_id": "model_number",
+     "tools_used": [
+      "listing_fields",
+      "brand_products"
+     ],
+     "answer": "The listing names model cve91 (title suffix cve91wht), and Coby already has a cve91blk Headphones entry, supporting model cve91 with the stated White color."
+    }
+   ],
+   "tool_calls": [
+    "listing_fields",
+    "similar_brands",
+    "brand_products"
+   ],
+   "retried": false,
+   "card": "v2",
+   "validator": "codex-agent:gpt-6-luna"
+  }
+ ]
+}

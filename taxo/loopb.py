@@ -20,7 +20,9 @@ from collections import Counter, defaultdict
 from pathlib import Path
 
 from taxo import gold as goldmod, kpis, score
-from taxo.core.config import ROOT, RUNS_DIR
+import yaml
+
+from taxo.core.config import DOMAINS_DIR, ROOT, RUNS_DIR
 from taxo.core.domain import hook
 from taxo.lattice.vocab import tokens
 
@@ -56,7 +58,12 @@ def sample(domain: str, version: str, seed: int | None = None, pool: str = "unla
     rnd = random.Random(7 if seed is None and version == "V1" else seed if seed is not None else version)
     placed = [p for p in fresh if p["level"] == "product"]
     agent = [p for p in fresh if p["route"] == "agent_title"]
-    pick = rnd.sample(placed, min(N_PLACED, len(placed))) + rnd.sample(agent, min(N_AGENT, len(agent)))
+    n_placed, n_agent = N_PLACED, N_AGENT
+    pack = DOMAINS_DIR / domain / "pack.yaml"                 # a domain with little gold samples less per round
+    if pack.is_file():
+        size = (yaml.safe_load(pack.read_text(encoding="utf-8")) or {}).get("loopb_sample") or {}
+        n_placed, n_agent = size.get("placed", N_PLACED), size.get("agent", N_AGENT)
+    pick = rnd.sample(placed, min(n_placed, len(placed))) + rnd.sample(agent, min(n_agent, len(agent)))
     rnd.shuffle(pick)
     out = _dir(domain) / f"{version}-blind.jsonl"
     with open(out, "w", encoding="utf-8") as f:
