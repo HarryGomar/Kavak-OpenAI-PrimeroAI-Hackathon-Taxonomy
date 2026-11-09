@@ -64,7 +64,7 @@ def _usage(stdout: str) -> dict:
     return u
 
 
-def _call(prompt: str, cache_dir: Path, model: str | None) -> dict:
+def _call(prompt: str, cache_dir: Path, model: str | None, schema_obj: dict | None = None) -> dict:
     key = hashlib.sha256(prompt.encode()).hexdigest()[:20]
     cached = cache_dir / f"{key}.json"
     if cached.exists():
@@ -74,7 +74,7 @@ def _call(prompt: str, cache_dir: Path, model: str | None) -> dict:
     t0 = time.time()
     with tempfile.TemporaryDirectory() as tmp:
         schema = Path(tmp) / "schema.json"
-        schema.write_text(json.dumps(SCHEMA))
+        schema.write_text(json.dumps(schema_obj or SCHEMA))
         out = Path(tmp) / "out.json"
         cmd = ["codex", "exec", "--sandbox", "read-only", "--skip-git-repo-check", "--ephemeral", "-C", tmp,
                "--output-schema", str(schema), "-o", str(out), "--color", "never", "--json", "-"]
@@ -177,3 +177,14 @@ def place_checked(decision, item, nodes, brand_of):
     if item.get("brand_id") and nid != item["brand_id"] and a != "place":
         return False, "agent changed the resolved brand"
     return True, a
+
+
+def ask(prompt: str, schema_obj: dict, cache_dir: Path, ledger=None, role="agent", domain="", model=None) -> dict:
+    """One structured Codex call (proposer, improver, ...), logged like the batch calls."""
+    r = _call(prompt, cache_dir, model, schema_obj)
+    if ledger is not None:
+        ledger.append("codex_call", domain=domain, role=role, key=r["key"], cached=r.get("cached", False),
+                      seconds=r.get("seconds"), usage=r.get("usage"), listings=0, error="error" in r,
+                      prompt_sha256=hashlib.sha256(prompt.encode()).hexdigest()[:12], model=model or "codex-default")
+    return r
+

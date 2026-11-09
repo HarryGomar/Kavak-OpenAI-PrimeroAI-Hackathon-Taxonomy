@@ -30,6 +30,59 @@ def read_yaml(path):
     return yaml.safe_load(Path(path).read_text(encoding="utf-8"))
 
 
+LEARNED_PATH = Path(__file__).resolve().parent / "identity-learned.yaml"
+ALLOWED = {  # what the automatic proposer may change, and how
+    "brand.aliases": "add_alias", "brand.not_brands": "append", "brand.drop_words": "append",
+    "brand.title_prefix_min_listings": "set", "model.not_model_tokens": "append", "model.strip_prefixes": "append",
+    "model.min_key_length": "set", "model.merchant_prefix_max": "set", "model.merchant_prefix_min_base": "set",
+    "model.sibling_suffix_max": "set", "model.series_prefix_min_word": "set", "model.field_reject_spec_tokens": "set",
+    "model.field_confirm_in_own_text": "set", "dimensions.colors": "append", "model.color_codes": "add_alias",
+}
+
+
+def apply_ops(cfg, ops):
+    """Apply whitelisted edits (see ALLOWED). Raises ValueError on anything else or on a bad regex."""
+    import copy
+    cfg = copy.deepcopy(cfg)
+    for op in ops:
+        path, kind, value = op["path"], op["op"], op["value"]
+        base = path if path in ALLOWED else ".".join(path.split(".")[:2])
+        require(base in ALLOWED and ALLOWED[base] == kind, f"edit not allowed: {kind} {path}")
+        parts = path.split(".")
+        node = cfg
+        for p_ in parts[:-1]:
+            node = node.setdefault(p_, {})
+        last = parts[-1]
+        if kind == "set":
+            require(type(value) in (int, bool), "set needs an int or bool")
+            node[last] = value
+        elif kind == "append":
+            require(isinstance(value, str) and value, "append needs a string")
+            if "not_model_tokens" in path:
+                re.compile(value)
+            lst = node.setdefault(last, [])
+            if value not in lst:
+                lst.append(value)
+        elif kind == "add_alias":
+            require(isinstance(value, str) and value and len(parts) == 3, "add_alias needs path a.b.<canonical>")
+            lst = node.setdefault(last, [])
+            if value not in lst:
+                lst.append(value)
+    return cfg
+
+
+def load_cfg():
+    """identity.yaml plus every kept automatic change (identity-learned.yaml), in order."""
+    cfg = read_yaml(CONFIG_PATH)
+    learned = read_yaml(LEARNED_PATH) if LEARNED_PATH.exists() else {}
+    kept = [c for c in (learned or {}).get("changes", []) if c.get("status") == "kept"]
+    for c in kept:
+        cfg = apply_ops(cfg, c["ops"])
+    if kept:
+        cfg["version"] = f"{cfg['version']}+L{len(kept)}"
+    return cfg
+
+
 def sha(*parts, n=12):
     return hashlib.sha256("\x1f".join(parts).encode()).hexdigest()[:n]
 

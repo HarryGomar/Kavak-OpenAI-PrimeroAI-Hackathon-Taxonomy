@@ -324,7 +324,7 @@ def main():
     previews = {k: cats.categorize(r) for k, r in rows.items()}                                    # step 1 (category)
     timings["parse_category"] = round(time.time() - t, 2)
     t = time.time()
-    cfg = graph.read_yaml(graph.CONFIG_PATH)
+    cfg = graph.load_cfg()
     nodes, edges, gplacements, review, _, checks = graph.construct(rows, list(previews.values()), cats, cfg)  # 1, 2, 4
     timings["brand_lattice"] = round(time.time() - t, 2)
     tnodes = tree(nodes, edges, cats)

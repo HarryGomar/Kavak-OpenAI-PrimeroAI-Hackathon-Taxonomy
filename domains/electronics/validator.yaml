@@ -1,8 +1,33 @@
-# Validator setup v1 (electronics). Checklist steps are proposals until the validator scores better on gold with them.
 version: 1
 model: gpt-6-luna
 web: true
 use_proposals: false
-inputs: [title, brand, manufacturer_model, source_category, description, price]
-# Starts empty: the improver induces steps from the validator's mistakes on our labels.
+inputs:
+- title
+- brand
+- manufacturer_model
+- source_category
+- description
+- price
 checklist: []
+versions:
+- version: 4
+  status: active
+  parent: 3
+  checklist:
+  - Treat included accessories or upgrade wording as evidence for matching kit candidates;
+    do not reject bundles solely because packaging differs.
+  - Allow multipacks to match explicitly identified constituent candidates when no
+    pack candidate fits and no distinguishing product attributes conflict.
+  - Choose only supplied candidates; prefer an explicitly supported family node over
+    an inferred exact model absent from the candidate set.
+  rationale: Avoid categorical packaging exclusions and unsupported model inference
+    while preserving product identity.
+  proposed_by: codex
+  score:
+    exact_rate: 0.889
+    harm_rate: 0.111
+    flag_precision: 0.5
+  vs_parent:
+    exact_rate: 0.667
+    flag_precision: 0.333

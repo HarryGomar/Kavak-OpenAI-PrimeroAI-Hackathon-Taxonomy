@@ -69,6 +69,9 @@ def vdir(rnd, ver):
 
 
 def validate(rnd, fresh_n, ver=1):
+    if ver not in codex_placer.VALIDATOR_PROMPTS:          # versions 4+ come from validator.yaml (auto improver)
+        from domains.electronics.auto import register_validator_versions
+        register_validator_versions()
     t_start = time.time()
     ledger = Ledger(OUT / "ledger.jsonl")
     rows, _ = load()
@@ -318,15 +321,19 @@ def rules_only(cfg):
 
 
 def gate(change, base_ref="HEAD"):
+    import subprocess
+    from domains.electronics import graph
+    base_cfg = yaml.safe_load(subprocess.run(["git", "show", f"{base_ref}:domains/electronics/identity.yaml"],
+                                             capture_output=True, text=True, check=True).stdout)
+    return gate_cfgs(change, base_cfg, graph.load_cfg())
+
+
+def gate_cfgs(change, base_cfg, new_cfg, quiet=False):
     """Keep a rule change only if, rules-only, it does not lose on dev (gold dev + benchmark train pairs) and wins on
     something; then ONE logged read of sealed (gold sealed brands + benchmark validation pairs) must agree."""
-    import subprocess
     from domains.electronics import graph
     ledger = Ledger(OUT / "ledger.jsonl")
     t0 = time.time()
-    base_cfg = yaml.safe_load(subprocess.run(["git", "show", f"{base_ref}:domains/electronics/identity.yaml"],
-                                             capture_output=True, text=True, check=True).stdout)
-    new_cfg = graph.read_yaml(graph.CONFIG_PATH)
     rows, lid, _ = gold_rows()
     g = goldmod.Gold(rows, OUT / "sealed-reads.jsonl")
     tl = type_labels()
@@ -370,7 +377,9 @@ def gate(change, base_ref="HEAD"):
     ledger.append("gate", domain=DOMAIN, **out)
     (OUT / "gates").mkdir(exist_ok=True)
     (OUT / "gates" / f"{int(time.time())}-{change}.json").write_text(json.dumps(out, indent=2))
-    print(json.dumps(out, indent=1))
+    if not quiet:
+        print(json.dumps(out, indent=1))
+    return out
 
 
 REVIEW_PAGE = r"""<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
