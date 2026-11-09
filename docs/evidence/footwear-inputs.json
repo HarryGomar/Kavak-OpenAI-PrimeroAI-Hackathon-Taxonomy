@@ -1,0 +1,21 @@
+{
+  "inspection": "manifest/files only; no taxonomy run or tests",
+  "files": [
+    {
+      "path": "G:\\.shortcut-targets-by-id\\1lo5XQFqwWZ4oV915bOgMLt9KPW0IeTv4\\Hackathon-Kavak-OpenAI-Primero\\DATA\\Listings\\RAW\\footwear\\subset-1\\footwear_listings.parquet",
+      "bytes": 981950,
+      "sha256": "75b7f232e3d963ca35594a5f484f2a85e9f69a56562bede16792796eaabd6601"
+    },
+    {
+      "path": "G:\\.shortcut-targets-by-id\\1lo5XQFqwWZ4oV915bOgMLt9KPW0IeTv4\\Hackathon-Kavak-OpenAI-Primero\\DATA\\Listings\\RAW\\footwear\\subset-1\\source_rows.parquet",
+      "bytes": 1144975,
+      "sha256": "efdf83206cc6550b38b27878c1d872129b6575f2db9e860765732ca8f3880c08"
+    },
+    {
+      "path": "G:\\.shortcut-targets-by-id\\1lo5XQFqwWZ4oV915bOgMLt9KPW0IeTv4\\Hackathon-Kavak-OpenAI-Primero\\DATA\\Listings\\RAW\\footwear\\subset-1\\manifest.json",
+      "bytes": 13465,
+      "sha256": "f5ac7828a2d0831a5f382a2fd9e5a67725fd644fc3e713440581ffdf24fb3828"
+    }
+  ],
+  "rows": 2948
+}

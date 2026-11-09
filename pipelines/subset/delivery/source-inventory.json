@@ -1,0 +1,167 @@
+{
+  "format": "delivery_code_inventory/v1",
+  "files": [
+    {
+      "source": "tasks/s3-gold-check-20261109/analyze_subset_distribution.py",
+      "copy": "s3-gold-check-20261109/analyze_subset_distribution.py",
+      "sha256": "aca1d9b74bcb4f315086151d1b810b1352e1d5fa5203c7d8c329c70d901d326a",
+      "bytes": 3551
+    },
+    {
+      "source": "tasks/s3-gold-check-20261109/audit_raw_subsets.py",
+      "copy": "s3-gold-check-20261109/audit_raw_subsets.py",
+      "sha256": "dd58c4948478826af36a42589439ce3421c209b4e792b66ea502500a8c9ae3bd",
+      "bytes": 5095
+    },
+    {
+      "source": "tasks/s3-gold-check-20261109/check_subset_overlap.py",
+      "copy": "s3-gold-check-20261109/check_subset_overlap.py",
+      "sha256": "e76a18938be16ebb395acda45985d9cf8685b7a34bae132a86f7a8c624a8d1ee",
+      "bytes": 5131
+    },
+    {
+      "source": "tasks/s3-gold-check-20261109/clean_raw_subsets.py",
+      "copy": "s3-gold-check-20261109/clean_raw_subsets.py",
+      "sha256": "3d7939c4d356d1eb0cb42ec051534c8ba2b77d5570157f8e9ba8ea0df5bcb127",
+      "bytes": 9864
+    },
+    {
+      "source": "tasks/s3-gold-check-20261109/copy_subsets_to_drive.py",
+      "copy": "s3-gold-check-20261109/copy_subsets_to_drive.py",
+      "sha256": "6d3e6a8e15fe1f076ed8b9a5adf94db1b98ee0719682d93260286710bb0bdcc4",
+      "bytes": 4500
+    },
+    {
+      "source": "tasks/s3-gold-check-20261109/enrich_outside_cases.py",
+      "copy": "s3-gold-check-20261109/enrich_outside_cases.py",
+      "sha256": "3038d38cb46a0280d2a334631a61a4571d5f462826cb992eb93d469eb1e55fca",
+      "bytes": 4191
+    },
+    {
+      "source": "tasks/s3-gold-check-20261109/finalize_content_inspection.py",
+      "copy": "s3-gold-check-20261109/finalize_content_inspection.py",
+      "sha256": "95cd71f718d042e05cd1208bdcfea717764999947723ad1dcfcb5c014506c205",
+      "bytes": 7719
+    },
+    {
+      "source": "tasks/s3-gold-check-20261109/hydrate_labels.py",
+      "copy": "s3-gold-check-20261109/hydrate_labels.py",
+      "sha256": "ee05ca6a6fd177d91bcffab18b50b54f2f3503b32ffba0d81099ee7e506e30f7",
+      "bytes": 2256
+    },
+    {
+      "source": "tasks/s3-gold-check-20261109/index_semantic_eligibility.py",
+      "copy": "s3-gold-check-20261109/index_semantic_eligibility.py",
+      "sha256": "d0fe76faa5a28c3b413d6f02869d9a3a04db6a8f7c3f81369c25034dfc4a6ffc",
+      "bytes": 3295
+    },
+    {
+      "source": "tasks/s3-gold-check-20261109/inspect_labels.py",
+      "copy": "s3-gold-check-20261109/inspect_labels.py",
+      "sha256": "cfb670c1a9b2a3b3f4779930fa64df272e1fc366488e5bd83c006e302532bfe0",
+      "bytes": 4178
+    },
+    {
+      "source": "tasks/s3-gold-check-20261109/inspect_outside_cases.py",
+      "copy": "s3-gold-check-20261109/inspect_outside_cases.py",
+      "sha256": "b3b9165af18e321c21b8017ffc981298384608bb073ad1d55666adb2c670492b",
+      "bytes": 2455
+    },
+    {
+      "source": "tasks/s3-gold-check-20261109/make_stratified_subsets.py",
+      "copy": "s3-gold-check-20261109/make_stratified_subsets.py",
+      "sha256": "43808b54dba0a957ec4ea60c47b993d22873ee472dffd52953987116947b958a",
+      "bytes": 17859
+    },
+    {
+      "source": "tasks/s3-gold-check-20261109/overlap_schemas.py",
+      "copy": "s3-gold-check-20261109/overlap_schemas.py",
+      "sha256": "5bc17c9b182503df1ae1b80a45ba498a9713f9f9abd6edbc55394da989332c88",
+      "bytes": 1496
+    },
+    {
+      "source": "tasks/s3-gold-check-20261109/publish_raw_subsets.py",
+      "copy": "s3-gold-check-20261109/publish_raw_subsets.py",
+      "sha256": "afb1878ba1003649d9eaa265ca929b44d278a13294952fab421e5d05452e259a",
+      "bytes": 9039
+    },
+    {
+      "source": "tasks/s3-gold-check-20261109/recheck_raw_pedia.py",
+      "copy": "s3-gold-check-20261109/recheck_raw_pedia.py",
+      "sha256": "fadef6c64b2bd2c14aca46179eee235b6e980b236954533382fba0cc5f7fcaed",
+      "bytes": 2601
+    },
+    {
+      "source": "tasks/s3-gold-check-20261109/redo_pedia_subsets.py",
+      "copy": "s3-gold-check-20261109/redo_pedia_subsets.py",
+      "sha256": "8654837aab5180ad9356e85b66cf4675ffd65a713fa865576e0386db4389ffe0",
+      "bytes": 9814
+    },
+    {
+      "source": "tasks/s3-gold-check-20261109/run_stratified.ps1",
+      "copy": "s3-gold-check-20261109/run_stratified.ps1",
+      "sha256": "21ad6d73e395553c63b527c21c72a96bce5a5dd9472b3af2219013f61fde71a2",
+      "bytes": 1011
+    },
+    {
+      "source": "tasks/s3-gold-check-20261109/save_placement_examples.py",
+      "copy": "s3-gold-check-20261109/save_placement_examples.py",
+      "sha256": "c38e8bd4be87ce9d22be0d6b5ac97d4daaec2d772d5beb8b366836143fa065c0",
+      "bytes": 6982
+    },
+    {
+      "source": "tasks/s3-gold-check-20261109/semantic_guard.py",
+      "copy": "s3-gold-check-20261109/semantic_guard.py",
+      "sha256": "41eeee5c79b94b51acb90815d7754ff03096789cdb213514592cb7862a376029",
+      "bytes": 9062
+    },
+    {
+      "source": "tasks/s3-gold-check-20261109/verify_stratified_subsets.py",
+      "copy": "s3-gold-check-20261109/verify_stratified_subsets.py",
+      "sha256": "00303d400dad69c2b91dfc93d5fe1575aee65948933c6c499d0737c30d6450a7",
+      "bytes": 4514
+    },
+    {
+      "source": "tasks/gold-subsets-20261109/add_history.py",
+      "copy": "gold-subsets-20261109/add_history.py",
+      "sha256": "33b2634eb8c0efa7082b5a64556f6962c91e1d6c52575229a469e53f5019b76c",
+      "bytes": 322
+    },
+    {
+      "source": "tasks/gold-subsets-20261109/check_label_provenance.py",
+      "copy": "gold-subsets-20261109/check_label_provenance.py",
+      "sha256": "2709fdc3392b8ec55ccf81163fd1ee5a36b28d700440dcd9fdf35af8c162c7b7",
+      "bytes": 1306
+    },
+    {
+      "source": "tasks/gold-subsets-20261109/configure_sources.py",
+      "copy": "gold-subsets-20261109/configure_sources.py",
+      "sha256": "f5f65e314b97af43ab7c87b41a482d92274c6c4bdd89cae7b7b3e3541de06473",
+      "bytes": 1282
+    },
+    {
+      "source": "tasks/gold-subsets-20261109/optional-readback-not-run-for-full-export.py",
+      "copy": "gold-subsets-20261109/optional-readback-not-run-for-full-export.py",
+      "sha256": "3e153675275dc78a595e3978c30544aa887e3d80c921bc8ff62885d733ade88b",
+      "bytes": 7509
+    },
+    {
+      "source": "tasks/gold-subsets-20261109/update_gold_docs.py",
+      "copy": "gold-subsets-20261109/update_gold_docs.py",
+      "sha256": "bdc97b7ebfed7c7ff87ae0573b385092f90d519d639db8dfeed507bd4e799506",
+      "bytes": 379
+    },
+    {
+      "source": "tasks/pedia-labeled-subsets-20261109/describe.py",
+      "copy": "pedia-labeled-subsets-20261109/describe.py",
+      "sha256": "3d4d45185f1d6ffbd541c7b79818b5e965fb71248a534ff9e38d149ce5a3f881",
+      "bytes": 1248
+    },
+    {
+      "source": "tasks/pedia-labeled-subsets-20261109/update_gold_docs.py",
+      "copy": "pedia-labeled-subsets-20261109/update_gold_docs.py",
+      "sha256": "fa1bf3b7da0ddc977090387cf2cd18be96f9f705eb197bcb39e810f1ec3e2d7b",
+      "bytes": 1620
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+variant: {}
+strip: []
+size_pattern: '(?!)'
+preserve_identity_tokens: true
+bind: [of, the, and, for]
+settings: {support_floor: 2}

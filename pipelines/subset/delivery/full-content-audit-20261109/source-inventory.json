@@ -1,0 +1,29 @@
+{
+  "format": "task_script_snapshot/v1",
+  "files": [
+    {
+      "file": "prepare_replacements.py",
+      "source_sha256": "5b35933e9628851f707d972d2579541852937d02f65f93b149da341f13233884"
+    },
+    {
+      "file": "prepare_replacements.ps1",
+      "source_sha256": "d0c3a418bb0b6c6b347711c7d95d013a5abb07fdcbad0fde09ff92a5136a98ab"
+    },
+    {
+      "file": "repair_food.py",
+      "source_sha256": "5c9b68c8895b9b24e04adddd78344cda66f2d4a06a7685f344f810f8ef3f4f70"
+    },
+    {
+      "file": "package_other_domains.py",
+      "source_sha256": "16d53278cf72ab6c5ba4ffa5d55dd34efdb5343cec6d2306e0b86942caaf1ba3"
+    },
+    {
+      "file": "publish_repairs.py",
+      "source_sha256": "5e1ad3d5a5d109d7076128180fb06ee6d248f2f5b19b73cd341c779a01a7f4b0"
+    },
+    {
+      "file": "Food-Gold-script/verify_food_gold.py",
+      "source_sha256": "c0792d251e5a67f190080445e4c906a8249e34b56a846f67b2249f2a70f10219"
+    }
+  ]
+}

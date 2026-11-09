@@ -1,0 +1,71 @@
+{
+  "format": "raw_gold_pairing/v1",
+  "pairs": [
+    {
+      "domain": "food",
+      "subset": 1,
+      "raw": "food/subset-1/food_listings.parquet",
+      "gold": "food/subset-1/gold.parquet",
+      "raw_rows": 5000,
+      "gold_rows": 4500,
+      "gold_ids_outside_this_raw": 0,
+      "gold_ids_equal_this_raw_in_pedia_ids": true,
+      "unique_gold_ids": 4500
+    },
+    {
+      "domain": "food",
+      "subset": 2,
+      "raw": "food/subset-2/food_listings.parquet",
+      "gold": "food/subset-2/gold.parquet",
+      "raw_rows": 5000,
+      "gold_rows": 4500,
+      "gold_ids_outside_this_raw": 0,
+      "gold_ids_equal_this_raw_in_pedia_ids": true,
+      "unique_gold_ids": 4500
+    },
+    {
+      "domain": "food",
+      "subset": 3,
+      "raw": "food/subset-3/food_listings.parquet",
+      "gold": "food/subset-3/gold.parquet",
+      "raw_rows": 5000,
+      "gold_rows": 4500,
+      "gold_ids_outside_this_raw": 0,
+      "gold_ids_equal_this_raw_in_pedia_ids": true,
+      "unique_gold_ids": 4500
+    },
+    {
+      "domain": "fragrance",
+      "subset": 1,
+      "raw": "fragrance/subset-1/fragrance_listings.parquet",
+      "gold": "fragrance/subset-1/gold.parquet",
+      "raw_rows": 5000,
+      "gold_rows": 4500,
+      "gold_ids_outside_this_raw": 0,
+      "gold_ids_equal_this_raw_in_pedia_ids": true,
+      "unique_gold_ids": 4500
+    },
+    {
+      "domain": "fragrance",
+      "subset": 2,
+      "raw": "fragrance/subset-2/fragrance_listings.parquet",
+      "gold": "fragrance/subset-2/gold.parquet",
+      "raw_rows": 5000,
+      "gold_rows": 4500,
+      "gold_ids_outside_this_raw": 0,
+      "gold_ids_equal_this_raw_in_pedia_ids": true,
+      "unique_gold_ids": 4500
+    },
+    {
+      "domain": "fragrance",
+      "subset": 3,
+      "raw": "fragrance/subset-3/fragrance_listings.parquet",
+      "gold": "fragrance/subset-3/gold.parquet",
+      "raw_rows": 5000,
+      "gold_rows": 4500,
+      "gold_ids_outside_this_raw": 0,
+      "gold_ids_equal_this_raw_in_pedia_ids": true,
+      "unique_gold_ids": 4500
+    }
+  ]
+}

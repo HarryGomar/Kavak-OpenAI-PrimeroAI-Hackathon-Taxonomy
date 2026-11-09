@@ -1,0 +1,5 @@
+version: 1
+web: false
+use_proposals: false
+inputs: [title, brand, source_brand, merchant, byline, description, aplus_content, best_seller_ranks, categories, variant_options_json]
+checklist: []

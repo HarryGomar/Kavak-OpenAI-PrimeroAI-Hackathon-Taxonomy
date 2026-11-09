@@ -1,0 +1,101 @@
+{
+  "format": "raw_content_repair/v1",
+  "status": "PASS",
+  "input_rows_screened": 43168,
+  "method": "Three independent agent audits, full-row automated screening and targeted source evidence review. Not manual verification of every listing.",
+  "repaired_domains": [
+    "food",
+    "clothing",
+    "footwear",
+    "games"
+  ],
+  "fragrance_modified": false,
+  "fragrance_protected_files_verified": 22,
+  "final_domains": {
+    "food": {
+      "subsets": 3,
+      "rows_per_subset": 5000,
+      "replacements": 138,
+      "in_pedia_per_subset": 4500,
+      "outside_pedia_per_subset": 500
+    },
+    "clothing": {
+      "subsets": 1,
+      "rows": 5000,
+      "removed": 957,
+      "replacements": 957
+    },
+    "footwear": {
+      "subsets": 1,
+      "rows": 2948,
+      "removed": 59
+    },
+    "games": {
+      "subsets": 1,
+      "rows": 4338,
+      "removed": 823
+    }
+  },
+  "food_gold_refreshed": true,
+  "food_gold_rows_per_subset": 4500,
+  "food_gold_exact_pairing_verified": true,
+  "all9_subsets_observation_ids_disjoint": true,
+  "total_rows_in_all9_subsets_including_unchanged_fragrance": 42286,
+  "source_values_preserved": true,
+  "quality_policy": "Unrelated products rejected; contaminated text and unresolved field contradictions held, not guessed or silently corrected. Explicit FREE gifts are not rejected solely for zero price.",
+  "raw_layout": "DATA/Listings/RAW/{domain}/subset-{n}",
+  "gold_layout": "DATA/Listings/Labeled/food/subset-{1,2,3}/gold.parquet",
+  "domains": {
+    "food": [
+      {
+        "name": "subset-1",
+        "rows": 5000,
+        "sha256": "f48ac5a963d8b6a2da840370e10f8bec411e877fabd5b7b06e6d1d43a87b572a",
+        "column_count": 97,
+        "content_audit_passed": true
+      },
+      {
+        "name": "subset-2",
+        "rows": 5000,
+        "sha256": "f633d5eed55cf2edee979a57614ad33fecb3384b4f6da037a1a1790c5ca27436",
+        "column_count": 97,
+        "content_audit_passed": true
+      },
+      {
+        "name": "subset-3",
+        "rows": 5000,
+        "sha256": "ccf7516be992464976811ac665a5393eb566b0dbafb1e273da8d50a0a1219ea3",
+        "column_count": 97,
+        "content_audit_passed": true
+      }
+    ],
+    "clothing": [
+      {
+        "name": "subset-1",
+        "rows": 5000,
+        "sha256": "f3a47a08b7513f4885c9917b48940ec419491e29de5ab01b26b8db892403e8b5",
+        "column_count": 97,
+        "content_audit_passed": true
+      }
+    ],
+    "footwear": [
+      {
+        "name": "subset-1",
+        "rows": 2948,
+        "sha256": "75b7f232e3d963ca35594a5f484f2a85e9f69a56562bede16792796eaabd6601",
+        "column_count": 97,
+        "content_audit_passed": true
+      }
+    ],
+    "games": [
+      {
+        "name": "subset-1",
+        "rows": 4338,
+        "sha256": "4749cb77a529b202d94a8d1e1b5f41cb7a45f23ae879e17d601f9c1ef26d5054",
+        "column_count": 97,
+        "content_audit_passed": true
+      }
+    ]
+  },
+  "fragrance_instruction": "Fragrance audit findings were not applied, per owner instruction; existing RAW and Labeled payloads/manifests unchanged."
+}

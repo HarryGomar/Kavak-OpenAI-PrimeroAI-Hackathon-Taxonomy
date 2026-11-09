@@ -1,0 +1,81 @@
+name: toys
+families: []
+levels:
+- brand
+- line
+- product
+- variant
+data: toys/
+truth: none; source screens and synthetic checks are not gold
+readiness: bootstrap_only_no_trusted_taxonomy
+conventions: '- Preserve set/model numbers, numbered names, editions and scales as
+  identity evidence; never strip bare numerals.
+
+  - Contents or construction pieces are not pack multiplicity; a 300-piece building
+  set is one product, not 300 units.
+
+  - Repeated identical units are listing attributes, never pack nodes; a named mixed
+  playset can be a product.
+
+  - Character, franchise, licensor, seller and compatibility target are separate from
+  the source brand or maker claim.
+
+  - A scale or edition can distinguish an evidenced product; color is a variant only
+  when actually specified.
+
+  - Assorted/random or colors-may-vary offers never establish a particular color or
+  character variant.
+
+  - A toy accessory is a separate product from the complete toy; compatibility alone
+  never identifies its maker.
+
+  - Include source-supported toys and games in this ONE domain; tabletop, puzzle and
+  video-game kinds are subtypes.
+
+  - Unsupported or conflicting evidence is held with a reason; no department rank
+  supplies a product taxonomy.
+
+
+  For game subtypes:
+
+  - Require supported game identity; broad Toys & Games or Video Games membership
+  is insufficient.
+
+  - Partition by subtype before counting or matching; never merge software, hardware,
+  accessories, currency, DLC, puzzles or tabletop games.
+
+  - Preserve title numerals, sequels, model codes, named sets, puzzle artwork and
+  piece counts; piece count is puzzle identity evidence, not an outer pack count.
+
+  - Base games, expansions and base-plus-expansion bundles are distinct products unless
+  source evidence establishes standalone equivalence.
+
+  - Preserve platform/generation, edition, language and physical/digital evidence.
+  Missing information is unknown, never an implicit standard edition or English disc.
+
+  - A compatible console or game names the accessory target, not its maker or product
+  identity. Sellers and licensed characters never establish brand.
+
+  - Collector bundles require named contents; never silently collapse them into a
+  full game or a figure.
+
+  - Colour, condition, seller, price, age guidance, player count, play time and outer
+  pack count are listing attributes unless evidence proves otherwise.
+
+  - Do not create nodes from source ranks, food-format fields or machine audit decisions.
+  Human review is required before promoting proposals.
+
+  '
+subtypes:
+- toy
+- board_game
+- card_game
+- dice_game
+- domino_game
+- puzzle
+- tabletop_accessory
+- video_game_software
+- video_game_hardware
+- video_game_accessory
+- video_game_dlc
+- video_game_currency

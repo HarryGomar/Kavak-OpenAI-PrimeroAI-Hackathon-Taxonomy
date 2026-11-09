@@ -1,0 +1,266 @@
+{
+  "format": "silver_subset_delivery/v1",
+  "recorded_date": "2026-11-09",
+  "evidence": "Summary of the saved local-file and Drive readback reports from the delivered extraction; not a fresh extraction or test run.",
+  "local_report": "data/subsets/uniqueness-report.json",
+  "drive_report": "Hackathon-Kavak-OpenAI-Primero/DATA/Listings/Non-labeled yet/uniqueness-report.json",
+  "status": "PASS",
+  "drive_status": "PASS",
+  "domains": {
+    "food": {
+      "subsets": [
+        {
+          "name": "silver-gold-pedia-n5000-seed73",
+          "rows": 5000,
+          "listing_id_column": "observation_key",
+          "distinct_listing_ids": 5000,
+          "null_listing_ids": 0,
+          "sha256": "853d96fce9dc0d3b588ce310a00888484bb857e7ff6857a67ced379a19028f9c",
+          "strata": {
+            "gold": 2000,
+            "pedia_without_gold": 2900,
+            "outside_pedia": 100
+          },
+          "diversity": {
+            "gold": {
+              "rows": 2000,
+              "eligible": 161530,
+              "brands": 100,
+              "sources": 123
+            },
+            "pedia_without_gold": {
+              "rows": 2900,
+              "eligible": 58175,
+              "brands": 108,
+              "sources": 107
+            },
+            "outside_pedia": {
+              "rows": 100,
+              "eligible": 61986,
+              "brands": 99,
+              "sources": 5
+            }
+          },
+          "total_sources": 140,
+          "total_brand_labels": 246,
+          "relationships": {
+            "models": 982,
+            "models_with_multiple_listings": 558,
+            "models_with_multiple_sources": 291,
+            "models_with_sibling_variants": 281
+          },
+          "column_count": 97,
+          "original_schema_preserved": true,
+          "gold_labeled_distinct_ids": 2000,
+          "path": "data/subsets/silver-gold-pedia-n5000-seed73/food/food_listings.parquet",
+          "drive_path": "food/subset-2/food_listings.parquet"
+        },
+        {
+          "name": "silver-gold-pedia-n5000-seed97",
+          "rows": 5000,
+          "listing_id_column": "observation_key",
+          "distinct_listing_ids": 5000,
+          "null_listing_ids": 0,
+          "sha256": "7f58e7cd70cd5fb04d302bf9da4de40ad289a1e2cb2680a734c6e8193991b9f5",
+          "strata": {
+            "gold": 2000,
+            "pedia_without_gold": 2900,
+            "outside_pedia": 100
+          },
+          "diversity": {
+            "gold": {
+              "rows": 2000,
+              "eligible": 159530,
+              "brands": 100,
+              "sources": 99
+            },
+            "pedia_without_gold": {
+              "rows": 2900,
+              "eligible": 55275,
+              "brands": 273,
+              "sources": 37
+            },
+            "outside_pedia": {
+              "rows": 100,
+              "eligible": 61886,
+              "brands": 99,
+              "sources": 5
+            }
+          },
+          "total_sources": 107,
+          "total_brand_labels": 450,
+          "relationships": {
+            "models": 1591,
+            "models_with_multiple_listings": 698,
+            "models_with_multiple_sources": 206,
+            "models_with_sibling_variants": 287
+          },
+          "column_count": 97,
+          "original_schema_preserved": true,
+          "gold_labeled_distinct_ids": 2000,
+          "path": "data/subsets/silver-gold-pedia-n5000-seed97/food/food_listings.parquet",
+          "drive_path": "food/subset-3/food_listings.parquet"
+        },
+        {
+          "name": "silver-n5000-seed42",
+          "rows": 5000,
+          "listing_id_column": "observation_key",
+          "distinct_listing_ids": 5000,
+          "null_listing_ids": 0,
+          "sha256": "670234f80e55f8d411ddb2d1f6d0c08450888b8284b9908665122f78e797a2bc",
+          "path": "data/subsets/silver-n5000-seed42/food/food_listings.parquet",
+          "drive_path": "food/food_listings.parquet"
+        }
+      ],
+      "total_rows": 15000,
+      "total_distinct_listing_ids": 15000,
+      "all_internal_unique": true,
+      "all_pairs_disjoint": true,
+      "pairwise_intersections": [
+        {
+          "left": "silver-gold-pedia-n5000-seed73/food/food_listings.parquet",
+          "right": "silver-gold-pedia-n5000-seed97/food/food_listings.parquet",
+          "intersection_count": 0
+        },
+        {
+          "left": "silver-gold-pedia-n5000-seed73/food/food_listings.parquet",
+          "right": "silver-n5000-seed42/food/food_listings.parquet",
+          "intersection_count": 0
+        },
+        {
+          "left": "silver-gold-pedia-n5000-seed97/food/food_listings.parquet",
+          "right": "silver-n5000-seed42/food/food_listings.parquet",
+          "intersection_count": 0
+        }
+      ]
+    },
+    "fragrance": {
+      "subsets": [
+        {
+          "name": "silver-gold-pedia-n5000-seed73",
+          "rows": 5000,
+          "listing_id_column": "source_record_key",
+          "distinct_listing_ids": 5000,
+          "null_listing_ids": 0,
+          "sha256": "e73789b06e6cb2ba43006f6a96cf7b16381100649f8ee79a0d7dda74f98da25d",
+          "strata": {
+            "gold": 2000,
+            "pedia_without_gold": 2900,
+            "outside_pedia": 100
+          },
+          "diversity": {
+            "gold": {
+              "rows": 2000,
+              "eligible": 46453,
+              "brands": 120,
+              "sources": 50
+            },
+            "pedia_without_gold": {
+              "rows": 2900,
+              "eligible": 58798,
+              "brands": 120,
+              "sources": 46
+            },
+            "outside_pedia": {
+              "rows": 100,
+              "eligible": 316117,
+              "brands": 88,
+              "sources": 10
+            }
+          },
+          "total_sources": 65,
+          "total_brand_labels": 252,
+          "relationships": {
+            "models": 1565,
+            "models_with_multiple_listings": 891,
+            "models_with_multiple_sources": 681,
+            "models_with_sibling_variants": 16
+          },
+          "column_count": 106,
+          "original_schema_preserved": true,
+          "gold_labeled_distinct_ids": 2000,
+          "path": "data/subsets/silver-gold-pedia-n5000-seed73/fragrance/fragrance_listings.parquet",
+          "drive_path": "fragrance/subset-2/fragrance_listings.parquet"
+        },
+        {
+          "name": "silver-gold-pedia-n5000-seed97",
+          "rows": 5000,
+          "listing_id_column": "source_record_key",
+          "distinct_listing_ids": 5000,
+          "null_listing_ids": 0,
+          "sha256": "712f6e52fea5b9b0808c8aa4889ca67fff3f818538bdfa0297b3505d8b3edbb0",
+          "strata": {
+            "gold": 2000,
+            "pedia_without_gold": 2900,
+            "outside_pedia": 100
+          },
+          "diversity": {
+            "gold": {
+              "rows": 2000,
+              "eligible": 44453,
+              "brands": 119,
+              "sources": 46
+            },
+            "pedia_without_gold": {
+              "rows": 2900,
+              "eligible": 55898,
+              "brands": 120,
+              "sources": 30
+            },
+            "outside_pedia": {
+              "rows": 100,
+              "eligible": 316017,
+              "brands": 88,
+              "sources": 11
+            }
+          },
+          "total_sources": 58,
+          "total_brand_labels": 256,
+          "relationships": {
+            "models": 1460,
+            "models_with_multiple_listings": 927,
+            "models_with_multiple_sources": 713,
+            "models_with_sibling_variants": 13
+          },
+          "column_count": 106,
+          "original_schema_preserved": true,
+          "gold_labeled_distinct_ids": 2000,
+          "path": "data/subsets/silver-gold-pedia-n5000-seed97/fragrance/fragrance_listings.parquet",
+          "drive_path": "fragrance/subset-3/fragrance_listings.parquet"
+        },
+        {
+          "name": "silver-n5000-seed42",
+          "rows": 5000,
+          "listing_id_column": "source_record_key",
+          "distinct_listing_ids": 5000,
+          "null_listing_ids": 0,
+          "sha256": "486a53b737da49379e131ab8c41d7fd28aeb08e947c657a418a66de72db678b2",
+          "path": "data/subsets/silver-n5000-seed42/fragrance/fragrance_listings.parquet",
+          "drive_path": "fragrance/fragrance_listings.parquet"
+        }
+      ],
+      "total_rows": 15000,
+      "total_distinct_listing_ids": 15000,
+      "all_internal_unique": true,
+      "all_pairs_disjoint": true,
+      "pairwise_intersections": [
+        {
+          "left": "silver-gold-pedia-n5000-seed73/fragrance/fragrance_listings.parquet",
+          "right": "silver-gold-pedia-n5000-seed97/fragrance/fragrance_listings.parquet",
+          "intersection_count": 0
+        },
+        {
+          "left": "silver-gold-pedia-n5000-seed73/fragrance/fragrance_listings.parquet",
+          "right": "silver-n5000-seed42/fragrance/fragrance_listings.parquet",
+          "intersection_count": 0
+        },
+        {
+          "left": "silver-gold-pedia-n5000-seed97/fragrance/fragrance_listings.parquet",
+          "right": "silver-n5000-seed42/fragrance/fragrance_listings.parquet",
+          "intersection_count": 0
+        }
+      ]
+    }
+  },
+  "all_six_files_globally_disjoint": true
+}

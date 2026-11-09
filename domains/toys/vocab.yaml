@@ -1,0 +1,8 @@
+# Conservative bootstrap. No context-free stripping is safe for set numbers,
+# scales, numbered names, editions, pieces or bundles in these sources.
+variant: {}
+size_pattern: '(?!)'
+strip: []
+bind: [of, the, and, with, for]
+settings:
+  support_floor: 2

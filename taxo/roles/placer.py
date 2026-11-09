@@ -1,7 +1,7 @@
 """Placer agent: reads a listing, searches the domain's taxonomy with tools, returns one node (or abstains)."""
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import asdict, dataclass, field
 
 from agents import Agent, RunContextWrapper, function_tool
 from pydantic import BaseModel, Field
@@ -16,6 +16,8 @@ class PlaceContext:
     domain: str
     nodes: dict[str, Node]
     rules: list[RuleSpec] = field(default_factory=list)   # admitted rule specs (taxo/core/rules.py)
+    listing: Listing | None = None
+    shadow: list[dict] = field(default_factory=list)
     yaml_rules: list = field(default_factory=list)        # the pipeline's active place rules (taxo/evaluator.py)
 
 
@@ -48,19 +50,21 @@ def read_node(ctx: RunContextWrapper[PlaceContext], node_id: str) -> dict:
 
 @function_tool
 def check_rules(ctx: RunContextWrapper[PlaceContext], listing_title: str, node_id: str) -> list[dict]:
-    """Run the domain's enabled rules on (title, node). Any reject or abstain means: do not choose this node."""
+    """Run admitted rules (and the pipeline's active place rules) on the current listing and candidate.
+    Veto/abstain findings block this choice. Shadow findings are logged outside the prompt and never decide."""
     from taxo import evaluator
     n = ctx.context.nodes.get(node_id)
     if not n:
         return [{"error": f"no node {node_id}"}]
-    listing = Listing(id="probe", domain=ctx.context.domain, title=listing_title)
-    out = [{"rule": f.check, "decision": f.decision, "detail": f.detail}
-           for f in rule_engine.run_rules(ctx.context.rules, listing, n, ctx.context.nodes).decided]
+    listing = ctx.context.listing or Listing(id="probe", domain=ctx.context.domain, title=listing_title)
+    result = rule_engine.run_rules(ctx.context.rules, listing, n, ctx.context.nodes)
+    ctx.context.shadow.extend({"listing_id": listing.id, "node_id": n.id, **asdict(v)} for v in result.shadow)
+    out = [{**asdict(v), "status": "admitted", "binding": True} for v in result.decided]
     if ctx.context.yaml_rules:
         o = evaluator.evaluate(ctx.context.yaml_rules, "place", {"placement": {"step": "lattice", "level": "product"}},
                                {"listing": listing, "node": n, "tax": ctx.context.nodes})
         if o.then.get("veto"):
-            out.append({"rule": o.rule, "decision": "veto", "detail": o.detail})
+            out.append({"check": o.rule, "decision": "veto", "detail": o.detail, "status": "admitted", "binding": True})
     return out
 
 
@@ -73,7 +77,10 @@ Domain conventions:
 {conventions}"""
 
 
-def make_placer(domain: str, conventions: str = "") -> Agent[PlaceContext]:
+def make_placer(domain: str, conventions: str = "", *, include_proposals: bool = False) -> Agent[PlaceContext]:
+    from taxo.memory import agentic_for
+    instructions = agentic_for(domain, include_proposals=include_proposals) if domain in {"toys", "clothing", "footwear"} else []
+    conventions += "\n" + "\n".join(f"[{r.status.value}] {r.text}" for r in instructions)
     return Agent[PlaceContext](
         name=f"placer-{domain}",
         instructions=INSTRUCTIONS.format(domain=domain, conventions=conventions or "(none yet)"),

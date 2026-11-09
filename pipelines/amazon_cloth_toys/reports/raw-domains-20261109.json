@@ -1,0 +1,84 @@
+{
+  "format": "historical_amazon_raw_domains/v1",
+  "status": "PASS",
+  "evidence": "Saved Drive-file inspection plus full local selection and parsing replay on 2026-11-09; existing Food/Fragrance extraction not rerun.",
+  "raw_drive_layout": "DATA/Listings/RAW/{clothing,footwear,games}/subset-1",
+  "silver_format": "Exact Food Silver97-column names/order/types/metadata; not food-family admission.",
+  "m4r_commit": "00fc125280116736372a38fefe4206ddfed65604",
+  "domains": {
+    "clothing": {
+      "subset": 1,
+      "rows": 5000,
+      "column_count": 97,
+      "drive_parquet_sha256": "3819f4a44dc8a8d04a205b6ceceb6d334b96cf1aca7079248c7ada4f6407cd1f",
+      "replay_parquet_sha256": "3819f4a44dc8a8d04a205b6ceceb6d334b96cf1aca7079248c7ada4f6407cd1f",
+      "membership_and_business_values_match": true,
+      "exact_template_schema": true,
+      "m4r_contract_gate": {
+        "rows_checked": 5000,
+        "rules_checked": 67,
+        "violations": {}
+      },
+      "identity_rows_verified": 5000,
+      "json_schema_price_samples": {
+        "missing": 3,
+        "present": 3
+      },
+      "source_rows_exact": true
+    },
+    "footwear": {
+      "subset": 1,
+      "rows": 3007,
+      "column_count": 97,
+      "drive_parquet_sha256": "ebe21666da74cdb778b63820166fe204dd528dfac09e0d520a71c7510c2bc874",
+      "replay_parquet_sha256": "ebe21666da74cdb778b63820166fe204dd528dfac09e0d520a71c7510c2bc874",
+      "membership_and_business_values_match": true,
+      "exact_template_schema": true,
+      "m4r_contract_gate": {
+        "rows_checked": 3007,
+        "rules_checked": 67,
+        "violations": {}
+      },
+      "identity_rows_verified": 3007,
+      "json_schema_price_samples": {
+        "missing": 3,
+        "present": 3
+      },
+      "source_rows_exact": true
+    },
+    "games": {
+      "subset": 1,
+      "rows": 5161,
+      "column_count": 97,
+      "drive_parquet_sha256": "064d64e9ab9ff490383118a0befb7963bb2f125e28cd603198816415a95ca8e6",
+      "replay_parquet_sha256": "d6cbe242d8600d489d48ab66afc752050851b946b85d7a84c672acd50ea02dc3",
+      "membership_and_business_values_match": true,
+      "exact_template_schema": true,
+      "m4r_contract_gate": {
+        "rows_checked": 5161,
+        "rules_checked": 67,
+        "violations": {}
+      },
+      "identity_rows_verified": 5161,
+      "json_schema_price_samples": {
+        "missing": 3,
+        "present": 3
+      },
+      "source_rows_exact": true
+    }
+  },
+  "pedia_membership": "not_evaluated",
+  "gold_labels_present": false,
+  "games_content_review": "Category/format/identity checks only; stricter garment/footwear content review not performed on games.",
+  "clothing_replacements": 1422,
+  "previous_clothing_rows_retained": 3578,
+  "source_rows_preserved_in_sidecar": true,
+  "replay_note": "Clothing/footwear bytes reproduce exactly. Games retains earlier delivered run metadata/compatibility issue wording; replay uses current parser revision. All other columns and membership match.",
+  "all9_drive_subsets_have_disjoint_observation_ids": true,
+  "code_sha256": {
+    "pipelines/subset/apparel_rules.py": "d6bc8a38eea142c9b74ef89f42323cd6a66b3717d25b55b92894e146f7fc6382",
+    "pipelines/subset/select_apparel.py": "ef424c5c3eaa6c3b29fde2ea68807f05122ad7a320c21c312f13c5782e252bb6",
+    "pipelines/amazon_cloth_toys/parse.py": "56104bdda6e72b4d4d08729d47109e1761c3fb55a65ac72d009770ed6d144b2f",
+    "pipelines/amazon_cloth_toys/run.ps1": "60f170dcac73f17b98ef975c879bb83320bc41b73f43c5833215a124f7dd361b"
+  }
+}

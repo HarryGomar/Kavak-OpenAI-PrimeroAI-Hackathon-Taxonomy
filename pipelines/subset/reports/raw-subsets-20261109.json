@@ -1,0 +1,483 @@
+{
+  "format": "raw_delivery_summary/v3",
+  "status": "PASS",
+  "evidence": "Recorded original saved-file checks; PR audit does not rerun extraction.",
+  "raw_drive_layout": "DATA/Listings/RAW/{food,fragrance}/subset-{1,2,3}",
+  "labeled_drive_layout": "DATA/Listings/Labeled/{food,fragrance}/subset-{1,2,3}/gold.parquet",
+  "gold_inputs_used_for_raw_selection": false,
+  "domains": {
+    "food": {
+      "subsets": [
+        {
+          "subset": 1,
+          "rows": 5000,
+          "seed": 42,
+          "gold_inputs_used": false,
+          "strata": {
+            "in_pedia": {
+              "rows": 4500,
+              "brand_labels": 113,
+              "sources": 133
+            },
+            "outside_pedia": {
+              "rows": 500,
+              "brand_labels": 107,
+              "sources": 27
+            }
+          },
+          "classification_column": "food_scope_status",
+          "allowed_classification": "confirmed",
+          "review_required_true_excluded": false,
+          "pedia_release": "food-2026-11-09-r41",
+          "pedia_release_sha256": "b0e526f0ec7904722d5f5e0fbccfed4573ca3e1ca7e05595a658208a8c62872d",
+          "pedia_graph_manifest_sha256": "9b2bb46a365edec9bc4de5a1332a32fb1bb8c18d7bfa6a26e87aa2ed44493eb7",
+          "selection_sha256": "b4517f52a57b1ae09133784c6a8a3358927adb0178d7047f3bf0ccb4c987d251",
+          "parquet_sha256": "90d74f379c01c858aebcea29b8229ad7b1f2eed5c6f12bea69a57011ea7d7c88",
+          "parquet_bytes": 4304160,
+          "verified_rows": 5000,
+          "verified_schema": true,
+          "verified_ids": true,
+          "classification_counts": {
+            "confirmed": 5000
+          },
+          "column_count": 97,
+          "content_checked": true,
+          "semantic_rules_sha256": "41eeee5c79b94b51acb90815d7754ff03096789cdb213514592cb7862a376029",
+          "replacement_counts": {
+            "in_pedia": 112,
+            "outside_pedia": 10
+          },
+          "retained_rows": 4878,
+          "semantic_acceptance_counts": {
+            "food_term_in_title": 3139,
+            "explicit_ingredients": 1233,
+            "food_term_in_product_description": 628
+          },
+          "verified_semantic_nonaccept_rows": 0,
+          "verified_semantic_rows": 5000,
+          "brand_labels": 219,
+          "sources": 141,
+          "models": 669,
+          "models_with_multiple_listings": 558,
+          "models_with_multiple_sources": 383,
+          "models_with_sibling_variants": 325
+        },
+        {
+          "subset": 2,
+          "rows": 5000,
+          "seed": 73,
+          "gold_inputs_used": false,
+          "strata": {
+            "in_pedia": {
+              "rows": 4500,
+              "brand_labels": 108,
+              "sources": 130
+            },
+            "outside_pedia": {
+              "rows": 500,
+              "brand_labels": 110,
+              "sources": 24
+            }
+          },
+          "classification_column": "food_scope_status",
+          "allowed_classification": "confirmed",
+          "review_required_true_excluded": false,
+          "pedia_release": "food-2026-11-09-r41",
+          "pedia_release_sha256": "b0e526f0ec7904722d5f5e0fbccfed4573ca3e1ca7e05595a658208a8c62872d",
+          "pedia_graph_manifest_sha256": "9b2bb46a365edec9bc4de5a1332a32fb1bb8c18d7bfa6a26e87aa2ed44493eb7",
+          "selection_sha256": "8d674e67ccce3a2f4d0d556e87bc8ffebdeaf74acbd369e851b90dc4dfb59ff4",
+          "parquet_sha256": "3dfa7cafb71e2d2a11d309ba3e1763891421a6067a1b2473788adf09bb8cfbed",
+          "parquet_bytes": 4726655,
+          "verified_rows": 5000,
+          "verified_schema": true,
+          "verified_ids": true,
+          "classification_counts": {
+            "confirmed": 5000
+          },
+          "column_count": 97,
+          "content_checked": true,
+          "semantic_rules_sha256": "41eeee5c79b94b51acb90815d7754ff03096789cdb213514592cb7862a376029",
+          "replacement_counts": {
+            "in_pedia": 68,
+            "outside_pedia": 12
+          },
+          "retained_rows": 4920,
+          "semantic_acceptance_counts": {
+            "food_term_in_title": 3135,
+            "explicit_ingredients": 1391,
+            "food_term_in_product_description": 474
+          },
+          "verified_semantic_nonaccept_rows": 0,
+          "verified_semantic_rows": 5000,
+          "brand_labels": 218,
+          "sources": 138,
+          "models": 679,
+          "models_with_multiple_listings": 538,
+          "models_with_multiple_sources": 375,
+          "models_with_sibling_variants": 282
+        },
+        {
+          "subset": 3,
+          "rows": 5000,
+          "seed": 97,
+          "gold_inputs_used": false,
+          "strata": {
+            "in_pedia": {
+              "rows": 4500,
+              "brand_labels": 108,
+              "sources": 104
+            },
+            "outside_pedia": {
+              "rows": 500,
+              "brand_labels": 122,
+              "sources": 31
+            }
+          },
+          "classification_column": "food_scope_status",
+          "allowed_classification": "confirmed",
+          "review_required_true_excluded": false,
+          "pedia_release": "food-2026-11-09-r41",
+          "pedia_release_sha256": "b0e526f0ec7904722d5f5e0fbccfed4573ca3e1ca7e05595a658208a8c62872d",
+          "pedia_graph_manifest_sha256": "9b2bb46a365edec9bc4de5a1332a32fb1bb8c18d7bfa6a26e87aa2ed44493eb7",
+          "selection_sha256": "78faa0938c2bc3568b4e290c5425330ed694a476e81f52cef7b03a998ddfbdcb",
+          "parquet_sha256": "45c5f4a65b45a1dbd7a2235ae09b5dafced91ea8effe24dd8b525f2afa63b8ba",
+          "parquet_bytes": 4453264,
+          "verified_rows": 5000,
+          "verified_schema": true,
+          "verified_ids": true,
+          "classification_counts": {
+            "confirmed": 5000
+          },
+          "column_count": 97,
+          "content_checked": true,
+          "semantic_rules_sha256": "41eeee5c79b94b51acb90815d7754ff03096789cdb213514592cb7862a376029",
+          "replacement_counts": {
+            "in_pedia": 73,
+            "outside_pedia": 28
+          },
+          "retained_rows": 4899,
+          "semantic_acceptance_counts": {
+            "food_term_in_product_description": 371,
+            "food_term_in_title": 3040,
+            "explicit_ingredients": 1589
+          },
+          "verified_semantic_nonaccept_rows": 0,
+          "verified_semantic_rows": 5000,
+          "brand_labels": 227,
+          "sources": 114,
+          "models": 624,
+          "models_with_multiple_listings": 440,
+          "models_with_multiple_sources": 243,
+          "models_with_sibling_variants": 249
+        }
+      ],
+      "total_distinct_listing_ids": 15000,
+      "pairwise_listing_id_intersections": [
+        {
+          "left": 1,
+          "right": 2,
+          "intersection": 0
+        },
+        {
+          "left": 1,
+          "right": 3,
+          "intersection": 0
+        },
+        {
+          "left": 2,
+          "right": 3,
+          "intersection": 0
+        }
+      ],
+      "independent_pedia_readback": {
+        "pedia_release": "food-2026-11-09-r41",
+        "subsets": [
+          {
+            "subset": 1,
+            "listings": 5000,
+            "verified_in_pedia": 4500,
+            "verified_outside": 500,
+            "outside_with_any_placement": 0,
+            "flag_disagreements": 0
+          },
+          {
+            "subset": 2,
+            "listings": 5000,
+            "verified_in_pedia": 4500,
+            "verified_outside": 500,
+            "outside_with_any_placement": 0,
+            "flag_disagreements": 0
+          },
+          {
+            "subset": 3,
+            "listings": 5000,
+            "verified_in_pedia": 4500,
+            "verified_outside": 500,
+            "outside_with_any_placement": 0,
+            "flag_disagreements": 0
+          }
+        ]
+      }
+    },
+    "fragrance": {
+      "subsets": [
+        {
+          "subset": 1,
+          "rows": 5000,
+          "seed": 42,
+          "gold_inputs_used": false,
+          "strata": {
+            "in_pedia": {
+              "rows": 4500,
+              "brand_labels": 127,
+              "sources": 68
+            },
+            "outside_pedia": {
+              "rows": 500,
+              "brand_labels": 109,
+              "sources": 14
+            }
+          },
+          "classification_column": "perfume_status",
+          "allowed_classification": "included",
+          "review_required_true_excluded": true,
+          "pedia_release": "fragrance-2026-10-21-r10",
+          "pedia_release_sha256": "7e38975c75ec20f866d83193d2e68a57904791c36997cc3ea0f7eabd7875d10e",
+          "pedia_graph_manifest_sha256": "64aa31e6cc901a0e62d497f7226c1950d38f3d89e150d91f023c91844b3776f1",
+          "selection_sha256": "5e9ba5e81d7f8f1568bec7a2de4d561937f0d8117f3d0ee77f4699340e2e4901",
+          "parquet_sha256": "4e0e94841e6fff3e6c51e79c465b2f5a09e91613d2ef525f9872fbf1a3900251",
+          "parquet_bytes": 8432439,
+          "verified_rows": 5000,
+          "verified_schema": true,
+          "verified_ids": true,
+          "classification_counts": {
+            "included": 5000
+          },
+          "column_count": 106,
+          "content_checked": true,
+          "semantic_rules_sha256": "41eeee5c79b94b51acb90815d7754ff03096789cdb213514592cb7862a376029",
+          "replacement_counts": {
+            "in_pedia": 95,
+            "outside_pedia": 6
+          },
+          "retained_rows": 4899,
+          "semantic_acceptance_counts": {
+            "personal_fragrance_set": 261,
+            "explicit_personal_fragrance_kind": 4739
+          },
+          "verified_semantic_nonaccept_rows": 0,
+          "verified_semantic_rows": 5000,
+          "brand_labels": 222,
+          "sources": 72,
+          "models": 1156,
+          "models_with_multiple_listings": 928,
+          "models_with_multiple_sources": 877,
+          "models_with_sibling_variants": 32
+        },
+        {
+          "subset": 2,
+          "rows": 5000,
+          "seed": 73,
+          "gold_inputs_used": false,
+          "strata": {
+            "in_pedia": {
+              "rows": 4500,
+              "brand_labels": 126,
+              "sources": 61
+            },
+            "outside_pedia": {
+              "rows": 500,
+              "brand_labels": 118,
+              "sources": 15
+            }
+          },
+          "classification_column": "perfume_status",
+          "allowed_classification": "included",
+          "review_required_true_excluded": true,
+          "pedia_release": "fragrance-2026-10-21-r10",
+          "pedia_release_sha256": "7e38975c75ec20f866d83193d2e68a57904791c36997cc3ea0f7eabd7875d10e",
+          "pedia_graph_manifest_sha256": "64aa31e6cc901a0e62d497f7226c1950d38f3d89e150d91f023c91844b3776f1",
+          "selection_sha256": "a40441b1ec92d96883eb636e4cadcd3ec6a3dc921355d78264cdbbb3d56ee7c1",
+          "parquet_sha256": "51579af564a3b5a61399c184658b9d3eead6f83ef7a80e9f12ee29c9c874cf21",
+          "parquet_bytes": 8296544,
+          "verified_rows": 5000,
+          "verified_schema": true,
+          "verified_ids": true,
+          "classification_counts": {
+            "included": 5000
+          },
+          "column_count": 106,
+          "content_checked": true,
+          "semantic_rules_sha256": "41eeee5c79b94b51acb90815d7754ff03096789cdb213514592cb7862a376029",
+          "replacement_counts": {
+            "in_pedia": 103,
+            "outside_pedia": 20
+          },
+          "retained_rows": 4877,
+          "semantic_acceptance_counts": {
+            "explicit_personal_fragrance_kind": 4748,
+            "personal_fragrance_set": 252
+          },
+          "verified_semantic_nonaccept_rows": 0,
+          "verified_semantic_rows": 5000,
+          "brand_labels": 230,
+          "sources": 65,
+          "models": 1322,
+          "models_with_multiple_listings": 870,
+          "models_with_multiple_sources": 759,
+          "models_with_sibling_variants": 9
+        },
+        {
+          "subset": 3,
+          "rows": 5000,
+          "seed": 97,
+          "gold_inputs_used": false,
+          "strata": {
+            "in_pedia": {
+              "rows": 4500,
+              "brand_labels": 134,
+              "sources": 54
+            },
+            "outside_pedia": {
+              "rows": 500,
+              "brand_labels": 120,
+              "sources": 13
+            }
+          },
+          "classification_column": "perfume_status",
+          "allowed_classification": "included",
+          "review_required_true_excluded": true,
+          "pedia_release": "fragrance-2026-10-21-r10",
+          "pedia_release_sha256": "7e38975c75ec20f866d83193d2e68a57904791c36997cc3ea0f7eabd7875d10e",
+          "pedia_graph_manifest_sha256": "64aa31e6cc901a0e62d497f7226c1950d38f3d89e150d91f023c91844b3776f1",
+          "selection_sha256": "f407504efc55d135edb9084ce9724dc0f867c902bf703cf20bc410330c3f2760",
+          "parquet_sha256": "2ce199bd9fca1da005e832b3b85cd96c4b8cf0dcaabd60205befa6eb9a8679a5",
+          "parquet_bytes": 7730844,
+          "verified_rows": 5000,
+          "verified_schema": true,
+          "verified_ids": true,
+          "classification_counts": {
+            "included": 5000
+          },
+          "column_count": 106,
+          "content_checked": true,
+          "semantic_rules_sha256": "41eeee5c79b94b51acb90815d7754ff03096789cdb213514592cb7862a376029",
+          "replacement_counts": {
+            "in_pedia": 120,
+            "outside_pedia": 21
+          },
+          "retained_rows": 4859,
+          "semantic_acceptance_counts": {
+            "explicit_personal_fragrance_kind": 4641,
+            "personal_fragrance_set": 359
+          },
+          "verified_semantic_nonaccept_rows": 0,
+          "verified_semantic_rows": 5000,
+          "brand_labels": 238,
+          "sources": 58,
+          "models": 1295,
+          "models_with_multiple_listings": 876,
+          "models_with_multiple_sources": 773,
+          "models_with_sibling_variants": 12
+        }
+      ],
+      "total_distinct_listing_ids": 15000,
+      "pairwise_listing_id_intersections": [
+        {
+          "left": 1,
+          "right": 2,
+          "intersection": 0
+        },
+        {
+          "left": 1,
+          "right": 3,
+          "intersection": 0
+        },
+        {
+          "left": 2,
+          "right": 3,
+          "intersection": 0
+        }
+      ],
+      "independent_pedia_readback": {
+        "pedia_release": "fragrance-2026-10-21-r10",
+        "subsets": [
+          {
+            "subset": 1,
+            "listings": 5000,
+            "verified_in_pedia": 4500,
+            "verified_outside": 500,
+            "outside_with_any_placement": 0,
+            "flag_disagreements": 0
+          },
+          {
+            "subset": 2,
+            "listings": 5000,
+            "verified_in_pedia": 4500,
+            "verified_outside": 500,
+            "outside_with_any_placement": 0,
+            "flag_disagreements": 0
+          },
+          {
+            "subset": 3,
+            "listings": 5000,
+            "verified_in_pedia": 4500,
+            "verified_outside": 500,
+            "outside_with_any_placement": 0,
+            "flag_disagreements": 0
+          }
+        ]
+      }
+    }
+  },
+  "labeled_pairs": [
+    {
+      "domain": "food",
+      "subset": 1,
+      "raw_rows": 5000,
+      "gold_rows": 4500,
+      "raw_sha256": "90d74f379c01c858aebcea29b8229ad7b1f2eed5c6f12bea69a57011ea7d7c88",
+      "gold_sha256": "d0b96026f9eeb07215d65fe8314445dfc15855c348fead0a3cebd25f90a25508"
+    },
+    {
+      "domain": "food",
+      "subset": 2,
+      "raw_rows": 5000,
+      "gold_rows": 4500,
+      "raw_sha256": "3dfa7cafb71e2d2a11d309ba3e1763891421a6067a1b2473788adf09bb8cfbed",
+      "gold_sha256": "436625090a18eaa562596f8d15b9913b4750b1d79c0f5d2e577d1001ad2e593e"
+    },
+    {
+      "domain": "food",
+      "subset": 3,
+      "raw_rows": 5000,
+      "gold_rows": 4500,
+      "raw_sha256": "45c5f4a65b45a1dbd7a2235ae09b5dafced91ea8effe24dd8b525f2afa63b8ba",
+      "gold_sha256": "5f162976dc30dcb936a8032e55042bdddc265ec1aab5b6fa7cb6420e998ff5c6"
+    },
+    {
+      "domain": "fragrance",
+      "subset": 1,
+      "raw_rows": 5000,
+      "gold_rows": 4500,
+      "raw_sha256": "4e0e94841e6fff3e6c51e79c465b2f5a09e91613d2ef525f9872fbf1a3900251",
+      "gold_sha256": "48183f4ee3779931f37a6170ef6695e8f95bd31a5dda6367bce0801a5c0f915c"
+    },
+    {
+      "domain": "fragrance",
+      "subset": 2,
+      "raw_rows": 5000,
+      "gold_rows": 4500,
+      "raw_sha256": "51579af564a3b5a61399c184658b9d3eead6f83ef7a80e9f12ee29c9c874cf21",
+      "gold_sha256": "b7fb10f89069ff2dd797cc4051f7270a19d3abccc54e14d71a2355bb7b0c4a55"
+    },
+    {
+      "domain": "fragrance",
+      "subset": 3,
+      "raw_rows": 5000,
+      "gold_rows": 4500,
+      "raw_sha256": "2ce199bd9fca1da005e832b3b85cd96c4b8cf0dcaabd60205befa6eb9a8679a5",
+      "gold_sha256": "aae5c9cf731ddcc72e7366ee40eb091d034e551a71c99ae3e91552c54c775992"
+    }
+  ]
+}
