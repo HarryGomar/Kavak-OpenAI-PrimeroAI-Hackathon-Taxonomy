@@ -1,6 +1,6 @@
 # Taxo data spec: what each domain owner hands over
 
-*For the teammates who organise one domain each: **food**, **fragrance** or **cars**. You do not need to have been in
+*For the teammates who organise one domain each: **food**, **fragrance**, **cars** or **electronics**. You do not need to have been in
 the design sessions. Read §1 and your domain's checklist in §2, then use §3–§9 as reference. The empty templates to
 copy are in [`docs/templates/`](templates/).*
 
@@ -84,6 +84,23 @@ have a VIN. Reconciling all of that, reading the catalogue into make › model �
       10 per source if the sample allows, plus a second labeller on 25.
 - [ ] `rules/` and `conventions/`. The most important convention to decide is **when two version names are the same
       trim** ("Advance" vs "Advance CVT"); `domains/cars/pack.yaml` leaves it as a TODO.
+
+### 2.4 Electronics
+
+Where you start: the public DeepMatcher benchmarks (Amazon–Google, Walmart–Amazon, Abt–Buy), **31,390** historical
+US retail listings in one `products.csv`, plus `public_match_labels.csv` (31,277 same-product pairs, **pair
+evaluation only**, never gold). There is **no official catalogue**, so the lattice step builds the tree (§4.3):
+brand › product (manufacturer model) › variant (colour or capacity). Category (storage, cameras, printing, audio,
+video) is a browse field from `domains/electronics/categories/`, never a level. Currency is unknown.
+
+- [x] `listings/`: `products.csv` and `public_match_labels.csv` **as they are**, plus a `SOURCE.md`.
+- [ ] `gold/round-01.yaml`: **50** blind labels sampled at random from the in-scope listings, at least 10 per source
+      where the frame allows. `uv run python -m domains.electronics.gold_sample` draws them and writes a labelling page
+      that exports this file. Listings already reviewed with a proposed answer (`seen.txt`) are excluded.
+- [ ] `rules/` and `conventions/`: start from the 6 conventions in `domains/electronics/pack.yaml`.
+
+Run it: `uv run python -m domains.electronics.pipeline` (add `--agent-calls N` with an `OPENAI_API_KEY` to send
+routed listings to the placer agent). Output in `runs/electronics/`.
 
 ## 3. Listings: hand them over raw
 

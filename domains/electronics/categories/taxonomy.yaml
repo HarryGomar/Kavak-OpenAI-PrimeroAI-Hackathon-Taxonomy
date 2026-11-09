@@ -1,0 +1,46 @@
+schema_version: 1
+scope: electronics
+version: 0.2.0
+status: draft
+categories:
+  - {id: electronics, label: Electronics, parent: null, profile: electronics-base}
+  - {id: electronics.storage, label: Storage, parent: electronics, profile: storage}
+  - {id: electronics.storage.hard_drive, label: Hard drives, parent: electronics.storage, profile: storage}
+  - {id: electronics.storage.external_hard_drive, label: External hard drives, parent: electronics.storage.hard_drive, profile: storage}
+  - {id: electronics.storage.internal_hard_drive, label: Internal hard drives, parent: electronics.storage.hard_drive, profile: storage}
+  - {id: electronics.storage.ssd, label: Solid-state drives, parent: electronics.storage, profile: storage}
+  - {id: electronics.storage.usb_flash_drive, label: USB flash drives, parent: electronics.storage, profile: storage}
+  - {id: electronics.storage.memory_card, label: Memory cards, parent: electronics.storage, profile: storage}
+  - {id: electronics.storage.card_reader, label: Memory card readers, parent: electronics.storage, profile: storage}
+  - {id: electronics.storage.enclosure, label: Drive enclosures, parent: electronics.storage, profile: storage}
+  - {id: electronics.storage.dock, label: Drive docks and duplicators, parent: electronics.storage, profile: storage}
+  - {id: electronics.storage.optical_drive, label: Optical drives, parent: electronics.storage, profile: storage}
+  - {id: electronics.storage.network_storage, label: Network-attached storage, parent: electronics.storage, profile: storage}
+  - {id: electronics.imaging, label: Cameras and accessories, parent: electronics, profile: imaging}
+  - {id: electronics.imaging.camera, label: Cameras, parent: electronics.imaging, profile: imaging}
+  - {id: electronics.imaging.camcorder, label: Camcorders, parent: electronics.imaging, profile: imaging}
+  - {id: electronics.imaging.lens, label: Camera and camcorder lenses, parent: electronics.imaging, profile: imaging}
+  - {id: electronics.imaging.lens_accessory, label: Lens accessories, parent: electronics.imaging, profile: imaging}
+  - {id: electronics.imaging.battery, label: Camera batteries, parent: electronics.imaging, profile: imaging}
+  - {id: electronics.imaging.charger, label: Camera battery chargers, parent: electronics.imaging, profile: imaging}
+  - {id: electronics.imaging.case, label: Camera bags and cases, parent: electronics.imaging, profile: imaging}
+  - {id: electronics.imaging.tripod, label: Tripods and supports, parent: electronics.imaging, profile: imaging}
+  - {id: electronics.printing, label: Printers and supplies, parent: electronics, profile: printing}
+  - {id: electronics.printing.printer, label: Printers, parent: electronics.printing, profile: printing}
+  - {id: electronics.printing.ink_supply, label: Ink supplies, parent: electronics.printing, profile: printing}
+  - {id: electronics.printing.ink_cartridge, label: Ink cartridges, parent: electronics.printing.ink_supply, profile: printing}
+  - {id: electronics.printing.toner, label: Toner cartridges, parent: electronics.printing, profile: printing}
+  - {id: electronics.printing.imaging_unit, label: Imaging units and drums, parent: electronics.printing, profile: printing}
+  - {id: electronics.printing.printhead, label: Printheads, parent: electronics.printing, profile: printing}
+  - {id: electronics.printing.transfer_unit, label: Transfer units and belts, parent: electronics.printing, profile: printing}
+  - {id: electronics.printing.ribbon, label: Printer ribbons, parent: electronics.printing, profile: printing}
+  - {id: electronics.audio, label: Audio, parent: electronics, profile: audio}
+  - {id: electronics.audio.headphones, label: Headphones, parent: electronics.audio, profile: audio}
+  - {id: electronics.audio.headset, label: Headsets, parent: electronics.audio, profile: audio}
+  - {id: electronics.audio.speaker, label: Speakers, parent: electronics.audio, profile: audio}
+  - {id: electronics.audio.player, label: Audio players, parent: electronics.audio, profile: audio}
+  - {id: electronics.audio.amplifier, label: Amplifiers, parent: electronics.audio, profile: audio}
+  - {id: electronics.audio.receiver, label: Audio and AV receivers, parent: electronics.audio, profile: audio}
+  - {id: electronics.audio.accessory, label: Audio accessories, parent: electronics.audio, profile: audio}
+  - {id: electronics.video, label: Video, parent: electronics, profile: video}
+  - {id: electronics.video.portable_media_player, label: Portable media players, parent: electronics.video, profile: video}

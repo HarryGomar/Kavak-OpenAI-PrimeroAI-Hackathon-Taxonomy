@@ -11,7 +11,7 @@ import yaml
 from taxo.core.config import DOMAINS_DIR
 from taxo.core.schemas import Listing, Node
 
-DOMAINS = ("food", "fragrance", "cars", "car_parts")
+DOMAINS = ("food", "fragrance", "cars", "car_parts", "electronics")
 
 
 @dataclass
