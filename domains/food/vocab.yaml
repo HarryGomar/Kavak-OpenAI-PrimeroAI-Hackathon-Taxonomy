@@ -8,4 +8,6 @@ size_pattern: '^\d+([.,]\d+)?(oz|g|kg|lb|lbs|ml|l|ct|pk|count|fl)?$|^(oz|ounce|o
 strip: [snack, snacks, candy, candies, food, product, products, net wt, value]
 bind: [de, la, of, the, and, n, with, in]
 settings:
+  shop_brand: true      # round 8, kept on sealed: shop names the brand's own store (looser brand_site)
+  variant_field: true      # round 7, kept on sealed: variant step: shop variant label as flavour node
   support_floor: 2

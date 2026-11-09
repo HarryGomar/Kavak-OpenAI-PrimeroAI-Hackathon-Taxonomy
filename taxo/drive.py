@@ -1,9 +1,10 @@
-"""The hackathon's shared fragrance data on Drive (Hackathon-Kavak-OpenAI-Primero/DATA/Listings), read in place:
+"""The hackathon's shared data on Drive (Hackathon-Kavak-OpenAI-Primero/DATA/Listings), read in place:
 
-    RAW/fragrance/subset-{1,2,3}/fragrance_listings.parquet     5,000 listings each (key: source_record_key)
-    Labeled/fragrance/subset-{1,2,3}/gold.parquet               Pedia's placement of 4,500 of them (key: silver_id)
+    RAW/<domain>/subset-{1,2,3}/<domain>_listings.parquet     5,000 listings each
+    Labeled/<domain>/subset-{1,2,3}/gold.parquet               Pedia's placement of 4,500 of them (key: silver_id)
 
-The project agreed to use Pedia's placement as gold here (Labeled/README.md). Harry's human labels are scored next to it.
+Fragrance joins on source_record_key, food on observation_key (Labeled/README.md). The project agreed to use Pedia's
+placement as gold here. Harry's human labels (fragrance only) are scored next to it.
 """
 from __future__ import annotations
 
@@ -17,26 +18,31 @@ from taxo.gold import GoldRow
 
 DRIVE_DIR = Path(os.environ.get("TAXO_DRIVE_DIR", r"G:\My Drive\Hackathon-Kavak-OpenAI-Primero\DATA\Listings"))
 SUBSETS = (1, 2, 3)
-RAW_COLS = ["source_record_key", "listing_name", "brand_name", "manufacturer_name", "source_id", "listing_url"]
+KEY = {"fragrance": "source_record_key", "food": "observation_key"}
+MAKER = {"fragrance": "manufacturer_name"}          # food has no maker column
+VARIANT = {"food": "variant_name"}                  # the shop's own variant label (Shopify, Amazon)
 GOLD_COLS = ["silver_id", "pedia_brand_key", "pedia_brand", "pedia_path_json", "pedia_placement_level"]
 
 
-def listings() -> list[dict]:
+def listings(domain: str = "fragrance") -> list[dict]:
+    key, maker = KEY[domain], MAKER.get(domain)
+    var = VARIANT.get(domain)
+    cols = [key, "listing_name", "brand_name", "source_id", "listing_url"] + ([maker] if maker else []) + ([var] if var else [])
     out = []
     for k in SUBSETS:
-        for r in pq.read_table(DRIVE_DIR / "RAW" / "fragrance" / f"subset-{k}" / "fragrance_listings.parquet",
-                               columns=RAW_COLS).to_pylist():
-            out.append({"id": str(r["source_record_key"]), "title": r["listing_name"] or "", "subset": k,
-                        "brand_name": r["brand_name"], "manufacturer_name": r["manufacturer_name"],
-                        "source": r["source_id"] or "", "url": r["listing_url"]})
+        for r in pq.read_table(DRIVE_DIR / "RAW" / domain / f"subset-{k}" / f"{domain}_listings.parquet",
+                               columns=cols).to_pylist():
+            out.append({"id": str(r[key]), "title": r["listing_name"] or "", "subset": k,
+                        "brand_name": r["brand_name"], "manufacturer_name": r.get(maker) if maker else None,
+                        "source": r["source_id"] or "", "url": r["listing_url"], "variant": r.get(var) if var else None})
     return out
 
 
-def pedia_gold() -> tuple[list[GoldRow], dict[str, str]]:
+def pedia_gold(domain: str = "fragrance") -> tuple[list[GoldRow], dict[str, str]]:
     """(gold rows, brand key -> display name). A row's id is "pedia:<silver_id>"; its path comes from pedia_path_json."""
     rows, names = [], {}
     for k in SUBSETS:
-        for r in pq.read_table(DRIVE_DIR / "Labeled" / "fragrance" / f"subset-{k}" / "gold.parquet",
+        for r in pq.read_table(DRIVE_DIR / "Labeled" / domain / f"subset-{k}" / "gold.parquet",
                                columns=GOLD_COLS).to_pylist():
             path = [seg[0] for seg in json.loads(r["pedia_path_json"] or "[]")]
             if not path or not r["pedia_brand_key"]:
