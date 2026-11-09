@@ -1,8 +1,7 @@
 <!doctype html>
 <!--
   The pitch deck. One file, no build step. Open it in a browser (it needs internet for the fonts and product photos).
-  12 slides (PRESENTATION.md, slide by slide). Slide 6, the architecture, has variants A-F next to each other:
-  keep one and delete the rest.
+  12 slides (PRESENTATION.md, slide by slide).
 
   Keys:  → Space  next   ← back   Home / End   F fullscreen   O or Esc overview   N speaker notes
   URL:   #5 opens the 5th page.  ?all turns off the fade (for screenshots).
@@ -149,13 +148,6 @@
   .res .f { font: 600 46px/1 var(--disp); }
   .res .c { font: 400 22px var(--sans); color: var(--mute); margin-left: 14px; }
 
-  /* ---------- 6E · layers ---------- */
-  .layers > div { display: grid; grid-template-columns: 300px 1fr; column-gap: 40px; padding: 34px 0; border-top: 2px solid var(--line); align-items: baseline; }
-  .layers h3 { margin: 0; font: 600 30px var(--sans); }
-  .layers p { margin: 0; font: 400 32px/1.35 var(--sans); color: var(--ink2); }
-  .layers p b { color: var(--ink); }
-  .layers p span { color: var(--faint); margin: 0 10px; }
-
   /* ---------- HUD, overview, print ---------- */
   .progress { position: fixed; left: 0; bottom: 0; height: 3px; width: 0; background: var(--ink); z-index: 20; transition: width .3s var(--ease); }
   .static .progress { display: none; }
@@ -270,51 +262,11 @@
   <aside class="notes">We work with over two million listings. We have little time to label cases. Agents are too expensive to run on all of them: [$C] for one pass. We don't even know if we are improving, and we want this to work across domains without starting from zero each time. That's why we want rules: they are free, you can read and test them, and they carry over. Each constraint is one part of the system.</aside>
 </section>
 
-<!-- 6A · Architecture: zoom into one domain -->
-<section class="slide" data-n="6" data-var="A">
+<!-- 6 · Architecture: one domain opened up, the meta loop on the right -->
+<section class="slide" data-n="6">
   <h2>Taxo: a solver, and three loops that improve it.</h2>
   <div class="fill"><svg class="ch" id="archA"></svg></div>
-  <aside class="notes">We propose this architecture. Across domains on the left; one domain opened up on the right. In the middle the solver: listings go through free rules, and an agent gets only what they can't settle. Loop 1 above: errors on the gold set, an agent proposes a rule, a gate in code keeps it only if F1 on gold rises. Loop 2 below: a validator checks listings nobody labelled, a person labels what it flags, and that goes back into the rules and the checks. Loop 3 on the left: lessons carry to the next domain. We'll go through each loop with an example.</aside>
-</section>
-
-<!-- 6B · Architecture: three loops -->
-<section class="slide" data-n="6" data-var="B">
-  <h2>Taxo: a solver, and three loops that improve it.</h2>
-  <div class="fill"><svg class="ch" id="archB"></svg></div>
-  <aside class="notes">The solver places listings with rules and an agent for the rest. Three loops improve it: induction turns labelled cases into rules; validation turns doubts on unlabelled listings into new labels; meta carries what worked to the next domain.</aside>
-</section>
-
-<!-- 6C · Architecture: rings around the solver -->
-<section class="slide" data-n="6" data-var="C">
-  <h2>Taxo: a solver, and three loops that improve it.</h2>
-  <div class="fill"><svg class="ch" id="archC"></svg></div>
-  <aside class="notes">At the centre, the solver: rules, and an agent for the rest. Around it, three loops, each wider than the last: induction on the gold set, validation on listings nobody labelled, and meta across domains.</aside>
-</section>
-
-<!-- 6D · Architecture: one line, three feedback loops -->
-<section class="slide" data-n="6" data-var="D">
-  <h2>Taxo: a solver, and three loops that improve it.</h2>
-  <div class="fill"><svg class="ch" id="archD"></svg></div>
-  <aside class="notes">The solver is one line: listings, free rules, an agent for the rest, the product tree. Loop 1 improves the rules from the gold set. Loop 2 checks the output on listings nobody labelled and feeds new labels back. Loop 3 carries what worked to the next domain.</aside>
-</section>
-
-<!-- 6E · Architecture: four lines -->
-<section class="slide" data-n="6" data-var="E">
-  <h2>Taxo: a solver, and three loops that improve it.</h2>
-  <div class="layers">
-    <div><h3>The solver</h3><p>Listings<span>→</span>rules, free<span>→</span>an agent, only for the rest<span>→</span><b>product tree</b></p></div>
-    <div><h3 style="color:var(--ind)">Loop 1 · Induction</h3><p>Gold set<span>→</span>an agent proposes a rule<span>→</span>kept if F1 on gold rises<span>→</span><b>better rules</b></p></div>
-    <div><h3 style="color:var(--val)">Loop 2 · Validation</h3><p>Listings nobody labelled<span>→</span>validator flags doubts<span>→</span>a person labels<span>→</span><b>better gold and checks</b></p></div>
-    <div><h3 style="color:var(--meta)">Loop 3 · Meta</h3><p>What worked<span>→</span>lessons<span>→</span><b>a head start in the next domain</b></p></div>
-  </div>
-  <aside class="notes">Four lines. The solver places listings. Loop 1 turns the gold set into better rules. Loop 2 turns doubts on unlabelled listings into better gold and stricter checks. Loop 3 turns what worked into a head start in the next domain.</aside>
-</section>
-
-<!-- 6F · Architecture: who does what -->
-<section class="slide" data-n="6" data-var="F">
-  <h2>Code does the work, agents do the judgment, a person decides what's true.</h2>
-  <div class="fill"><svg class="ch" id="archF"></svg></div>
-  <aside class="notes">Read it by column. Placing listings: code settles most of them, the cheapest agent gets the rest. Induction: a person labels gold, an agent proposes rules, code gates them. Validation: an agent checks listings nobody labelled, a person settles its doubts. Meta: code keeps what worked, with its scope, and the next domain starts from it.</aside>
+  <aside class="notes">We propose this architecture. One domain opened up on the left; across domains on the right. In the middle the solver: listings go through free rules, and an agent gets only what they can't settle. Loop 1 above: errors on the gold set, an agent proposes a rule, a gate in code keeps it only if F1 on gold rises. Loop 2 below: a validator checks listings nobody labelled, a person labels what it flags, and that goes back into the rules and the checks. Loop 3 on the right: what worked is distilled into lessons for the next domain. We'll go through each loop with an example.</aside>
 </section>
 
 <!-- 7 · Loop 1: one listing through the rules -->
@@ -502,100 +454,34 @@ claim:  Strip size, pack and
     put('evals', `0 0 ${w} ${h}`, s);
   })();
 
-  // ---------- 6A · zoom into one domain ----------
+  // ---------- 6 · one domain opened up (left), the meta loop across domains (right) ----------
   (() => {
     let s = '';
+    // across domains, on the right
+    s += '<g transform="translate(1444 0)">';
     s += Tx(0, 44, 'Loop 3 · Meta', { fs: 24, fw: 600, c: C.meta });
     s += Nd(110, 175, 'Food', null, { fs: 34, fw: 500, c: C.ink2 }) + Nd(110, 395, 'Fragrance', null, { fs: 36, fw: 700 }) + Nd(110, 615, 'Cars', null, { fs: 34, fw: 500, c: C.ink2 });
     s += Ar([[110, 200], [110, 352]], C.meta) + Tx(126, 284, 'lessons', { fs: 20, c: C.meta });
     s += Ar([[110, 420], [110, 572]], C.meta) + Tx(126, 504, 'lessons', { fs: 20, c: C.meta });
-    s += `<path d="M215 372L400 30M215 400L400 700" stroke="${C.line}" stroke-width="2" fill="none"/>`;
-    s += `<rect x="400" y="30" width="1264" height="670" rx="28" fill="${C.panel}"/>`;
+    s += '</g>';
+    s += `<path d="M1458 372L1264 30M1458 400L1264 700" stroke="${C.line}" stroke-width="2" fill="none"/>`;
+    // one domain, opened up
+    s += `<rect x="0" y="30" width="1264" height="670" rx="28" fill="${C.panel}"/>`;
+    s += '<g transform="translate(-400 0)">';
     s += Tx(1630, 76, 'inside one domain', { a: 'end', fs: 20, c: C.faint });
-    // the solver
     s += Nd(530, 382, 'Listings') + Nd(840, 384, 'Rules', ['free'], { fs: 36, c: C.ind }) + Nd(1150, 382, 'Agent', ['only what rules', "can't settle"]) + Nd(1500, 382, 'Product tree');
     s += Ar([[608, 372], [772, 372]]) + Ar([[910, 372], [1082, 372]]) + Ar([[1218, 372], [1408, 372]]);
-    // loop 1
     s += Tx(440, 100, 'Loop 1 · Induction', { fs: 24, fw: 600, c: C.ind });
     s += Nd(560, 172, 'Errors on gold', ['cases labelled by hand']) + Nd(885, 172, 'An agent', ['proposes one rule']) + Nd(1215, 172, 'A gate in code', ['keeps it if F1 on gold rises']);
     s += Ar([[672, 162], [818, 162]], C.ind) + Ar([[955, 162], [1108, 162]], C.ind);
     s += Ar([[1215, 238], [1215, 272], [870, 272], [870, 342]], C.ind) + Tx(1040, 262, 'new rule', { a: 'middle', fs: 19, c: C.ind });
     s += Ar([[810, 342], [810, 306], [560, 306], [560, 236]], C.ind) + Tx(685, 298, 'run on gold', { a: 'middle', fs: 19, c: C.ind });
-    // loop 2
     s += Tx(440, 560, 'Loop 2 · Validation', { fs: 24, fw: 600, c: C.val });
     s += Nd(1200, 622, 'A validator agent', ['checks listings nobody labelled']) + Nd(840, 622, 'A person', ['labels what it flags']);
     s += Ar([[1500, 400], [1500, 612], [1365, 612]], C.val) + Ar([[1040, 612], [928, 612]], C.val);
     s += Ar([[840, 590], [840, 452]], C.val) + Tx(856, 528, 'new labels, stricter checks', { fs: 19, c: C.val });
+    s += '</g>';
     put('archA', '0 0 1664 720', s);
-  })();
-
-  // ---------- 6B · three loops ----------
-  (() => {
-    let s = '';
-    s += Tx(832, 40, 'The solver:  listings  →  rules  →  an agent, only for the rest  →  product tree', { a: 'middle', fs: 30, fw: 500, c: C.ink });
-    s += `<line x1="140" x2="1524" y1="78" y2="78" stroke="${C.line}" stroke-width="2"/>`;
-    const L = [[290, C.ind, 'Loop 1 · Induction', 'labelled cases', '→ rules', ['an agent proposes rules;', 'kept if F1 on gold rises']],
-               [832, C.val, 'Loop 2 · Validation', 'unlabelled listings', '→ new labels', ['the validator flags doubts;', 'a person labels them']],
-               [1374, C.meta, 'Loop 3 · Meta', 'what worked', '→ next domain', ['lessons, with their scope,', 'start the next domain']]];
-    L.forEach(([cx, c, name, a, b, sub]) => {
-      s += Tx(cx, 168, name, { a: 'middle', fs: 28, fw: 600, c });
-      s += arc(cx, 370, 150, -55, 235, c, 6);
-      s += Tx(cx, 360, a, { a: 'middle', fs: 26, c: C.ink2 }) + Tx(cx, 402, b, { a: 'middle', fs: 30, fw: 600, c: C.ink });
-      s += sub.map((t, i) => Tx(cx, 590 + i * 32, t, { a: 'middle', fs: 23, c: C.mute })).join('');
-    });
-    put('archB', '0 0 1664 720', s);
-  })();
-
-  // ---------- 6C · rings around the solver ----------
-  (() => {
-    const cx = 430, cy = 380;
-    let s = `<circle cx="${cx}" cy="${cy}" r="105" fill="${C.panel}"/>` + Tx(cx, cy - 2, 'Solver', { a: 'middle', fs: 32, fw: 600, c: C.ink }) + Tx(cx, cy + 30, 'rules + agent', { a: 'middle', fs: 20, c: C.mute });
-    [[165, C.ind, '1'], [235, C.val, '2'], [305, C.meta, '3']].forEach(([r, c, n]) => {
-      s += arc(cx, cy, r, -72, 252, c, 7);
-      s += Tx(cx, cy - r + 9, n, { a: 'middle', fs: 28, fw: 700, c });
-    });
-    const items = [[150, C.ind, '1  Induction', ['A small gold set becomes rules,', 'kept only if F1 on gold rises.']],
-                   [350, C.val, '2  Validation', ['An agent checks listings nobody labelled;', 'a person labels its doubts.']],
-                   [550, C.meta, '3  Meta', ['What worked carries', 'to the next domain.']]];
-    items.forEach(([y, c, t, sub]) => { s += Tx(880, y, t, { fs: 34, fw: 600, c }) + sub.map((l, i) => Tx(880, y + 44 + i * 36, l, { fs: 28, c: C.ink2 })).join(''); });
-    put('archC', '0 0 1664 720', s);
-  })();
-
-  // ---------- 6D · one line, three feedback loops ----------
-  (() => {
-    let s = '';
-    s += Nd(170, 380, 'Listings') + Nd(640, 382, 'Rules', ['free'], { fs: 36, c: C.ind }) + Nd(1080, 380, 'Agent', ['only the rest']) + Nd(1500, 380, 'Product tree');
-    s += Ar([[250, 370], [572, 370]]) + Ar([[710, 370], [1015, 370]]) + Ar([[1148, 370], [1408, 370]]);
-    // loop 1: a loop over the rules
-    s += Cu([612, 330], [470, 110], [810, 110], [668, 332], C.ind);
-    s += Tx(640, 70, 'Loop 1 · Induction', { a: 'middle', fs: 26, fw: 600, c: C.ind }) + Tx(830, 200, 'gold set → rules', { fs: 22, c: C.ind });
-    // loop 2: from the output back to the rules
-    s += Cu([1500, 405], [1500, 660], [640, 660], [640, 438], C.val);
-    s += Tx(1070, 660, 'Loop 2 · Validation', { a: 'middle', fs: 26, fw: 600, c: C.val }) + Tx(1070, 694, 'doubts on unlabelled listings → new labels', { a: 'middle', fs: 22, c: C.val });
-    // loop 3: out to the next domain
-    s += Ar([[1500, 342], [1500, 190]], C.meta, { w: 4 }) + Nd(1500, 160, 'Next domain', null, { c: C.meta });
-    s += Tx(1520, 280, 'Loop 3 · Meta', { fs: 22, fw: 600, c: C.meta }) + Tx(1520, 306, 'lessons', { fs: 20, c: C.meta });
-    put('archD', '0 0 1664 720', s);
-  })();
-
-  // ---------- 6F · who does what ----------
-  (() => {
-    const cols = [['Place listings', C.ink], ['Loop 1 · Induction', C.ind], ['Loop 2 · Validation', C.val], ['Loop 3 · Meta', C.meta]];
-    const X0 = 250, CW = 353, rows = [['Code', 'free, testable'], ['Agents', 'paid per call'], ['A person', 'decides what is true']];
-    const RY = [80, 290, 500];
-    const cells = [
-      [['Rules settle', 'most listings'], ['Gate keeps a rule only', 'if F1 on gold rises'], ['Freezes each round as', 'a validation set'], ['Keeps what worked,', 'with its scope']],
-      [['The cheapest agent', "settles what's left"], ['Reads the errors,', 'proposes one rule'], ['Checks listings nobody', 'labelled, flags doubts'], ["Starts the next domain", 'from the lessons']],
-      [[], ['Labels the gold set'], ['Labels what the', 'validator flags'], []],
-    ];
-    let s = '';
-    cols.forEach(([t, c], j) => { s += Tx(X0 + j * CW + 12, 46, t, { fs: 26, fw: 600, c }); });
-    rows.forEach(([t, sub], i) => {
-      s += `<line x1="0" x2="1664" y1="${RY[i]}" y2="${RY[i]}" stroke="${C.line}" stroke-width="2"/>`;
-      s += Tx(0, RY[i] + 56, t, { fs: 30, fw: 600, c: C.ink }) + Tx(0, RY[i] + 90, sub, { fs: 20 });
-      cells[i].forEach((lines, j) => { lines.forEach((l, k) => { s += Tx(X0 + j * CW + 12, RY[i] + 56 + k * 36, l, { fs: 27, c: C.ink2 }); }); });
-    });
-    put('archF', '0 0 1664 720', s);
   })();
 
   // ---------- line charts ----------

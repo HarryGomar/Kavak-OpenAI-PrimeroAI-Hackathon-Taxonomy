@@ -2,8 +2,7 @@
 
 *About 7 minutes, 12 slides. **Show** is what is on screen; **Say** is what you say. Numbers in [brackets] come from
 today's runs: fill them in or cut the line, and never present a placeholder as a result. The system is in
-[SPEC.md](SPEC.md); the deck is [slides/index.html](slides/index.html). Slide 6, the architecture, has six variants in the
-deck (A–F): keep one.*
+[SPEC.md](SPEC.md); the deck is [slides/index.html](slides/index.html).*
 
 The story in one breath: a system improves only as far as its eval, and most useful tasks have no ground truth to check
 against. We took one that looks easy and isn't, connecting a market's listings, and built a system that improves at
@@ -71,9 +70,9 @@ everything → the solver; we don't know if we're improving → loop 2; every do
 
 ## 6. The architecture: a solver and three loops (40 s)
 
-**Show (pick one):** A, one domain opened up, with the domains on the left. B, three loop circles. C, three rings around
-the solver. D, the solver as one line with three feedback loops. E, four lines of text. F, who does what: code, agents, a
-person.
+**Show:** one domain opened up on the left: the solver in the middle (listings → free rules → an agent only for what
+rules can't settle → product tree), loop 1 above it, loop 2 below. On the right, loop 3: food, fragrance and cars joined
+by lessons.
 
 **Say:**
 - We propose this architecture. The solver places listings with free rules, and sends an agent only what they can't
