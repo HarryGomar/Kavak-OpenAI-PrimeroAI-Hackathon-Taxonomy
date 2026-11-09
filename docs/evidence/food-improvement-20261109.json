@@ -1,7 +1,7 @@
 {
   "domain": "food",
-  "state": "in_progress_pending005and006",
-  "updated_utc": "2026-11-09T22:11:01.356300+00:00",
+  "state": "completed_deadline_window",
+  "updated_utc": "2026-11-09T22:12:39.359980+00:00",
   "deadline": "2026-11-09T22:13:27+00:00",
   "privacy": "SANITIZED aggregate evidence only. Full source rows, gold rows/IDs, prompts/citations/tool answers and private datasets remain external; no private reasoning retained.",
   "population_limit": "Same50 previously inspected deterministic observations, exploratory paired evidence, not external holdout or production admission.",
@@ -32,7 +32,8 @@
       "cost": null,
       "card_sha256": null,
       "code_sha256": null,
-      "decision": "experimental_candidate_no_production_admission"
+      "decision": "cold_start_reference",
+      "framing": "cold-start"
     },
     {
       "run": "run-001",
@@ -69,7 +70,8 @@
       "cost": null,
       "card_sha256": "dc323a9d3146d2b6aa7f3d23bc74659017c9de4c5fdad57099b15db7180b1e12",
       "code_sha256": "4721a21b8c912fb7be83fbb88a4631cc99bc6ade624094676d338d0483ed7602",
-      "decision": "experimental_candidate_no_production_admission"
+      "decision": "accept_experimental_default",
+      "framing": "enabling/experimental development"
     },
     {
       "run": "run-002",
@@ -107,7 +109,8 @@
       "cost": null,
       "card_sha256": "9b8a90f84cb4bc62c9a9fed9d9ff88bd3a2f102101af817a940d30561e4b7dcb",
       "code_sha256": "4721a21b8c912fb7be83fbb88a4631cc99bc6ade624094676d338d0483ed7602",
-      "decision": "experimental_candidate_no_production_admission"
+      "decision": "accept_experimental_default",
+      "framing": "enabling/experimental development"
     },
     {
       "run": "run-003",
@@ -144,7 +147,8 @@
       "cost": null,
       "card_sha256": "c6fc2b2d251e5c31f2a2178e07134bdbda741b44e6f8288b2ae54650585491d7",
       "code_sha256": "00aca65871eedd4544dce2cd4800e3f4580f013db8aa74a9b4acbec8a8c3dca0",
-      "decision": "tradeoff_rejected_as_default"
+      "decision": "rejected_tradeoff_or_reproduction",
+      "framing": "enabling/experimental development"
     },
     {
       "run": "run-004",
@@ -182,7 +186,8 @@
       "cost": null,
       "card_sha256": "77ceaa6271932a095e71615a852a551bb09ff43ae0b5b5a3fd8e0d51a2060b59",
       "code_sha256": "37f8141d9257230c3f5dfd2e38f7ec3b18f73c49a54023b42a522ac3995f6cd5",
-      "decision": "experimental_candidate_no_production_admission"
+      "decision": "accept_experimental_default",
+      "framing": "enabling/experimental development"
     },
     {
       "run": "run-005",
@@ -220,7 +225,47 @@
       "cost": null,
       "card_sha256": "4c121d9db0e32d49cb26a33d130d6ceea9a3cbd97c0af9a01949e6e717ae2a3e",
       "code_sha256": "32582c966be711bc276dfdffe6dc213a5ff964c42aee9d87b6db48bf7ecd75da",
-      "decision": "experimental_candidate_no_production_admission"
+      "decision": "accept_experimental_default",
+      "framing": "Pedia warm/reference"
+    },
+    {
+      "run": "run-006",
+      "n": 50,
+      "identity_exact": 5,
+      "strict_full_exact": 4,
+      "brand_correct": 36,
+      "abstain": 4,
+      "ambiguous": 2,
+      "classes": {
+        "exact": 5,
+        "unscorable_ambiguous_brand": 2,
+        "wrong_label_path": 28,
+        "valid_shallower": 2,
+        "wrong_brand": 8,
+        "abstain": 4,
+        "wrong_deeper": 1
+      },
+      "paired_vs_previous": {
+        "exact_gain": 0,
+        "exact_regression": 3,
+        "brand_gain": 0,
+        "brand_regression": 1
+      },
+      "actual_placer_model_calls": 5,
+      "scorer_model_calls": 0,
+      "elapsed_seconds": 171.147,
+      "usage": {
+        "input_tokens": 92661,
+        "cached_input_tokens": 61440,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 26590,
+        "reasoning_output_tokens": 19222
+      },
+      "cost": null,
+      "card_sha256": "9b8a90f84cb4bc62c9a9fed9d9ff88bd3a2f102101af817a940d30561e4b7dcb",
+      "code_sha256": "4721a21b8c912fb7be83fbb88a4631cc99bc6ade624094676d338d0483ed7602",
+      "decision": "rejected_tradeoff_or_reproduction",
+      "framing": "reproducibility of002"
     }
   ],
   "roles": {
@@ -236,5 +281,47 @@
     "Improver round2 used v2 mistakes with stale v1 setup context; limitation recorded, helper corrected for future use"
   ],
   "full_local_artifact_index": "C:\\Users\\eduar\\Desktop\\HACKATON\\tasks\\taxo-four-20261109T162041\\food\\improvement-loop-01\\artifact-index.json",
-  "reference_dependency": "PR#8 universal ff5a42b; lockv2 CLI0.166.0 Sol6.1 xhigh FAST"
+  "reference_dependency": "PR#8 universal ff5a42b; lockv2 CLI0.166.0 Sol6.1 xhigh FAST",
+  "best_accepted": "run-005",
+  "warm_reference": "run-005",
+  "post_warm_improvement_cycles": 0,
+  "reproducibility": {
+    "reference": "run-002",
+    "repeat": "run-006",
+    "same_batch_prompts": [
+      true,
+      true,
+      true,
+      true,
+      true
+    ],
+    "reference_identity_exact": 8,
+    "repeat_identity_exact": 5,
+    "reference_brand": 37,
+    "repeat_brand": 36,
+    "interpretation": "Actual same-input/prompt reproduction is variable; best005 was not reproduced within deadline."
+  },
+  "actual_model_calls": {
+    "placer": 30,
+    "proposer": 2,
+    "improver": 2,
+    "validator": 10
+  },
+  "total_model_calls": 44,
+  "usage": {
+    "input_tokens": 889129,
+    "cached_input_tokens": 370944,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 225516,
+    "reasoning_output_tokens": 169860
+  },
+  "cost": null,
+  "paired_best_vs_original": {
+    "exact_gain": 9,
+    "exact_regression": 0,
+    "brand_gain": 41,
+    "brand_regression": 0
+  },
+  "framing": "Cold->best is mostly enabling placement/source evidence and Pedia reuse, not all novel learning; run001->002 measured loop change; run003 product gain/brand loss rejected; run006 reproducibility not improvement.",
+  "integrity_all_passed": true
 }
