@@ -15,11 +15,11 @@ The current manifest is `content_audited_category_silver_raw_subset/v3`.
 
 - `clothing_listings.parquet`: 5,000 rows, 97 fields, SHA256
   `f3a47a08b7513f4885c9917b48940ec419491e29de5ab01b26b8db892403e8b5`.
-- `source_rows.parquet`: 5,000 rows, 25 fields, SHA256
+- `source_rows.parquet`: 5,000 rows, 24 fields, SHA256
   `abf50c9d9a7f9f2f5c9df64c514f9d9704cf1e2663701d3839bf3648243b489e`.
 - `manifest.json`: SHA256
   `7fcf8b5018790052a0b63f91e83c54a91bd86a90d8187a444577cee2f4b5a848`.
-- Original local `data/different_lines/amazon.parquet`: 100,278 rows, 23 fields,
+- Original local `data/different_lines/amazon.parquet`: 100,278 rows, 22 fields,
   SHA256 `228e808136c7bf5da07bb0d0a07ce6897993f11bcf99e606da45144d807a5a24`.
 
 The earlier mounted clothing SHA256 `3819f4a4…` is superseded. The updated export
@@ -75,11 +75,10 @@ to add exceptions from this inspected sample.
 From this checkout, PowerShell:
 
 ```powershell
-uv venv .venv
-uv pip install --python .venv/Scripts/python.exe -e '.[dev]'
+uv sync --frozen
 $raw = 'G:/.shortcut-targets-by-id/1lo5XQFqwWZ4oV915bOgMLt9KPW0IeTv4/Hackathon-Kavak-OpenAI-Primero/DATA/Listings/RAW'
 $env:TAXO_CLOTHING_LISTINGS = "$raw/clothing/subset-1/clothing_listings.parquet"
-.venv/Scripts/python.exe -m taxo.cli inspect clothing --limit 2
+uv run python -m taxo.cli inspect clothing --limit 2
 ```
 
 Alternatively set `TAXO_DATA_DIR` to the RAW root; the default is
@@ -113,6 +112,61 @@ JSON. Pattern counts include 71 explicit style/model mentions, 637 pack/set/
 source, not independent validation.
 
 The final domain-only report verifies the adapter, source preservation and local proposal checks. Shared hooks were narrowed afterward; no further tests or taxonomy runs were performed at the user's request. No accuracy estimate, human gold or rule promotion is claimed.
+
+## Bounded CLI execution and audience-only proposal
+
+The bounded run uses the installed Codex command-line interface (CLI) through
+the coordinator's pinned implementation at `21c65f8` (dependency PR #8).
+See [the shared invocation and blinding contract](codex-cli-validator.md).
+The later universal model-role wiring is a separate coordinator change; do not
+replace a frozen validator midway through a comparison.
+
+Use a fresh run root outside Git and keep all data-bearing outputs there:
+
+```powershell
+uv sync --frozen
+$env:TAXO_DATA_DIR = $raw
+$run = 'C:/local-runs/<run-id>/clothing'
+uv run python -m taxo.pipeline clothing --construct --limit 50 --output "$run/iteration-00/construction"
+uv run python -m taxo.validate_cli clothing --construction "$run/iteration-00/construction" --output "$run/iteration-00/validation"
+```
+
+Before inspecting disagreements, record the actual manifests, hashes, schemas,
+counts and complete original identifiers. Selection is the deterministic adapter
+prefix, including held observations, rather than a population-random sample.
+Freeze the complete source snapshot and baseline validator judgments before
+choosing one proposal. Source preservation can be audited against the sidecar
+and original catalog without treating either source's annotations as gold.
+
+The clothing-only proposal extends `cl-garment-type-conflict`: a candidate name
+containing only demographic audience words (and optional function words) does
+not establish a product. The check abstains; a candidate containing an additional
+name, garment word or model numeral falls through to the existing type-conflict
+check. A demographic word may occur within a valid product name, so this is an
+all-words condition, never a title blacklist or listing exception. A legitimately
+named audience-only product remains a possible counterexample for human review.
+
+The rule remains `status: proposal`. The isolated run temporarily set only this
+pair rule to `admitted`, constructed iteration-01 once, and restored its exact
+proposal file in `finally`. That activation was an unadmitted counterfactual,
+not production admission. The local run root contains the exact temporary YAML,
+code snapshots, command, restoration record and delta report. No shared harness,
+validator, vocabulary threshold or other domain file was changed.
+
+Compare iteration-01 with `taxo.validate_cli.compare` and the frozen baseline
+judgments, as documented in the shared contract. Require identical SHA256 hashes
+of the full `listings.jsonl` files before comparison; matching identifiers alone
+does not establish unchanged evidence. Do not relabel the proposal iteration.
+Retain changed paths, counterexamples, scopes, routes, abstentions and rule events
+alongside both blind review queues. Exact string-path silver agreement is not
+semantic placement accuracy and does not reward every correct shallower path.
+
+The run report, `status.json` and `artifact-index.json` live outside Git under
+the coordinator's `taxo-four-20261109T162041/clothing` run root. The report records
+the neutral silver outcome and unresolved patterns. There are no reviewed human
+labels from this execution; accuracy scoring and rule admission remain blocked.
+Only bounded construction and installed-CLI validation were used, with no test
+suite or additional proposal rounds.
 
 Later work: review source-quality holds and missing-maker evidence; establish
 style, cut, audience, size-system and set conventions with human labels; inspect

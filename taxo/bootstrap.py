@@ -142,7 +142,8 @@ def _construct(name: str, limit: int | None = None, output: Path | None = None) 
                               "Proposed nodes require review and blind human gold before accuracy scoring or rule admission."],
               "output": str(out)}
     out.mkdir(parents=True, exist_ok=True)
-    for filename, records in [("placements.jsonl", placements), ("nodes.jsonl", list(nodes.values())),
+    for filename, records in [("listings.jsonl", [l.model_dump(mode="json") for l in listings]),
+                              ("placements.jsonl", placements), ("nodes.jsonl", list(nodes.values())),
                               ("screened.jsonl", screened), ("rule-events.jsonl", trace),
                               ("observations.jsonl", [{"id": l.id, "title": l.title, "source": l.source,
                                "scope": _scope(l), "brand_evidence": "source_reported_unverified" if l.brand else "missing",
