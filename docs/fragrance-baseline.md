@@ -171,3 +171,23 @@ will be needed before long.
 **Sealed reads:** 6 in total.
 
 **Rule for future rounds:** a change that loses on dev is dropped without reading sealed.
+
+## Loop B, round V1: validator plus person review (in progress)
+
+**Sample** (`uv run python -m taxo.loopb sample fragrance V1`): 40 fresh listings with no Pedia label and a known
+brand. 25 are ones the lattice placed and 15 are ones it sent to the agent.
+
+**Validator v1:** no `OPENAI_API_KEY` is set, so v1 is the Claude Code session itself. It labelled from a file that
+hides the pipeline's answers. It is not fully blind, because the same session wrote the pipeline.
+
+**Compare:** the validator agrees with the pipeline on 6 and disagrees on 34. The disagreements fall into these groups:
+- Catalog names seen once stop at the brand.
+- Clusters made of the junk word "AL".
+- HTML markup became a product name (`<span class="label_a small upper">`).
+- Titles joined a near neighbour: "While in Love Forever" placed on "Hawas Love", "Kunafa Chocolate" on "Odyssey Dubai
+  Chocolate Gourmand".
+
+**Review:** the person settles all 34 disagreements and the 6 agreed spot checks on a private review page. The two
+answers are shown as A and B in a fixed order per listing, without saying which labeller gave which. After that,
+`taxo.loopb settle` freezes V1, adds the person's labels as gold, and writes the validator's score as the KPI silver
+row.
