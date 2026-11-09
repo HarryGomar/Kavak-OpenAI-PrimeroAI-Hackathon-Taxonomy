@@ -15,6 +15,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 import pyarrow.parquet as pq
+import yaml
 from pydantic import BaseModel, Field
 
 from taxo.codex_cli import invoke, fingerprint, write, load_pin
@@ -53,6 +54,15 @@ def read(path):
 
 def rows(path):
     return [json.loads(x) for x in path.read_text(encoding="utf-8").splitlines() if x.strip()]
+
+
+def resolve_card(card: Path | None = None) -> Path:
+    """Explicit historical card, or the owner-selected Food pack baseline."""
+    if card is not None:
+        return card
+    domain = Path(__file__).parent
+    pack = yaml.safe_load((domain / "pack.yaml").read_text(encoding="utf-8"))
+    return domain / pack["baseline_card"]
 
 
 def dump_rows(path, values):
@@ -165,7 +175,8 @@ def score(root, folder, placements, previous):
     return metrics
 
 
-def execute(root, name, card, previous=None):
+def execute(root, name, card=None, previous=None):
+    card = resolve_card(card)
     folder = root / name
     folder.mkdir(exist_ok=False)
     started = time.monotonic()
@@ -193,11 +204,16 @@ node, using evidence field keys exactly. Every name word must be present in its 
 inferred from explicit title/description maker evidence when source brand is missing; a shop, reseller or
 license character is not automatically a maker. Never fill missing maker with a guessed brand.
 Use levels brand, model, variant in that order, max one each. Sizes and numeric pack counts are attributes,
-never node identity. Flavour/colour names are variants only when title supports them; form is product identity.
+never node identity. Naming evidence includes the title and explicitly offered/selected original shop
+variant_name/options, never Default Title or unspecified options. A conflicting title wins over generic
+descriptions or incompatible option claims. Form is product identity; do not invent missing flavours.
 Correct shallow paths beat unsupported deeper paths. Preserve actual named identity; do not create broad
 category nodes. Keep concise reason/confidence; do not provide private reasoning. Return every ID verbatim.
 CARD:
 """ + hypothesis["instruction"]
+    pack = yaml.safe_load(Path(__file__).with_name("pack.yaml").read_text(encoding="utf-8"))
+    prompt += ("\nCURRENT OWNER-SELECTED FOOD CONVENTIONS (govern naming evidence when a historical "
+               "card contains conflicting title-only language):\n" + pack["conventions"])
     dump_rows(folder / "source-evidence.jsonl", [evidence(r) for r in listings])
     try:
         def call(offset):
@@ -260,7 +276,7 @@ if __name__ == "__main__":
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--root", type=Path, required=True)
     ap.add_argument("--name", required=True)
-    ap.add_argument("--card", type=Path, required=True)
+    ap.add_argument("--card", type=Path, help="explicit card; default: Food pack baseline_card")
     ap.add_argument("--previous", type=Path)
     a = ap.parse_args()
     execute(a.root, a.name, a.card, a.previous)

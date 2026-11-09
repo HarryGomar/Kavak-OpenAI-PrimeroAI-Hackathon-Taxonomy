@@ -33,7 +33,13 @@
       "card_sha256": null,
       "code_sha256": null,
       "decision": "cold_start_reference",
-      "framing": "cold-start"
+      "framing": "cold-start",
+      "actual_served_tier": null,
+      "prompt_hashes": [],
+      "full_local_artifact_index": {
+        "path": "C:\\Users\\eduar\\Desktop\\HACKATON\\tasks\\taxo-four-20261109T162041\\food\\improvement-loop-01\\run-000-baseline\\artifact-index.json",
+        "sha256": "7d5a5cceda289ff9936730718679868ef393d20dbbfa2f370c209b411ca9d879"
+      }
     },
     {
       "run": "run-001",
@@ -71,7 +77,20 @@
       "card_sha256": "dc323a9d3146d2b6aa7f3d23bc74659017c9de4c5fdad57099b15db7180b1e12",
       "code_sha256": "4721a21b8c912fb7be83fbb88a4631cc99bc6ade624094676d338d0483ed7602",
       "decision": "accept_experimental_default",
-      "framing": "enabling/experimental development"
+      "framing": "enabling/experimental development",
+      "actual_served_tier": null,
+      "prompt_hashes": [
+        "a502fdebd5b00c182b9e0ebfb603c4fbe5d6f1d883501cdd47e0b98a1d25b06a",
+        "5a291ded8008a4ee3ac365869290f3abb66d25d99e18965f042fcf8c12f75408",
+        "5756d8dae4cb72f19a5350dadc2b23ace9bd9b8ba19f8750f62709c50087356b",
+        "d80a27baa6d464e9e8fcae8ca91c08f410c10a43dab86beea56a1444bc1aa452",
+        "16e52f404357ee9f49196ad36d891b309960931693bcd59d039dd1896231c7b4"
+      ],
+      "full_local_artifact_index": {
+        "path": "C:\\Users\\eduar\\Desktop\\HACKATON\\tasks\\taxo-four-20261109T162041\\food\\improvement-loop-01\\run-001\\artifact-index.json",
+        "sha256": "2c7973a52343ef8048584cd86f8e223913284cc3cf31a01cbae50c40cd6a2cfd"
+      },
+      "started_utc": "2026-11-09T21:55:18.908335+00:00"
     },
     {
       "run": "run-002",
@@ -110,7 +129,20 @@
       "card_sha256": "9b8a90f84cb4bc62c9a9fed9d9ff88bd3a2f102101af817a940d30561e4b7dcb",
       "code_sha256": "4721a21b8c912fb7be83fbb88a4631cc99bc6ade624094676d338d0483ed7602",
       "decision": "accept_experimental_default",
-      "framing": "enabling/experimental development"
+      "framing": "enabling/experimental development",
+      "actual_served_tier": null,
+      "prompt_hashes": [
+        "8d534815fb2deb429f67fb5beeb8d6490b750beed97cf6229580ae15f7778867",
+        "155051de23b816e93af91ffb67bab24cfa0b5eb09f9024f9092356cfc7bc51d9",
+        "1bef4ec5574ce8a467277f475a636fe0543ac4b6349738d9568b495efe5f755b",
+        "51edb838067092d46102d05d6726bb42619391225a85e77483071a7d8ad152bc",
+        "2f18967934d2c8af53485a09058d6854a55004efe46753ffb43c2a2961dae043"
+      ],
+      "full_local_artifact_index": {
+        "path": "C:\\Users\\eduar\\Desktop\\HACKATON\\tasks\\taxo-four-20261109T162041\\food\\improvement-loop-01\\run-002\\artifact-index.json",
+        "sha256": "1af923022ddfe6082bc9985c966f6b950ef852febd425e2633b1b7b7f0f5f80f"
+      },
+      "started_utc": "2026-11-09T21:59:18.235245+00:00"
     },
     {
       "run": "run-003",
@@ -148,7 +180,20 @@
       "card_sha256": "c6fc2b2d251e5c31f2a2178e07134bdbda741b44e6f8288b2ae54650585491d7",
       "code_sha256": "00aca65871eedd4544dce2cd4800e3f4580f013db8aa74a9b4acbec8a8c3dca0",
       "decision": "rejected_tradeoff_or_reproduction",
-      "framing": "enabling/experimental development"
+      "framing": "enabling/experimental development",
+      "actual_served_tier": null,
+      "prompt_hashes": [
+        "25f033047e99debfcd275e2f54640edb6409721171c72dfdb33466904afb7177",
+        "d293d2d0d5e8693a820364b93f545794e7d09b43e88413a4a690bde438ee180f",
+        "821b00ed4e695d87ad9a0ddf5043934658dfac0813efdb7b76cb9543748a16aa",
+        "14feea342d9662041c9e12c691becfc5c7a60a8c545fc99cd8f3d7c201ff46cf",
+        "506458264bb265a9560d271173d9b812d18e4eb10ac2a89453961cd1cea22728"
+      ],
+      "full_local_artifact_index": {
+        "path": "C:\\Users\\eduar\\Desktop\\HACKATON\\tasks\\taxo-four-20261109T162041\\food\\improvement-loop-01\\run-003\\artifact-index.json",
+        "sha256": "ef5d94f2446a13220c9c639e944dc6b1f977ba422bcc27957362d8cdc759ca2b"
+      },
+      "started_utc": "2026-11-09T22:02:44.637954+00:00"
     },
     {
       "run": "run-004",
@@ -187,7 +232,20 @@
       "card_sha256": "77ceaa6271932a095e71615a852a551bb09ff43ae0b5b5a3fd8e0d51a2060b59",
       "code_sha256": "37f8141d9257230c3f5dfd2e38f7ec3b18f73c49a54023b42a522ac3995f6cd5",
       "decision": "accept_experimental_default",
-      "framing": "enabling/experimental development"
+      "framing": "enabling/experimental development",
+      "actual_served_tier": null,
+      "prompt_hashes": [
+        "1f3de4c65e20499bcb0adb3cbe5dd5cf42c6a8eaff15f35b209d2f21fea56b43",
+        "3b4f6fdbd95f4dc15f2ad1d8564d2a79b625481eba25534016bc411f514ef457",
+        "0a3dd19f5872962ba3b2edbc75925d9b0f304da301816e19f4ac48cf0e947b0a",
+        "b4ff6834c41b7d2e6f792dcd26d9213666e96b5558ca970eec26f7a44f1085b9",
+        "05fbc20697fcf70956721f7735f17a032b82e3df64a37f95e5592620dfabbd84"
+      ],
+      "full_local_artifact_index": {
+        "path": "C:\\Users\\eduar\\Desktop\\HACKATON\\tasks\\taxo-four-20261109T162041\\food\\improvement-loop-01\\run-004\\artifact-index.json",
+        "sha256": "c4b445c95a902be0b983360fbc15cdf62b2f4e26a68d6483cb78925a0fbf7714"
+      },
+      "started_utc": "2026-11-09T22:05:54.670370+00:00"
     },
     {
       "run": "run-005",
@@ -226,7 +284,20 @@
       "card_sha256": "4c121d9db0e32d49cb26a33d130d6ceea9a3cbd97c0af9a01949e6e717ae2a3e",
       "code_sha256": "32582c966be711bc276dfdffe6dc213a5ff964c42aee9d87b6db48bf7ecd75da",
       "decision": "accept_experimental_default",
-      "framing": "Pedia warm/reference"
+      "framing": "Pedia warm/reference",
+      "actual_served_tier": null,
+      "prompt_hashes": [
+        "64aa19fafe7ce3d8541ce5994d3ebf94f368847f2e84a107275fa2afa4a1111e",
+        "5ef6155793ab5f0ea0b6749e24187d37ec317419cdbd29ec5ab0dd4f7e33e088",
+        "19b877396beaee17a77ec82184741afb1f00ee3613b2973f4c5d9b3cd111d258",
+        "8b7ece06fba9a890a71365e6e2939519540debfdd8ab2342fe7697db288a4da3",
+        "b72f616a595c315339ea80bbfda0bc71a28ea23b61973fa00952cf55d58edf1a"
+      ],
+      "full_local_artifact_index": {
+        "path": "C:\\Users\\eduar\\Desktop\\HACKATON\\tasks\\taxo-four-20261109T162041\\food\\improvement-loop-01\\run-005\\artifact-index.json",
+        "sha256": "1ac32cc0c5e1adfaed1e651a765167fa2a54131e17b3a955570f7f4bce1f59e6"
+      },
+      "started_utc": "2026-11-09T22:07:28.228232+00:00"
     },
     {
       "run": "run-006",
@@ -265,7 +336,20 @@
       "card_sha256": "9b8a90f84cb4bc62c9a9fed9d9ff88bd3a2f102101af817a940d30561e4b7dcb",
       "code_sha256": "4721a21b8c912fb7be83fbb88a4631cc99bc6ade624094676d338d0483ed7602",
       "decision": "rejected_tradeoff_or_reproduction",
-      "framing": "reproducibility of002"
+      "framing": "reproducibility of002",
+      "actual_served_tier": null,
+      "prompt_hashes": [
+        "8d534815fb2deb429f67fb5beeb8d6490b750beed97cf6229580ae15f7778867",
+        "155051de23b816e93af91ffb67bab24cfa0b5eb09f9024f9092356cfc7bc51d9",
+        "1bef4ec5574ce8a467277f475a636fe0543ac4b6349738d9568b495efe5f755b",
+        "51edb838067092d46102d05d6726bb42619391225a85e77483071a7d8ad152bc",
+        "2f18967934d2c8af53485a09058d6854a55004efe46753ffb43c2a2961dae043"
+      ],
+      "full_local_artifact_index": {
+        "path": "C:\\Users\\eduar\\Desktop\\HACKATON\\tasks\\taxo-four-20261109T162041\\food\\improvement-loop-01\\run-006\\artifact-index.json",
+        "sha256": "6596eff2ccbafc8e3c3c2a6c28e24fd724a9742823a922da11a863a4c7f1cb31"
+      },
+      "started_utc": "2026-11-09T22:08:32.595662+00:00"
     }
   ],
   "roles": {
@@ -323,5 +407,169 @@
     "brand_regression": 0
   },
   "framing": "Cold->best is mostly enabling placement/source evidence and Pedia reuse, not all novel learning; run001->002 measured loop change; run003 product gain/brand loss rejected; run006 reproducibility not improvement.",
-  "integrity_all_passed": true
+  "integrity_all_passed": true,
+  "baseline_default_selection": {
+    "method": "Static card/config resolution, CLI --help and factory instruction inspection only; no tests/model/construction/evaluation",
+    "pack_card": "cards/baseline-pedia.json",
+    "default_resolves_expected_path": true,
+    "explicit_card_preserved": true,
+    "baseline_instruction_sha256": "f6538358cd47f6131426356072ec266febd00f515be05dc215f14aa1cd6f3887",
+    "measured005_instruction_sha256": "f6538358cd47f6131426356072ec266febd00f515be05dc215f14aa1cd6f3887",
+    "instruction_equal_measured005": true,
+    "git_staged_instruction_equal_measured005": true,
+    "baseline_card_sha256": "12fed78f37480695bb0962fb230df3e7c6ad7e0a82ca42f938884ab4af4d1f2b",
+    "baseline_card_git_blob": "f201baee17cf5c34cdc062d03f562c6fe4003752",
+    "measured005_full_card_sha256": "4c121d9db0e32d49cb26a33d130d6ceea9a3cbd97c0af9a01949e6e717ae2a3e",
+    "whole_card_file_byte_equal": false,
+    "why_file_metadata_differs": "Public baseline excludes local feedback/provenance wrapper fields and adds owner selection metadata; active instruction is unchanged.",
+    "whole_prompt_pipeline_equal_measured005": false,
+    "new_configuration_measured": false,
+    "wrapper_and_conventions": "Aligned offered/selected variant evidence and title conflict priority; authoritative pack conventions appended after historical card text.",
+    "generic_cli_passes_pack_conventions": true,
+    "generic_factory_contains_updated_evidence_convention": true,
+    "nodes_status": "proposal",
+    "selection_authority": "owner-selected Pedia baseline, not learned-rule admission"
+  },
+  "actual_served_tier": null,
+  "repo_contracts": {
+    "rule_lifecycle": [
+      "SPEC.md#5.1",
+      "docs/DATA-SPEC.md#7",
+      "taxo/core/schemas.py:Status/RuleSpec/AgenticRule",
+      "taxo/memory.py:agentic_for"
+    ],
+    "lessons": [
+      "SPEC.md#5.3",
+      "memory/lessons.md"
+    ],
+    "round_export": {
+      "ref": "origin/distill/rounds",
+      "commit": "8c085cdce477280b18dcc87773c30eac3314d411",
+      "path": "taxo/distill.py",
+      "sha256": "69a56a492028a00af876fd78ae5ae44431e3c2d569281d50fb72ce914b11fa7f",
+      "helper": "record(domain,kpi,gate=None,lesson,kind,branch,author)"
+    },
+    "kpi": [
+      "taxo/kpis.py",
+      {
+        "ref": "origin/main",
+        "commit": "ca39c780c5cbd8b9d6a9208e919791b563343c27",
+        "path": "docs/KPIS.md"
+      }
+    ],
+    "memory_record": "taxo/memory.py:record (ts, rule, domain, outcome fields)",
+    "run_log": "taxo/core/ledger.py:Ledger.append (ts, kind, prev, payload, hash)",
+    "integration": "Read-only git-show inspection; no branch merge/cherry-pick, shared distiller edit, collector invocation or active lesson generation. Collector finds Food records on this branch; keep=null prevents lessons() admission."
+  },
+  "native_round_records": {
+    "run-000-baseline": {
+      "path": "memory\\rounds\\food\\20261109T212253.718498+0000-57c73a7553.json",
+      "id": "57c73a7553",
+      "sha256": "12424f1b29204edaf1fc066434771c0087a4ffdcdfc9572d1467f6881102e064"
+    },
+    "run-001": {
+      "path": "memory\\rounds\\food\\20261109T215518.908335+0000-f8cc251a1d.json",
+      "id": "f8cc251a1d",
+      "sha256": "e6a9bf8834954f9a8ef2f62941764c33daa986fba5733910e71f712091c099fa"
+    },
+    "run-002": {
+      "path": "memory\\rounds\\food\\20261109T215918.235245+0000-0ca5cdf6b3.json",
+      "id": "0ca5cdf6b3",
+      "sha256": "5806d3688001bd1d742ce3fab4fbe4cf10be20b625bb69fb9ba58a44ec000988"
+    },
+    "run-003": {
+      "path": "memory\\rounds\\food\\20261109T220244.637954+0000-a8aba0c871.json",
+      "id": "a8aba0c871",
+      "sha256": "7978f081c0dcabf46e26f007cacb69356388dc1ca4b242cda814e1706df2be77"
+    },
+    "run-004": {
+      "path": "memory\\rounds\\food\\20261109T220554.670370+0000-c284ea25c4.json",
+      "id": "c284ea25c4",
+      "sha256": "bd8777742695a60b43d988acec9e8c747e43bab9e4f7bff930708efb2b60a971"
+    },
+    "run-005": {
+      "path": "memory\\rounds\\food\\20261109T220728.228232+0000-a46e2d7efb.json",
+      "id": "a46e2d7efb",
+      "sha256": "4c9ea7987ed1b36546849c8b268a06d41527d77390d12ce2ac1aa77d98d17d41"
+    },
+    "run-006": {
+      "path": "memory\\rounds\\food\\20261109T220832.595662+0000-6280933564.json",
+      "id": "6280933564",
+      "sha256": "5910a554eaf3665171aace25725c2b8905c5de6724f9f81cb7a6e4de356d81fd"
+    },
+    "validator-v2": {
+      "path": "memory\\rounds\\food\\20261109T215928.326396+0000-d078d8e4a6.json",
+      "id": "d078d8e4a6",
+      "sha256": "e253e5a0b7f75b0eba3ad72c3fff6ba42675379b931da72580b1ec80f0ce1ee6"
+    },
+    "validator-v3": {
+      "path": "memory\\rounds\\food\\20261109T220415.008443+0000-6fdf6985ee.json",
+      "id": "6fdf6985ee",
+      "sha256": "62fecb9519e48b66f19ed37d0eab946a129867705a75c72965ac44a32abd0a8d"
+    }
+  },
+  "lifecycle": {
+    "gate": null,
+    "keep": null,
+    "decided_on": null,
+    "production_admission": false,
+    "starting_conventions": "owner_selected_not_statistically_admitted",
+    "why": "No whole-brand sealed Food gate was run; repeatedly inspected exploratory50 only."
+  },
+  "static_native_record_inspection": [
+    {
+      "file": "memory\\rounds\\food\\20261109T212253.718498+0000-57c73a7553.json",
+      "all_kpi_keys": true,
+      "pending": true,
+      "no_sealed_claim": true
+    },
+    {
+      "file": "memory\\rounds\\food\\20261109T215518.908335+0000-f8cc251a1d.json",
+      "all_kpi_keys": true,
+      "pending": true,
+      "no_sealed_claim": true
+    },
+    {
+      "file": "memory\\rounds\\food\\20261109T215918.235245+0000-0ca5cdf6b3.json",
+      "all_kpi_keys": true,
+      "pending": true,
+      "no_sealed_claim": true
+    },
+    {
+      "file": "memory\\rounds\\food\\20261109T215928.326396+0000-d078d8e4a6.json",
+      "all_kpi_keys": true,
+      "pending": true,
+      "no_sealed_claim": true
+    },
+    {
+      "file": "memory\\rounds\\food\\20261109T220244.637954+0000-a8aba0c871.json",
+      "all_kpi_keys": true,
+      "pending": true,
+      "no_sealed_claim": true
+    },
+    {
+      "file": "memory\\rounds\\food\\20261109T220415.008443+0000-6fdf6985ee.json",
+      "all_kpi_keys": true,
+      "pending": true,
+      "no_sealed_claim": true
+    },
+    {
+      "file": "memory\\rounds\\food\\20261109T220554.670370+0000-c284ea25c4.json",
+      "all_kpi_keys": true,
+      "pending": true,
+      "no_sealed_claim": true
+    },
+    {
+      "file": "memory\\rounds\\food\\20261109T220728.228232+0000-a46e2d7efb.json",
+      "all_kpi_keys": true,
+      "pending": true,
+      "no_sealed_claim": true
+    },
+    {
+      "file": "memory\\rounds\\food\\20261109T220832.595662+0000-6280933564.json",
+      "all_kpi_keys": true,
+      "pending": true,
+      "no_sealed_claim": true
+    }
+  ]
 }

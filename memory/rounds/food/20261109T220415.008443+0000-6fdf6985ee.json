@@ -1,0 +1,60 @@
+{
+ "id": "6fdf6985ee",
+ "domain": "food",
+ "ts": "2026-11-09T22:04:15.008443+00:00",
+ "loop": "B",
+ "round": 3,
+ "change": "EXPLORATORY Food: independent validator setup v3",
+ "label": "EXPLORATORY Food: independent validator setup v3",
+ "keep": null,
+ "decided_on": null,
+ "lesson": "food-validator-investigation",
+ "kind": "validator_check",
+ "branch": "harness/food-20261109T162041",
+ "author": "EduardoGC21",
+ "gate": null,
+ "kpi": {
+  "ts": "2026-11-09T22:04:15.008443+00:00",
+  "domain": "food",
+  "loop": "B",
+  "round": 3,
+  "label": "EXPLORATORY Food: independent validator setup v3",
+  "code": "4445d00fe8cd2895dc15d33d091aeb647d44e0497a70e748521b44b7f7f22fb3",
+  "vocab": null,
+  "rules": null,
+  "data": "food_original_frozen_prefix50",
+  "gold_dev": null,
+  "gold_sealed": null,
+  "human_dev": null,
+  "human_sealed": null,
+  "silver": null,
+  "shares": {},
+  "agent_calls": 5,
+  "sealed_reads_total": null,
+  "secs": 138.75775979994796,
+  "listings": 50,
+  "gold_sample": "nonrandom_previously_inspected",
+  "metadata": {
+   "ts_source": "directory creation at execution entry; no instrumented UTC start retained",
+   "setup_sha256": "4445d00fe8cd2895dc15d33d091aeb647d44e0497a70e748521b44b7f7f22fb3",
+   "metrics": {
+    "rates_denominator": 50,
+    "identity_path_exact": 4,
+    "strict_full_path_exact": 2,
+    "brand_correct": 34,
+    "abstentions_all_frozen": 4
+   },
+   "experimental_decision": "reject_setup_trial",
+   "inconsistent_rows": 0,
+   "production_admission": false,
+   "no_population_extension": true,
+   "cost": null,
+   "actual_served_tier": null,
+   "code_source": {
+    "path": "domains/food/validate_paths.py",
+    "archived_implementation_sha256": "4a455ed014b050f6e2bde7e4890354a473e5aa7ee4af6fa44508ac74fdc3d208",
+    "code_field_scope": "setup artifact hash used as version identity; implementation hash recorded separately"
+   }
+  }
+ }
+}

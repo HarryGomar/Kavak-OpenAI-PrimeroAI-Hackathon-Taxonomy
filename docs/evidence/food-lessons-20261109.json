@@ -1,0 +1,868 @@
+{
+  "domain": "food",
+  "privacy": "Sanitized machine-readable aggregate execution/decision/provenance only. No listing/gold IDs, titles, rows, full data-bearing prompts/answers/citations or private reasoning. Full data-heavy logs remain external.",
+  "owner_gold_authority": "owner-confirmed human Pedia gold",
+  "primary_denominator": 50,
+  "source_sha256": "549c975018dbac1d05182e129b3a442f18d13d200bbaf2be6658523a800e96db",
+  "gold_rulings_sha256": "155485a8ba0e4d692e08664084c1d605bb48ce0f527dbeaac4c46cc059056a4c",
+  "scorer_sha256": "675d4dce5beca1a4b638c64a6d91cc428f0fe70b415b312c1ac2be2b747b367e",
+  "full_artifact_index": {
+    "path": "C:\\Users\\eduar\\Desktop\\HACKATON\\tasks\\taxo-four-20261109T162041\\food\\improvement-loop-01\\artifact-index.json",
+    "sha256": "26ff2735496958ad361d85668f0144fe29916f997c91463393e3aa1009fd70be"
+  },
+  "cost": null,
+  "actual_served_tier": null,
+  "lessons": [
+    {
+      "id": "lesson/food-enable-placer-before-claiming-learning",
+      "kind": "route",
+      "scope": "domain:food",
+      "claim": "Execute missing placement route and permit source-supported new nodes instead of unused route counts.",
+      "record": [
+        {
+          "domain": "food",
+          "loop": "A",
+          "round": 0,
+          "branch": "harness/food-20261109T162041",
+          "author": "EduardoGC21",
+          "keep": null,
+          "decided_on": null,
+          "better": null,
+          "worse": null,
+          "delta_exact": null,
+          "delta_harm": null,
+          "delta_agent": null,
+          "delta_f1": null,
+          "delta_cost": null,
+          "record": "57c73a7553"
+        },
+        {
+          "domain": "food",
+          "loop": "A",
+          "round": 1,
+          "branch": "harness/food-20261109T162041",
+          "author": "EduardoGC21",
+          "keep": null,
+          "decided_on": null,
+          "better": null,
+          "worse": null,
+          "delta_exact": null,
+          "delta_harm": null,
+          "delta_agent": null,
+          "delta_f1": null,
+          "delta_cost": null,
+          "record": "f8cc251a1d"
+        }
+      ],
+      "status": "proposal",
+      "evidence_classification": "reused_enabling",
+      "evidence": {
+        "runs": [
+          "run-000-baseline",
+          "run-001"
+        ],
+        "observed_outcome": "identity0to7, brand3to36; exact gains7/regressions0, brand regression1",
+        "limits": "Cold start was not a competent Pedia baseline; do not attribute all enabling gain to novel learning.",
+        "provenance": [
+          {
+            "run": "run-000-baseline",
+            "card_sha256": null,
+            "code_sha256": null
+          },
+          {
+            "run": "run-001",
+            "card_sha256": "dc323a9d3146d2b6aa7f3d23bc74659017c9de4c5fdad57099b15db7180b1e12",
+            "code_sha256": "4721a21b8c912fb7be83fbb88a4631cc99bc6ade624094676d338d0483ed7602"
+          }
+        ]
+      },
+      "publication_state": "Candidate for future curation; not generated active distill lesson"
+    },
+    {
+      "id": "lesson/food-modifier-role-and-commercial-names",
+      "kind": "card_text",
+      "scope": "domain:food",
+      "claim": "Distinguish product form/assortment identity from size/count and retain source named product expressions.",
+      "record": [
+        {
+          "domain": "food",
+          "loop": "A",
+          "round": 1,
+          "branch": "harness/food-20261109T162041",
+          "author": "EduardoGC21",
+          "keep": null,
+          "decided_on": null,
+          "better": null,
+          "worse": null,
+          "delta_exact": null,
+          "delta_harm": null,
+          "delta_agent": null,
+          "delta_f1": null,
+          "delta_cost": null,
+          "record": "f8cc251a1d"
+        },
+        {
+          "domain": "food",
+          "loop": "A",
+          "round": 2,
+          "branch": "harness/food-20261109T162041",
+          "author": "EduardoGC21",
+          "keep": null,
+          "decided_on": null,
+          "better": null,
+          "worse": null,
+          "delta_exact": null,
+          "delta_harm": null,
+          "delta_agent": null,
+          "delta_f1": null,
+          "delta_cost": null,
+          "record": "0ca5cdf6b3"
+        }
+      ],
+      "status": "proposal",
+      "evidence_classification": "proposed_measured_exploratory",
+      "evidence": {
+        "runs": [
+          "run-001",
+          "run-002"
+        ],
+        "observed_outcome": "exact7to8, strict4to5, brand36to37; exact gains4/regressions3, brand gains2/regression1",
+        "limits": "Small net gain with churn; source-only model variability and reused feedback preclude generalization claims.",
+        "provenance": [
+          {
+            "run": "run-001",
+            "card_sha256": "dc323a9d3146d2b6aa7f3d23bc74659017c9de4c5fdad57099b15db7180b1e12",
+            "code_sha256": "4721a21b8c912fb7be83fbb88a4631cc99bc6ade624094676d338d0483ed7602"
+          },
+          {
+            "run": "run-002",
+            "card_sha256": "9b8a90f84cb4bc62c9a9fed9d9ff88bd3a2f102101af817a940d30561e4b7dcb",
+            "code_sha256": "4721a21b8c912fb7be83fbb88a4631cc99bc6ade624094676d338d0483ed7602"
+          }
+        ]
+      },
+      "publication_state": "Candidate for future curation; not generated active distill lesson"
+    },
+    {
+      "id": "lesson/food-narrative-name-extraction-tradeoff",
+      "kind": "card_text",
+      "scope": "domain:food",
+      "claim": "Prefer attested commercial designation over surrounding sales wording.",
+      "record": [
+        {
+          "domain": "food",
+          "loop": "A",
+          "round": 2,
+          "branch": "harness/food-20261109T162041",
+          "author": "EduardoGC21",
+          "keep": null,
+          "decided_on": null,
+          "better": null,
+          "worse": null,
+          "delta_exact": null,
+          "delta_harm": null,
+          "delta_agent": null,
+          "delta_f1": null,
+          "delta_cost": null,
+          "record": "0ca5cdf6b3"
+        },
+        {
+          "domain": "food",
+          "loop": "A",
+          "round": 3,
+          "branch": "harness/food-20261109T162041",
+          "author": "EduardoGC21",
+          "keep": null,
+          "decided_on": null,
+          "better": null,
+          "worse": null,
+          "delta_exact": null,
+          "delta_harm": null,
+          "delta_agent": null,
+          "delta_f1": null,
+          "delta_cost": null,
+          "record": "a8aba0c871"
+        }
+      ],
+      "status": "proposal",
+      "evidence_classification": "rejected_as_default",
+      "evidence": {
+        "runs": [
+          "run-002",
+          "run-003"
+        ],
+        "observed_outcome": "exact8to10 but brand37to33; exact gains5/regressions3, brand regressions4",
+        "limits": "Highest exact trial was not selected at expense of brand correctness.",
+        "provenance": [
+          {
+            "run": "run-002",
+            "card_sha256": "9b8a90f84cb4bc62c9a9fed9d9ff88bd3a2f102101af817a940d30561e4b7dcb",
+            "code_sha256": "4721a21b8c912fb7be83fbb88a4631cc99bc6ade624094676d338d0483ed7602"
+          },
+          {
+            "run": "run-003",
+            "card_sha256": "c6fc2b2d251e5c31f2a2178e07134bdbda741b44e6f8288b2ae54650585491d7",
+            "code_sha256": "00aca65871eedd4544dce2cd4800e3f4580f013db8aa74a9b4acbec8a8c3dca0"
+          }
+        ]
+      },
+      "publication_state": "Candidate for future curation; not generated active distill lesson"
+    },
+    {
+      "id": "lesson/food-source-org-roles-not-gold-lookup",
+      "kind": "route",
+      "scope": "domain:food",
+      "claim": "Expose original organization roles and shop variants; distinguish consumer mark from owner/distributor.",
+      "record": [
+        {
+          "domain": "food",
+          "loop": "A",
+          "round": 3,
+          "branch": "harness/food-20261109T162041",
+          "author": "EduardoGC21",
+          "keep": null,
+          "decided_on": null,
+          "better": null,
+          "worse": null,
+          "delta_exact": null,
+          "delta_harm": null,
+          "delta_agent": null,
+          "delta_f1": null,
+          "delta_cost": null,
+          "record": "a8aba0c871"
+        },
+        {
+          "domain": "food",
+          "loop": "A",
+          "round": 4,
+          "branch": "harness/food-20261109T162041",
+          "author": "EduardoGC21",
+          "keep": null,
+          "decided_on": null,
+          "better": null,
+          "worse": null,
+          "delta_exact": null,
+          "delta_harm": null,
+          "delta_agent": null,
+          "delta_f1": null,
+          "delta_cost": null,
+          "record": "c284ea25c4"
+        }
+      ],
+      "status": "proposal",
+      "evidence_classification": "reused_measured_input_enabling",
+      "evidence": {
+        "runs": [
+          "run-003",
+          "run-004"
+        ],
+        "observed_outcome": "exact10to9, brand33to43, abstain5to2; vs accepted002 exact8to9 and brand37to43",
+        "limits": "Joint prompt/input and stochastic changes; vendor alone remains unverified, not automatic own-label.",
+        "provenance": [
+          {
+            "run": "run-003",
+            "card_sha256": "c6fc2b2d251e5c31f2a2178e07134bdbda741b44e6f8288b2ae54650585491d7",
+            "code_sha256": "00aca65871eedd4544dce2cd4800e3f4580f013db8aa74a9b4acbec8a8c3dca0"
+          },
+          {
+            "run": "run-004",
+            "card_sha256": "77ceaa6271932a095e71615a852a551bb09ff43ae0b5b5a3fd8e0d51a2060b59",
+            "code_sha256": "37f8141d9257230c3f5dfd2e38f7ec3b18f73c49a54023b42a522ac3995f6cd5"
+          }
+        ]
+      },
+      "publication_state": "Candidate for future curation; not generated active distill lesson"
+    },
+    {
+      "id": "lesson/food-pedia-starting-principles",
+      "kind": "card_text",
+      "scope": "domain:food",
+      "claim": "Consumer-facing mark, stable marketed core, original offered shop variants, title conflict priority, same-maker mix vs multi-maker assortment.",
+      "record": [
+        {
+          "domain": "food",
+          "loop": "A",
+          "round": 4,
+          "branch": "harness/food-20261109T162041",
+          "author": "EduardoGC21",
+          "keep": null,
+          "decided_on": null,
+          "better": null,
+          "worse": null,
+          "delta_exact": null,
+          "delta_harm": null,
+          "delta_agent": null,
+          "delta_f1": null,
+          "delta_cost": null,
+          "record": "c284ea25c4"
+        },
+        {
+          "domain": "food",
+          "loop": "A",
+          "round": 5,
+          "branch": "harness/food-20261109T162041",
+          "author": "EduardoGC21",
+          "keep": null,
+          "decided_on": null,
+          "better": null,
+          "worse": null,
+          "delta_exact": null,
+          "delta_harm": null,
+          "delta_agent": null,
+          "delta_f1": null,
+          "delta_cost": null,
+          "record": "a46e2d7efb"
+        }
+      ],
+      "status": "proposal",
+      "evidence_classification": "reused_owner_selected_baseline",
+      "evidence": {
+        "runs": [
+          "run-004",
+          "run-005"
+        ],
+        "observed_outcome": "exact9to9, brand43to44, strict6to5; warm/reference005 exact9/50, strict5/50, brand44/50",
+        "limits": "No post-warm improvement cycle. New default wrapper/conventions alignment is unmeasured. Pedia source principles only, no wholesale engine/card or example brand lists.",
+        "provenance": [
+          {
+            "run": "run-004",
+            "card_sha256": "77ceaa6271932a095e71615a852a551bb09ff43ae0b5b5a3fd8e0d51a2060b59",
+            "code_sha256": "37f8141d9257230c3f5dfd2e38f7ec3b18f73c49a54023b42a522ac3995f6cd5"
+          },
+          {
+            "run": "run-005",
+            "card_sha256": "4c121d9db0e32d49cb26a33d130d6ceea9a3cbd97c0af9a01949e6e717ae2a3e",
+            "code_sha256": "32582c966be711bc276dfdffe6dc213a5ff964c42aee9d87b6db48bf7ecd75da"
+          }
+        ]
+      },
+      "publication_state": "Candidate for future curation; not generated active distill lesson"
+    },
+    {
+      "id": "lesson/food-unsupported-proposer-operators",
+      "kind": "rule_shape",
+      "scope": "domain:food",
+      "claim": "Validate existing check names and parameter signatures before any rule experiment.",
+      "record": [
+        {
+          "domain": "food",
+          "loop": "A",
+          "round": 1,
+          "branch": "harness/food-20261109T162041",
+          "author": "EduardoGC21",
+          "keep": null,
+          "decided_on": null,
+          "better": null,
+          "worse": null,
+          "delta_exact": null,
+          "delta_harm": null,
+          "delta_agent": null,
+          "delta_f1": null,
+          "delta_cost": null,
+          "record": "f8cc251a1d"
+        },
+        {
+          "domain": "food",
+          "loop": "A",
+          "round": 2,
+          "branch": "harness/food-20261109T162041",
+          "author": "EduardoGC21",
+          "keep": null,
+          "decided_on": null,
+          "better": null,
+          "worse": null,
+          "delta_exact": null,
+          "delta_harm": null,
+          "delta_agent": null,
+          "delta_f1": null,
+          "delta_cost": null,
+          "record": "0ca5cdf6b3"
+        }
+      ],
+      "status": "proposal",
+      "evidence_classification": "rejected",
+      "evidence": {
+        "runs": [
+          "run-001-feedback-roles",
+          "run-002-feedback-roles"
+        ],
+        "observed_outcome": "too_shallow and twin_of proposals rejected unsupported params; no rule activation",
+        "limits": "Proposed registry needs independent legitimate evidence, not evaluation gold target catalogs.",
+        "provenance": []
+      },
+      "publication_state": "Candidate for future curation; not generated active distill lesson"
+    },
+    {
+      "id": "lesson/food-validator-investigation-not-automatic-progress",
+      "kind": "validator_check",
+      "scope": "domain:food",
+      "claim": "Independently measure improver-generated checklists; keep them distinct from placer instruction transfers.",
+      "record": [
+        {
+          "domain": "food",
+          "loop": "B",
+          "round": 2,
+          "branch": "harness/food-20261109T162041",
+          "author": "EduardoGC21",
+          "keep": null,
+          "decided_on": null,
+          "better": null,
+          "worse": null,
+          "delta_exact": null,
+          "delta_harm": null,
+          "delta_agent": null,
+          "delta_f1": null,
+          "delta_cost": null,
+          "record": "d078d8e4a6"
+        },
+        {
+          "domain": "food",
+          "loop": "B",
+          "round": 3,
+          "branch": "harness/food-20261109T162041",
+          "author": "EduardoGC21",
+          "keep": null,
+          "decided_on": null,
+          "better": null,
+          "worse": null,
+          "delta_exact": null,
+          "delta_harm": null,
+          "delta_agent": null,
+          "delta_f1": null,
+          "delta_cost": null,
+          "record": "6fdf6985ee"
+        }
+      ],
+      "status": "proposal",
+      "evidence_classification": "rejected_trials",
+      "evidence": {
+        "runs": [
+          "independent-validator-v2",
+          "independent-validator-v3"
+        ],
+        "observed_outcome": "v1 exact5 brand37; v2 exact5 brand35 with2 inconsistent outputs; v3 exact4 brand34",
+        "limits": "v2 metrics diagnostic only; round2 setup-context mismatch recorded; raw proposals do not override naming safeguards.",
+        "provenance": []
+      },
+      "publication_state": "Candidate for future curation; not generated active distill lesson"
+    },
+    {
+      "id": "lesson/food-repeatability-is-not-assumed",
+      "kind": "validator_check",
+      "scope": "domain:food",
+      "claim": "Repeat unchanged card/code/source prompts rather than count sampling noise as new improvement.",
+      "record": [
+        {
+          "domain": "food",
+          "loop": "A",
+          "round": 2,
+          "branch": "harness/food-20261109T162041",
+          "author": "EduardoGC21",
+          "keep": null,
+          "decided_on": null,
+          "better": null,
+          "worse": null,
+          "delta_exact": null,
+          "delta_harm": null,
+          "delta_agent": null,
+          "delta_f1": null,
+          "delta_cost": null,
+          "record": "0ca5cdf6b3"
+        },
+        {
+          "domain": "food",
+          "loop": "A",
+          "round": 6,
+          "branch": "harness/food-20261109T162041",
+          "author": "EduardoGC21",
+          "keep": null,
+          "decided_on": null,
+          "better": null,
+          "worse": null,
+          "delta_exact": null,
+          "delta_harm": null,
+          "delta_agent": null,
+          "delta_f1": null,
+          "delta_cost": null,
+          "record": "6280933564"
+        }
+      ],
+      "status": "proposal",
+      "evidence_classification": "measured_unstable",
+      "evidence": {
+        "runs": [
+          "run-002",
+          "run-006"
+        ],
+        "observed_outcome": "all5 batch prompts equal; exact8to5, brand37to36; exact0gains/3regressions",
+        "limits": "Best005 not repeated; no robustness, population accuracy or production admission claim.",
+        "provenance": [
+          {
+            "run": "run-002",
+            "card_sha256": "9b8a90f84cb4bc62c9a9fed9d9ff88bd3a2f102101af817a940d30561e4b7dcb",
+            "code_sha256": "4721a21b8c912fb7be83fbb88a4631cc99bc6ade624094676d338d0483ed7602"
+          },
+          {
+            "run": "run-006",
+            "card_sha256": "9b8a90f84cb4bc62c9a9fed9d9ff88bd3a2f102101af817a940d30561e4b7dcb",
+            "code_sha256": "4721a21b8c912fb7be83fbb88a4631cc99bc6ade624094676d338d0483ed7602"
+          }
+        ]
+      },
+      "publication_state": "Candidate for future curation; not generated active distill lesson"
+    },
+    {
+      "id": "lesson/food-missing-gold-alias-is-not-prediction-truth",
+      "kind": "card_text",
+      "scope": "domain:food",
+      "claim": "Preserve exact-label mismatches and scope uncertainty without tuning scorer or inventing missing canonical names.",
+      "record": [
+        {
+          "domain": "food",
+          "loop": "A",
+          "round": 1,
+          "branch": "harness/food-20261109T162041",
+          "author": "EduardoGC21",
+          "keep": null,
+          "decided_on": null,
+          "better": null,
+          "worse": null,
+          "delta_exact": null,
+          "delta_harm": null,
+          "delta_agent": null,
+          "delta_f1": null,
+          "delta_cost": null,
+          "record": "f8cc251a1d"
+        },
+        {
+          "domain": "food",
+          "loop": "A",
+          "round": 2,
+          "branch": "harness/food-20261109T162041",
+          "author": "EduardoGC21",
+          "keep": null,
+          "decided_on": null,
+          "better": null,
+          "worse": null,
+          "delta_exact": null,
+          "delta_harm": null,
+          "delta_agent": null,
+          "delta_f1": null,
+          "delta_cost": null,
+          "record": "0ca5cdf6b3"
+        },
+        {
+          "domain": "food",
+          "loop": "A",
+          "round": 3,
+          "branch": "harness/food-20261109T162041",
+          "author": "EduardoGC21",
+          "keep": null,
+          "decided_on": null,
+          "better": null,
+          "worse": null,
+          "delta_exact": null,
+          "delta_harm": null,
+          "delta_agent": null,
+          "delta_f1": null,
+          "delta_cost": null,
+          "record": "a8aba0c871"
+        },
+        {
+          "domain": "food",
+          "loop": "A",
+          "round": 4,
+          "branch": "harness/food-20261109T162041",
+          "author": "EduardoGC21",
+          "keep": null,
+          "decided_on": null,
+          "better": null,
+          "worse": null,
+          "delta_exact": null,
+          "delta_harm": null,
+          "delta_agent": null,
+          "delta_f1": null,
+          "delta_cost": null,
+          "record": "c284ea25c4"
+        },
+        {
+          "domain": "food",
+          "loop": "A",
+          "round": 5,
+          "branch": "harness/food-20261109T162041",
+          "author": "EduardoGC21",
+          "keep": null,
+          "decided_on": null,
+          "better": null,
+          "worse": null,
+          "delta_exact": null,
+          "delta_harm": null,
+          "delta_agent": null,
+          "delta_f1": null,
+          "delta_cost": null,
+          "record": "a46e2d7efb"
+        },
+        {
+          "domain": "food",
+          "loop": "A",
+          "round": 6,
+          "branch": "harness/food-20261109T162041",
+          "author": "EduardoGC21",
+          "keep": null,
+          "decided_on": null,
+          "better": null,
+          "worse": null,
+          "delta_exact": null,
+          "delta_harm": null,
+          "delta_agent": null,
+          "delta_f1": null,
+          "delta_cost": null,
+          "record": "6280933564"
+        }
+      ],
+      "status": "proposal",
+      "evidence_classification": "unverified_semantic_equivalence",
+      "evidence": {
+        "runs": [
+          "run-001",
+          "run-002",
+          "run-003",
+          "run-004",
+          "run-005",
+          "run-006"
+        ],
+        "observed_outcome": "Primary denominator50 throughout; identity and strict-full scored separately",
+        "limits": "Unknown synonyms are conservative mismatches, not independently proven semantic errors. Scope truth null.",
+        "provenance": [
+          {
+            "run": "run-001",
+            "card_sha256": "dc323a9d3146d2b6aa7f3d23bc74659017c9de4c5fdad57099b15db7180b1e12",
+            "code_sha256": "4721a21b8c912fb7be83fbb88a4631cc99bc6ade624094676d338d0483ed7602"
+          },
+          {
+            "run": "run-002",
+            "card_sha256": "9b8a90f84cb4bc62c9a9fed9d9ff88bd3a2f102101af817a940d30561e4b7dcb",
+            "code_sha256": "4721a21b8c912fb7be83fbb88a4631cc99bc6ade624094676d338d0483ed7602"
+          },
+          {
+            "run": "run-003",
+            "card_sha256": "c6fc2b2d251e5c31f2a2178e07134bdbda741b44e6f8288b2ae54650585491d7",
+            "code_sha256": "00aca65871eedd4544dce2cd4800e3f4580f013db8aa74a9b4acbec8a8c3dca0"
+          },
+          {
+            "run": "run-004",
+            "card_sha256": "77ceaa6271932a095e71615a852a551bb09ff43ae0b5b5a3fd8e0d51a2060b59",
+            "code_sha256": "37f8141d9257230c3f5dfd2e38f7ec3b18f73c49a54023b42a522ac3995f6cd5"
+          },
+          {
+            "run": "run-005",
+            "card_sha256": "4c121d9db0e32d49cb26a33d130d6ceea9a3cbd97c0af9a01949e6e717ae2a3e",
+            "code_sha256": "32582c966be711bc276dfdffe6dc213a5ff964c42aee9d87b6db48bf7ecd75da"
+          },
+          {
+            "run": "run-006",
+            "card_sha256": "9b8a90f84cb4bc62c9a9fed9d9ff88bd3a2f102101af817a940d30561e4b7dcb",
+            "code_sha256": "4721a21b8c912fb7be83fbb88a4631cc99bc6ade624094676d338d0483ed7602"
+          }
+        ]
+      },
+      "publication_state": "Candidate for future curation; not generated active distill lesson"
+    }
+  ],
+  "pedia_source": {
+    "commit": "fde981536ce7133e0cff8891cc2cf94c2cae82da",
+    "files": [
+      {
+        "relative_path": "AGENTS.md",
+        "sha256": "b25eba0d6f47ca911528beaabfcd984e65ce1802041c8039121fa91877550b4c"
+      },
+      {
+        "relative_path": "spaces/food/conventions.yaml",
+        "sha256": "802ca287523dc19547d87ea29704ec79357f35363a495335d9e14298e380e992"
+      },
+      {
+        "relative_path": "pipeline/populate/cards/loop-judge-v2.md",
+        "sha256": "617966d5f16c356ba88a6b81d0db81e5c50ef58179e4f30d33e9e4284007002e"
+      },
+      {
+        "relative_path": "pipeline/populate/cards/loop-brand-v2.md",
+        "sha256": "b33dcfecf5ad823462ec191c1c616c51c4b5cc5a5a38cb35abea249adb841a0f"
+      }
+    ]
+  },
+  "feedback_partition": {
+    "n_feedback": 20,
+    "n_withheld": 30,
+    "not_external_holdout": true
+  },
+  "cold_reference": "run-000-baseline",
+  "warm_reference": "run-005",
+  "post_warm_improvement_cycles": 0,
+  "baseline_selection": "Owner selected starting configuration, not learned-rule admission",
+  "baseline_default_selection": {
+    "method": "Static card/config resolution, CLI --help and factory instruction inspection only; no tests/model/construction/evaluation",
+    "pack_card": "cards/baseline-pedia.json",
+    "default_resolves_expected_path": true,
+    "explicit_card_preserved": true,
+    "baseline_instruction_sha256": "f6538358cd47f6131426356072ec266febd00f515be05dc215f14aa1cd6f3887",
+    "measured005_instruction_sha256": "f6538358cd47f6131426356072ec266febd00f515be05dc215f14aa1cd6f3887",
+    "instruction_equal_measured005": true,
+    "git_staged_instruction_equal_measured005": true,
+    "baseline_card_sha256": "12fed78f37480695bb0962fb230df3e7c6ad7e0a82ca42f938884ab4af4d1f2b",
+    "baseline_card_git_blob": "f201baee17cf5c34cdc062d03f562c6fe4003752",
+    "measured005_full_card_sha256": "4c121d9db0e32d49cb26a33d130d6ceea9a3cbd97c0af9a01949e6e717ae2a3e",
+    "whole_card_file_byte_equal": false,
+    "why_file_metadata_differs": "Public baseline excludes local feedback/provenance wrapper fields and adds owner selection metadata; active instruction is unchanged.",
+    "whole_prompt_pipeline_equal_measured005": false,
+    "new_configuration_measured": false,
+    "wrapper_and_conventions": "Aligned offered/selected variant evidence and title conflict priority; authoritative pack conventions appended after historical card text.",
+    "generic_cli_passes_pack_conventions": true,
+    "generic_factory_contains_updated_evidence_convention": true,
+    "nodes_status": "proposal",
+    "selection_authority": "owner-selected Pedia baseline, not learned-rule admission"
+  },
+  "repo_contracts": {
+    "rule_lifecycle": [
+      "SPEC.md#5.1",
+      "docs/DATA-SPEC.md#7",
+      "taxo/core/schemas.py:Status/RuleSpec/AgenticRule",
+      "taxo/memory.py:agentic_for"
+    ],
+    "lessons": [
+      "SPEC.md#5.3",
+      "memory/lessons.md"
+    ],
+    "round_export": {
+      "ref": "origin/distill/rounds",
+      "commit": "8c085cdce477280b18dcc87773c30eac3314d411",
+      "path": "taxo/distill.py",
+      "sha256": "69a56a492028a00af876fd78ae5ae44431e3c2d569281d50fb72ce914b11fa7f",
+      "helper": "record(domain,kpi,gate=None,lesson,kind,branch,author)"
+    },
+    "kpi": [
+      "taxo/kpis.py",
+      {
+        "ref": "origin/main",
+        "commit": "ca39c780c5cbd8b9d6a9208e919791b563343c27",
+        "path": "docs/KPIS.md"
+      }
+    ],
+    "memory_record": "taxo/memory.py:record (ts, rule, domain, outcome fields)",
+    "run_log": "taxo/core/ledger.py:Ledger.append (ts, kind, prev, payload, hash)",
+    "integration": "Read-only git-show inspection; no branch merge/cherry-pick, shared distiller edit, collector invocation or active lesson generation. Collector finds Food records on this branch; keep=null prevents lessons() admission."
+  },
+  "memory_records": [
+    {
+      "ts": "2026-11-09T22:21:05.227152+00:00",
+      "rule": "lesson/food-enable-placer-before-claiming-learning",
+      "domain": "food",
+      "status": "proposal",
+      "production_admission": false,
+      "outcome": "reused_enabling",
+      "round_records": [
+        "57c73a7553",
+        "f8cc251a1d"
+      ]
+    },
+    {
+      "ts": "2026-11-09T22:21:05.227159+00:00",
+      "rule": "lesson/food-modifier-role-and-commercial-names",
+      "domain": "food",
+      "status": "proposal",
+      "production_admission": false,
+      "outcome": "proposed_measured_exploratory",
+      "round_records": [
+        "f8cc251a1d",
+        "0ca5cdf6b3"
+      ]
+    },
+    {
+      "ts": "2026-11-09T22:21:05.227161+00:00",
+      "rule": "lesson/food-narrative-name-extraction-tradeoff",
+      "domain": "food",
+      "status": "proposal",
+      "production_admission": false,
+      "outcome": "rejected_as_default",
+      "round_records": [
+        "0ca5cdf6b3",
+        "a8aba0c871"
+      ]
+    },
+    {
+      "ts": "2026-11-09T22:21:05.227162+00:00",
+      "rule": "lesson/food-source-org-roles-not-gold-lookup",
+      "domain": "food",
+      "status": "proposal",
+      "production_admission": false,
+      "outcome": "reused_measured_input_enabling",
+      "round_records": [
+        "a8aba0c871",
+        "c284ea25c4"
+      ]
+    },
+    {
+      "ts": "2026-11-09T22:21:05.227163+00:00",
+      "rule": "lesson/food-pedia-starting-principles",
+      "domain": "food",
+      "status": "proposal",
+      "production_admission": false,
+      "outcome": "reused_owner_selected_baseline",
+      "round_records": [
+        "c284ea25c4",
+        "a46e2d7efb"
+      ]
+    },
+    {
+      "ts": "2026-11-09T22:21:05.227164+00:00",
+      "rule": "lesson/food-unsupported-proposer-operators",
+      "domain": "food",
+      "status": "proposal",
+      "production_admission": false,
+      "outcome": "rejected",
+      "round_records": [
+        "f8cc251a1d",
+        "0ca5cdf6b3"
+      ]
+    },
+    {
+      "ts": "2026-11-09T22:21:05.227165+00:00",
+      "rule": "lesson/food-validator-investigation-not-automatic-progress",
+      "domain": "food",
+      "status": "proposal",
+      "production_admission": false,
+      "outcome": "rejected_trials",
+      "round_records": [
+        "d078d8e4a6",
+        "6fdf6985ee"
+      ]
+    },
+    {
+      "ts": "2026-11-09T22:21:05.227166+00:00",
+      "rule": "lesson/food-repeatability-is-not-assumed",
+      "domain": "food",
+      "status": "proposal",
+      "production_admission": false,
+      "outcome": "measured_unstable",
+      "round_records": [
+        "0ca5cdf6b3",
+        "6280933564"
+      ]
+    },
+    {
+      "ts": "2026-11-09T22:21:05.227167+00:00",
+      "rule": "lesson/food-missing-gold-alias-is-not-prediction-truth",
+      "domain": "food",
+      "status": "proposal",
+      "production_admission": false,
+      "outcome": "unverified_semantic_equivalence",
+      "round_records": [
+        "f8cc251a1d",
+        "0ca5cdf6b3",
+        "a8aba0c871",
+        "c284ea25c4",
+        "a46e2d7efb",
+        "6280933564"
+      ]
+    }
+  ]
+}

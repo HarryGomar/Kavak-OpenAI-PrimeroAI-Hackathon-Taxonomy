@@ -1,0 +1,86 @@
+{
+ "id": "c284ea25c4",
+ "domain": "food",
+ "ts": "2026-11-09T22:05:54.670370+00:00",
+ "loop": "A",
+ "round": 4,
+ "change": "EXPLORATORY Food: original organization-role evidence",
+ "label": "EXPLORATORY Food: original organization-role evidence",
+ "keep": null,
+ "decided_on": null,
+ "lesson": "food-source-org-roles",
+ "kind": "route",
+ "branch": "harness/food-20261109T162041",
+ "author": "EduardoGC21",
+ "gate": null,
+ "kpi": {
+  "ts": "2026-11-09T22:05:54.670370+00:00",
+  "domain": "food",
+  "loop": "A",
+  "round": 4,
+  "label": "EXPLORATORY Food: original organization-role evidence",
+  "code": "sha256:37f8141d9257230c3f5dfd2e38f7ec3b18f73c49a54023b42a522ac3995f6cd5",
+  "vocab": null,
+  "rules": null,
+  "data": "food_original_frozen_prefix50",
+  "gold_dev": null,
+  "gold_sealed": null,
+  "human_dev": null,
+  "human_sealed": null,
+  "silver": null,
+  "shares": {
+   "to_agent": 1.0,
+   "placed_by_agent": 0.96
+  },
+  "agent_calls": 5,
+  "sealed_reads_total": null,
+  "secs": 230.962,
+  "listings": 50,
+  "gold_sample": "nonrandom_previously_inspected",
+  "metadata": {
+   "ts_source": "recorded started_utc",
+   "exported_from_saved_logs": true,
+   "full_sample_gold": {
+    "n": 50,
+    "identity_exact": 9,
+    "strict_full_exact": 6,
+    "brand_correct": 43,
+    "abstain": 2,
+    "ambiguous": 2,
+    "classes": {
+     "exact": 9,
+     "unscorable_ambiguous_brand": 2,
+     "wrong_label_path": 31,
+     "valid_shallower": 2,
+     "abstain": 2,
+     "wrong_brand": 3,
+     "wrong_deeper": 1
+    }
+   },
+   "paired": {
+    "exact_gain": 1,
+    "exact_regression": 2,
+    "brand_gain": 12,
+    "brand_regression": 2
+   },
+   "experimental_decision": "accept_experimental_default",
+   "production_admission": false,
+   "card_sha256": "77ceaa6271932a095e71615a852a551bb09ff43ae0b5b5a3fd8e0d51a2060b59",
+   "source_sha256": "549c975018dbac1d05182e129b3a442f18d13d200bbaf2be6658523a800e96db",
+   "scorer_sha256": "675d4dce5beca1a4b638c64a6d91cc428f0fe70b415b312c1ac2be2b747b367e",
+   "gold_sha256": "155485a8ba0e4d692e08664084c1d605bb48ce0f527dbeaac4c46cc059056a4c",
+   "feedback_partition_n": 20,
+   "withheld_feedback_n": 30,
+   "external_holdout": false,
+   "delta_f1": null,
+   "cost": null,
+   "actual_served_tier": null,
+   "full_artifact_index": {
+    "path": "C:\\Users\\eduar\\Desktop\\HACKATON\\tasks\\taxo-four-20261109T162041\\food\\improvement-loop-01\\run-004\\artifact-index.json",
+    "sha256": "c4b445c95a902be0b983360fbc15cdf62b2f4e26a68d6483cb78925a0fbf7714"
+   },
+   "scope_truth": null,
+   "metric_caution": "Exact normalized-label rates, not proven semantic harm or population accuracy; no standard dev/sealed experiment."
+  }
+ }
+}
