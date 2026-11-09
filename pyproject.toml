@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "Scalable judgment: place listings into a taxonomy across domains, with a shared memory of rules that earn their place."
 requires-python = ">=3.11"
 dependencies = [
-    "openai-agents>=0.24",
+    "jsonschema>=4",
     "pyarrow>=26.0.1",
     "pydantic>=2.7",
     "pyyaml>=6",

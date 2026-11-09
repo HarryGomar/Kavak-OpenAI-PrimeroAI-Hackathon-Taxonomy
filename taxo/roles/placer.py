@@ -3,10 +3,11 @@ from __future__ import annotations
 
 from dataclasses import asdict, dataclass, field
 
-from agents import Agent, RunContextWrapper, function_tool
 from pydantic import BaseModel, Field
 
-from taxo.core import config, rules as rule_engine
+from taxo.roles.runtime import CliAgent, ToolContext
+
+from taxo.core import rules as rule_engine
 from taxo.core.schemas import Listing, Node, RuleSpec
 
 
@@ -26,8 +27,7 @@ class PlacementOut(BaseModel):
     reason: str = Field(description="one sentence: which words in the title support this node")
 
 
-@function_tool
-def search_taxonomy(ctx: RunContextWrapper[PlaceContext], query: str, limit: int = 10) -> list[dict]:
+def search_taxonomy(ctx: ToolContext[PlaceContext], query: str, limit: int = 10) -> list[dict]:
     """Find taxonomy nodes whose path shares words with the query. Returns id, path, level, children."""
     words = {w for w in query.lower().split() if len(w) > 2}
     scored = []
@@ -40,15 +40,13 @@ def search_taxonomy(ctx: RunContextWrapper[PlaceContext], query: str, limit: int
     return [{"id": n.id, "path": n.path, "level": n.level, "children": n.children[:20]} for _, _, n in scored[:limit]]
 
 
-@function_tool
-def read_node(ctx: RunContextWrapper[PlaceContext], node_id: str) -> dict:
+def read_node(ctx: ToolContext[PlaceContext], node_id: str) -> dict:
     """Full details of one node, including its children (the next level down)."""
     n = ctx.context.nodes.get(node_id)
     return n.model_dump() if n else {"error": f"no node {node_id}"}
 
 
-@function_tool
-def check_rules(ctx: RunContextWrapper[PlaceContext], listing_title: str, node_id: str) -> list[dict]:
+def check_rules(ctx: ToolContext[PlaceContext], listing_title: str, node_id: str) -> list[dict]:
     """Run admitted rules on the current listing and candidate. Veto/abstain findings block this choice.
     Shadow findings are logged outside the prompt and never affect the decision.
     """
@@ -70,14 +68,14 @@ Domain conventions:
 {conventions}"""
 
 
-def make_placer(domain: str, conventions: str = "", *, include_proposals: bool = False) -> Agent[PlaceContext]:
+def make_placer(domain: str, conventions: str = "", *, include_proposals: bool = False) -> CliAgent[PlaceContext]:
     from taxo.memory import agentic_for
-    instructions = agentic_for(domain, include_proposals=include_proposals) if domain in {"toys", "clothing", "footwear"} else []
+    instructions = agentic_for(domain, include_proposals=include_proposals)
     conventions += "\n" + "\n".join(f"[{r.status.value}] {r.text}" for r in instructions)
-    return Agent[PlaceContext](
+    return CliAgent[PlaceContext](
         name=f"placer-{domain}",
         instructions=INSTRUCTIONS.format(domain=domain, conventions=conventions or "(none yet)"),
-        model=config.model("placer"),
+        domain=domain,
         tools=[search_taxonomy, read_node, check_rules],
         output_type=PlacementOut,
     )
