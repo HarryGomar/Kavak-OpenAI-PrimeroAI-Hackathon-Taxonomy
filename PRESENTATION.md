@@ -22,7 +22,7 @@ partly agent-built system. Against Harry's own labels the rules moved less: 47% 
 
 ## 1. Title (10 s)
 
-**Show:** Taxo. Learning to build product trees for any commerce domain.
+**Show:** Taxo. Learning to build product trees for any commerce domain. White, no point cloud.
 
 **Say:** We're going to show you Taxo: a system that keeps improving at a task with no ground truth.
 
@@ -90,17 +90,16 @@ food titles never name the brand. Each figure is about ±2 points. The results s
 
 ## 5. The architecture: a solver, and three loops (50 s)
 
-**Show:** the fragrance panel, with the other domains' panels stacked behind it (Food, Clothing, Footwear, Toys). Each
-node is an icon, a name and one line; agents carry the agent icon.
-- **The solver**, left to right: Listings (2 million) → Rules (place 89%, free) → Placer agent (the other 11%) →
-  Taxonomy → Silver + gold (the eval).
-- **Loop 1, rule induction** (blue): errors and patterns go up to the Proposer agent (one rule), then the Gate in code
-  (keeps it if sealed gold rises), then down to Rules.
-- **Loop 2, validation** (orange): fresh listings go to the Validator agent (flags likely errors), then A person
-  (labels its flags), then the Improver agent (improves the validator). The person's labels add silver and gold, and
-  the return leg reads "round again, until silver agrees with gold".
-- **Loop 3, lessons** (green), on the right: Distil in code (kept changes → lessons) → A lesson (kept in two domains) →
-  Every domain.
+**Show:** one panel, "Fragrance, one domain". Each node is an icon, a name and one line; agents carry the agent icon.
+- **The solver**, left to right: Listings (2 million) → Rules (place 89%, free), drawn as its three parts, Memory,
+  Tools and Operators → Placer agent (places the other 11%) → Silver + gold (scores the trees).
+- **Loop 1, rule induction** (blue): errors go up to the Proposer agent (proposes one change), then the Gate in code
+  (keeps it only if gold rises), which writes back into memory and operators.
+- **Loop 2, validation** (orange), numbered: 1 the Validator agent labels fresh listings; 2 a person settles only its
+  flags, and silver + gold grow; 3 the Improver agent makes a better validator. The return leg reads "round again,
+  until silver matches gold".
+- **Loop 3, lessons** (green), on the right, outside the panel: Distil in code (kept changes → lessons) → A lesson
+  (kept in two domains) → Every domain's memory, tools and operators: Fragrance, Food, Clothing, Footwear, Toys.
 
 **Two pop-ups.** Press → to show the gold one, → for the silver one, → again for the next slide:
 - **Gold: a person's labels, used to score everything.** Four listings, each with gold as a small stacked tree beside
@@ -123,50 +122,47 @@ node is an icon, a name and one line; agents carry the agent icon.
   free, and the placer agent gets only the 11% they can't place.
 - The taxonomy is scored on the eval: gold, which a person labelled, and silver, which the validator labelled and a
   person checked. [Show the two pop-ups.]
-- Loop 1: the proposer agent reads the errors and proposes one rule; a gate in code keeps it only if sealed gold rises.
+- The rules are three things: memory, tools and operators. The next slide shows each.
+- Loop 1: the proposer agent reads the errors and proposes one change; a gate in code keeps it only if sealed gold rises.
 - Loop 2: the validator checks fresh listings the rules have never seen and flags likely errors; a person labels them;
   the improver makes the validator better. It goes round until silver agrees with gold.
 - Loop 3: every domain runs the same loops on its own branch. Distil turns kept changes into lessons, and a lesson kept
-  in two domains goes to every domain.
+  in two domains goes into every domain's memory, tools and operators.
 
 ## 6. Loop 1 changes three things in the rules (40 s)
 
-**Show:** three columns. Each has an icon, what it is, a short excerpt of the real YAML with loop 1's change marked
-like a diff (+ added, − removed, × dropped), and its measured effect:
-- **Memory**, what words mean. `vocab.yaml`: Elixir, Intense taken out of the concentrations (round 2); hair, travel,
-  mist added to the words that are never a name (round 1). **+1.4** points.
-- **Operators**, the steps in code, called by rules. `settle-single-name.yaml`, new in round 6: a name seen once, in
-  three listings or fewer, is its own product, found by loop 2. **+15.1** points, with the brand's own store and the
-  shop's URL (rounds 3 and 5).
-- **Tools**, checks that stop a wrong placement. One that works: `veto-set-conflict.yaml`, active. One that doesn't:
-  `child-typed-form.yaml` (a body mist as a typed child, round 4), dropped by the gate and left in shadow, where it
-  only logs. **−501** wrong placements with the set check on, on food.
+**Show:** three columns. Each has an icon, a name, two or three words, three lines of YAML with loop 1's change marked
+like a diff (+ added, − removed, × dropped), and one big number:
+- **Memory**, what words mean. `vocab.yaml`: + strip: hair, travel, mist; − concentration: elixir. **+1.4** points.
+- **Operators**, steps in code. `settle-single-name.yaml`: + when: name in ≤ 3 listings; + then: its own product.
+  **+15.1** points.
+- **Tools**, checks. + check: set_conflict, kept; × check: form_conflict, dropped. **−501** wrong placements.
 
-Underneath, two strips:
-- **How the rules place a listing: the lattice.** Three Lattafa titles with the names in bold → count across the
-  brand's titles: Khamrah Qahwa, 2 titles, a product; Khamrah, 3 titles and shared, a family → the tree Lattafa ›
-  Khamrah › Khamrah Qahwa.
-- **How loop 1 changes them: induction.** Errors on gold → proposer agent → one YAML change → gate on sealed gold.
-  Kept only if sealed gold clearly improves: 52% → 69% exact.
+Underneath, two strips with almost no words:
+- **The lattice.** Three Lattafa titles, names in bold → Khamrah Qahwa ×2, product; Khamrah ×3, family → the tree
+  Lattafa › Khamrah › Khamrah Qahwa.
+- **Induction.** errors → proposer → one change → gate.
 
 **Say:**
 - Loop 1 doesn't touch the agent. It changes three things in the rules, and each is a file you can read.
 - Memory, what words mean: the vocabulary learned that hair, travel and mist are never part of a name, and that Elixir
   and Intense aren't concentrations. A point and a half.
-- Operators, the steps in code that rules call: a name seen only once is still its own product, an idea from loop 2.
-  With the brand's own store and the shop's URL naming the brand, fifteen points.
+- Operators, the steps in code that rules call: a name seen in three listings or fewer is still its own product, an
+  idea from loop 2. With the brand's own store and the shop's URL naming the brand, fifteen points in all.
 - Tools, checks that stop a wrong placement: the set check works; on food, turning it off adds 501 wrong placements.
   A form check didn't, so the gate dropped it and it only logs now.
-- Underneath is how it works. The lattice counts names across all of a brand's titles: in two or more, a product;
-  shared by other products, a family. Induction: an agent reads the errors and proposes one YAML change, and the gate
-  keeps it only if sealed gold clearly improves. Together, 52% to 69%.
+- Underneath is how it works. The lattice counts names across all of a brand's titles: Khamrah Qahwa in two, a
+  product; Khamrah in three and shared, a family. Induction: an agent reads the errors and proposes one YAML change,
+  and the gate keeps it only if sealed gold clearly improves. Together, 52% to 69%.
 
 *Careful with the induction strip:* it shows how the loop is built. The kept fragrance rounds were written by hand
 from the same evidence; the Codex proposer has kept nothing yet (see slide 7's note).
 
 *The YAML is trimmed from the real files on `origin/claude/fragrance-run-d587d6` (`domains/fragrance/vocab.yaml`,
 `rules/global/25-settle-single-name.yaml`, `rules/global/veto-set-conflict.yaml`,
-`rules/fragrance/child-typed-form.yaml`); the settle rule's `when` is paraphrased. Points are from the round records.
+`rules/fragrance/child-typed-form.yaml`); the settle rule's `when` and `then` are paraphrased (the file says
+`cluster_units: le 3` and `place: cluster`), and Intense, also removed in round 2, is left off. Points are from the
+round records: operators' +15.1 is rounds 3, 5 and 6 together (+11.3, +0.9, +2.9).
 The 501 is food (the peer session's run: the set veto turned off on food). Round 7, turning the concentration check
 off, was also dropped, so that check stays on.*
 
@@ -241,7 +237,7 @@ rows); gold added in the reviewed rounds (23 and 20 settled flags); silver 40 a 
 are estimates**, marked "est." on the slide: no solver score was recorded on each new silver set, and the rule counts
 after eval 1 (8, 10) are illustrative.*
 
-## 9. Loop 3: lessons cross domains, but not both ways (40 s)
+## 9. Loop 3: operators carry; memory has to earn it (40 s)
 
 **Show:**
 - **Top row:** each domain on its own branch → distil turns each kept change into a lesson → tried on the other
@@ -249,40 +245,49 @@ after eval 1 (8, 10) are illustrative.*
 - **Left:** a 4×4 grid (Fragrance, Food, Clothing, Footwear). Each cell is the change in exact-match points when one
   domain's lessons are tried on another's sealed gold. Green helps, orange hurts, the diagonal is each domain's own
   loop 1.
-- **Right, two worked examples:**
-  - **Food → Fragrance helps:** "2 Pack" and "100ml | Best Seller" are crossed out, and the shop's own store names the
-    brand.
-  - **Fragrance → Food doesn't:** a structure lesson ("a flanker is a new product") would make Oreo Double Stuf Golden
-    a new product, where food's gold has Golden as a variant. Food on fragrance's code and rules: 11.2% exact; the
-    agent alone: 44.5%.
-- **Bottom:** a lesson goes global once two domains keep it.
+- **Right, operators carry:** the lattice, learned on fragrance, is the same code in every domain; only the vocabulary
+  changes. Three rows, each a name seen in 2 titles and so a product: Fragrance, Khamrah Qahwa EDP 100ml; Food, Double
+  Stuf Cookies; Footwear, Air Max 90 Size 10.
+- **Right, memory has to earn it:** fragrance's "a flanker is a new product" breaks food, where Golden is a variant.
+  Food on fragrance's code and rules: 11.2% exact; the agent alone: 44.5%.
+- **Bottom:** memory goes global once two domains keep it.
 
 **Say:**
 - Every domain runs on its own branch, and distil, which is code, turns each kept change into a lesson with its scope
   and its record.
 - Loop 3 tries each domain's lessons on every other domain's sealed gold.
-- Food's cleaning lessons carry: dropping sizes, multipacks and shop noise, and reading the brand from the shop's own
-  store, make fragrance titles clean too.
-- Fragrance's structure lessons don't carry back: a flanker like Khamrah Qahwa is a new product, but a new Oreo flavour
-  is a variant. On fragrance's rules, food starts at 11% exact, where the agent alone gets 45%.
-- So a lesson goes global only once two domains have kept it.
+- Operators carry. The lattice was learned on fragrance, but it is code: count a name across a brand's titles, and a
+  name in two or more is a product. The same code places Double Stuf in food and Air Max 90 in footwear. Only the
+  vocabulary changes.
+- Memory has to earn it. Fragrance learned that a flanker like Khamrah Qahwa is a new product; in food, a new Oreo
+  flavour is a variant. On fragrance's rules, food starts at 11% exact, where the agent alone gets 45%.
+- So memory goes global only once two domains have kept it.
 
-*What's measured:* the diagonal for fragrance (+16.5, 52.4 → 68.9) and food (+5.6, 11.2 → 16.8), and food's cold start
+*The three lattice rows show the operator's logic on one public product title per domain; they are not counts from
+a run.* *What's measured:* the diagonal for fragrance (+16.5, 52.4 → 68.9) and food (+5.6, 11.2 → 16.8), and food's cold start
 on fragrance's rules. **The other cells are illustrative**, and the slide's source line says so. Real evidence that
 lessons carry unevenly:
 - whole_name cut food's harmful placements by 789 but cost fragrance 41 exact placements;
 - turning fragrance's set veto off on food adds 501 harmful placements, so that lesson carries.
 
-## 10. Everything is in the evals (20 s)
+## 10. Taxo improves the system and its eval together (20 s)
 
-**Show:** the point cloud. Everything is in the evals. As the system improves, the eval has to improve with it. Next:
-customer-feedback models, and other tasks with no ground truth.
+**Show:** in black, "Taxo improves the system and its eval together." In grey, "For tasks with no ground truth."
+Then three plain lines, no colour:
+- **Loop 1** Learns rules from gold. Exact match 52% → 69%, agent calls down 63%.
+- **Loop 2** Grows the eval. A validator labels, a person checks what it flags.
+- **Loop 3** Shares what works across domains.
+
+Last line, small: Next: customer-feedback models.
 
 **Say:**
-- What matters is that we improved a task that isn't directly verifiable, by improving how we check it, with a person's
-  feedback.
+- Taxo improves the system and its eval together, for tasks with no ground truth.
+- Loop 1 learns rules from gold: exact match from 52% to 69% on fragrance, and agent calls down by almost two thirds.
+- Loop 2 grows the eval: a validator labels new listings, and a person checks only what it flags.
+- Loop 3 shares what works across domains.
 - We think it carries to other tasks with no ground truth, like customer-feedback models.
-- Everything is in the evals: as the system improves, the eval has to improve with it.
+
+*Agent calls down 63% is the share of fragrance listings sent to an agent, 30.1% → 11.1% (slide 7).*
 
 ---
 

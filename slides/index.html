@@ -62,9 +62,13 @@
   .cover h1 { font: 600 220px/0.9 var(--disp); letter-spacing: -.045em; margin: 0 0 40px -8px; align-self: flex-start; }
   .cover .subt { font: 400 54px/1.2 var(--sans); letter-spacing: -.015em; margin: 0; max-width: 1100px; align-self: flex-start; }
   .cover .ev { font: 500 24px var(--sans); color: var(--mute); margin: 64px 0 0; align-self: flex-start; }
-  .closing { justify-content: center; gap: 36px; padding-left: 160px; }
-  .closing h2 { font-size: 124px; line-height: 1; letter-spacing: -.035em; align-self: flex-start; }
-  .closing p { font: 400 40px/1.35 var(--sans); color: var(--ink2); margin: 0; align-self: flex-start; }
+  .closing { justify-content: center; gap: 0; }
+  .closing h2 { margin: 0; font-size: 70px; line-height: 1.1; letter-spacing: -.025em; }
+  .closing .cl-s { margin: 18px 0 0; font: 400 36px var(--sans); color: var(--mute); }
+  .closing .cl-l { margin: 64px 0 0; padding-top: 40px; border-top: 2px solid var(--line); display: flex; flex-direction: column; gap: 26px; }
+  .closing .cl-l p { margin: 0; display: flex; gap: 20px; align-items: baseline; font: 400 32px/1.35 var(--sans); color: var(--ink2); }
+  .closing .cl-l p > b { flex: none; width: 150px; font: 600 32px var(--sans); color: var(--ink); }
+  .closing .cl-n { margin: 56px 0 0; font: 400 26px var(--sans); color: var(--faint); }
 
   /* ---------- photos ---------- */
   .pic { position: absolute; margin: 0; }
@@ -178,7 +182,7 @@
   .l1-col { display: flex; flex-direction: column; min-width: 0; }
   .l1-n { margin: 0 0 2px; display: flex; align-items: center; gap: 14px; font: 600 40px var(--disp); color: var(--ink); letter-spacing: -.01em; }
   .l1-w { margin: 0 0 16px; font: 400 22px var(--sans); color: var(--mute); }
-  .l1-y { padding: 14px 0; border-radius: 12px; background: #F4F6F8; min-height: 190px; box-sizing: border-box; font: 400 18px/1.6 var(--mono); color: var(--ink2); }
+  .l1-y { padding: 14px 0; border-radius: 12px; background: #F4F6F8; min-height: 150px; box-sizing: border-box; font: 400 20px/1.75 var(--mono); color: var(--ink2); }
   .l1-y .y { display: grid; grid-template-columns: 34px 1fr auto; align-items: baseline; padding-right: 18px; white-space: pre; }
   .l1-y .y i { font-style: normal; text-align: center; color: var(--faint); }
   .l1-y .y em { font: 500 16px var(--sans); font-style: normal; color: var(--ind); }
@@ -186,21 +190,30 @@
   .l1-y .a { background: #E1EDF9; } .l1-y .a i, .l1-y .a span { color: var(--ind); }
   .l1-y .d span { color: var(--faint); text-decoration: line-through; } .l1-y .d i { color: var(--val); }
   .l1-y .x span { color: var(--faint); } .l1-y .x i, .l1-y .x em { color: var(--val); }
-  .l1-pt { margin: 16px 0 0; font: 400 20px/1.3 var(--sans); color: var(--mute); display: flex; align-items: baseline; gap: 16px; }
-  .l1-pt b { flex: none; font: 600 60px/1 var(--disp); color: var(--ind); letter-spacing: -.02em; }
-  .l1-band { margin-top: 40px; padding-top: 30px; border-top: 2px solid var(--line); display: grid; grid-template-columns: 1.15fr 1fr; gap: 64px; }
+  .l1-pt { margin: 18px 0 0; font: 400 24px/1.3 var(--sans); color: var(--mute); display: flex; align-items: baseline; gap: 16px; }
+  .l1-pt b { flex: none; font: 600 72px/1 var(--disp); color: var(--ind); letter-spacing: -.02em; }
+  .l1-band { margin-top: 48px; padding-top: 34px; border-top: 2px solid var(--line); display: grid; grid-template-columns: 1.15fr 1fr; gap: 64px; }
   .l1-bh { margin: 0 0 16px; font: 600 24px var(--sans); color: var(--ind); }
   .lat { display: flex; align-items: center; gap: 18px; }
   .lat p { margin: 0; white-space: nowrap; }
   .lat-t p { font: 400 19px/1.65 var(--sans); color: var(--faint); } .lat-t b { color: var(--ink); font-weight: 600; }
-  .lat-c p { display: grid; grid-template-columns: auto auto; column-gap: 12px; font: 400 18px/1.3 var(--sans); margin: 4px 0; }
-  .lat-c b { font: 600 21px var(--sans); color: var(--ink); } .lat-c span { grid-row: 2; color: var(--mute); } .lat-c em { grid-row: 1 / span 2; grid-column: 2; align-self: center; font-style: normal; font-weight: 600; color: var(--ind); }
+  .lat-c p { display: grid; grid-template-columns: auto 44px auto; column-gap: 14px; align-items: baseline; font: 400 20px/1.9 var(--sans); }
+  .lat-c b { font: 600 21px var(--sans); color: var(--ink); } .lat-c span { color: var(--mute); font-family: var(--mono); } .lat-c em { font-style: normal; font-weight: 600; color: var(--ind); }
   .lat-tr p { position: relative; padding-left: calc(var(--k) * 26px); font: 500 20px/1.65 var(--sans); color: var(--ink2); }
   .lat-tr p + p::before { content: ''; position: absolute; left: calc(var(--k) * 26px - 18px); top: -2px; width: 11px; height: 18px; border-left: 2px solid var(--line); border-bottom: 2px solid var(--line); border-bottom-left-radius: 4px; }
   .lat-tr b { color: var(--ind); font-weight: 600; }
-  .ind { display: flex; align-items: center; gap: 14px; }
-  .ind p { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; font: 400 19px/1.25 var(--sans); color: var(--ink2); }
+  .ind { display: flex; align-items: center; gap: 20px; }
+  .ind p { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; font: 500 21px/1.25 var(--sans); color: var(--ink2); }
   .ind-k { margin: 16px 0 0; font: 400 21px var(--sans); color: var(--ink2); } .ind-k b { color: var(--ind); font-weight: 600; }
+
+  /* ---------- 9 · loop 3: operators carry ---------- */
+  .l3-main > .l3-ex { min-width: 0; }
+  .l3-op { margin-top: 14px; display: flex; flex-direction: column; gap: 6px; }
+  .l3-op p { margin: 0; display: grid; grid-template-columns: 112px 1fr auto 84px; align-items: baseline; column-gap: 14px; font: 400 20px var(--sans); color: var(--faint); white-space: nowrap; }
+  .l3-op .dm { color: var(--mute); font-weight: 500; }
+  .l3-op .nm b { color: var(--ink); font-weight: 600; }
+  .l3-op .n { color: var(--mute); font-size: 19px; }
+  .l3-op em { font-style: normal; font-weight: 600; color: var(--meta); }
 
   .evt { border-collapse: collapse; width: 100%; }
   .evt th { font: 500 21px var(--sans); color: var(--faint); text-align: left; padding: 0 24px 14px 0; }
@@ -264,7 +277,6 @@
 
 <!-- 1 · Title -->
 <section class="slide cover" data-n="1">
-  <svg class="cloud" data-seed="7" aria-hidden="true"></svg>
   <h1 class="clear" data-name>Taxo</h1>
   <p class="subt clear">Learning to build product trees for any commerce domain</p>
   <p class="ev clear">Kavak × OpenAI × Primero hackathon · 9 November 2026</p>
@@ -334,7 +346,7 @@
   <aside class="notes">These are the three things we want to improve. Accuracy: an agent on every listing places 85% of fragrance listings exactly right, but it can't check its own work, as we just saw. Rules plus the agent get 75% today, at a ninth of the cost: closing that gap is what loops 1 and 2 are for. Loop 1 learns rules from a few labels, and loop 2 makes the check stricter. On food, a new domain, the agent gets 45% and rules plus the agent 20%: that's where loop 3 has to help. Cost: the agent uses about 630 tokens a listing. For two million listings that's about 1.3 billion tokens, around $3,800 a pass, and we pay it again on every refresh and in every domain. Rules place 89% of fragrance listings for free, so the bill falls to about $400. Speed: at a second a listing, one call at a time, that's about 570 hours. Rules take a millisecond a listing, and loop 3 lets each new domain start from the last one's lessons.</aside>
 </section>
 
-<!-- 5 · Architecture: one domain opened up (solver in the middle, loop 1 above, loop 2 below), the other domains stacked behind it, loop 3 on the right -->
+<!-- 5 · Architecture: fragrance on a panel (solver row, loop 1 above, loop 2 below), loop 3 on the right; rules drawn as memory, tools, operators -->
 <section class="slide" data-n="5">
   <h2>Taxo: a solver, and three loops that improve it.</h2>
   <div class="fill"><svg class="ch" id="arch"></svg></div>
@@ -350,7 +362,7 @@
     <p class="evk">Round 1: the validator matched gold on <b>75%</b> of 40 fresh listings, and <b>82%</b> of its flags were real errors. Round 3: <b>85%</b>, and <b>every</b> flag was real.<br>
       Each round it labels 40 more listings. The loop runs until silver matches gold.</p>
   </div>
-  <aside class="notes">This is one domain, fragrance, on its own branch. Listings go through the rules first, for free, and the placer agent gets only the 11% the rules can't place. Loop 1: the proposer agent reads the errors on silver and gold and proposes one rule change, and a gate in code keeps it only if exact match on sealed gold rises. Loop 2: the validator agent checks fresh listings the rules have never seen, and a person labels what it flags. The improver agent makes the validator better from those labels, round after round, until its silver agrees with the person's gold. Those labels grow silver and gold, and the patterns behind them go to loop 1. Loop 3: every domain runs the same loops on its own branch, distil turns kept changes into lessons, and a lesson kept in two domains goes to all of them.</aside>
+  <aside class="notes">This is one domain, fragrance. Listings go through the rules first, for free, and the placer agent gets the 11% they can't place. The rules have three parts: memory, the files of words and brands; tools, checks in code; and operators, the code steps that strip, count and place. Loop 1: the proposer agent reads the errors on silver and gold and proposes one change, and a gate in code keeps it only if gold rises. That changes memory and operators. Loop 2: the validator agent labels fresh listings, a person settles only its flags, and the improver agent makes a better validator, round after round until silver matches gold. That grows silver and gold, and the errors it finds go to loop 1. Loop 3: distil turns kept changes into lessons, and a lesson kept in two domains goes into every domain's memory, tools and operators.</aside>
 </section>
 
 <!-- 6 · Loop 1: what it changes. Memory, operators, tools, each with its YAML and its effect -->
@@ -360,45 +372,44 @@
       <div class="l1-col">
         <p class="l1-n"><i data-ic="db" data-s="44" data-c="#0070C0"></i>Memory</p>
         <p class="l1-w">what words mean</p>
-        <div class="l1-y"><div class="y c"><i> </i><span># vocab.yaml</span></div><div class="y "><i> </i><span>concentration: [eau de parfum, edt,</span></div><div class="y d"><i>−</i><span>  elixir, intense]</span><em>round 2</em></div><div class="y "><i> </i><span>strip: [perfume, fragrance, cologne,</span></div><div class="y a"><i>+</i><span>  hair, travel, mist]</span><em>round 1</em></div></div>
-        <p class="l1-pt"><b>+1.4</b>points: hair, travel, mist; Elixir, Intense</p>
+        <div class="l1-y"><div class="y c"><i> </i><span># vocab.yaml</span></div><div class="y a"><i>+</i><span>strip: hair, travel, mist</span></div><div class="y d"><i>−</i><span>concentration: elixir</span></div></div>
+        <p class="l1-pt"><b>+1.4</b>points</p>
       </div>
       <div class="l1-col">
         <p class="l1-n"><i data-ic="code" data-s="44" data-c="#0070C0"></i>Operators</p>
-        <p class="l1-w">the steps, in code, called by rules</p>
-        <div class="l1-y"><div class="y c"><i> </i><span># rules/settle-single-name.yaml</span></div><div class="y a"><i>+</i><span>when: name seen once,</span><em>round 6</em></div><div class="y a"><i>+</i><span>  in 3 listings or fewer</span></div><div class="y a"><i>+</i><span>then: {place: own product}</span></div><div class="y a"><i>+</i><span>found_by: loop 2</span></div></div>
-        <p class="l1-pt"><b>+15.1</b>points, with the brand's own store and the shop's URL</p>
+        <p class="l1-w">steps, in code</p>
+        <div class="l1-y"><div class="y c"><i> </i><span># settle-single-name.yaml</span></div><div class="y a"><i>+</i><span>when: name in ≤ 3 listings</span></div><div class="y a"><i>+</i><span>then: its own product</span></div></div>
+        <p class="l1-pt"><b>+15.1</b>points</p>
       </div>
       <div class="l1-col">
         <p class="l1-n"><i data-ic="wrench" data-s="44" data-c="#0070C0"></i>Tools</p>
-        <p class="l1-w">checks that stop a wrong placement</p>
-        <div class="l1-y"><div class="y c"><i> </i><span># rules/veto-set-conflict.yaml</span></div><div class="y a"><i>+</i><span>check: set_conflict</span></div><div class="y a"><i>+</i><span>status: active</span><em>kept</em></div><div class="y c"><i> </i><span># rules/child-typed-form.yaml</span></div><div class="y x"><i>×</i><span>check: form_conflict</span></div><div class="y x"><i>×</i><span>status: shadow</span><em>dropped</em></div></div>
-        <p class="l1-pt"><b>−501</b>wrong placements, with the set check on (food)</p>
+        <p class="l1-w">checks</p>
+        <div class="l1-y"><div class="y a"><i>+</i><span>check: set_conflict</span><em>kept</em></div><div class="y x"><i>×</i><span>check: form_conflict</span><em>dropped</em></div></div>
+        <p class="l1-pt"><b>−501</b>wrong placements</p>
       </div>
   </div>
   <div class="l1-band">
     <div>
-      <p class="l1-bh">How the rules place a listing: the lattice</p>
+      <p class="l1-bh">The lattice</p>
       <div class="lat">
-        <div class="lat-t"><p>Lattafa <b>Khamrah Qahwa</b> EDP 100ml</p><p><b>Khamrah Qahwa</b> by Lattafa 3.4 oz</p><p>Lattafa <b>Khamrah</b> Eau de Parfum</p></div>
+        <div class="lat-t"><p>Lattafa <b>Khamrah Qahwa</b> EDP</p><p><b>Khamrah Qahwa</b> 3.4 oz</p><p>Lattafa <b>Khamrah</b> EDP</p></div>
         <i data-ic="next" data-s="30" data-c="#B8BEC7"></i>
-        <div class="lat-c"><p><b>Khamrah Qahwa</b><span>2 titles</span><em>product</em></p><p><b>Khamrah</b><span>3 titles, shared</span><em>family</em></p></div>
+        <div class="lat-c"><p><b>Khamrah Qahwa</b><span>×2</span><em>product</em></p><p><b>Khamrah</b><span>×3</span><em>family</em></p></div>
         <i data-ic="next" data-s="30" data-c="#B8BEC7"></i>
         <div class="lat-tr"><p style="--k:0">Lattafa</p><p style="--k:1">Khamrah</p><p style="--k:2"><b>Khamrah Qahwa</b></p></div>
       </div>
     </div>
     <div>
-      <p class="l1-bh">How loop 1 changes them: induction</p>
+      <p class="l1-bh">Induction</p>
       <div class="ind">
-        <p><i data-ic="flag" data-s="34" data-c="#0070C0"></i>errors<br>on gold</p>
+        <p><i data-ic="flag" data-s="38" data-c="#0070C0"></i>errors</p>
         <i data-ic="next" data-s="26" data-c="#B8BEC7"></i>
-        <p><i data-ic="agent" data-s="34" data-c="#0070C0"></i>proposer<br>agent</p>
+        <p><i data-ic="agent" data-s="38" data-c="#0070C0"></i>proposer</p>
         <i data-ic="next" data-s="26" data-c="#B8BEC7"></i>
-        <p><i data-ic="rules" data-s="34" data-c="#0070C0"></i>one YAML<br>change</p>
+        <p><i data-ic="rules" data-s="38" data-c="#0070C0"></i>one change</p>
         <i data-ic="next" data-s="26" data-c="#B8BEC7"></i>
-        <p><i data-ic="gate" data-s="34" data-c="#0070C0"></i>gate on<br>sealed gold</p>
+        <p><i data-ic="gate" data-s="38" data-c="#0070C0"></i>gate</p>
       </div>
-      <p class="ind-k">Kept only if sealed gold clearly improves: <b>52% → 69% exact</b>.</p>
     </div>
   </div>
   <aside class="notes">Loop 1 doesn't touch the agent. It changes three things in the rules, and each is a file you can read. Memory, what words mean: the vocabulary learned that hair, travel and mist are never part of a name, and that Elixir and Intense are not concentrations. A point and a half. Operators, the steps in code that rules call: when a name is seen only once, in three listings or fewer, it is still its own product; that came from loop 2. With the brand's own store and the shop's URL naming the brand, fifteen points. Tools, checks that stop a wrong placement: the set check, a gift set is never one product, works; on food, turning it off adds 501 wrong placements. A form check, a body mist as a typed child, didn't: the gate dropped it, and it only logs now. Underneath, how it works. The lattice: strip each title, count the names across all of a brand's titles; a name in two or more titles is a product, and a name other products share is a family. That places Khamrah Qahwa under Khamrah, with no agent call. Induction: the proposer agent reads the errors on gold and proposes one YAML change; a gate in code keeps it only if sealed gold clearly improves. Together, exact match on sealed gold went from 52% to 69%.</aside>
@@ -425,26 +436,23 @@
 
 <!-- 10 · Loop 3: meta -->
 <section class="slide" data-n="9">
-  <h2><span style="color:var(--meta)">Loop 3:</span> lessons cross domains, but not both ways.</h2>
+  <h2><span style="color:var(--meta)">Loop 3:</span> operators carry; memory has to earn it.</h2>
   <p class="l3-flow"><span><i data-ic="branch" data-s="30" data-c="#1E9E6E"></i>Each domain on its own branch</span><span class="l3-ar">→</span><span><i data-ic="lesson" data-s="30" data-c="#1E9E6E"></i>Distil turns each kept change into a lesson</span><span class="l3-ar">→</span><span><i data-ic="gate" data-s="30" data-c="#1E9E6E"></i>Tried on the other domains' sealed gold</span></p>
   <div class="l3-main">
     <svg class="l3-mx" id="l3mx" role="img" aria-label="Cross-validation matrix: lessons from each domain, tried on each domain's sealed gold"></svg>
     <div class="l3-ex">
       <div>
-        <h3><i data-ic="check" data-s="34" data-c="#1E9E6E"></i>Food → Fragrance: helps</h3>
-        <p class="l3-w">Food's cleaning lessons carry: sizes, multipacks and shop noise go, and the shop's own store names the brand.</p>
-        <div class="l3-ba">
-          <p class="k">before</p><p class="t"><s>2 Pack</s> Khamrah Qahwa <s>100ml | Best Seller</s><small>sold by <u>lattafa_us</u></small></p>
-          <p class="k">after</p><p class="t"><u>Lattafa</u> › Khamrah Qahwa</p>
-        </div>
+        <h3><i data-ic="code" data-s="34" data-c="#1E9E6E"></i>Operators carry</h3>
+        <p class="l3-w">The lattice, learned on fragrance, is the same code in every domain. Only the vocabulary changes.</p>
+        <div class="l3-op"><p><span class="dm">Fragrance</span><span class="nm"><b>Khamrah Qahwa</b> EDP 100ml</span><span class="n">2 titles</span><em>product</em></p><p><span class="dm">Food</span><span class="nm"><b>Double Stuf</b> Cookies</span><span class="n">2 titles</span><em>product</em></p><p><span class="dm">Footwear</span><span class="nm"><b>Air Max 90</b> Size 10</span><span class="n">2 titles</span><em>product</em></p></div>
       </div>
       <div>
-        <h3><i data-ic="cross" data-s="34" data-c="#D9622B"></i>Fragrance → Food: doesn't</h3>
-        <p class="l3-w">A structure lesson: a flanker is a new product.</p>
+        <h3><i data-ic="db" data-s="34" data-c="#D9622B"></i>Memory has to earn it</h3>
+        <p class="l3-w">Fragrance's "a flanker is a new product" breaks food: Golden is a variant.</p>
         <svg class="l3-tr" id="l3tr" role="img" aria-label="Oreo Double Stuf Golden: a new product under fragrance's lesson, a variant in food's gold"></svg>
         <p class="l3-m">Food on fragrance's code and rules: 11.2% exact. The agent alone: 44.5%.</p>
       </div>
-      <p class="l3-end"><i data-ic="globe" data-s="36" data-c="#1E9E6E"></i>A lesson goes global once two domains keep it.</p>
+      <p class="l3-end"><i data-ic="globe" data-s="36" data-c="#1E9E6E"></i>Memory goes global once two domains keep it.</p>
     </div>
   </div>
   <p class="src">Measured: fragrance's and food's own loop 1, and food's cold start. Other cells illustrative.</p>
@@ -453,11 +461,15 @@
 
 <!-- 12 · Close -->
 <section class="slide closing" data-n="10">
-  <svg class="cloud" data-seed="11" aria-hidden="true"></svg>
-  <h2 class="clear">Everything is in the evals.</h2>
-  <p class="clear">As the system improves, the eval has to improve with it.</p>
-  <p class="clear" style="color:var(--mute)">Next: customer-feedback models, and other tasks with no ground truth.</p>
-  <aside class="notes">What matters is that we improved a task that isn't directly verifiable, by improving how we check it, with a person's feedback. We think it carries to other tasks with no ground truth, like customer-feedback models. Everything is in the evals: as the system improves, the eval has to improve with it.</aside>
+  <h2>Taxo improves the system and its eval together.</h2>
+  <p class="cl-s">For tasks with no ground truth.</p>
+  <div class="cl-l">
+    <p><b>Loop 1</b><span>Learns rules from gold. Exact match 52% → 69%, agent calls down 63%.</span></p>
+    <p><b>Loop 2</b><span>Grows the eval. A validator labels, a person checks what it flags.</span></p>
+    <p><b>Loop 3</b><span>Shares what works across domains.</span></p>
+  </div>
+  <p class="cl-n">Next: customer-feedback models.</p>
+  <aside class="notes">Taxo improves the system and its eval together, for tasks with no ground truth. Loop 1 learns rules from gold: exact match from 52% to 69% on fragrance, and agent calls down by almost two thirds. Loop 2 grows the eval: a validator labels new listings, and a person checks only what it flags. Loop 3 shares what works across domains. We think this carries to other tasks with no ground truth, like customer-feedback models.</aside>
 </section>
 
 </div></div>
@@ -639,71 +651,81 @@
   const gold = t => `<tspan style="fill:${AG.gold};font-weight:600">${t}</tspan>`, silver = t => `<tspan style="fill:${AG.silv};font-weight:600">${t}</tspan>`;
   const DOMS = ['Fragrance', 'Food', 'Clothing', 'Footwear', 'Toys'];
 
-  // the slide-5 picture. One strict grid: the solver in the middle row, loop 1 above it, loop 2 below it, all inside the
-  // fragrance panel; the other domains' panels are stacked behind it; loop 3 runs down the right. Every node is an icon,
-  // a name and one short line. Agents use the agent icon in their loop's colour.
+  // the slide-5 picture. Fragrance on a light panel: the solver row in the middle, loop 1 above it, loop 2 below it.
+  // Loop 3 runs down the right, outside the panel. The rules are drawn as their three parts, and each loop's arrow
+  // lands on what it changes: loop 1 on memory and operators, loop 2 on the validator and on silver + gold,
+  // loop 3 on every domain's memory, tools and operators.
   (() => {
     let s = '';
-    const col = i => 112 + (i - 1) * 216;              // grid columns c1..c6
-    const R1 = 198, R0 = 374, R2 = 550;                 // icon centres: loop 1, the solver, loop 2
-    const PR = 1320, PT = 112, PB = 744, DX = 12, DY = 28;   // front panel: right edge, top, bottom; offset of each panel behind
-    const IS = 44, top = y => y - IS / 2 - 6, bot = y => y + 98;   // where arrows stop: above an icon, below a node's text
-    const node = (x, y, ic, ic_c, name, line) => Ic(ic, x - IS / 2, y - IS / 2, IS, ic_c, 1.8)
-      + Tx(x, y + 58, name, { a: 'middle', fs: 28, fw: 600, c: C.ink }) + Tx(x, y + 86, line, { a: 'middle', fs: 20, c: C.mute });
-    const right = (x1, x2, y, c, o) => Ar([[x1 + 32, y], [x2 - 32, y]], c, o);   // icon to icon, along a row
-
-    // the other domains: panels stacked behind fragrance, each named on the strip that shows
-    const strip = (k, name, bold) => {
-      const x = k * DX, y = PT - k * DY, lx = x + PR - 176;
-      return Ic('branch', lx, y + 5, 18, C.meta, 2.2) + Tx(lx + 28, y + 20, name, { fs: 20, fw: bold ? 600 : 500, c: bold ? C.ink : C.ink2 });
+    const P5 = {
+      db: ICON.db || '<ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5V19A9 3 0 0 0 21 19V5"/><path d="M3 12A9 3 0 0 0 21 12"/>',
+      code: ICON.code || '<path d="m16 18 6-6-6-6"/><path d="m8 6-6 6 6 6"/>',
+      flask: '<path d="M14 2v6a2 2 0 0 0 .245.96l5.51 10.08A2 2 0 0 1 18 22H6a2 2 0 0 1-1.755-2.96l5.51-10.08A2 2 0 0 0 10 8V2"/><path d="M6.453 15h11.094"/><path d="M8.5 2h7"/>',
     };
-    for (let k = 4; k >= 1; k--) {
-      s += `<rect x="${k * DX}" y="${PT - k * DY}" width="${PR}" height="${PB - PT}" rx="24" fill="${C.panel}" stroke="#fff" stroke-width="3"/>`;
-      s += strip(k, DOMS[k]);
-    }
-    s += `<rect x="0" y="${PT}" width="${PR}" height="${PB - PT}" rx="24" fill="${C.panel}" stroke="#fff" stroke-width="3"/>`;
-    s += strip(0, DOMS[0], true);
+    // an icon centred on cx, cy
+    const I = (k, cx, cy, sz, c, w = 1.6) => `<g transform="translate(${cx - sz / 2} ${cy - sz / 2}) scale(${sz / 24})" fill="none" stroke="${c}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round">${P5[k] || ICON[k]}</g>`;
+    const nm = (x, y, t) => Tx(x, y, t, { a: 'middle', fs: 34, fw: 600, c: C.ink });
+    const sb = (x, y, t, c = C.mute) => Tx(x, y, t, { a: 'middle', fs: 23, c });
+    const IS = 56, NM = 74, SB = 106;                       // icon size; name and line below the icon centre
+    const node = (x, cy, ic, icc, name, line, dn = NM) => I(ic, x, cy, IS, icc) + nm(x, cy + dn, name) + sb(x, cy + dn + 32, line);
+    const step = (n, x, cy) => Tx(x + 40, cy - 24, n, { fs: 25, fw: 700, c: C.val });   // a step number, top right of the icon
 
-    // the solver, left to right
-    s += node(col(1), R0, 'listings', C.ink2, 'Listings', '2 million');
-    s += node(col(2), R0, 'rules', C.ind, 'Rules', 'place 89%, free');
-    s += node(col(3), R0, 'agent', C.ink, 'Placer agent', 'places the other 11%');
-    s += node(col(4), R0, 'tree', C.ink2, 'Taxonomy', 'the product trees');
-    s += node(col(5), R0, 'eval', C.ink2, `${silver('Silver')} + ${gold('gold')}`, 'the eval');
-    for (let i = 1; i < 5; i++) s += right(col(i), col(i + 1), R0, C.wire);
+    const YL1 = 62, YS = 310, YL2 = 556;                    // icon centres: loop 1, the solver, loop 2
+    const SN = 94;                                          // the solver row's names sit lower, under the rules' parts
+    const XL = 70, XR = 350, XP = 680, XE = 930;            // listings, rules, placer, eval (and the person, the proposer)
+    const XM = XR - 124, XO = XR + 130;                     // memory and operators, either side of tools
+    const XV = 650, XI = 1210;                              // validator, improver
+    const PX = 1372, X3 = 1528;                             // the panel's right edge; loop 3's column
 
-    // loop 1, rule induction: the eval's errors -> the proposer -> the gate -> a new rule
-    s += Tx(40, 152, 'Loop 1 · rule induction', { fs: 24, fw: 600, c: C.ind });
-    s += node(col(5), R1, 'agent', C.ind, 'Proposer agent', 'proposes one rule');
-    s += node(col(2), R1, 'gate', C.ind, 'Gate, in code', 'keeps it if sealed gold rises');
-    s += Ar([[col(5), top(R0)], [col(5), bot(R1)]], C.ind) + Tx(col(5) - 12, 328, 'errors', { a: 'end', fs: 20, c: C.ind });
-    s += Ar([[col(5) - 32, R1], [col(2) + 32, R1]], C.ind);
-    s += Ar([[col(2), bot(R1)], [col(2), top(R0)]], C.ind) + Tx(col(2) + 12, 328, 'new rule', { fs: 20, c: C.ind });
+    // fragrance: one domain, on a light panel
+    s += `<rect x="-26" y="-22" width="${PX + 26}" height="790" rx="28" fill="${C.panel}"/>`;
+    s += Ic('branch', PX - 288, -4, 22, C.meta, 2.2) + Tx(PX - 26, 14, 'Fragrance, one domain', { a: 'end', fs: 21, c: C.mute });
 
-    // loop 2, validation: fresh listings -> the validator -> a person -> the improver -> round again, until silver agrees with gold
-    s += Tx(40, R2 + 8, 'Loop 2 · validation', { fs: 24, fw: 600, c: C.val });
-    s += node(col(4), R2, 'agent', C.val, 'Validator agent', 'flags likely errors');
-    s += node(col(5), R2, 'person', C.val, 'A person', 'labels its flags');
-    s += node(col(6), R2, 'agent', C.val, 'Improver agent', 'improves the validator');
-    s += Ar([[col(4), bot(R0)], [col(4), top(R2)]], C.val) + Tx(col(4) - 12, 504, 'fresh listings', { a: 'end', fs: 20, c: C.val });
-    s += right(col(4), col(5), R2, C.val) + right(col(5), col(6), R2, C.val);
-    s += Ar([[col(6), bot(R2)], [col(6), 682], [col(4), 682], [col(4), bot(R2)]], C.val);
-    s += Tx(col(5), 714, `round again, until ${silver('silver')} agrees with ${gold('gold')}`, { a: 'middle', fs: 20, c: C.val });
-    // what loop 2 hands on: more silver and gold to the eval, and the patterns behind the new labels to loop 1
-    const LX = col(5) + 136, JY = 497;
-    s += Ar([[col(5), top(R2)], [col(5), bot(R0)]], C.val) + Tx(col(5) - 12, 504, `more ${silver('silver')} + ${gold('gold')}`, { a: 'end', fs: 20, c: C.val });
-    s += Ar([[col(5), JY], [LX, JY], [LX, R1], [col(5) + 32, R1]], C.val) + `<circle cx="${col(5)}" cy="${JY}" r="6" fill="${C.val}"/>`;
-    s += Tx(col(5) + 14, 328, 'patterns', { fs: 20, c: C.val });
+    // the solver, left to right. The rules are their three parts
+    s += node(XL, YS, 'listings', C.ink2, 'Listings', '2 million', SN);
+    [[XM, 'db', 'Memory'], [XR, 'wrench', 'Tools'], [XO, 'code', 'Operators']].forEach(([x, k, t]) => {
+      s += I(k, x, YS, 46, C.ink, 1.7) + Tx(x, YS + 54, t, { a: 'middle', fs: 25, fw: 600, c: C.ink2 });
+    });
+    s += nm(XR, YS + SN, 'Rules') + sb(XR, YS + SN + 32, 'place 89%, free');
+    s += node(XP, YS, 'agent', C.ink, 'Placer agent', 'places the other 11%', SN);
+    s += node(XE, YS, 'eval', C.ink2, `${silver('Silver')} + ${gold('gold')}`, 'scores the trees', SN);
+    s += Ar([[XL + 36, YS], [XM - 34, YS]]) + Ar([[XO + 34, YS], [XP - 36, YS]]) + Ar([[XP + 36, YS], [XE - 36, YS]]);
 
-    // loop 3, across domains: kept changes leave every branch, distil makes lessons, a lesson kept twice goes to all
-    const X3 = 1531, SE = PR + 4 * DX;
-    s += Tx(X3 - 133, 152, 'Loop 3 · lessons', { fs: 24, fw: 600, c: C.meta });
-    s += node(X3, R1, 'wrench', C.meta, 'Distil, in code', 'kept changes → lessons');
-    s += node(X3, R0, 'lesson', C.meta, 'A lesson', 'kept in two domains');
-    s += node(X3, R2, 'globe', C.meta, 'Every domain', 'gets the lesson');
-    s += Ar([[SE + 2, R1], [X3 - 32, R1]], C.meta);
-    s += Ar([[X3, bot(R1)], [X3, top(R0)]], C.meta) + Ar([[X3, bot(R0)], [X3, top(R2)]], C.meta);
-    s += Ar([[X3 - 32, R2], [SE + 6, R2]], C.meta);
+    // loop 1, rule induction: errors -> the proposer -> the gate -> new memory and operators
+    s += Tx(0, 14, 'Loop 1 · rule induction', { fs: 26, fw: 600, c: C.ind });
+    s += node(XE, YL1, 'agent', C.ind, 'Proposer agent', 'proposes one change');
+    s += node(XR, YL1, 'gate', C.ind, 'Gate, in code', 'keeps it only if gold rises');
+    s += Ar([[XE, YS - 36], [XE, YL1 + SB + 14]], C.ind) + Tx(XE - 14, 236, 'errors', { a: 'end', fs: 23, c: C.ind });
+    s += Ar([[XE - 40, YL1], [XR + 40, YL1]], C.ind);
+    const FY = 240;
+    s += Ar([[XR, YL1 + SB + 14], [XR, FY], [XM, FY], [XM, YS - 30]], C.ind) + Ar([[XR, FY], [XO, FY], [XO, YS - 30]], C.ind);
+    s += Tx(XR + 16, FY - 14, 'memory, operators', { fs: 23, fw: 600, c: C.ind });
+
+    // loop 2, validation, a cycle: 1 the validator labels fresh listings, 2 a person settles its flags, 3 the improver
+    // makes a better validator, and round again. Out of it: more silver and gold, whose errors go on to loop 1
+    s += Tx(0, YL2 + 70, 'Loop 2 · validation', { fs: 26, fw: 600, c: C.val });
+    s += node(XV, YL2, 'agent', C.val, 'Validator agent', 'labels fresh listings') + step(1, XV, YL2);
+    s += node(XE, YL2, 'person', C.val, 'A person', 'settles only its flags') + step(2, XE, YL2);
+    s += node(XI, YL2, 'agent', C.val, 'Improver agent', 'makes a better validator') + step(3, XI, YL2);
+    s += Ar([[XL, YS + SN + 46], [XL, YL2], [XV - 38, YL2]], C.val) + Tx((XL + XV) / 2 + 20, YL2 - 14, 'fresh listings', { a: 'middle', fs: 23, c: C.val });
+    s += Ar([[XV + 38, YL2], [XE - 36, YL2]], C.val) + Ar([[XE + 36, YL2], [XI - 38, YL2]], C.val);
+    s += Ar([[XE, YL2 - 36], [XE, YS + SN + 46]], C.val) + Tx(XE + 16, YL2 - 66, `${silver('silver')} + ${gold('gold')} grow`, { fs: 23, c: C.val });
+    const LB = YL2 + 146;
+    s += Ar([[XI, YL2 + SB + 12], [XI, LB], [XV, LB], [XV, YL2 + SB + 12]], C.val);
+    s += Tx((XV + XI) / 2, LB + 38, `round again, until ${silver('silver')} matches ${gold('gold')}`, { a: 'middle', fs: 23, c: C.val });
+
+    // loop 3, across domains: kept changes leave the panel, distil makes lessons, a lesson kept in two domains goes
+    // into every domain's memory, tools and operators
+    s += Tx(PX + 30, 14, 'Loop 3 · lessons', { fs: 26, fw: 600, c: C.meta });
+    s += node(X3, YL1, 'flask', C.meta, 'Distil, in code', 'kept changes → lessons');
+    s += node(X3, YS, 'lesson', C.meta, 'A lesson', 'kept in two domains', SN);
+    s += Ar([[PX + 4, YL1], [X3 - 40, YL1]], C.meta);
+    s += Ar([[X3, YL1 + SB + 14], [X3, YS - 36]], C.meta);
+    const GY = YS + SN + 76, GX = 78;
+    s += Ar([[X3, YS + SN + 46], [X3, YL2 - 30]], C.meta) + Ar([[X3, GY], [X3 - GX, GY], [X3 - GX, YL2 - 30]], C.meta) + Ar([[X3, GY], [X3 + GX, GY], [X3 + GX, YL2 - 30]], C.meta);
+    [[X3 - GX, 'db'], [X3, 'wrench'], [X3 + GX, 'code']].forEach(([x, k]) => { s += I(k, x, YL2, 42, C.meta, 1.8); });
+    s += nm(X3, YL2 + NM, 'Every domain') + sb(X3, YL2 + NM + 32, 'memory, tools, operators', C.meta);
+    s += Tx(X3, YL2 + NM + 68, 'Fragrance · Food · Clothing', { a: 'middle', fs: 20, c: C.mute }) + Tx(X3, YL2 + NM + 94, 'Footwear · Toys', { a: 'middle', fs: 20, c: C.mute });
     put('arch', '0 0 1664 749', s);
   })();
 
