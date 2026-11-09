@@ -12,7 +12,7 @@ import argparse
 import json
 from pathlib import Path
 
-from taxo import gold as goldmod, kpis, score
+from taxo import distill, gold as goldmod, kpis, score
 from taxo.core.config import ROOT, RUNS_DIR
 from taxo.core.metrics import wilson
 from taxo.parse import Brands
@@ -80,6 +80,8 @@ def main() -> None:
     ap.add_argument("--label", required=True)
     ap.add_argument("--data", choices=["drive", "edu"], default="drive")
     ap.add_argument("--dev", action="store_true", help="diff on dev gold only: no sealed read, no KPI row, no decision")
+    ap.add_argument("--lesson", help="a lesson id shared across domains, e.g. strip-forms-before-counting (taxo.distill)")
+    ap.add_argument("--kind", choices=["rule_shape", "route", "registry_source", "validator_check", "card_text", "vocab"])
     a = ap.parse_args()
     rows, human, names = load_gold(a.data)
     brands = Brands(names)
@@ -106,10 +108,12 @@ def main() -> None:
         ma["human_sealed"] = h["after"]
     (a.after / f"gate-r{a.round}.json").write_text(json.dumps(out, indent=1), encoding="utf-8")
     ma["sealed"], ma["sealed_reads_logged"] = c["after"], g.reads()
-    kpis.append(a.domain, kpis.row(a.domain, ma, "A", a.round, f"gate {'KEPT' if keep else 'DROPPED'}: {a.label}",
-                                   ROOT / "domains" / a.domain / "vocab.yaml",
-                                   [ROOT / "rules" / a.domain, ROOT / "rules" / "global"]))
+    kpi = kpis.row(a.domain, ma, "A", a.round, f"gate {'KEPT' if keep else 'DROPPED'}: {a.label}",
+                   ROOT / "domains" / a.domain / "vocab.yaml", [ROOT / "rules" / a.domain, ROOT / "rules" / "global"])
+    kpis.append(a.domain, kpi)
+    rec = distill.record(a.domain, kpi, out, lesson=a.lesson, kind=a.kind)   # commit it: it is how the team sees it
     print(json.dumps(out, indent=1))
+    print("round record:", rec)
 
 
 if __name__ == "__main__":

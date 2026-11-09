@@ -1,0 +1,140 @@
+{
+ "id": "e05fb55fb1",
+ "domain": "fragrance",
+ "ts": "2026-11-09T16:06:51",
+ "loop": "A",
+ "round": 6,
+ "change": "settle short single names (Loop B V1)",
+ "label": "gate KEPT: drive r6: settle short single names (Loop B V1)",
+ "keep": true,
+ "decided_on": "sealed",
+ "lesson": null,
+ "kind": null,
+ "branch": "claude/fragrance-run-d587d6",
+ "author": "Rafael Harry Gomar Dawson",
+ "gate": {
+  "touched": 155,
+  "better": 93,
+  "worse": 33,
+  "why": [
+   "PASS exact 1473 -> 1539 does not fall",
+   "PASS exact rises or agent share falls (0.181 -> 0.111)",
+   "PASS touches 155 sealed rows (>= 10)",
+   "PASS better 93 of 126 changed: Wilson lower bound 0.66 >= 0.5"
+  ],
+  "agent_before": 0.181,
+  "agent_after": 0.111,
+  "before": {
+   "accept_rows": 2233,
+   "exact_rate": 0.66,
+   "right_or_shallower": 0.836,
+   "harm_rate": 0.128
+  },
+  "after": {
+   "accept_rows": 2233,
+   "exact_rate": 0.689,
+   "right_or_shallower": 0.821,
+   "harm_rate": 0.142
+  },
+  "human_sealed": {
+   "better": 4,
+   "worse": 4
+  }
+ },
+ "kpi": {
+  "ts": "2026-11-09T16:06:51",
+  "domain": "fragrance",
+  "loop": "A",
+  "round": 6,
+  "label": "gate KEPT: drive r6: settle short single names (Loop B V1)",
+  "code": "55ea1b4+dirty",
+  "vocab": "ed3965cb95",
+  "rules": "7b8912dccd",
+  "data": "drive",
+  "gold_dev": {
+   "accept_rows": 11267,
+   "exact_rate": 0.657,
+   "right_or_shallower": 0.784,
+   "harm_rate": 0.192,
+   "reject_rows": 0,
+   "rejects_held": 0,
+   "levels": {
+    "0": 0.935,
+    "1": 0.705,
+    "2": 0.654,
+    "3": 0.478,
+    "4": 0.542
+   }
+  },
+  "gold_sealed": {
+   "accept_rows": 2233,
+   "exact_rate": 0.689,
+   "right_or_shallower": 0.821,
+   "harm_rate": 0.142,
+   "reject_rows": 0,
+   "rejects_held": 0,
+   "levels": {
+    "0": 0.941,
+    "1": 0.755,
+    "2": 0.699,
+    "3": 0.269,
+    "4": 0.0
+   }
+  },
+  "human_dev": {
+   "accept_rows": 431,
+   "exact_rate": 0.529,
+   "right_or_shallower": 0.77,
+   "harm_rate": 0.186,
+   "reject_rows": 100,
+   "rejects_held": 82,
+   "levels": {
+    "0": 0.805,
+    "1": 0.68,
+    "2": 0.497,
+    "3": 0.227,
+    "4": 0.0
+   }
+  },
+  "human_sealed": {
+   "accept_rows": 159,
+   "exact_rate": 0.503,
+   "right_or_shallower": 0.881,
+   "harm_rate": 0.119,
+   "reject_rows": 19,
+   "rejects_held": 16,
+   "levels": {
+    "0": 1.0,
+    "1": 0.629,
+    "2": 0.49,
+    "3": 0.0,
+    "4": 0.0
+   }
+  },
+  "silver": null,
+  "pedia_dev_in_subset": {
+   "accept_rows": 55,
+   "exact_rate": 0.491,
+   "right_or_shallower": 0.564,
+   "harm_rate": 0.436,
+   "reject_rows": 27,
+   "rejects_held": 24,
+   "levels": {
+    "0": 0.636,
+    "1": 0.564,
+    "2": 0.541,
+    "3": 0.455,
+    "4": 0.0
+   }
+  },
+  "shares": {
+   "placed_by_lattice": 0.792,
+   "settled_by_rule": 0.097,
+   "to_agent": 0.111,
+   "placed_by_agent": 0.0
+  },
+  "agent_calls": 0,
+  "sealed_reads_total": 7,
+  "secs": 11.9
+ }
+}

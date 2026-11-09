@@ -1,0 +1,84 @@
+{
+ "id": "5b06043fd5",
+ "domain": "fragrance",
+ "ts": "2026-11-09T16:09:34",
+ "loop": "A",
+ "round": 7,
+ "change": "concentration veto to shadow (Loop B V2)",
+ "label": "drive r7: concentration veto to shadow (Loop B V2)",
+ "keep": null,
+ "decided_on": null,
+ "lesson": null,
+ "kind": null,
+ "branch": "claude/fragrance-run-d587d6",
+ "author": "Rafael Harry Gomar Dawson",
+ "gate": null,
+ "kpi": {
+  "ts": "2026-11-09T16:09:34",
+  "domain": "fragrance",
+  "loop": "A",
+  "round": 7,
+  "label": "drive r7: concentration veto to shadow (Loop B V2)",
+  "code": "3eec1a0+dirty",
+  "vocab": "ed3965cb95",
+  "rules": "e3d7a04ec7",
+  "data": "drive",
+  "gold_dev": {
+   "accept_rows": 11267,
+   "exact_rate": 0.66,
+   "right_or_shallower": 0.783,
+   "harm_rate": 0.194,
+   "reject_rows": 0,
+   "rejects_held": 0,
+   "levels": {
+    "0": 0.935,
+    "1": 0.708,
+    "2": 0.656,
+    "3": 0.481,
+    "4": 0.542
+   }
+  },
+  "gold_sealed": null,
+  "human_dev": {
+   "accept_rows": 431,
+   "exact_rate": 0.529,
+   "right_or_shallower": 0.77,
+   "harm_rate": 0.186,
+   "reject_rows": 100,
+   "rejects_held": 82,
+   "levels": {
+    "0": 0.805,
+    "1": 0.68,
+    "2": 0.497,
+    "3": 0.227,
+    "4": 0.0
+   }
+  },
+  "human_sealed": null,
+  "silver": null,
+  "pedia_dev_in_subset": {
+   "accept_rows": 55,
+   "exact_rate": 0.491,
+   "right_or_shallower": 0.564,
+   "harm_rate": 0.436,
+   "reject_rows": 27,
+   "rejects_held": 24,
+   "levels": {
+    "0": 0.636,
+    "1": 0.564,
+    "2": 0.541,
+    "3": 0.455,
+    "4": 0.0
+   }
+  },
+  "shares": {
+   "placed_by_lattice": 0.797,
+   "settled_by_rule": 0.097,
+   "to_agent": 0.106,
+   "placed_by_agent": 0.0
+  },
+  "agent_calls": 0,
+  "sealed_reads_total": null,
+  "secs": 12.6
+ }
+}

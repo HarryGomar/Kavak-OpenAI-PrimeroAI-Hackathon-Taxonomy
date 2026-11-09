@@ -1,0 +1,100 @@
+{
+ "id": "c013379a20",
+ "domain": "fragrance",
+ "ts": "2026-11-09T16:05:46",
+ "loop": "B",
+ "round": 1,
+ "change": "Loop B V1: settled by pedia",
+ "label": "Loop B V1: settled by pedia",
+ "keep": null,
+ "decided_on": null,
+ "lesson": null,
+ "kind": null,
+ "branch": "claude/fragrance-run-d587d6",
+ "author": "Rafael Harry Gomar Dawson",
+ "gate": null,
+ "kpi": {
+  "ts": "2026-11-09T16:05:46",
+  "domain": "fragrance",
+  "loop": "B",
+  "round": 1,
+  "label": "Loop B V1: settled by pedia",
+  "code": "55ea1b4+dirty",
+  "vocab": "ed3965cb95",
+  "rules": "a5e20829d9",
+  "data": "drive",
+  "gold_dev": {
+   "accept_rows": 11267,
+   "exact_rate": 0.628,
+   "right_or_shallower": 0.798,
+   "harm_rate": 0.179,
+   "reject_rows": 0,
+   "rejects_held": 0,
+   "levels": {
+    "0": 0.935,
+    "1": 0.665,
+    "2": 0.648,
+    "3": 0.478,
+    "4": 0.542
+   }
+  },
+  "gold_sealed": null,
+  "human_dev": {
+   "accept_rows": 431,
+   "exact_rate": 0.508,
+   "right_or_shallower": 0.775,
+   "harm_rate": 0.181,
+   "reject_rows": 100,
+   "rejects_held": 77,
+   "levels": {
+    "0": 0.805,
+    "1": 0.654,
+    "2": 0.497,
+    "3": 0.227,
+    "4": 0.0
+   }
+  },
+  "human_sealed": null,
+  "silver": {
+   "version": "V1",
+   "validator": "claude-session/card-v1",
+   "reviewer": "pedia",
+   "reviewed": 25,
+   "agreement": 0.525,
+   "flag_precision": 0.789,
+   "spot_agreed_held": "5/6",
+   "pipeline_wrong_found": 16,
+   "verdicts": {
+    "validator_right": 12,
+    "both_wrong": 4,
+    "pipeline_right": 9,
+    "spot:pipeline_right": 5,
+    "spot:both_wrong": 1
+   }
+  },
+  "pedia_dev_in_subset": {
+   "accept_rows": 55,
+   "exact_rate": 0.491,
+   "right_or_shallower": 0.564,
+   "harm_rate": 0.436,
+   "reject_rows": 27,
+   "rejects_held": 24,
+   "levels": {
+    "0": 0.636,
+    "1": 0.564,
+    "2": 0.541,
+    "3": 0.455,
+    "4": 0.0
+   }
+  },
+  "shares": {
+   "placed_by_lattice": 0.792,
+   "settled_by_rule": 0.027,
+   "to_agent": 0.181,
+   "placed_by_agent": 0.0
+  },
+  "agent_calls": 0,
+  "sealed_reads_total": null,
+  "secs": 16.6
+ }
+}

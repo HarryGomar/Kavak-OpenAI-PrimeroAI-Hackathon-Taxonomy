@@ -16,3 +16,17 @@ Built on what worked in Pedia ([Mantis4Real/pedia-harness](https://github.com/Ma
 `C:\Work\Pedia-Harness\repo`). The original notes are in `C:\Work\Kavak-OpenAI-Primero-Hackathon\Taxo.md`.
 
 Data stays in the home that owns it: this repo keeps pointers and toy samples only.
+
+## Sharing your rounds (distillation)
+
+`runs/` never goes in Git, so each round travels as a small **round record** in `memory/rounds/<domain>/` (KPI row
+and gate decision: rates and counts only). Work on your own branch, and:
+
+1. Gate every change: `uv run python -m taxo.gate <domain> <before> <after> --round N --label "..." [--lesson <id>]`.
+   The gate writes the round record. Use the same `--lesson` id as another domain when your change is the same shape:
+   that is how a lesson is shown to transfer.
+2. Rounds made before this existed: `uv run python -m taxo.distill export <domain>` backfills from `runs/<domain>/`.
+3. Commit `memory/rounds/` with your vocab and rule changes, and push your branch.
+
+Then anyone can run `uv run python -m taxo.distill collect`: it reads the records on every `origin/*` branch and writes
+`lessons/*.yaml` (scope: kept in two domains → global) and [docs/DISTILL.md](docs/DISTILL.md).

@@ -1,0 +1,99 @@
+{
+ "id": "230be1cd5d",
+ "domain": "fragrance",
+ "ts": "2026-11-09T16:08:44",
+ "loop": "B",
+ "round": 2,
+ "change": "Loop B V2: settled by pedia",
+ "label": "Loop B V2: settled by pedia",
+ "keep": null,
+ "decided_on": null,
+ "lesson": null,
+ "kind": null,
+ "branch": "claude/fragrance-run-d587d6",
+ "author": "Rafael Harry Gomar Dawson",
+ "gate": null,
+ "kpi": {
+  "ts": "2026-11-09T16:08:44",
+  "domain": "fragrance",
+  "loop": "B",
+  "round": 2,
+  "label": "Loop B V2: settled by pedia",
+  "code": "3eec1a0+dirty",
+  "vocab": "ed3965cb95",
+  "rules": "7b8912dccd",
+  "data": "drive",
+  "gold_dev": {
+   "accept_rows": 11267,
+   "exact_rate": 0.657,
+   "right_or_shallower": 0.784,
+   "harm_rate": 0.192,
+   "reject_rows": 0,
+   "rejects_held": 0,
+   "levels": {
+    "0": 0.935,
+    "1": 0.705,
+    "2": 0.654,
+    "3": 0.478,
+    "4": 0.542
+   }
+  },
+  "gold_sealed": null,
+  "human_dev": {
+   "accept_rows": 431,
+   "exact_rate": 0.529,
+   "right_or_shallower": 0.77,
+   "harm_rate": 0.186,
+   "reject_rows": 100,
+   "rejects_held": 82,
+   "levels": {
+    "0": 0.805,
+    "1": 0.68,
+    "2": 0.497,
+    "3": 0.227,
+    "4": 0.0
+   }
+  },
+  "human_sealed": null,
+  "silver": {
+   "version": "V2",
+   "validator": "claude-session/card-v2",
+   "reviewer": "pedia",
+   "reviewed": 28,
+   "agreement": 0.45,
+   "flag_precision": 0.955,
+   "spot_agreed_held": "6/6",
+   "pipeline_wrong_found": 21,
+   "verdicts": {
+    "validator_right": 15,
+    "both_wrong": 6,
+    "pipeline_right": 7,
+    "spot:pipeline_right": 6
+   }
+  },
+  "pedia_dev_in_subset": {
+   "accept_rows": 55,
+   "exact_rate": 0.491,
+   "right_or_shallower": 0.564,
+   "harm_rate": 0.436,
+   "reject_rows": 27,
+   "rejects_held": 24,
+   "levels": {
+    "0": 0.636,
+    "1": 0.564,
+    "2": 0.541,
+    "3": 0.455,
+    "4": 0.0
+   }
+  },
+  "shares": {
+   "placed_by_lattice": 0.792,
+   "settled_by_rule": 0.097,
+   "to_agent": 0.111,
+   "placed_by_agent": 0.0
+  },
+  "agent_calls": 0,
+  "sealed_reads_total": null,
+  "secs": 11.9
+ }
+}

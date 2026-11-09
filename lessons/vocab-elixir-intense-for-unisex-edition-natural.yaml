@@ -1,0 +1,20 @@
+# Written by taxo.distill from memory/rounds/. Edit the claim or kind; the record is regenerated.
+id: lesson/vocab-elixir-intense-for-unisex-edition-natural
+kind: null
+scope: null
+status: dropped
+claim: 'vocab: -elixir -intense +for unisex +edition +natural'
+record:
+- domain: fragrance
+  loop: A
+  round: 1
+  branch: claude/fragrance-run-d587d6
+  author: Rafael Harry Gomar Dawson
+  keep: false
+  decided_on: sealed
+  better: 4
+  worse: 3
+  delta_exact: 0.029
+  delta_harm: 0.021
+  delta_agent: 0.0
+  record: 08264e56c7
