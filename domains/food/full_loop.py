@@ -20,15 +20,26 @@ from taxo.tools import checks
 def run(root, baseline, name, setup_path, resume=False):
     out = root/name
     out.mkdir(exist_ok=resume)
+    reused = []
+
+    def completed(folder, manifest, statuses, required):
+        if not resume or not folder.exists():
+            return False
+        marker = folder/manifest
+        if not marker.exists() or read(marker).get('status') not in statuses or any(
+                not (folder/filename).is_file() for filename in required):
+            raise RuntimeError(f'Refusing to repeat incomplete/failed stage at {folder}; preserve and inspect its artifacts')
+        reused.append({'stage': folder.name, 'manifest': fingerprint(marker),
+                       'execution': 'Actual completed calls from this same cycle; no duplicate calls'})
+        write(out/'resume.json', {'reused_stages': reused})
+        return True
+
     write(out/'stage-status.json', {'status': 'running', 'stage': 'independent_validation'})
     current = root/(name+'-validator-current')
-    resumed_validator = resume and (current/'role-manifest.json').exists() and read(current/'role-manifest.json')['status'] == 'executed'
+    resumed_validator = completed(current, 'role-manifest.json', {'executed'},
+                                  ('judgments.json', 'gold-rulings.json', 'metrics.json'))
     if not resumed_validator:
         validate_paths.execute(root, setup_path, name+'-validator-current')
-    else:
-        write(out/'resume.json', {'stage': 'feedback_roles', 'independent_validator':
-            'Actual calls already completed in this same cycle; resume after setup parsing failure',
-            'source': fingerprint(current/'role-manifest.json')})
     gold = {r['observation_id']: r for r in read(current/'gold-rulings.json')}
     pipeline = {r['id']: r for r in rows(baseline/'placements.jsonl')}
     judgments = {r['listing_id']: r for r in read(current/'judgments.json')}
@@ -49,17 +60,44 @@ def run(root, baseline, name, setup_path, resume=False):
     write(out/'validator-findings.json', dict(counts))
     # Reuse existing role factories/runtime on authorized feedback only.
     role_name = name+'-feedback'
-    if resume and (root/role_name).exists():
-        role_name += '-resume'
-    (root/role_name).mkdir()
-    write(root/role_name/'feedback-diagnosis.json', read(baseline/'feedback-diagnosis.json'))
-    loop_roles.execute(root, role_name, current/'judgments.json')
+    role_attempts = [role_name, role_name+'-resume']
+    finished_roles = []
+    if resume:
+        for attempt in role_attempts:
+            folder = root/(attempt+'-feedback-roles')
+            if ((folder/'manifest.json').is_file() and
+                    all((folder/filename).is_file() for filename in
+                        ('proposer-output.json', 'improver-output.json', 'proposer-decision.json', 'improver-decision.json')) and
+                    all((folder/role/'manifest.json').is_file() and
+                        read(folder/role/'manifest.json').get('status') == 'completed'
+                        for role in ('proposer', 'improver'))):
+                finished_roles.append(attempt)
+        if len(finished_roles) > 1:
+            raise RuntimeError('Multiple completed feedback attempts exist; select one explicitly before resuming')
+    if finished_roles:
+        role_name = finished_roles[0]
+        reused.append({'stage': role_name+'-feedback-roles',
+                       'manifest': fingerprint(root/(role_name+'-feedback-roles')/'manifest.json'),
+                       'execution': 'Actual completed proposer/improver calls from this same cycle; no duplicate calls'})
+        write(out/'resume.json', {'reused_stages': reused})
+    else:
+        if resume and any((root/attempt).exists() or (root/(attempt+'-feedback-roles')).exists()
+                          for attempt in role_attempts):
+            raise RuntimeError('Feedback stage has incomplete/failed artifacts; refusing duplicate calls')
+        (root/role_name).mkdir()
+        write(root/role_name/'feedback-diagnosis.json', read(baseline/'feedback-diagnosis.json'))
+        loop_roles.execute(root, role_name, current/'judgments.json')
     roles = root/(role_name+'-feedback-roles')
     write(out/'stage-status.json', {'status': 'running', 'stage': 'analysis_and_candidate'})
-    card = propose(root, baseline, out/'analyst')
+    if completed(out/'analyst', 'manifest.json', {'completed'}, ('candidate-card.json', 'final.json')):
+        card = out/'analyst/candidate-card.json'
+    else:
+        card = propose(root, baseline, out/'analyst')
     candidate_name = name+'-candidate'
-    place(root, candidate_name, card, baseline)
     candidate = root/candidate_name
+    if not completed(candidate, 'manifest.json', {'completed'},
+                     ('placements.jsonl', 'metrics.json', 'gold-rulings.json', 'paired-deltas.json', 'nodes.jsonl')):
+        place(root, candidate_name, card, baseline)
     decision = select(baseline, candidate)
     old_metrics, new_metrics = read(baseline/'metrics.json'), read(candidate/'metrics.json')
     deltas = read(candidate/'paired-deltas.json')
@@ -108,7 +146,9 @@ def run(root, baseline, name, setup_path, resume=False):
                           'production_admission': False, 'reason': improvement['reason']}
     if improvement['accept_for_validator_experiment']:
         next_setup = roles/'validator-setup-v2.json'
-        validate_paths.execute(root, next_setup, name+'-validator-candidate')
+        if not completed(root/(name+'-validator-candidate'), 'role-manifest.json', {'executed'},
+                         ('judgments.json', 'gold-rulings.json', 'metrics.json')):
+            validate_paths.execute(root, next_setup, name+'-validator-candidate')
         vm = read(root/(name+'-validator-candidate')/'metrics.json')
         old = read(current/'metrics.json')
         # Compare on the other dev partition; this is not a fresh/brand-sealed holdout.
