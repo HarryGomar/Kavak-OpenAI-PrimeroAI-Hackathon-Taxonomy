@@ -1,0 +1,8 @@
+id: toys/length-unit-only
+stage: place
+when: [{fact: toys.candidate_length_unit_only, eq: true}]
+then: {veto: true}
+status: shadow
+origin: bounded unified-toys construction and independent frozen CLI silver inspection
+why: A bare length unit does not establish a product identity; retain the shallower placement for review without stripping numeric or named identity evidence.
+evidence: Observed unit-only lattice candidates; machine evidence only, no reviewed human labels or admission. See docs/toys.md for the isolated experiment and limitations.
