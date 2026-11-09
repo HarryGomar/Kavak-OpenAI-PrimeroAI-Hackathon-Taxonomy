@@ -2,7 +2,7 @@ name: food
 families: [consumer_packaged]       # family rules shared with fragrance (count, measure, bundle structure)
 levels: [brand, line, product, variant, pack]
 data: food/                          # under TAXO_DATA_DIR
-truth: none yet - blind-label a random sample (labels never go in this repo)
+truth: owner-confirmed Food Pedia human gold; verify exact source joins; labels stay outside Git
 conventions: |
   - Pack count and weight/volume are buying choices on the product, never identity nodes.
   - A flavour or colour is a variant; a different format or form is a separate product.

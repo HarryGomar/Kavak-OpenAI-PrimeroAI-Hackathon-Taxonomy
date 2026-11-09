@@ -108,3 +108,47 @@ hierarchy does not supply scope truth or prove whether an abstention was
 necessary. No population estimate follows from this nonrandom prefix. The
 existing `taxo.score` drops fragrance-oriented words and the existing admission
 gate supports fragrance only; neither is used for this Food evaluation.
+
+## Experimental source-only placement loop
+
+`domains.food.place_paths` actually executes the evidence route through the shared
+installed CLI, in batches of ten. It proposes new brand/model/variant nodes when
+the bootstrap has no product catalog. Every proposed name needs literal supplied
+source citations; code rejects unsupported names, invalid hierarchy, quantity
+identity and admitted-rule conflicts, preserving defensible ancestors. Code
+materializes source-grounded proposal trees and placements; nothing is admitted.
+
+The loop consumes a frozen source snapshot, scorer, gold mappings and hashed
+alias/brand references. Placement receives only explicit original source fields,
+never gold paths, registry targets or independent validator answers. Source
+organization roles and variant options are unverified evidence, not new brand
+truth. The fixed Food scorer runs after placement, with denominator 50.
+
+`domains.food.loop_roles` uses the existing `make_proposer` and `make_improver`
+factories through `runtime.run_sync` on the recorded feedback partition only.
+Unknown checks/parameters and answer lists are rejected. Improver output concerns
+validator setup; a transferred placer instruction is a separately named trial.
+`domains.food.validate_paths` trials changed validator checklists independently
+on source evidence, preserving v1. Invalid batches are explicitly refused.
+The curator is deterministic code using paired gold metrics, never another model.
+
+```powershell
+uv run python -m domains.food.place_paths --root <frozen-loop-root> --name run-NNN --card <source-only-card.json> --previous <previous-run>
+uv run python -m domains.food.loop_roles --root <frozen-loop-root> --run run-NNN --validator <independent-judgments.json>
+uv run python -m domains.food.validate_paths --root <frozen-loop-root> --setup <experimental-validator-setup.json>
+```
+
+Cards, per-role inputs/decisions, exact commands, code versions, source citations,
+trees, refusals, scores, paired regressions, usage and indexes remain outside Git.
+`summarize().model_calls=0` describes the deterministic scorer only; actual
+placement/validator/proposer/improver calls and usage are recorded separately.
+Previously inspected feedback/withheld partitions are exploratory, not an
+untouched external holdout. A source-only card can gain exact identities while
+losing brands; both must remain visible. Repeated model outputs are not assumed
+deterministic and monetary cost stays null when the CLI does not report it.
+
+Selected principles from Pedia's current Food listing-loop cards/conventions may
+inspire isolated experiments. The old Food scope YAML engine is not its current
+runtime. Do not copy brand examples or gold target nodes, import old model
+settings, alter the fixed scorer, or treat a local experimental decision as
+production admission.
