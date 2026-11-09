@@ -1,0 +1,203 @@
+{
+ "id": "5e7a1f379f",
+ "domain": "food",
+ "ts": "2026-11-09T22:22:44.075743+00:00",
+ "loop": "A",
+ "round": 7,
+ "change": "run-007-warm-baseline",
+ "label": "run-007-warm-baseline",
+ "keep": null,
+ "decided_on": null,
+ "lesson": "food-preliminary-card-trials",
+ "kind": "card_text",
+ "branch": "harness/food-loop-observability",
+ "author": "EduardoGC21",
+ "gate": null,
+ "kpi": {
+  "domain": "food",
+  "ts": "2026-11-09T22:22:44.075743+00:00",
+  "loop": "A",
+  "round": 7,
+  "label": "run-007-warm-baseline",
+  "code": "21a17965ede2db16b7598f20c3b01c7cf6aa067d66dbe9354d5d4d6ca049cd9e",
+  "vocab": null,
+  "rules": "0b4af22d8a35f2c1ffee90954d94bc094f3b5c2769c5e4e00002a4f71dc38081",
+  "data": "549c975018dbac1d05182e129b3a442f18d13d200bbaf2be6658523a800e96db",
+  "gold_dev": null,
+  "gold_sealed": null,
+  "human_dev": null,
+  "human_sealed": null,
+  "silver": null,
+  "shares": {
+   "to_agent": 1.0
+  },
+  "agent_calls": 5,
+  "sealed_reads_total": null,
+  "secs": 224.554,
+  "metadata": {
+   "full_sample_gold": {
+    "frozen_n": 50,
+    "matched_gold_n": 50,
+    "unlabeled_or_join_unscorable": 0,
+    "resolved_prediction_n": 48,
+    "ambiguous_prediction_n": 2,
+    "classes": {
+     "exact": 14,
+     "unscorable_ambiguous_brand": 2,
+     "wrong_label_path": 28,
+     "valid_shallower": 2,
+     "abstain": 2,
+     "wrong_brand": 1,
+     "wrong_deeper": 1
+    },
+    "identity_path_exact": 14,
+    "strict_full_path_exact": 8,
+    "brand_correct": 45,
+    "rates_denominator": 50,
+    "identity_path_exact_rate": 0.28,
+    "strict_full_path_exact_rate": 0.16,
+    "brand_correct_rate": 0.9,
+    "primary_policy": "All verified-gold observations, including abstentions and ambiguous predictions; unresolved is not demonstrated correct, not necessarily semantically wrong.",
+    "secondary_resolved_only": {
+     "denominator": 48,
+     "identity_path_exact_rate": 0.2916666666666667,
+     "brand_correct_rate": 0.9375
+    },
+    "abstentions_all_frozen": 2,
+    "levels": {
+     "brand": {
+      "correct_prefix": 45,
+      "n": 50
+     },
+     "model": {
+      "correct_prefix": 19,
+      "n": 50
+     },
+     "variant": {
+      "correct_prefix": 7,
+      "n": 30
+     }
+    },
+    "scope_accuracy": null,
+    "model_calls": 0,
+    "partitions": {
+     "feedback": {
+      "frozen_n": 20,
+      "matched_gold_n": 20,
+      "unlabeled_or_join_unscorable": 0,
+      "resolved_prediction_n": 19,
+      "ambiguous_prediction_n": 1,
+      "classes": {
+       "exact": 6,
+       "wrong_label_path": 12,
+       "unscorable_ambiguous_brand": 1,
+       "valid_shallower": 1
+      },
+      "identity_path_exact": 6,
+      "strict_full_path_exact": 2,
+      "brand_correct": 19,
+      "rates_denominator": 20,
+      "identity_path_exact_rate": 0.3,
+      "strict_full_path_exact_rate": 0.1,
+      "brand_correct_rate": 0.95,
+      "primary_policy": "All verified-gold observations, including abstentions and ambiguous predictions; unresolved is not demonstrated correct, not necessarily semantically wrong.",
+      "secondary_resolved_only": {
+       "denominator": 19,
+       "identity_path_exact_rate": 0.3157894736842105,
+       "brand_correct_rate": 1.0
+      },
+      "abstentions_all_frozen": 0,
+      "levels": {
+       "brand": {
+        "correct_prefix": 19,
+        "n": 20
+       },
+       "model": {
+        "correct_prefix": 7,
+        "n": 20
+       },
+       "variant": {
+        "correct_prefix": 4,
+        "n": 13
+       }
+      },
+      "scope_accuracy": null,
+      "model_calls": 0
+     },
+     "withheld_feedback": {
+      "frozen_n": 30,
+      "matched_gold_n": 30,
+      "unlabeled_or_join_unscorable": 0,
+      "resolved_prediction_n": 29,
+      "ambiguous_prediction_n": 1,
+      "classes": {
+       "unscorable_ambiguous_brand": 1,
+       "wrong_label_path": 16,
+       "valid_shallower": 1,
+       "exact": 8,
+       "abstain": 2,
+       "wrong_brand": 1,
+       "wrong_deeper": 1
+      },
+      "identity_path_exact": 8,
+      "strict_full_path_exact": 6,
+      "brand_correct": 26,
+      "rates_denominator": 30,
+      "identity_path_exact_rate": 0.26666666666666666,
+      "strict_full_path_exact_rate": 0.2,
+      "brand_correct_rate": 0.8666666666666667,
+      "primary_policy": "All verified-gold observations, including abstentions and ambiguous predictions; unresolved is not demonstrated correct, not necessarily semantically wrong.",
+      "secondary_resolved_only": {
+       "denominator": 29,
+       "identity_path_exact_rate": 0.27586206896551724,
+       "brand_correct_rate": 0.896551724137931
+      },
+      "abstentions_all_frozen": 2,
+      "levels": {
+       "brand": {
+        "correct_prefix": 26,
+        "n": 30
+       },
+       "model": {
+        "correct_prefix": 12,
+        "n": 30
+       },
+       "variant": {
+        "correct_prefix": 3,
+        "n": 17
+       }
+      },
+      "scope_accuracy": null,
+      "model_calls": 0
+     }
+    },
+    "paired": {
+     "exact_gain": 5,
+     "exact_regression": 0,
+     "brand_gain": 1,
+     "brand_regression": 0
+    },
+    "frozen_silver_agreement": 8
+   },
+   "production_admission": false,
+   "diagnostics": {
+    "failed_rows": 0,
+    "intentional_parks": 2,
+    "grounding_rejections": {},
+    "rules_fingerprint": "0b4af22d8a35f2c1ffee90954d94bc094f3b5c2769c5e4e00002a4f71dc38081"
+   },
+   "source_sha256": "549c975018dbac1d05182e129b3a442f18d13d200bbaf2be6658523a800e96db",
+   "card_sha256": "12fed78f37480695bb0962fb230df3e7c6ad7e0a82ca42f938884ab4af4d1f2b",
+   "decision": {},
+   "artifact_index": {
+    "path": "C:\\Users\\eduar\\Desktop\\HACKATON\\tasks\\taxo-four-20261109T162041\\food\\improvement-loop-01\\run-007-warm-baseline\\artifact-index.json",
+    "sha256": "abab359207f91aa1e91f82295a28ac52c717a1ae3b9e278849e0082455df3ca5",
+    "bytes": 12493
+   },
+   "external_holdout": false,
+   "cost": null,
+   "actual_served_tier": null,
+   "execution_scope": "Preliminary placer/card evidence, NOT a completed full harness loop"
+  }
+ }
+}

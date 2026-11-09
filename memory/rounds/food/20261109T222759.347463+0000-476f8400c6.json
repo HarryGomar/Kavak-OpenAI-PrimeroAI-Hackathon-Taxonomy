@@ -1,0 +1,217 @@
+{
+ "id": "476f8400c6",
+ "domain": "food",
+ "ts": "2026-11-09T22:27:59.347463+00:00",
+ "loop": "A",
+ "round": 8,
+ "change": "continuation-008-candidate-1",
+ "label": "continuation-008-candidate-1",
+ "keep": null,
+ "decided_on": null,
+ "lesson": "food-preliminary-card-trials",
+ "kind": "card_text",
+ "branch": "harness/food-loop-observability",
+ "author": "EduardoGC21",
+ "gate": null,
+ "kpi": {
+  "domain": "food",
+  "ts": "2026-11-09T22:27:59.347463+00:00",
+  "loop": "A",
+  "round": 8,
+  "label": "continuation-008-candidate-1",
+  "code": "7341c67b3c494799a6ca48491c053befc12d872290d10d60f6d06f4a2df64293",
+  "vocab": null,
+  "rules": "0b4af22d8a35f2c1ffee90954d94bc094f3b5c2769c5e4e00002a4f71dc38081",
+  "data": "549c975018dbac1d05182e129b3a442f18d13d200bbaf2be6658523a800e96db",
+  "gold_dev": null,
+  "gold_sealed": null,
+  "human_dev": null,
+  "human_sealed": null,
+  "silver": null,
+  "shares": {
+   "to_agent": 1.0
+  },
+  "agent_calls": 5,
+  "sealed_reads_total": null,
+  "secs": 260.38,
+  "metadata": {
+   "full_sample_gold": {
+    "frozen_n": 50,
+    "matched_gold_n": 50,
+    "unlabeled_or_join_unscorable": 0,
+    "resolved_prediction_n": 48,
+    "ambiguous_prediction_n": 2,
+    "classes": {
+     "exact": 15,
+     "unscorable_ambiguous_brand": 2,
+     "wrong_label_path": 26,
+     "valid_shallower": 3,
+     "abstain": 2,
+     "wrong_brand": 1,
+     "wrong_deeper": 1
+    },
+    "identity_path_exact": 15,
+    "strict_full_path_exact": 9,
+    "brand_correct": 45,
+    "rates_denominator": 50,
+    "identity_path_exact_rate": 0.3,
+    "strict_full_path_exact_rate": 0.18,
+    "brand_correct_rate": 0.9,
+    "primary_policy": "All verified-gold observations, including abstentions and ambiguous predictions; unresolved is not demonstrated correct, not necessarily semantically wrong.",
+    "secondary_resolved_only": {
+     "denominator": 48,
+     "identity_path_exact_rate": 0.3125,
+     "brand_correct_rate": 0.9375
+    },
+    "abstentions_all_frozen": 2,
+    "levels": {
+     "brand": {
+      "correct_prefix": 45,
+      "n": 50
+     },
+     "model": {
+      "correct_prefix": 20,
+      "n": 50
+     },
+     "variant": {
+      "correct_prefix": 8,
+      "n": 30
+     }
+    },
+    "scope_accuracy": null,
+    "model_calls": 0,
+    "partitions": {
+     "feedback": {
+      "frozen_n": 20,
+      "matched_gold_n": 20,
+      "unlabeled_or_join_unscorable": 0,
+      "resolved_prediction_n": 19,
+      "ambiguous_prediction_n": 1,
+      "classes": {
+       "exact": 8,
+       "wrong_label_path": 10,
+       "unscorable_ambiguous_brand": 1,
+       "valid_shallower": 1
+      },
+      "identity_path_exact": 8,
+      "strict_full_path_exact": 4,
+      "brand_correct": 19,
+      "rates_denominator": 20,
+      "identity_path_exact_rate": 0.4,
+      "strict_full_path_exact_rate": 0.2,
+      "brand_correct_rate": 0.95,
+      "primary_policy": "All verified-gold observations, including abstentions and ambiguous predictions; unresolved is not demonstrated correct, not necessarily semantically wrong.",
+      "secondary_resolved_only": {
+       "denominator": 19,
+       "identity_path_exact_rate": 0.42105263157894735,
+       "brand_correct_rate": 1.0
+      },
+      "abstentions_all_frozen": 0,
+      "levels": {
+       "brand": {
+        "correct_prefix": 19,
+        "n": 20
+       },
+       "model": {
+        "correct_prefix": 9,
+        "n": 20
+       },
+       "variant": {
+        "correct_prefix": 5,
+        "n": 13
+       }
+      },
+      "scope_accuracy": null,
+      "model_calls": 0
+     },
+     "withheld_feedback": {
+      "frozen_n": 30,
+      "matched_gold_n": 30,
+      "unlabeled_or_join_unscorable": 0,
+      "resolved_prediction_n": 29,
+      "ambiguous_prediction_n": 1,
+      "classes": {
+       "unscorable_ambiguous_brand": 1,
+       "wrong_label_path": 16,
+       "valid_shallower": 2,
+       "exact": 7,
+       "abstain": 2,
+       "wrong_brand": 1,
+       "wrong_deeper": 1
+      },
+      "identity_path_exact": 7,
+      "strict_full_path_exact": 5,
+      "brand_correct": 26,
+      "rates_denominator": 30,
+      "identity_path_exact_rate": 0.23333333333333334,
+      "strict_full_path_exact_rate": 0.16666666666666666,
+      "brand_correct_rate": 0.8666666666666667,
+      "primary_policy": "All verified-gold observations, including abstentions and ambiguous predictions; unresolved is not demonstrated correct, not necessarily semantically wrong.",
+      "secondary_resolved_only": {
+       "denominator": 29,
+       "identity_path_exact_rate": 0.2413793103448276,
+       "brand_correct_rate": 0.896551724137931
+      },
+      "abstentions_all_frozen": 2,
+      "levels": {
+       "brand": {
+        "correct_prefix": 26,
+        "n": 30
+       },
+       "model": {
+        "correct_prefix": 11,
+        "n": 30
+       },
+       "variant": {
+        "correct_prefix": 3,
+        "n": 17
+       }
+      },
+      "scope_accuracy": null,
+      "model_calls": 0
+     }
+    },
+    "paired": {
+     "exact_gain": 3,
+     "exact_regression": 2,
+     "brand_gain": 0,
+     "brand_regression": 0
+    },
+    "frozen_silver_agreement": 7,
+    "silver_observations": 50,
+    "paired_comparator": "C:\\Users\\eduar\\Desktop\\HACKATON\\tasks\\taxo-four-20261109T162041\\food\\improvement-loop-01\\run-007-warm-baseline"
+   },
+   "production_admission": false,
+   "diagnostics": {
+    "failed_rows": 0,
+    "intentional_parks": 2,
+    "grounding_rejections": {},
+    "rules_fingerprint": "0b4af22d8a35f2c1ffee90954d94bc094f3b5c2769c5e4e00002a4f71dc38081"
+   },
+   "source_sha256": "549c975018dbac1d05182e129b3a442f18d13d200bbaf2be6658523a800e96db",
+   "card_sha256": "8d05b37ab00e06f9839e38b4851bc19441f830fb38d826939e16deda44abee5c",
+   "decision": {
+    "keep_for_development": true,
+    "production_admission": false,
+    "gate": null,
+    "reason": "Exact gain with no aggregate brand/strict regression",
+    "paired": {
+     "exact_gain": 3,
+     "exact_regression": 2,
+     "brand_gain": 0,
+     "brand_regression": 0
+    },
+    "caveat": "Exploratory exact-label comparison on previously inspected gold; no sealed gate or cost claim"
+   },
+   "artifact_index": {
+    "path": "C:\\Users\\eduar\\Desktop\\HACKATON\\tasks\\taxo-four-20261109T162041\\food\\improvement-loop-01\\continuation-008-candidate-1\\artifact-index.json",
+    "sha256": "6bb266bdf17e6debc79af0229b33454d2680561dc542fffa0c3b2d08baa535a4",
+    "bytes": 12814
+   },
+   "external_holdout": false,
+   "cost": null,
+   "actual_served_tier": null,
+   "execution_scope": "Preliminary placer/card evidence, NOT a completed full harness loop"
+  }
+ }
+}
