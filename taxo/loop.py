@@ -5,10 +5,10 @@ checks the rules and improves the validator, then again.
 
 One cycle:
   1. rules     taxo.climb phase on the current silver set: hill-climb vocab edits and rule on/off, gated on silver
-  2. check     human checkpoint: Pedia dev gold + one logged sealed read (did silver-trained rules really improve?)
+  2. check     checkpoint on dev human labels, the placer agent on (sealed is read ONCE, after the last cycle)
   3. human     Loop B round: fresh Pedia-labelled sample, the validator labels it blind, Pedia settles disagreements
-  4. improve   Codex proposes checklist steps from the validator's misses on human labels; A/B on a fresh sample;
-               kept only if exact rises and harm does not (validator.yaml version + 1)
+  4. improve   the improver agent proposes ONE question change from the validator's misses and traces on human
+               labels; A/B on a fresh sample; kept only if exact rises and harm does not (validator.yaml version + 1)
   5. silver    a fresh silver set labelled by the current validator, for the next cycle's rule phase
 Pedia's label stands in for the person (the project's choice for testing). Every step writes a KPI row.
 """
@@ -17,23 +17,15 @@ from __future__ import annotations
 import argparse
 import json
 import re
-import shutil
-import subprocess
-import tempfile
 from pathlib import Path
 
 import yaml
 
 from taxo import climb, kpis, loopb, score, validator
+from taxo.core.codex import Runner
 from taxo.core.config import DOMAINS_DIR, ROOT, RUNS_DIR
 from taxo.lattice.vocab import tokens
-
-STEP_SCHEMA = {"type": "object", "additionalProperties": False, "required": ["steps"],
-               "properties": {"steps": {"type": "array", "items": {
-                   "type": "object", "additionalProperties": False, "required": ["id", "text", "fixes"],
-                   "properties": {"id": {"type": "string"}, "text": {"type": "string"},
-                                  "fixes": {"type": "string"}}}}}}
-
+from taxo.roles.improver import make_improver
 
 def _say(msg: str) -> None:
     print(msg, flush=True)
@@ -69,36 +61,40 @@ def _misses(domain: str, version: str, suffix: str = "") -> list[dict]:
         gp = p["pedia_path"]
         j = score.judge(p["pedia_brand"], v["path"], p["pedia_brand"], gp, set(tokens(gp[0])))
         if j.cls != "exact":
-            out.append({"title": blind[v["id"]]["title"], "validator": " > ".join(v["path"]),
+            out.append({"title": blind[v["id"]]["title"], "validator": " > ".join(v["path"]), "trace": v.get("trace"),
                         "human": " > ".join(gp), "class": j.cls})
     return out
 
 
-def propose_steps(domain: str, misses: list[dict], log: Path) -> list[dict]:
-    """Codex as the improver: up to 3 general checklist steps that would fix these misses (no per-item answers)."""
-    c = validator.card(domain)
-    active = [s["text"] for s in c.get("checklist") or [] if s.get("status") == "active"]
-    text = ("You improve the instructions of a labeller that places fragrance listings on a product tree.\n\n"
-            "Its instructions:\n" + c["task"].strip()
-            + ("\n\nIts current checklist:\n" + "\n".join(f"- {s}" for s in active) if active else "")
-            + "\n\nBelow are listings it got wrong: its answer and the human's answer. Write at most 3 new checklist "
-              "steps that state GENERAL conventions (true for many listings) that would have fixed several of these. "
-              "Never mention a specific product or brand by name as the rule itself; never write a step that fixes a "
-              "single listing. Do not run commands or read files.\n\n"
-            + json.dumps(misses, ensure_ascii=False, indent=0))
-    with tempfile.TemporaryDirectory() as tmp:
-        t = Path(tmp)
-        (t / "schema.json").write_text(json.dumps(STEP_SCHEMA), encoding="utf-8")
-        cmd = [shutil.which("codex") or "codex", "exec", "--ignore-user-config", "--sandbox", "read-only",
-               "--skip-git-repo-check", "--ephemeral", "--color", "never", "-C", tmp,
-               "--output-schema", str(t / "schema.json"), "-o", str(t / "out.json"), "-"]
-        p = subprocess.run(cmd, input=text, capture_output=True, text=True, encoding="utf-8", timeout=1800)
-        raw = (t / "out.json").read_text(encoding="utf-8") if (t / "out.json").exists() else ""
-    log.write_text(f"exit {p.returncode}\n--- stderr\n{p.stderr[-3000:]}\n--- answer\n{raw}", encoding="utf-8")
+def propose_change(domain: str, misses: list[dict], log: Path) -> dict | None:
+    """The improver agent (taxo/roles/improver.py) on the Codex runner: ONE SetupChange from the validator's mistakes
+    and their traces. Returns the change as a dict, or None."""
+    s = validator.card(domain)
+    qs = [{k: q.get(k) for k in ("id", "ask", "tools", "then")} for q in s.get("questions") or []
+          if q.get("status") in ("admitted", "shadow")]
+    text = ("Current questions:\n" + json.dumps(qs, ensure_ascii=False, indent=0)
+            + "\n\nTools: similar_brands, ask_person, brand_products" + (", web_search" if s.get("web") else "")
+            + "\n\nMistakes (listing, the validator's answer and trace, the person's answer):\n"
+            + json.dumps(misses[:30], ensure_ascii=False, indent=0))
     try:
-        return json.loads(raw)["steps"][:3]
-    except (json.JSONDecodeError, KeyError, TypeError):
-        return []
+        r = Runner.run_sync(make_improver(domain), text, timeout=900)
+    except Exception as e:
+        log.write_text(f"improver failed: {e}", encoding="utf-8")
+        return None
+    change = r.final_output.model_dump()
+    log.write_text(json.dumps(change, indent=1, ensure_ascii=False), encoding="utf-8")
+    return change
+
+
+def apply_change(s: dict, ch: dict, origin: str) -> dict | None:
+    """A question change applied to a copy of the setup (next version); other kinds are not applied yet."""
+    if ch.get("kind") != "question" or not ch.get("question_id") or not ch.get("ask"):
+        return None
+    q = {"id": ch["question_id"], "ask": ch["ask"], "tools": ch.get("tools") or [], "then": ch.get("then"),
+         "status": "admitted", "origin": origin}
+    qs = [x for x in s.get("questions") or [] if x.get("id") != q["id"]]
+    at = next((i + 1 for i, x in enumerate(qs) if x.get("id") == ch.get("after")), len(qs))
+    return {**s, "version": int(s.get("version", 1)) + 1, "questions": qs[:at] + [q] + qs[at:]}
 
 
 def improve_validator(domain: str, cyc: int) -> dict:
@@ -116,14 +112,15 @@ def improve_validator(domain: str, cyc: int) -> dict:
     # 4. improver: steps from this round's misses (and the previous round's), A/B on a fresh sample
     prev = f"V{int(v[1:]) - 1}"
     misses = _misses(domain, v) + (_misses(domain, prev) if (d / f"{prev}-validator.jsonl").exists() else [])
-    steps = propose_steps(domain, misses, d / f"{v}-improver.log")
-    if not steps:
-        _say("  improver proposed no steps")
-        return {"round": v, "kept": False, "human": s}
+    ch = propose_change(domain, misses, d / f"{v}-improver.json")
     c = validator.card(domain)
-    cand = {**c, "version": c.get("version", 1) + 1,
-            "checklist": (c.get("checklist") or []) + [{"id": st["id"], "text": st["text"], "status": "active",
-                                                        "origin": f"improver {v}: {st['fixes']}"} for st in steps]}
+    cand = apply_change(c, ch, f"improver {v}: {(ch or {}).get('rationale', '')[:200]}") if ch else None
+    if cand is None:
+        _say(f"  improver: no question change to test ({(ch or {}).get('kind')}: {(ch or {}).get('text')})")
+        _row(domain, "B", cyc * 100 + 2, f"validator improver cycle {cyc}: nothing testable",
+             {"version": v, "validator": "codex-agent", "reviewer": "pedia", "agreement": None, "change": ch})
+        return {"round": v, "kept": False, "human": s, "change": ch}
+    steps = [ch]
     ab = _next_v(domain)
     loopb.sample(domain, ab, pool="pedia-dev")
     items = [json.loads(x) for x in open(d / f"{ab}-blind.jsonl", encoding="utf-8")]
@@ -132,7 +129,9 @@ def improve_validator(domain: str, cyc: int) -> dict:
     (d / f"{ab}-validator.jsonl").write_text("".join(json.dumps(x, ensure_ascii=False) + "\n" for x in cur), "utf-8")
     (d / f"{ab}-validator-cand.jsonl").write_text("".join(json.dumps(x, ensure_ascii=False) + "\n" for x in new), "utf-8")
     a, b = loopb.validator_vs_pedia(domain, ab), loopb.validator_vs_pedia(domain, ab, "-cand")
-    keep = b["exact"] > a["exact"] and b["harm_rate"] <= a["harm_rate"]
+    abst = {k: sum(x.get("decision") in ("abstain", "reject") for x in L) / max(len(L), 1) for k, L in (("a", cur), ("b", new))}
+    a["abstain_rate"], b["abstain_rate"] = round(abst["a"], 3), round(abst["b"], 3)
+    keep = b["exact"] > a["exact"] and b["harm_rate"] <= a["harm_rate"] and abst["b"] <= abst["a"] + 0.05
     result = {"round": ab, "current": a, "candidate": b, "steps": steps, "kept": keep,
               "card": f"v{c.get('version', 1)}" + (f" -> v{cand['version']}" if keep else " (unchanged)")}
     (d / f"{ab}-improver-ab.json").write_text(json.dumps(result, indent=1, ensure_ascii=False), encoding="utf-8")
@@ -179,7 +178,11 @@ def main() -> None:
     for k in range(a.start, a.start + a.cycles):
         res = cycle(a.domain, k, silver, a.rule_rounds, skip_rules=a.skip_first_rules and k == a.start)
         silver = res["next_silver"]
-    print(kpis.table(kpis.history(a.domain)[-12:]))
+    _say("final: one sealed read")
+    fin = climb.pipeline_run(a.domain, 999, f"final after {a.cycles} cycles: one sealed read", sealed=True)
+    _say(f"  final: {fin}")
+    (RUNS_DIR / a.domain / "loop-final.json").write_text(json.dumps(fin, indent=1), encoding="utf-8")
+    print(kpis.table(kpis.history(a.domain)[-16:]))
 
 
 if __name__ == "__main__":

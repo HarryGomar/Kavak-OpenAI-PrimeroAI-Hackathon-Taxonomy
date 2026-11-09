@@ -37,6 +37,7 @@ class ValidateContext:
     brands: list[str] = field(default_factory=list)
     listing_id: str | None = None
     version: int = 0
+    menus: dict[str, list[str]] = field(default_factory=dict)   # brand -> its known node names (no labels, no answer)
 
 
 class Answer(BaseModel):

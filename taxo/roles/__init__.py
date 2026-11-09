@@ -7,5 +7,6 @@ validator one per domain; works a line of QUESTIONS (its skills), each answered 
 improver  from the validator's mistakes on gold and their traces: edits its questions or writes it a tool   (LLM)
 proposer  from disagreements: a code rule, a new check, a prompt line, a vocab entry, a registry addition, a route,
           or a convention question for a person                                         (LLM)
-curator   keeps the books: admits, promotes and retires rules on their record           (code, not an agent)
+
+The curator (admits, promotes and retires rules on their record) is code, not an agent: taxo/learn/curator.py.
 """

@@ -60,4 +60,6 @@ def test_naming_a_tool_without_calling_it_counts_as_skipped():
     fn = [t for t in tools if isinstance(t, codex.FunctionTool)]
     assert codex.skipped("I checked similar_brands.", fn, []) == ["similar_brands"]
     assert codex.skipped("Placed on the official name.", fn, []) == []
-    assert codex.skipped("ask_person was not available", fn, [{"tool": "similar_brands", "ok": True}]) == ["ask_person"]
+    uncalled = [t.name for t in fn if t.name != "similar_brands"]   # "unavailable": every tool not called
+    assert "ask_person" in uncalled
+    assert codex.skipped("ask_person was not available", fn, [{"tool": "similar_brands", "ok": True}]) == uncalled

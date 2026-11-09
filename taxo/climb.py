@@ -30,9 +30,11 @@ from taxo.core.config import DOMAINS_DIR, ROOT, RUNS_DIR
 from taxo.gate import RANK, wilson_lower
 from taxo.lattice import vocab as vocabmod
 from taxo.parse import Brands
+from taxo.tools.checks import CHECKS
 from taxo.pipeline import Item, brand_spread, load_gold, load_items, run, score_rows, shares, vocab_candidates
 
 N_SILVER, BATCH, MIN_TOUCHED, BAR = 200, 40, 5, 0.5
+AGENT_CALLS = 40   # placer calls per checkpoint run
 WORKERS = max(1, min(24, (os.cpu_count() or 2) - 2))   # candidates of a round run in parallel
 TOGGLE = ("veto/", "child/", "settle/single-name")    # rules whose on/off changes a placement
 
@@ -129,12 +131,85 @@ def _worker_init(domain: str, name: str) -> None:
     _W["tmp"] = _sdir(domain) / f"vocab-try-{os.getpid()}.yaml"
 
 
-def _worker_eval(arg: tuple[dict, dict]) -> dict:
-    """One candidate (vocab doc, rule statuses) -> per silver row (class, path)."""
-    doc, statuses = arg
-    rules = [evaluator.Rule(**{**r.__dict__, "status": statuses.get(r.id, r.status)}) for r in _W["rules"]]
+def _worker_eval(arg: tuple[dict, list[dict]]) -> dict:
+    """One candidate (vocab doc, its whole rule list as dicts) -> per silver row (class, path)."""
+    doc, rule_dicts = arg
+    rules = [evaluator.Rule(**d) for d in rule_dicts]
     run(_W["items"], _W["brands"], _vocab_of(doc, _W["tmp"]), rules, only=_W["only"])
     return _judge(_W["srows"], _W["by_gold"], _W["brands"])[0]
+
+
+# ---------------------------------------------------------------- the proposer agent as the main source of changes
+PAYLOAD_HELP = """payload_json formats that code can apply and test this round:
+- vocab: {"op": "add" or "remove", "axis": "strip" | "concentration" | "audience" | "form" | "edition" | "pack",
+          "tokens": ["word or phrase", ...]}
+- code_rule: {"params": {}} with `check` set to one of the known checks and `decision` veto or abstain
+- convention_question: {} (the description is the question for a person)
+Other kinds (agentic_rule, registry, route, new_check) are recorded as proposals for later rounds."""
+
+
+def clusters(sets: dict[str, list], limit: int = 6, examples: int = 4) -> list[dict]:
+    """Disagreements grouped by shape: (against which reference, class, the step that decided), biggest first."""
+    groups: dict[tuple, list] = {}
+    for ref, judged in sets.items():
+        for g, it, j in judged:
+            if j.cls == "exact":
+                continue
+            groups.setdefault((ref, j.cls, it.reason or it.step or "none"), []).append((g, it, j))
+    out = []
+    for (ref, cls, why), rows in sorted(groups.items(), key=lambda kv: -len(kv[1]))[:limit]:
+        words = Counter(w for _, _, j in rows for w in (j.extra if cls in ("deeper", "wrong") else j.missing))
+        out.append({"against": ref, "shape": f"{cls} / {why}", "n": len(rows), "words": words.most_common(6),
+                    "examples": [{"title": it.title[:110], "pipeline": " > ".join(it.path) or "-",
+                                  "reference": " > ".join(g.expected_path)} for g, it, _ in rows[:examples]]})
+    return out
+
+
+def ask_proposer(domain: str, cl: list[dict], doc: dict, log: Path) -> dict | None:
+    from taxo.core.codex import Runner
+    from taxo.roles.proposer import make_proposer
+    text = (PAYLOAD_HELP + "\n\nCurrent vocabulary (variant axes and strip words):\n"
+            + json.dumps({"variant": doc.get("variant"), "strip": doc.get("strip")}, ensure_ascii=False)
+            + "\n\nDisagreement clusters (pipeline vs the frozen validator's silver, and vs dev human labels):\n"
+            + json.dumps(cl, ensure_ascii=False, indent=0))
+    try:
+        r = Runner.run_sync(make_proposer(domain), text, timeout=900)
+    except Exception as e:
+        log.write_text(json.dumps({"error": str(e)[:500]}), encoding="utf-8")
+        return None
+    p = r.final_output.model_dump(mode="json")
+    log.write_text(json.dumps({"proposal": p, "clusters": cl}, indent=1, ensure_ascii=False), encoding="utf-8")
+    return p
+
+
+def proposal_candidate(domain: str, p: dict, doc: dict, rules: list[evaluator.Rule]):
+    """(label, doc, rules) that code can test, or None (the proposal is recorded only)."""
+    try:
+        payload = json.loads(p.get("payload_json") or "{}")
+    except json.JSONDecodeError:
+        payload = {}
+    kind, pid = p.get("kind"), re.sub(r"[^a-z0-9_]+", "_", (p.get("id") or "proposal").lower())
+    if kind == "vocab" and payload.get("tokens"):
+        d = yaml.safe_load(yaml.safe_dump(doc))
+        axis = payload.get("axis") or "strip"
+        lst = d.setdefault("strip", []) if axis == "strip" else d.setdefault("variant", {}).setdefault(axis, [])
+        toks = [t for t in payload["tokens"] if isinstance(t, str) and t.strip()]
+        if payload.get("op") == "remove":
+            lst[:] = [x for x in lst if x not in toks]
+        else:
+            lst.extend(t for t in toks if t not in lst)
+        return f"proposer vocab {axis} {payload.get('op', 'add')} {toks}", d, rules
+    if kind == "code_rule" and p.get("check") in CHECKS:
+        rule = evaluator.Rule(id=f"proposed/{pid}", stage="place", status="active", why=p.get("description", ""),
+                              when=[{"fact": "placement.step", "eq": "lattice"},
+                                    {"check": p["check"], "params": payload.get("params") or {}}],
+                              then={"veto": True, "route": "agent_title"})
+        return f"proposer code_rule {p['check']} ({p.get('decision')})", doc, rules + [rule]
+    if kind == "convention_question":
+        q = RUNS_DIR / domain / "questions.jsonl"
+        with open(q, "a", encoding="utf-8") as f:
+            f.write(json.dumps({"from": "proposer", "question_id": pid, "question": p.get("description")}) + "\n")
+    return None
 
 
 def phase(domain: str, name: str, ph: int, rounds: int) -> list[dict]:
@@ -154,37 +229,66 @@ def phase(domain: str, name: str, ph: int, rounds: int) -> list[dict]:
     spread = brand_spread(items)
     kept = []
     print(f"phase {ph} start: silver exact {summ['exact_rate']} harm {summ['harm_rate']} ({len(srows)} rows)", flush=True)
+    gold_by = {gid: it for it in items for gid in it.gold}
+    dev_rows = [g for g in rows if g.brand in only and not goldmod.is_sealed(g.brand) and g.id in gold_by]
+    record = []
     for rnd in range(1, rounds + 1):
-        cands = [(lbl, d, rules) for lbl, d in vocab_candidates(judged, doc, _vocab_of(doc, tmp), spread)]
+        # 1. the proposer agent reads the disagreement clusters and proposes ONE change
+        _, dev_judged = score_rows(dev_rows, gold_by, brands)
+        cl = clusters({"silver (validator)": judged, "dev gold (human)": dev_judged})
+        prop = ask_proposer(domain, cl, doc, _sdir(domain) / f"phase{ph}-round{rnd}-proposer.json")
+        pc = proposal_candidate(domain, prop, doc, rules) if prop else None
+        cands = [(pc[0], pc[1], pc[2], "proposer-agent")] if pc else []
+        # 2. code search adds its own candidates
+        cands += [(lbl, d, rules, "code-search") for lbl, d in vocab_candidates(judged, doc, _vocab_of(doc, tmp), spread)]
         cands += [(f"rule {r.id}: {r.status} -> {'shadow' if r.status == 'active' else 'active'}", doc,
-                   _toggled(rules, r.id)) for r in rules if r.id.startswith(TOGGLE) and r.status in ("active", "shadow")]
-        best = None
+                   _toggled(rules, r.id), "code-search")
+                  for r in rules if r.id.startswith(TOGGLE) and r.status in ("active", "shadow")]
+        # 3. shadow every candidate on silver (in parallel); the gate decides; a passing proposer change wins
         with ProcessPoolExecutor(max_workers=min(len(cands), WORKERS), initializer=_worker_init,
-                                 initargs=(domain, name)) as pool:   # every candidate at once
-            outs = list(pool.map(_worker_eval, [(d, {r.id: r.status for r in rs}) for _, d, rs in cands]))
-        for (lbl, d, rs), after in zip(cands, outs):
+                                 initargs=(domain, name)) as pool:
+            outs = list(pool.map(_worker_eval, [(d, [r.__dict__ for r in rs]) for _, d, rs, _ in cands]))
+        best, prop_info = None, None
+        for (lbl, d, rs, src), after in zip(cands, outs):
             ok, info = _gate(cur, after)
-            if ok and (best is None or info["better"] - info["worse"] > best[3]["better"] - best[3]["worse"]):
-                best = (lbl, d, rs, info, after)
+            if src == "proposer-agent":
+                prop_info = {**info, "passed": ok}
+            score_ = (src == "proposer-agent", info["better"] - info["worse"])
+            if ok and (best is None or score_ > best[5]):
+                best = (lbl, d, rs, info, after, score_, src)
+        rec = {"round": rnd, "proposal": prop, "proposal_tested": bool(pc), "proposal_gate": prop_info,
+               "candidates": len(cands)}
+        print(f"  round {rnd}: proposer -> {(prop or {}).get('kind')}: {(prop or {}).get('description', '')[:100]} | "
+              f"{'tested ' + str(prop_info) if pc else 'not testable this round (recorded)'}", flush=True)
         if best is None:
+            record.append(rec | {"kept": None})
             print(f"  round {rnd}: none of {len(cands)} candidates passes the silver gate; phase ends", flush=True)
             break
-        lbl, doc, rules, info, cur = best
+        lbl, doc, rules, info, cur, _, src = best
         run(items, brands, _vocab_of(doc, tmp), rules, only=only)
         _, summ, judged = _judge(srows, by_gold, brands)
-        kept.append({"round": rnd, "change": lbl, **info, "silver_exact": summ["exact_rate"],
+        kept.append({"round": rnd, "change": lbl, "proposed_by": src, **info, "silver_exact": summ["exact_rate"],
                      "silver_harm": summ["harm_rate"], "candidates": len(cands)})
-        print(f"  round {rnd}: KEPT {lbl} | {info} | silver exact {summ['exact_rate']} harm {summ['harm_rate']}",
+        record.append(rec | {"kept": lbl, "proposed_by": src})
+        print(f"  round {rnd}: KEPT [{src}] {lbl} | {info} | silver exact {summ['exact_rate']} harm {summ['harm_rate']}",
               flush=True)
         kpis.append(domain, kpis.row(domain, {"shares_subset": shares(items), "data": "drive"}, "A", ph * 100 + rnd,
-                                     f"silver climb p{ph} r{rnd}: {lbl}", vocab_path, rule_dirs,
+                                     f"silver climb p{ph} r{rnd} [{src}]: {lbl}", vocab_path, rule_dirs,
                                      silver={"set": name, "validator": srows[0].extra["validator"],
                                              "agreement": summ["exact_rate"], "harm": summ["harm_rate"], **info}))
+    (_sdir(domain) / f"phase{ph}-rounds.json").write_text(json.dumps(record, indent=1, ensure_ascii=False), "utf-8")
     if kept:   # write the kept changes back: vocab and rule statuses
         vocab_path.write_text("# Fragrance vocabulary. Written by taxo.climb; the silver-climb edits are logged in "
                               "runs/fragrance/silver/phase*.json.\n"
                               + yaml.safe_dump(doc, sort_keys=False, allow_unicode=True, width=120), encoding="utf-8")
         for r in rules:
+            if not r.path:   # a rule the proposer wrote and the gate kept: its own file
+                f = ROOT / "rules" / domain / f"{r.id.replace('/', '-')}.yaml"
+                f.write_text(yaml.safe_dump({"id": r.id, "stage": r.stage, "when": r.when, "then": r.then,
+                                             "status": r.status, "why": r.why,
+                                             "origin": f"proposer agent, silver climb phase {ph}"},
+                                            sort_keys=False, allow_unicode=True), encoding="utf-8")
+                continue
             if r.path and r.id.startswith(TOGGLE):
                 t = Path(r.path).read_text(encoding="utf-8")
                 t2 = re.sub(r"^status: \w+$", f"status: {r.status}", t, count=1, flags=re.M)
@@ -196,13 +300,22 @@ def phase(domain: str, name: str, ph: int, rounds: int) -> list[dict]:
 
 def checkpoint(domain: str, ph: int) -> dict:
     """The human step after a rule phase: score on human labels (Pedia stands in): dev, plus one logged sealed read."""
-    subprocess.run([sys.executable, "-m", "taxo.pipeline", domain, "--data", "drive", "--no-experiments", "--sealed",
-                    "--loop", "A", "--round", str(ph * 100 + 99), "--label", f"human checkpoint after silver phase {ph}"],
-                   check=True)
+    return pipeline_run(domain, ph * 100 + 99, f"human checkpoint after silver phase {ph} (dev; placer on)")
+
+
+def pipeline_run(domain: str, rnd: int, label: str, sealed: bool = False, agent_calls: int = AGENT_CALLS) -> dict:
+    """A full pipeline run with the placer agent on `agent_calls` routed listings; sealed only when asked (once, at
+    the end of a loop)."""
+    subprocess.run([sys.executable, "-m", "taxo.pipeline", domain, "--data", "drive", "--no-experiments",
+                    "--agent-calls", str(agent_calls), "--loop", "A", "--round", str(rnd), "--label", label]
+                   + (["--sealed"] if sealed else []), check=True)
     m = json.loads((RUNS_DIR / domain / "metrics.json").read_text(encoding="utf-8"))
-    return {"dev": m["dev"]["exact_rate"], "dev_harm": m["dev"]["harm_rate"], "sealed": m["sealed"]["exact_rate"],
-            "sealed_harm": m["sealed"]["harm_rate"], "to_agent": m["shares_subset"]["to_agent"][1],
-            "sealed_reads": m.get("sealed_reads_logged")}
+    out = {"dev": m["dev"]["exact_rate"], "dev_harm": m["dev"]["harm_rate"], "human_dev": m["human_dev"]["exact_rate"],
+           "to_agent": m["shares_subset"]["to_agent"][1], "placer": m.get("placer")}
+    if sealed:
+        out |= {"sealed": m["sealed"]["exact_rate"], "sealed_harm": m["sealed"]["harm_rate"],
+                "sealed_reads": m.get("sealed_reads_logged")}
+    return out
 
 
 def main() -> None:

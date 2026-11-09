@@ -38,6 +38,7 @@ GOLD_DIR = Path(os.environ.get("TAXO_GOLD_DIR", r"C:\Work\Pedia-Harness\repo\tes
 PEDIA_REPO = Path(os.environ.get("TAXO_PEDIA_REPO", r"C:\Work\Pedia-Harness\repo"))
 OWNER_REF, OWNER_PATH = "0cd4be60", "tests/fixtures/owner-structure.jsonl"
 FIXTURES = ["fresh150-harry.yaml", "exp01-harry-correct.yaml"]
+CONCURRENCY = 10       # agent calls in flight at once (Codex runner)
 DOMINANT = 0.6          # a variant value on >= this share of a cluster's records is written on its node (for checks)
 AUDIENCE_WORDS = {"women": "for women", "womens": "for women", "for her": "for women", "pour femme": "for women",
                   "men": "for men", "mens": "for men", "for him": "for men", "pour homme": "for men"}
@@ -218,39 +219,79 @@ class NodePick(BaseModel):
     node: str | None = Field(description="the exact option, or null if none fits")
 
 
-def agent_step(items: list[Item], brands: Brands, max_calls: int, runner: str = "cli") -> int:
-    """SPEC step 6, kept to a stub: ask (for at most `max_calls` < 50 gold-linked items) which of the brand's placed
-    names the title is, on the chosen runner (taxo.core.codex.runner). Code checks the answer: a name not on the list
-    is refused."""
-    max_calls = min(max_calls, 49)
-    if max_calls <= 0:
-        return 0
-    from agents import Agent
+def brand_trees(items: list[Item], domain: str = "fragrance") -> dict[str, dict[str, Node]]:
+    """Each brand's tree as the lattice built it (families and products), as taxonomy nodes the placer can search."""
+    trees: dict[str, dict[str, Node]] = defaultdict(dict)
+    for it in items:
+        if it.level != "product" or not it.brand:
+            continue
+        for k in range(2, len(it.path) + 1):
+            nid = f"{it.brand}/" + " > ".join(it.path[1:k])
+            parent = f"{it.brand}/" + " > ".join(it.path[1:k - 1]) if k > 2 else None
+            t = trees[it.brand]
+            if nid not in t:
+                t[nid] = Node(id=nid, domain=domain, name=it.path[k - 1], parent_id=parent, path=it.path[:k],
+                              level="product")
+            if parent and nid not in t[parent].children:
+                t[parent].children.append(nid)
+                t[parent].level = "family"
+    return trees
 
+
+def agent_step(items: list[Item], brands: Brands, max_calls: int, runner: str = "cli",
+               rules: list[evaluator.Rule] | None = None, domain: str = "fragrance", log: Path | None = None) -> dict:
+    """SPEC step 6: listings routed to the agent go to the placer agent (taxo/roles/placer.py) on the Codex runner,
+    CONCURRENCY at a time, at most `max_calls` (gold-linked first, so the effect can be scored). The placer searches
+    the brand's tree with its tools and runs check_rules (the domain's admitted rule specs and the pipeline's active
+    place rules) before it answers; the admitted agentic rules are lines in its prompt. Code checks every answer: the
+    node must exist in the brand's tree, below the brand; anything else is refused and counted, never patched."""
+    stats = {"calls": 0, "placed": 0, "abstained": 0, "refused": 0, "failed": 0, "tool_calls": 0, "secs": 0.0}
+    if max_calls <= 0:
+        return stats
+    from concurrent.futures import ThreadPoolExecutor
+
+    from taxo import memory
     from taxo.core.codex import runner as pick_runner
-    from taxo.core.config import model
+    from taxo.roles.placer import PlaceContext, make_placer
     run = pick_runner(runner)
     if run is None:
-        return 0
-    agent = Agent(name="agent-step-fragrance", model=model("placer"), output_type=NodePick,
-                  instructions="Pick the product node a fragrance listing belongs to, from the list only. "
-                               "Answer null if none fits.")
-    calls = 0
-    names: dict[str, set[str]] = defaultdict(set)
-    for it in items:
-        if it.level == "product":
-            names[it.brand].add(" > ".join(it.path[1:]))
-    for it in items:
-        if calls >= max_calls:
-            break
-        if not (it.route == "agent_title" and it.gold and names.get(it.brand)):
-            continue
-        calls += 1
-        pick = run(agent, f"Title: {it.title}\nBrand: {brands.names[it.brand]}\nOptions:\n"
-                   + "\n".join(sorted(names[it.brand])[:300])).final_output.node
-        if pick in names[it.brand]:
-            it.path, it.level, it.step = [brands.names[it.brand]] + pick.split(" > "), "product", "agent"
-    return calls
+        return stats
+    t0 = time.time()
+    pack = yaml.safe_load((DOMAINS_DIR / domain / "pack.yaml").read_text(encoding="utf-8")) or {}
+    agentic = yaml.safe_load((DOMAINS_DIR / domain / "memory" / "rules" / "agentic.yaml").read_text(encoding="utf-8"))
+    lines = [f"- {r['text']}" for r in agentic or [] if r.get("status") == "admitted"]
+    agent = make_placer(domain, (pack.get("conventions") or "") + ("\n" + "\n".join(lines) if lines else ""))
+    specs = [r for r in memory.rules_for(domain, tuple(pack.get("families", []))) if r.status.value == "admitted"]
+    place_rules = [r for r in (rules or []) if r.stage == "place" and r.status == "active"]
+    trees = brand_trees(items, domain)
+    todo = [it for it in items if it.route == "agent_title" and it.brand and trees.get(it.brand)]
+    todo.sort(key=lambda it: not it.gold)
+    todo = todo[:max_calls]
+
+    def one(it: Item) -> dict:
+        ctx = PlaceContext(domain, trees[it.brand], specs, place_rules)
+        try:
+            r = run(agent, f"Listing title: {it.title}\nBrand: {brands.names[it.brand]}\nShop: {it.source}",
+                    context=ctx)
+        except Exception as e:
+            return {"id": it.id, "outcome": "failed", "error": str(e)[:200]}
+        o = r.final_output
+        n = trees[it.brand].get(o.node_id) if o.node_id else None
+        outcome = "abstained" if o.node_id is None else "placed" if n else "refused"
+        if n:
+            it.path, it.level, it.step, it.reason = list(n.path), "product", "agent", "placed_by_agent"
+        return {"id": it.id, "title": it.title, "node_id": o.node_id, "outcome": outcome, "confidence": o.confidence,
+                "reason": o.reason, "tool_calls": [t.get("tool") for t in getattr(r, "tool_calls", [])]}
+
+    with ThreadPoolExecutor(CONCURRENCY) as pool:
+        rows = list(pool.map(one, todo))
+    for x in rows:
+        stats[x["outcome"]] += 1
+        stats["tool_calls"] += len(x.get("tool_calls") or [])
+    stats["calls"], stats["secs"] = len(rows), round(time.time() - t0, 1)
+    if log:
+        log.write_text("".join(json.dumps(x, ensure_ascii=False) + "\n" for x in rows), encoding="utf-8")
+    return stats
 
 
 def score_rows(rows: list[goldmod.GoldRow], by_gold: dict[str, Item], brands: Brands, pedia: bool = False):
@@ -403,7 +444,7 @@ def main() -> None:
     rules = evaluator.load(ROOT / "rules" / a.domain, ROOT / "rules" / "global")
 
     stats = run(items, brands, vocab, rules)
-    calls = agent_step(items, brands, a.agent_calls, a.runner)
+    placer = agent_step(items, brands, a.agent_calls, a.runner, rules, a.domain, out_dir / "placer.jsonl")
     subset = [it for it in items if not it.id.startswith("gold:")]
     dev = gold.dev
     dev_rep, dev_j = score_rows(dev, by_gold, brands)
@@ -413,7 +454,7 @@ def main() -> None:
         "gold_by_origin": dict(Counter(g.origin for g in rows)),
         "dev_brands": sorted({g.brand for g in dev}), "sealed_brands": sorted(gold.sealed_brands()),
         "rules": [{"id": r.id, "stage": r.stage, "status": r.status} for r in rules],
-        "lattice": stats, "agent_calls": calls,
+        "lattice": stats, "agent_calls": placer["calls"], "placer": placer,
         "shares_subset": shares(subset), "shares_gold": shares(list({id(it): it for it in by_gold.values()}.values())),
         "rules_fired": dict(Counter(it.rule for it in items if it.rule)),
         "shadow_would_change": dict(Counter(r for it in items for r, _ in it.shadow)),
