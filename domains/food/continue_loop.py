@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import subprocess
 from pathlib import Path
 
 from pydantic import BaseModel
@@ -68,7 +69,8 @@ def export_round(folder, number, decision=None):
     """Native distiller record; detailed source-bearing evidence stays in the run folder."""
     from taxo.core.config import MEMORY_DIR
     manifest, metrics = read(folder/'manifest.json'), read(folder/'metrics.json')
-    rid = hashlib.sha256(str(folder.resolve()).encode()).hexdigest()[:10]
+    rid = hashlib.sha256(json.dumps(['food', manifest['started_utc'], folder.name,
+                                    manifest['code']['sha256']]).encode()).hexdigest()[:10]
     metadata = {'full_sample_gold': metrics, 'production_admission': False,
                 'diagnostics': read(folder/'diagnostics.json'),
                 'source_sha256': manifest['source']['sha256'], 'card_sha256': manifest['card']['sha256'],
@@ -78,6 +80,8 @@ def export_round(folder, number, decision=None):
     record = {'id': rid, 'domain': 'food', 'ts': manifest['started_utc'], 'loop': 'A', 'round': number,
               'change': 'Pedia-inspired CLI development continuation', 'label': folder.name,
               'keep': None, 'decided_on': None, 'lesson': 'food-card-feedback', 'kind': 'card_text',
+              'branch': subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD'], text=True).strip(),
+              'author': 'EduardoGC21',
               'gate': None, 'kpi': {'domain': 'food', 'ts': manifest['started_utc'], 'loop': 'A',
                   'round': number, 'label': folder.name, 'code': manifest['code']['sha256'],
                   'vocab': None, 'rules': read(folder/'diagnostics.json')['rules_fingerprint'],
