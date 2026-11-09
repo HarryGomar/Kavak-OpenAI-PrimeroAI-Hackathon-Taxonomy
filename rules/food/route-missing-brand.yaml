@@ -1,0 +1,13 @@
+id: food/route-missing-source-brand
+stage: route
+when:
+  - {fact: brand.slug, missing: true}
+  - {fact: placement.level, eq: none}
+then: {route: agent_evidence}
+status: shadow
+why: >-
+  Missing source brands leave food observations without a path. Route these to
+  supplied title/description evidence without inferring a brand from the seller
+  or importing Pedia assignments. One isolated bounded construction exercised
+  this route; path agreement was neutral and no agent placement calls were made.
+  Human listing review is still required before admission or cost/accuracy claims.
