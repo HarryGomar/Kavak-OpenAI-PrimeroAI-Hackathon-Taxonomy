@@ -151,7 +151,7 @@ def settle(domain: str, version: str, verdicts: Path) -> dict:
               "pipeline_wrong_found": pipe_wrong, "verdicts": dict(c)}
     (d / f"{version}-silver.json").write_text(json.dumps(silver, indent=1), encoding="utf-8")
     m = json.loads((RUNS_DIR / domain / "metrics.json").read_text(encoding="utf-8"))
-    kpis.append(domain, kpis.row(domain, m, "B", int(version.lstrip("V") or 0), f"Loop B {version}: person settled",
+    kpis.append(domain, kpis.row(domain, m, "B", int(version.lstrip("V") or 0), f"Loop B {version}: settled by {silver['reviewer']}",
                                  ROOT / "domains" / domain / "vocab.yaml",
                                  [ROOT / "rules" / domain, ROOT / "rules" / "global"], silver=silver))
     return silver
