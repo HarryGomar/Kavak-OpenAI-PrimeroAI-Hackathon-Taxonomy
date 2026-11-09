@@ -62,12 +62,9 @@
   .cover h1 { font: 600 220px/0.9 var(--disp); letter-spacing: -.045em; margin: 0 0 40px -8px; align-self: flex-start; }
   .cover .subt { font: 400 54px/1.2 var(--sans); letter-spacing: -.015em; margin: 0; max-width: 1100px; align-self: flex-start; }
   .cover .ev { font: 500 24px var(--sans); color: var(--mute); margin: 64px 0 0; align-self: flex-start; }
-  .closing { justify-content: center; padding-left: 160px; }
-  .endgrid { display: grid; grid-template-columns: 1fr 540px; gap: 90px; align-items: center; }
-  .endgrid > div { display: flex; flex-direction: column; gap: 36px; }
-  .closing h2 { font-size: 116px; line-height: 1; letter-spacing: -.035em; }
-  .closing p { font: 400 34px/1.35 var(--sans); color: var(--ink2); margin: 0; max-width: 900px; }
-  #chain { height: 720px; }
+  .closing { justify-content: center; gap: 36px; padding-left: 160px; }
+  .closing h2 { font-size: 124px; line-height: 1; letter-spacing: -.035em; align-self: flex-start; }
+  .closing p { font: 400 40px/1.35 var(--sans); color: var(--ink2); margin: 0; align-self: flex-start; }
 
   /* ---------- photos ---------- */
   .pic { position: absolute; margin: 0; }
@@ -91,26 +88,18 @@
   .say p { font: 400 30px/1.4 var(--sans); color: var(--ink2); margin: 0 0 30px; }
   .say b { color: var(--ink); }
 
-  /* ---------- 4 · accuracy, cost, speed ---------- */
-  .axes { display: grid; grid-template-columns: repeat(3, 1fr); flex: 1; min-height: 0; }
-  .axes > div { padding: 0 60px; display: flex; flex-direction: column; }
+  /* ---------- 4 · accuracy, cost, speed, and what each takes ---------- */
+  .axes { display: grid; grid-template-columns: repeat(3, 1fr); flex: 1; min-height: 0; align-content: center; }
+  .axes > div { padding: 0 56px; display: flex; flex-direction: column; }
   .axes > div:first-child { padding-left: 0; }
   .axes > div + div { border-left: 2px solid var(--line); }
-  .axes h3 { font: 600 52px/1 var(--disp); letter-spacing: -.02em; margin: 0 0 14px; }
-  .axes .m { font: 400 26px/1.35 var(--sans); color: var(--ink2); margin: 0; min-height: 72px; }
-  .axes .k { font: 500 21px var(--sans); color: var(--faint); margin: 44px 0 6px; }
-  .axes .v { font: 600 96px/1 var(--disp); margin: 0; }
-  .axes .w { font: 400 25px/1.4 var(--sans); color: var(--mute); margin: 26px 0 0; }
-
-  /* ---------- 5 · constraints ---------- */
-  .cons4 { display: grid; grid-template-columns: repeat(4, 1fr); flex: 1; min-height: 0; align-content: center; }
-  .cons4 > div { padding: 0 44px; display: flex; flex-direction: column; }
-  .cons4 > div:first-child { padding-left: 0; }
-  .cons4 > div + div { border-left: 2px solid var(--line); }
-  .cons4 .p { font: 400 28px/1.35 var(--sans); color: var(--ink2); margin: 0; min-height: 76px; }
-  .cons4 .cv { width: 100%; height: 250px; margin: 34px 0; display: block; overflow: visible; }
-  .cons4 .a { font: 600 32px/1.3 var(--sans); margin: 0; min-height: 84px; }
-  .cons4 .l { font: 600 24px var(--sans); color: var(--mute); margin: 18px 0 0; }
+  .axes h3 { font: 600 52px/1 var(--disp); letter-spacing: -.02em; margin: 0 0 18px; }
+  .axes .k { font: 500 21px var(--sans); color: var(--faint); margin: 0 0 6px; }
+  .axes .v { font: 600 64px/1 var(--disp); margin: 0; }
+  .axes .m { font: 400 26px/1.35 var(--sans); color: var(--ink2); margin: 30px 0 0; min-height: 70px; }
+  .axes .cv { width: 100%; height: 200px; margin: 26px 0; display: block; overflow: visible; }
+  .axes .a { font: 600 30px/1.3 var(--sans); margin: 0; min-height: 78px; }
+  .axes .l { font: 600 24px var(--sans); color: var(--mute); margin: 14px 0 0; }
 
   /* ---------- 7 · loop 1, one listing through the rules ---------- */
   .trace { display: flex; flex-direction: column; margin-top: -8px; }
@@ -243,39 +232,47 @@
   <aside class="notes">The task we tried this on comes from our own work. To understand a market you have to match and connect its listings into product trees: Oreo, Double Stuf, Golden; Lattafa, the Khamrah family, Khamrah Qahwa. Until you know listings are one product you can't add up its price, its reviews or its demand. It looks trivial for a person and is surprisingly hard for an agent: a size or a 12-pack is never a new product, a flanker like Khamrah Qahwa is.</aside>
 </section>
 
-<!-- 4 · What we want to improve -->
+<!-- 4 · What we want to improve, and what each takes -->
 <section class="slide" data-n="4">
-  <h2>What we want the system to improve, by itself.</h2>
+  <h2>Accuracy, cost, speed: what it improves by itself.</h2>
   <div class="axes">
-    <div><h3>Accuracy</h3><p class="m">F1 on gold, and on listings nobody labelled</p><p class="k">an agent on everything</p><p class="v"><span class="ph" data-r="AO.f1">[f]</span></p><p class="w">No ground truth beyond a small gold set.</p></div>
-    <div><h3>Cost</h3><p class="m">dollars to place all 2 million listings</p><p class="k">an agent on everything</p><p class="v"><span class="ph" data-r="AO.cost2M">[$C]</span></p><p class="w">Paid again on every refresh, and in every new domain.</p></div>
-    <div><h3>Speed</h3><p class="m">time to place all 2 million listings</p><p class="k">an agent on everything</p><p class="v"><span class="ph" data-r="AO.hours">[h]</span></p><p class="w">Rules are near-instant; each agent call takes seconds.</p></div>
+    <div><h3>Accuracy</h3><p class="k">an agent on everything: exact match</p><p class="v"><span class="ph" data-r="AO.f1">[f]</span></p>
+      <p class="m">Few labels, and its own eval can't be trusted</p><svg class="cv" id="cv3"></svg>
+      <p class="a">Rules from a few labels; an eval that improves</p><p class="l"><span style="color:var(--ind)">Loop 1</span> · <span style="color:var(--val)">Loop 2</span></p></div>
+    <div><h3>Cost</h3><p class="k">an agent on all 2M listings, one pass</p><p class="v"><span class="ph" data-r="AO.cost2M">[$C]</span></p>
+      <p class="m">Paid again on every refresh, in every domain</p><svg class="cv" id="cv2"></svg>
+      <p class="a"><span style="color:var(--ind)">Rules</span> settle 89%, free; an agent the rest</p><p class="l">The solver</p></div>
+    <div><h3>Speed</h3><p class="k">the same, one call at a time</p><p class="v"><span class="ph" data-r="AO.hours">[h]</span></p>
+      <p class="m">Seconds per agent call; each domain starts from zero</p><svg class="cv" id="cv4"></svg>
+      <p class="a">Rules take 1 ms a listing; <span style="color:var(--meta)">lessons</span> carry over</p><p class="l" style="color:var(--meta)">Loop 3</p></div>
   </div>
-  <p class="bottom">Cost and speed check themselves. Accuracy doesn't, so that's where the loops do their work.</p>
-  <aside class="notes">This is what we want the system to improve by itself, on three fronts. Accuracy: F1 on our gold set and on listings nobody labelled; an agent on everything gets [f]. Cost: placing all two million listings with an agent costs [$C], again on every refresh and in every new domain. Speed: [h] to place them all; rules are near-instant, an agent call takes seconds. Cost and speed check themselves. Accuracy doesn't, so that's where the loops do their work. It's a good task for self-improvement precisely because one axis can't be checked directly.</aside>
+  <p class="src">Measured on fragrance: the agent matched Pedia's labels on 120 of 160 listings, using ~920 tokens and ~0.9 s a listing, 40 per call. Estimates assume $3 per million tokens.</p>
+  <aside class="notes">This is what we want the system to improve by itself, on three fronts. Accuracy: an agent on everything matched Pedia's labels exactly on 75% of 160 fragrance listings. We have few labels, and as we saw, its own eval can't be trusted. So loop 1 learns rules from the few we label, and loop 2 improves the eval itself. Cost: it used about 920 tokens a listing, so all two million listings come to about 1.8 billion tokens: around $5,500 a pass at $3 per million, paid again on every refresh and in every domain. On fragrance, rules settle 89% for free, so the agent bill falls to about $600. Speed: at 0.9 seconds a listing, one call at a time, that's about 510 hours. Rules take about a millisecond a listing: two million in about 35 minutes. And loop 3 lets each new domain start from the last one's lessons. Cost and speed check themselves. Accuracy doesn't, so that's where most of the work goes.</aside>
 </section>
 
-<!-- 5 · Constraints -->
-<section class="slide" data-n="5">
-  <h2>Every constraint points to rules.</h2>
-  <div class="cons4">
-    <div><p class="p">2 million listings, and time to label only <b style="color:var(--ind)">a few</b></p><svg class="cv" id="cv1"></svg><p class="a">Learn rules from the few we label</p><p class="l" style="color:var(--ind)">Loop 1</p></div>
-    <div><p class="p">An agent on every listing costs <span class="ph" data-r="AO.cost2M">[$C]</span> a pass</p><svg class="cv" id="cv2"></svg><p class="a"><span style="color:var(--ind)">Rules</span> settle most, free; <span style="color:var(--ink)">an agent</span> gets the rest</p><p class="l">The solver</p></div>
-    <div><p class="p">No way to tell if we're improving</p><svg class="cv" id="cv3"></svg><p class="a">Improve the eval itself, with a person's labels</p><p class="l" style="color:var(--val)">Loop 2</p></div>
-    <div><p class="p">Each new domain starts from zero</p><svg class="cv" id="cv4"></svg><p class="a">Carry <span style="color:var(--meta)">the lessons</span> to the next one</p><p class="l" style="color:var(--meta)">Loop 3</p></div>
-  </div>
-  <aside class="notes">We work with over two million listings and have time to label only a few, so loop 1 learns rules from the few we label. An agent on every listing costs [$C] a pass, so rules settle most of them for free and an agent gets only the rest: that's the solver. We had no way to tell if we were improving: its own eval climbed while a person's check barely moved. So loop 2 improves the eval itself, with a person's labels. And each new domain would start from zero, so loop 3 carries the lessons to the next one.</aside>
-</section>
-
-<!-- 6 · Architecture: the flow top to bottom, the loops on the left -->
-<section class="slide" data-n="6">
+<!-- 5A · Architecture: the sketch, top to bottom, with the real agents -->
+<section class="slide" data-n="5" data-var="A">
   <h2>Taxo: a solver, and three loops that improve it.</h2>
   <div class="fill"><svg class="ch" id="archA"></svg></div>
-  <aside class="notes">We propose this architecture. In one domain, say fragrance, listings go through rules and agents, the solver, and come out as a taxonomy. Validation scores that taxonomy on gold and checks listings nobody labelled, and a person sees what it flags and labels a sample. Loop 1 takes what validation finds and improves the rules. Loop 2 takes the person's labels and improves the validation itself. Loop 3 carries the lessons to the next domain: food, cars. We'll go through each with an example.</aside>
+  <aside class="notes">We propose this architecture, and it is what runs today. In one domain, on its own branch, listings go through rules, and the placer agent gets only what rules can't settle; code checks its answer. The validator agent labels fresh listings blind: that's silver. A person settles every disagreement: that's gold. Loop 1: the proposer agent reads where the solver disagrees with silver and gold and proposes one rule change; a gate in code keeps it only if it scores better. Loop 2: the improver agent reads the validator's mistakes and proposes one change to the validator, kept only if it agrees more with gold. Loop 3: every domain runs on its own branch; distil reads them all, and a lesson kept in two domains goes global.</aside>
+</section>
+
+<!-- 5B · Architecture: the old panel, with the real agents and the branches -->
+<section class="slide" data-n="5" data-var="B">
+  <h2>Taxo: a solver, and three loops that improve it.</h2>
+  <div class="fill"><svg class="ch" id="archB"></svg></div>
+  <aside class="notes">We propose this architecture, and it is what runs today. In one domain, on its own branch, listings go through rules, and the placer agent gets only what rules can't settle; code checks its answer. The validator agent labels fresh listings blind: that's silver. A person settles every disagreement: that's gold. Loop 1: the proposer agent reads where the solver disagrees with silver and gold and proposes one rule change; a gate in code keeps it only if it scores better. Loop 2: the improver agent reads the validator's mistakes and proposes one change to the validator, kept only if it agrees more with gold. Loop 3: every domain runs on its own branch; distil reads them all, and a lesson kept in two domains goes global.</aside>
+</section>
+
+<!-- 5C · Architecture: one row, the loops as curves above and below, the branches at the bottom -->
+<section class="slide" data-n="5" data-var="C">
+  <h2>Taxo: a solver, and three loops that improve it.</h2>
+  <div class="fill"><svg class="ch" id="archC"></svg></div>
+  <aside class="notes">We propose this architecture, and it is what runs today. In one domain, on its own branch, listings go through rules, and the placer agent gets only what rules can't settle; code checks its answer. The validator agent labels fresh listings blind: that's silver. A person settles every disagreement: that's gold. Loop 1: the proposer agent reads where the solver disagrees with silver and gold and proposes one rule change; a gate in code keeps it only if it scores better. Loop 2: the improver agent reads the validator's mistakes and proposes one change to the validator, kept only if it agrees more with gold. Loop 3: every domain runs on its own branch; distil reads them all, and a lesson kept in two domains goes global.</aside>
 </section>
 
 <!-- 7 · Loop 1: one listing through the rules, with the file that decides each step -->
-<section class="slide" data-n="7">
+<section class="slide" data-n="6">
   <h2><span style="color:var(--ind)">Loop 1, induction:</span> a few labelled cases become rules.</h2>
   <div class="trace">
     <div class="tr first"><p class="rl">A Walmart listing</p><p class="tt">Lattafa Khamrah Qahwa Eau De Parfum 3.4 Oz Unisex Fragrance Lattafa</p></div>
@@ -311,7 +308,7 @@ then: {route: agent_evidence}</pre></div>
 </section>
 
 <!-- 8 · Loop 1: how the lattice works -->
-<section class="slide" data-n="8">
+<section class="slide" data-n="7">
   <h2><span style="color:var(--ind)">Loop 1:</span> the lattice finds products by counting.</h2>
   <div class="fill"><svg class="ch" id="lattice"></svg></div>
   <p class="bottom" style="font-size:28px;color:var(--ink2)">No word lists. A run shared by two products is a family. Add a word to the vocabulary and the count changes on the next run.</p>
@@ -319,64 +316,62 @@ then: {route: agent_evidence}</pre></div>
 </section>
 
 <!-- 8 · Loop 1: F1 on gold as the rules are built -->
-<section class="slide" data-n="9">
-  <h2><span style="color:var(--ind)">Loop 1:</span> F1 on the gold set, as each rule is added.</h2>
+<section class="slide" data-n="8">
+  <h2><span style="color:var(--ind)">Loop 1:</span> exact match on sealed gold, round by round.</h2>
   <div class="fill chart"><div class="plot"><svg class="ch" id="figA"></svg></div></div>
-  <p class="bottom" style="font-size:28px;color:var(--ink2)">Each round an agent proposes one rule. A gate in code keeps it only if F1 on gold rises.</p>
-  <aside class="notes">Each round an agent proposes one rule, and a gate in code keeps it only if F1 on gold rises. F1 on gold goes from [x] to [y] as the rules are built.</aside>
+  <p class="bottom" style="font-size:28px;color:var(--ink2)">A gate in code keeps a change only if exact match on sealed gold rises. Meanwhile the agent's share fell from 30% to 11%.</p>
+  <p class="src">Fragrance. Sealed gold: 2,233 listings with Pedia's labels, read only by the gate. Rounds 4, 7 and 8 were dropped.</p>
+  <aside class="notes">Each round tries one change, and a gate in code keeps it only if exact match on sealed gold rises. On fragrance it went from 52% to 69% over six rounds, and the share of listings sent to the agent fell from 30% to 11%. The big step, round 3, looks the product up on the brand's own site. Round 6 came from loop 2: the validator found that most of its errors were short names seen only once. The gate dropped three rounds.</aside>
 </section>
 
 <!-- 9 · Loop 2: validation -->
-<section class="slide" data-n="10">
+<section class="slide" data-n="9">
   <h2><span style="color:var(--val)">Loop 2, validation:</span> improve the eval itself.</h2>
   <div class="vgrid" style="grid-template-columns:780px 1fr;gap:90px">
-    <div class="chart"><div class="plot"><svg class="ch" id="loop2"></svg></div><p class="ex"><b style="color:#B07F0C">Gold</b>: labelled by a person. <b style="color:#7C8390">Silver</b>: labelled by the validator, every disagreement settled by a person.</p><p class="ex">For example: <span class="ph">[the check the person added, from the run]</span></p></div>
+    <div class="chart"><div class="plot"><svg class="ch" id="loop2"></svg></div><p class="ex"><b style="color:#B07F0C">Gold</b>: labelled by a person. <b style="color:#7C8390">Silver</b>: labelled by the validator, every disagreement settled by a person.</p><p class="ex">For example: 12 of the 16 errors it found were short names seen only once. That became a rule, kept in round 6.</p></div>
     <div class="chart"><h3>F1 of the solver, on each round's eval</h3><div class="plot"><svg class="ch" id="figB"></svg></div></div>
   </div>
-  <aside class="notes">A small gold set doesn't cover everything, so loop 2 improves the eval itself. Going round the loop: a validator agent checks listings nobody labelled. It flags errors, and cases it isn't confident about. A person settles them. Where the solver was wrong, the case joins gold: gold 2. The rest is kept as silver. From that come better rules, and a better validator. So each round there is more silver, and it is built better: the eval covers more and gets stricter. Then it asks what is going on: for example [confirm from the run: small houses with no barcode name the product only in the description]. That goes back into the rules, and into a stricter check, so confidence goes up. On the graph: as the checks get stricter, rule set 1 falls from [x] to [z]; after refining, rule set 2 gets back to [w]. We improve two things at once: the validation, and the solver underneath it.</aside>
+  <aside class="notes">A small gold set doesn't cover everything, so loop 2 improves the eval itself. Going round the loop: a validator agent checks listings nobody labelled. It flags errors, and cases it isn't confident about. A person settles them. Where the solver was wrong, the case joins gold: gold 2. The rest is kept as silver. From that come better rules, and a better validator. So each round there is more silver, and it is built better: the eval covers more and gets stricter. Then it asks what is going on: for example, 12 of the 16 errors it found were short product names seen only once; that became a rule, which the gate kept in round 6. That goes back into the rules, and into a stricter check, so confidence goes up. On the graph: as the checks get stricter, rule set 1 falls from [x] to [z]; after refining, rule set 2 gets back to [w]. We improve two things at once: the validation, and the solver underneath it.</aside>
 </section>
 
 <!-- 10 · Loop 3: meta -->
-<section class="slide" data-n="11">
-  <h2><span style="color:var(--meta)">Loop 3, meta:</span> the next domain starts from what this one learned.</h2>
+<section class="slide" data-n="10">
+  <h2><span style="color:var(--meta)">Loop 3, meta:</span> lessons carry across branches, unevenly.</h2>
   <div class="vgrid" style="grid-template-columns:720px 1fr">
-<pre class="mono"><i># a lesson, kept with its scope</i>
-lesson: strip-variants-first
-scope:  global
-claim:  Strip size, pack and
-        audience before counting
-        names, or every size
-        becomes a product.</pre>
+<pre class="mono"><i># lessons/brand-site-rung.yaml</i>
+<i># written by distil from the round</i>
+claim:  look the product up on
+        the brand's own site
+scope:  domain:fragrance
+record: round 3, kept
+        better 313, worse 45
+        exact     +11 points
+        to agent  -11 points</pre>
     <div class="xfer">
-      <p class="hd">Rounds saved against a cold start</p>
-      <div><p class="k">Food → fragrance</p><p class="v"><span class="ph" data-r="C.food>fragrance">[n]</span></p><p class="w">Carried.</p></div>
-      <div><p class="k">Fragrance → food</p><p class="v"><span class="ph" data-r="C.fragrance>food">[m]</span></p><p class="w">Not much.</p></div>
-      <div><p class="k">Fragrance → cars</p><p class="v"><span class="ph" data-r="C.fragrance>cars">[k]</span></p><p class="w">Cars have a published catalogue, so the registry does the work.</p></div>
+      <p class="hd">One lesson, whole_name, in two domains</p>
+      <div><p class="k">Food</p><p class="v">−789</p><p class="w">harmful placements</p></div>
+      <div><p class="k">Fragrance</p><p class="v">−41</p><p class="w">exact placements</p></div>
+      <div><p class="k">The rule</p><p class="v" style="color:var(--meta)">2</p><p class="w">domains must keep a lesson before it goes global</p></div>
     </div>
   </div>
-  <aside class="notes">The last loop distils what worked, with its scope, into lessons for the next domain. A domain that starts from those lessons gets there in fewer rounds. Food to fragrance carried; fragrance to food, not much. Cars have a published catalogue, so there the registry does the work.</aside>
+  <aside class="notes">Every domain runs on its own branch, and every round leaves a record. Distil reads all the branches and writes lessons, each with its scope and its record. This one, look the product up on the brand's own site, came from fragrance round 3: 313 placements better, 45 worse, and eleven points fewer listings sent to the agent. Lessons carry unevenly. Whole-name matching cut food's harmful placements by 789, but cost fragrance 41 exact ones. So a lesson goes global only once two domains have kept it.</aside>
 </section>
 
 <!-- 11 · Results -->
-<section class="slide" data-n="12">
+<section class="slide" data-n="11">
   <h2>Results: what each loop adds, in each domain.</h2>
   <div class="fill"><table class="res" id="res"></table></div>
-  <p class="src">F1 on fresh listings; cost per 1,000 listings beside it</p>
+  <p class="src">Exact match against Pedia's labels (the agent: 160 fresh listings; the rules: 2,233 sealed). Beside it, $ per 1,000 listings, est. at $3 per million tokens.</p>
   <aside class="notes">We have more under the hood, like the wiki the agents keep; happy to go into it after, there isn't time for the whole architecture now. Here is how each loop improves each domain. [Read the one row that matters most once the numbers are in.]</aside>
 </section>
 
-<!-- 13 · Close -->
-<section class="slide closing" data-n="13">
+<!-- 12 · Close -->
+<section class="slide closing" data-n="12">
   <svg class="cloud" data-seed="11" aria-hidden="true"></svg>
-  <div class="endgrid">
-    <div class="clear">
-      <h2>Everything is in the evals.</h2>
-      <p>We improved a task that isn't directly verifiable by improving how we check it, with feedback.</p>
-      <p style="color:var(--mute)">Next: customer-feedback models, and any task without a ground truth.</p>
-    </div>
-    <div class="clear"><svg class="ch" id="chain"></svg></div>
-  </div>
-  <aside class="notes">What matters is that we improved a task that isn't directly verifiable. A person's labels make a better eval; a better eval makes better rules; better rules make a better taxonomy, and the next domain starts ahead. We think it extends to other tasks, like customer-feedback models. Everything is in the evals: as we improve the system, we have to improve the evals.</aside>
+  <h2 class="clear">Everything is in the evals.</h2>
+  <p class="clear">As the system improves, the eval has to improve with it.</p>
+  <p class="clear" style="color:var(--mute)">Next: customer-feedback models, and other tasks with no ground truth.</p>
+  <aside class="notes">What matters is that we improved a task that isn't directly verifiable, by improving how we check it, with a person's feedback. We think it carries to other tasks with no ground truth, like customer-feedback models. Everything is in the evals: as the system improves, the eval has to improve with it.</aside>
 </section>
 
 </div></div>
@@ -394,10 +389,17 @@ claim:  Strip size, pack and
   const RESULTS = {
     // Every listing to an agent: F1 (0–1), dollars per 1,000 listings (the 2M bill on slide 4 is cost × 2,000),
     //   and hours to place all 2M listings.   e.g. agentOnly: { f1: …, cost: …, hours: … }
-    agentOnly: null,
+    // Measured on fragrance (C:\Work\Kavak-Taxo-runs\fragrance-run): the validator agent, blind, matched Pedia's labels
+    //   exactly on 120 of 160 listings (V1-V4, 40 each); it used ~920 tokens and ~0.9 s per listing, 40 listings per call
+    //   (840 listings). cost = $ per 1,000 listings at an assumed $3 per million tokens; hours = 2M x 0.92 s, one call at a time.
+    agentOnly: { f1: 0.75, cost: 2.76, hours: 511 },
     // Slide 8, loop 1 on fragrance: one entry per round, round 0 first. f1 on gold (0–1), kept: the rule kept that round.
     //   e.g. A: { rounds: [{ f1: …, kept: null }, { f1: …, kept: 'registry' }, { f1: …, kept: 'lattice' }] }
-    A: null,
+    // Fragrance, drive data: exact match on sealed gold (2,233 listings with Pedia's labels), the rounds the gate kept.
+    //   Rounds 4, 7 and 8 were dropped. From memory/rounds/fragrance on origin/distill/rounds.
+    A: { rounds: [{ f1: 0.524, kept: null, label: 'start' }, { f1: 0.528, kept: 'strip mist words', label: '1' },
+                  { f1: 0.538, kept: 'elixir, intense are names', label: '2' }, { f1: 0.651, kept: "the brand's own site", label: '3' },
+                  { f1: 0.660, kept: 'shop URLs', label: '5' }, { f1: 0.689, kept: 'short single names', label: '6' }] },
     // Slide 9: F1 of rule set 1 and rule set 2 on gold, validation set 1 and validation set 2 (0–1).
     //   e.g. B: { R1: { gold: …, V1: …, V2: … }, R2: { gold: …, V1: …, V2: … } }
     B: null,
@@ -406,7 +408,9 @@ claim:  Strip size, pack and
     C: null,
     // Slide 11: F1 on fresh listings (0–1) and $ per 1,000 listings, per domain and system.
     //   e.g. final: { fragrance: { agent: { f1, cost }, loop1: { f1, cost }, loop2: { f1, cost }, loop3: { f1, cost } }, food: {…}, cars: {…} }
-    final: null,
+    // Fragrance only so far. agent: the validator's 120 of 160 (Pedia's labels); loop1: sealed gold after round 6, with
+    //   11.1% of listings still sent to the agent (cost = 0.111 x the agent's $2.76).
+    final: { fragrance: { agent: { f1: 0.75, cost: 2.76 }, loop1: { f1: 0.689, cost: 0.31 } } },
   };
 
   // Pedia replay pe2 (C:\Work\RSI\hackathon\runs\pe2\ledger.jsonl), listing task: % of the 245 held-out listings right,
@@ -433,13 +437,14 @@ claim:  Strip size, pack and
   });
 
   // ---------- numbers from the runs: fill the brackets ----------
+  const pct = v => Math.round(v * 100) + '%';
   const f1 = v => v.toFixed(2), usd = v => '$' + (v < 10 ? v.toFixed(2) : v.toFixed(0));
   const usd2M = perK => '$' + Math.round(perK * 2000).toLocaleString('en-US');
   const V = {}, R = RESULTS;
   if (R.agentOnly) {
-    if (R.agentOnly.f1 != null) V['AO.f1'] = f1(R.agentOnly.f1);
-    if (R.agentOnly.cost != null) V['AO.cost2M'] = usd2M(R.agentOnly.cost);
-    if (R.agentOnly.hours != null) V['AO.hours'] = Math.round(R.agentOnly.hours) + ' h';
+    if (R.agentOnly.f1 != null) V['AO.f1'] = pct(R.agentOnly.f1);
+    if (R.agentOnly.cost != null) V['AO.cost2M'] = '≈ $' + (Math.round(R.agentOnly.cost * 2000 / 100) * 100).toLocaleString('en-US');
+    if (R.agentOnly.hours != null) V['AO.hours'] = '≈ ' + Math.round(R.agentOnly.hours / 10) * 10 + ' h';
   }
   if (R.C && R.C.saved) for (const [k, v] of Object.entries(R.C.saved)) if (v != null) V['C.' + k] = String(v);
   document.querySelectorAll('[data-r]').forEach(e => { if (V[e.dataset.r] != null) { e.textContent = V[e.dataset.r]; e.classList.remove('ph'); } });
@@ -490,43 +495,99 @@ claim:  Strip size, pack and
     put('evals', `0 0 ${w} ${h}`, s);
   })();
 
-  // ---------- 6 · the flow top to bottom, the loops on the left, the next domain top right ----------
+  // ---------- 5 · the architecture, three variants. Real roles: placer, validator, person, proposer + gate, improver, distil ----------
+  const AG = { gold: '#B07F0C', silv: '#7C8390' };
+  const gold = t => `<tspan style="fill:${AG.gold};font-weight:600">${t}</tspan>`, silver = t => `<tspan style="fill:${AG.silv};font-weight:600">${t}</tspan>`;
+  const DOMS = ['Fragrance', 'Food', 'Clothing', 'Footwear', 'Toys'];
+
+  // A · Harry's sketch: one flow top to bottom, the two loops on the left, the other branches top right
   (() => {
     let s = '';
-    const X = 470, N = X + 450;
+    const X = 600, N = 1090;
     const rows = [
       ['Fragrance', 40, ''],
-      ['Listings', 170, 'Lattafa Khamrah Qahwa Eau De Parfum 3.4 Oz …'],
-      [`<tspan style="fill:${C.ind}">Rules</tspan> + agents`, 300, 'the solver: rules settle most for free, an agent the rest'],
-      ['Taxonomy', 430, 'Lattafa › Khamrah › Khamrah Qahwa'],
-      [`<tspan style="fill:${C.val}">Validation</tspan>`, 560, 'scores it on gold, checks listings nobody labelled'],
-      ['A person', 690, 'sees what it flags, labels a sample'],
+      ['Listings', 165, '2 million, from every shop'],
+      [`<tspan style="fill:${C.ind}">Rules</tspan> + placer agent`, 290, "the agent gets only what rules can't settle"],
+      ['Taxonomy', 415, 'brand › product › variant'],
+      [`<tspan style="fill:${C.val}">Validator agent</tspan>`, 540, `labels fresh listings, blind: ${silver('silver')}`],
+      ['A person', 665, `settles every disagreement: ${gold('gold')}`],
     ];
     rows.forEach(([t, y, note], i) => {
-      s += Tx(X, y, t, { fs: 40, fw: 600, c: C.ink }) + (note ? Tx(N, y - 4, note, { fs: 24, c: C.mute }) : '');
-      if (i) s += Ar([[X + 30, rows[i - 1][1] + 20], [X + 30, y - 46]], C.wire);
+      s += Tx(X, y, t, { fs: 38, fw: 600, c: C.ink }) + (note ? Tx(N, y - 4, note, { fs: 24, c: C.mute }) : '');
+      if (i) s += Ar([[X + 30, rows[i - 1][1] + 18], [X + 30, y - 44]], C.wire);
     });
-    // loop 1: what validation finds improves the rules
-    s += Cu([X - 24, 536], [X - 280, 536], [X - 280, 288], [X - 24, 288], C.ind, 5);
-    s += Tx(X - 240, 404, 'Loop 1', { a: 'end', fs: 32, fw: 600, c: C.ind }) + Tx(X - 240, 440, 'improve the rules', { a: 'end', fs: 24, c: C.ind });
-    // loop 2: a person's labels improve the validation
-    s += Cu([X - 24, 678], [X - 150, 678], [X - 150, 556], [X - 24, 556], C.val, 5);
-    s += Tx(X - 140, 632, 'Loop 2', { a: 'end', fs: 32, fw: 600, c: C.val }) + Tx(X - 140, 668, 'improve the validation', { a: 'end', fs: 24, c: C.val });
-    // loop 3: the lessons go to the next domain
-    s += Ar([[X + 236, 26], [N - 22, 26]], C.meta, { w: 5 });
-    s += Tx(N, 40, 'Food, cars, …', { fs: 40, fw: 600, c: C.meta }) + Tx(N, 80, 'Loop 3: carry the lessons to the next domain', { fs: 24, c: C.meta });
-    put('archA', '0 0 1664 710', s);
+    s += Cu([X - 24, 524], [X - 280, 524], [X - 280, 276], [X - 24, 276], C.ind, 5);
+    s += Tx(X - 240, 368, 'Loop 1 · proposer agent', { a: 'end', fs: 28, fw: 600, c: C.ind })
+      + Tx(X - 240, 404, 'one rule change at a time;', { a: 'end', fs: 22, c: C.ind }) + Tx(X - 240, 432, 'a gate keeps it if it scores better', { a: 'end', fs: 22, c: C.ind });
+    s += Cu([X - 24, 652], [X - 150, 652], [X - 150, 546], [X - 24, 546], C.val, 5);
+    s += Tx(X - 140, 590, 'Loop 2 · improver agent', { a: 'end', fs: 28, fw: 600, c: C.val })
+      + Tx(X - 140, 626, 'one change to the validator,', { a: 'end', fs: 22, c: C.val }) + Tx(X - 140, 654, 'kept if it agrees more with gold', { a: 'end', fs: 22, c: C.val });
+    s += Ar([[X + 220, 26], [N - 22, 26]], C.meta, { w: 5 });
+    s += Tx(N, 38, 'Food · Clothing · Footwear · Toys', { fs: 30, fw: 600, c: C.meta })
+      + Tx(N, 76, 'Loop 3 · each domain on its own branch;', { fs: 22, c: C.meta }) + Tx(N, 104, 'a lesson kept in two goes global', { fs: 22, c: C.meta });
+    put('archA', '0 0 1664 700', s);
     document.getElementById('archA').setAttribute('preserveAspectRatio', 'xMinYMid meet');
   })();
 
-  // ---------- 5 · one small picture per constraint, drawn like the cloud ----------
+  // B · the old panel: the solver in the middle, loop 1 above, loop 2 below; the branches on the right
+  (() => {
+    let s = '';
+    s += '<g transform="translate(1424 0)">';
+    s += Tx(0, 40, 'Loop 3', { fs: 26, fw: 600, c: C.meta }) + Tx(0, 68, 'across branches', { fs: 20, c: C.meta });
+    s += Ar([[30, 100], [30, 640]], C.meta, { w: 3 });
+    DOMS.forEach((t, i) => { const y = 150 + i * 100;
+      s += `<path d="M66 ${y - 8}C66 ${y + 28} 30 ${y + 14} 30 ${y + 52}" fill="none" stroke="${C.meta}" stroke-width="2.5"/><circle cx="66" cy="${y - 8}" r="7" fill="${C.meta}"/>`;
+      s += Tx(86, y, t, { fs: 26, fw: i ? 500 : 700, c: i ? C.ink2 : C.ink }); });
+    s += Tx(0, 676, 'kept in two domains,', { fs: 20, c: C.meta }) + Tx(0, 702, 'a lesson goes global', { fs: 20, c: C.meta });
+    s += '</g>';
+    s += `<path d="M1500 136L1264 30M1500 150L1264 716" stroke="${C.line}" stroke-width="2" fill="none"/>`;
+    s += `<rect x="0" y="30" width="1264" height="686" rx="28" fill="${C.panel}"/>`;
+    s += '<g transform="translate(-400 0)">';
+    s += Tx(1640, 76, 'one domain, on its own branch', { a: 'end', fs: 20, c: C.faint });
+    s += Nd(510, 382, 'Listings') + Nd(790, 384, 'Rules', ['free'], { fs: 34, c: C.ind }) + Nd(1100, 382, 'Placer agent', ['only what rules', "can't settle"]) + Nd(1470, 382, 'Taxonomy');
+    s += Ar([[580, 372], [730, 372]]) + Ar([[846, 372], [1000, 372]]) + Ar([[1200, 372], [1384, 372]]);
+    s += Tx(440, 100, 'Loop 1 · the rules', { fs: 24, fw: 600, c: C.ind });
+    s += Nd(570, 172, 'Silver + gold', ['from loop 2']) + Nd(900, 172, 'Proposer agent', ['one rule change']) + Nd(1230, 172, 'A gate in code', ['keeps it if it scores better']);
+    s += Ar([[680, 162], [783, 162]], C.ind) + Ar([[1017, 162], [1113, 162]], C.ind);
+    s += Ar([[1230, 238], [1230, 272], [810, 272], [810, 342]], C.ind) + Tx(1020, 262, 'new rule', { a: 'middle', fs: 19, c: C.ind });
+    s += Ar([[770, 342], [770, 306], [570, 306], [570, 236]], C.ind) + Tx(670, 298, 'scored on', { a: 'middle', fs: 19, c: C.ind });
+    s += Tx(440, 560, 'Loop 2 · the eval', { fs: 24, fw: 600, c: C.val });
+    s += Nd(1300, 622, 'Validator agent', [`labels fresh listings: ${silver('silver')}`]) + Nd(960, 622, 'A person', [`settles disagreements: ${gold('gold')}`]) + Nd(640, 622, 'Improver agent', ['one change to the validator']);
+    s += Ar([[1470, 404], [1470, 612], [1426, 612]], C.val) + Ar([[1176, 612], [1088, 612]], C.val) + Ar([[832, 612], [757, 612]], C.val);
+    s += Ar([[640, 668], [640, 696], [1300, 696], [1300, 668]], C.val, { dash: true }) + Tx(700, 688, 'a better validator', { fs: 19, c: C.val });
+    s += '</g>';
+    put('archB', '0 0 1664 730', s);
+  })();
+
+  // C · one row left to right; loop 2 arcs above, loop 1 below; the branches along the bottom
+  (() => {
+    let s = '';
+    const y = 300, nodes = [[80, 'Listings', ['2 million']], [330, 'Rules', ['free'], C.ind], [610, 'Placer agent', ['only what rules', "can't settle"]],
+      [900, 'Taxonomy', ['brand › product']], [1200, 'Validator agent', ['labels fresh listings', `blind: ${silver('silver')}`], C.val], [1500, 'A person', ['settles disagreements:', gold('gold')]]];
+    s += Tx(0, 40, 'Fragrance, on its own branch', { fs: 22, c: C.faint });
+    nodes.forEach(([x, t, sub, c]) => { s += Nd(x, y, t, sub, { fs: 30, c: c || C.ink }); });
+    [[150, 276], [386, 516], [722, 808], [992, 1062], [1334, 1428]].forEach(([a, b]) => { s += Ar([[a, y - 10], [b, y - 10]]); });
+    s += Cu([1500, 254], [1500, 150], [1200, 150], [1200, 254], C.val, 5);
+    s += Tx(1350, 82, 'Loop 2 · improver agent', { a: 'middle', fs: 26, fw: 600, c: C.val }) + Tx(1350, 114, 'a better validator, kept if it agrees more with gold', { a: 'middle', fs: 20, c: C.val });
+    s += Cu([1200, 378], [1200, 600], [330, 600], [330, 352], C.ind, 5);
+    s += Tx(765, 450, 'Loop 1 · proposer agent', { a: 'middle', fs: 26, fw: 600, c: C.ind }) + Tx(765, 482, 'one rule change at a time;', { a: 'middle', fs: 20, c: C.ind })
+      + Tx(765, 508, 'a gate keeps it if it scores better', { a: 'middle', fs: 20, c: C.ind });
+    // loop 3: the domains as branches joining one line of lessons
+    const by = 690, bx = i => 420 + i * 230;
+    s += Tx(0, 660, 'Loop 3', { fs: 26, fw: 600, c: C.meta }) + Tx(0, 690, 'across branches', { fs: 20, c: C.meta });
+    s += Ar([[330, by], [1560, by]], C.meta, { w: 3 });
+    DOMS.forEach((t, i) => { const x = bx(i);
+      s += `<path d="M${x} ${by - 46}C${x} ${by - 20} ${x + 30} ${by} ${x + 60} ${by}" fill="none" stroke="${C.meta}" stroke-width="2.5"/><circle cx="${x}" cy="${by - 46}" r="7" fill="${C.meta}"/>`;
+      s += Tx(x + 16, by - 40, t, { fs: 22, fw: i ? 500 : 700, c: i ? C.ink2 : C.ink }); });
+    s += Tx(1576, by + 7, 'global', { fs: 22, fw: 600, c: C.meta });
+    put('archC', '0 0 1664 720', s);
+  })();
+
+  // ---------- 4 · one small picture per axis, drawn like the cloud ----------
   (() => {
     const sq = (x, y, c, z = 22) => `<rect x="${x}" y="${y}" width="${z}" height="${z}" rx="4" fill="${c}"/>`;
     const grid = (ox, oy, nx, ny, col, z = 22, g = 9) => { let s = ''; for (let j = 0; j < ny; j++) for (let i = 0; i < nx; i++) s += sq(ox + i * (z + g), oy + j * (z + g), col(i, j), z); return s; };
     const fit = (id, s) => { put(id, '0 0 340 250', s); document.getElementById(id).setAttribute('preserveAspectRatio', 'xMinYMid meet'); };
-    // 1 · a few labelled among many
-    const lab = new Set(['2,1', '7,2', '4,4', '9,5']);
-    fit('cv1', grid(0, 16, 10, 7, (i, j) => lab.has(i + ',' + j) ? C.ind : C.line));
     // 2 · rules settle most, an agent the rest
     const ag = new Set(['3,0', '8,1', '1,3', '6,3', '4,5', '9,6']);
     fit('cv2', grid(0, 16, 10, 7, (i, j) => ag.has(i + ',' + j) ? C.ink : '#B9D5EC'));
@@ -608,16 +669,6 @@ claim:  Strip size, pack and
     put('loop2', '0 40 800 640', s);
   })();
 
-  // ---------- 13 · the chain: a person's labels → … → the next domain ----------
-  (() => {
-    let s = '';
-    const st = [["A person's labels", C.ink], ['a better eval', C.val], ['better rules', C.ind], ['a better taxonomy', C.ink], ['the next domain, ahead', C.meta]];
-    st.forEach(([t, c], i) => { const y = 60 + i * 150; s += Tx(0, y, t, { fs: 44, fw: 600, c });
-      if (i < st.length - 1) s += Ar([[22, y + 24], [22, y + 102]], i === st.length - 2 ? C.meta : C.wire, { w: 4 }); });
-    put('chain', '0 0 540 700', s);
-    document.getElementById('chain').setAttribute('preserveAspectRatio', 'xMinYMid meet');
-  })();
-
   // ---------- line charts ----------
   function chart(id, o) {
     const w = o.w || 1500, h = o.h || 560, L = o.l || 90, Rr = o.r || 220, T = 20, Bm = 60;
@@ -651,8 +702,10 @@ claim:  Strip size, pack and
   const rounds = R.A && R.A.rounds && R.A.rounds.length ? R.A.rounds : null;
   if (rounds) {
     const fv = rounds.map(r => r.f1), lo = Math.max(0, Math.floor(Math.min(...fv.filter(v => v != null)) * 10) / 10 - .1);
-    chart('figA', { xs: rounds.map((_, i) => i ? 'round ' + i : 'start'), ymin: lo, ymax: 1, ticks: ticks01(lo), fmt: f1,
-      series: [{ v: fv, c: C.ind, label: f1(fv[fv.length - 1]), notes: rounds.map(r => r.kept ? '+ ' + r.kept : null) }] });
+    const hi = Math.ceil(Math.max(...fv) * 10) / 10, lo2 = Math.floor(Math.min(...fv) * 10) / 10;
+    chart('figA', { xs: rounds.map((r, i) => r.label ? (r.label === 'start' ? 'start' : 'round ' + r.label) : (i ? 'round ' + i : 'start')),
+      ymin: lo2 - .05, ymax: hi + .03, ticks: Array.from({ length: Math.round((hi - lo2) * 10) + 1 }, (_, k) => +(lo2 + k / 10).toFixed(1)), fmt: pct,
+      series: [{ v: fv, c: C.ind, label: pct(fv[fv.length - 1]), notes: rounds.map(r => r.kept ? '+ ' + r.kept : null) }] });
   } else chart('figA', { r: 40, xs: ['start', 'rule 1', 'rule 2', 'rule 3', '…'], ph: "waiting for today's run" });
 
   // 9 · Figure B
@@ -681,8 +734,8 @@ claim:  Strip size, pack and
   (() => {
     const D = [['fragrance', 'Fragrance'], ['food', 'Food'], ['cars', 'Cars']];
     const S = [['agent', 'An agent on everything'], ['loop1', 'After loop 1: rules'], ['loop2', 'After loop 2: checks'], ['loop3', "With loop 3's head start"]];
-    const cell = v => v && v.f1 != null ? `<span class="f">${f1(v.f1)}</span><span class="c">${v.cost != null ? usd(v.cost) : ''}</span>`
-                                        : `<span class="f ph">[F1]</span><span class="c ph">[$]</span>`;
+    const cell = v => v && v.f1 != null ? `<span class="f">${pct(v.f1)}</span><span class="c">${v.cost != null ? usd(v.cost) : ''}</span>`
+                                        : `<span class="f ph">[%]</span><span class="c ph">[$]</span>`;
     const fin = R.final || {};
     document.getElementById('res').innerHTML = `<tr><th></th>${D.map(([, n]) => `<th>${n}</th>`).join('')}</tr>` +
       S.map(([k, n]) => `<tr><td>${n}</td>${D.map(([d]) => `<td>${cell(fin[d] && fin[d][k])}</td>`).join('')}</tr>`).join('');
