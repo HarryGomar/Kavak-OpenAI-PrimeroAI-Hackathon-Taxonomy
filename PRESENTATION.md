@@ -129,37 +129,28 @@ node is an icon, a name and one line; agents carry the agent icon.
 - Loop 3: every domain runs the same loops on its own branch. Distil turns kept changes into lessons, and a lesson kept
   in two domains goes to every domain.
 
-## 6. Loop 1 edits the rules' memory, operators and tools (45 s)
+## 6. Loop 1 changes three things in the rules (40 s)
 
-**Show:** one Walmart title across the top, then three steps left to right. Each step names the part of the rules
-that runs it:
-1. **Strip the words that are never a name.** *Memory:* the vocabulary, in YAML. The title's words, one per line:
-   Eau De Parfum (concentration), 3.4 Oz (size), Unisex (audience), Fragrance (generic word) struck through; Khamrah
-   Qahwa is the name.
-2. **Count the names in Lattafa's titles.** *Operators:* count, in code. Khamrah Qahwa ×2 and Khamrah ×2 are
-   products; Yara, one word, is a product; Khamrah Dukhan, seen once, goes to an agent.
-3. **Place it in the tree.** *Operators and tools:* find the brand, check, place. Lattafa › Khamrah › Khamrah Qahwa,
-   no agent call.
+**Show:** three columns, each with a big icon, what it is, one example and the points it added on sealed gold:
+- **Memory**, what words mean, in YAML. "Khamrah Qahwa ~~Hair Mist~~". **+1.4**: hair, travel, mist are never a name
+  (r1); Elixir, Intense are part of the name (r2).
+- **Operators**, the steps, in code. "sold on lattafa.com → brand: Lattafa". **+15.1**: the brand's own store names
+  the brand (r3); the shop's URL names the brand (r5); a one-word name is a product (r6).
+- **Tools**, checks, in code. "a check on concentration words". **0**: tried, and the gate dropped it (r7).
 
-Underneath, **what loop 1 changed, kept by the gate**, in points of exact match on sealed gold, under the part it
-changed:
-- memory: hair, travel, mist are never a name (r1, +0.4); Elixir, Intense are part of the name (r2, +1.0);
-- operators: a one-word name is a product (r6, +2.9, an idea from loop 2);
-- operators and tools: the brand's own store names the brand (r3, +11.3); the shop's URL names it (r5, +0.9); tried a
-  concentration veto, a tool (r7): dropped.
+Under it: a gate in code keeps a change only if sealed gold clearly improves. Together: 52% → 69% exact.
 
 **Say:**
-- Loop 1 doesn't change the agent. It changes the rules, and the rules have three parts: memory, operators and tools.
-- Here's one Walmart listing. The vocabulary, memory, strips what's never a name. Count, an operator, finds the
-  products and families across all of Lattafa's titles. Then operators find the brand, tools check, and it's placed,
-  with no agent call.
-- Underneath is what loop 1 changed in each part, and what each change was worth on sealed gold. The big one: when a
-  listing is sold on the brand's own store, the brand is known. Eleven points.
-- The gate dropped a tool that didn't clearly help.
+- Loop 1 doesn't touch the agent. It changes three things in the rules.
+- Memory, what words mean: it learned that hair, travel and mist are never part of a name. A point and a half.
+- Operators, the steps in code: when a listing is sold on the brand's own store, the brand is known. With the shop's
+  URL and one-word names, fifteen points.
+- Tools, checks in code: one was tried, and the gate dropped it.
+- Together, exact match on sealed gold went from 52% to 69%.
 
-*The six Lattafa titles and their counts are an illustration; the changes and their points are measured
-(`memory/rounds/fragrance` on `origin/distill/rounds`). Which part each change touched comes from the round
-records: r1, r2 and r8 changed the vocabulary; r3, r5 and r6 changed code and rules; r7 was a veto.*
+*The points are measured (`memory/rounds/fragrance` on `origin/distill/rounds`). Which part each change touched comes
+from the round records: r1 and r2 changed the vocabulary; r3, r5 and r6 changed code and rules; r7 was a veto. The two
+example lines are illustrations.*
 
 ## 7. Loop 1: each rule kept, more right and cheaper (40 s)
 
@@ -192,32 +183,25 @@ rounds; with a table of the words that make placements wrong, 5 of 8 of its late
 dropped on sealed for moving fewer than 10 rows. Round 7 reached 69.1% and was still dropped (8 better, 5 worse), which
 is why the slide says "clearly helps" and not "rises".
 
-## 8. Loop 2: the eval grows until silver matches gold (55 s)
+## 8. Loop 2, validation: improve the eval itself (50 s)
 
-**Show:**
-- **Top, the validator's versions scored against gold.** On the left, the improver's kept step: v1 82.5% → v2 85.0%
-  (a later run). Across rounds 1–4, a flat line: v2 labels every round. In rounds 2 and 4, a hollow dot: a v3 try,
-  dropped for the same match and more harm. Then a dashed "Next · est." step to v3 and v4, crossing the target line,
-  "loop until silver matches gold: 90%".
-- **Bottom, the rounds.** Silver piles up 40 → 80 → 120 → 160, each layer labelled by the version that made it. Rounds
-  1 and 3: the flags a person settled (23 settled, 82.4% right; 20 settled, 100% right). Gold 2 grows 23 → 43.
-- **To loop 1:** short names seen once → rule r6, kept by the gate; concentration and audience words → r7, r8, dropped.
-- **Takeaway:** each version climbs against gold; the kept version labels the next, bigger sample. Ground truth grows.
+**Show:** left, the loop as a circle: a validator labels fresh listings, blind → flags where it and the solver
+disagree → a person settles them (gold 2, and more silver) → better rules and a better validator. In the middle:
+each round, more silver, built better. Right, the chart: silver grows 0 → 40 → 80 → 120 → 160 over four rounds, and
+gold from the settled flags 0 → 23 → 23 → 43 → 43. Under it: the validator, v1 → v2 kept, 82.5% → 85% match with gold;
+two later tries matched no better, so they were dropped.
 
 **Say:**
-- Loop 2 makes the eval bigger and better at the same time.
-- Each round, the validator labels 40 fresh listings the rules have never seen. A person settles only what it flags:
-  in round 1, 23 flags, and 82% were real errors; in round 3, every flag was real. Those become gold 2.
-- With more gold, the improver agent tries a new validator version. It's kept only if it matches gold better: v1 to
-  v2 went from 82.5% to 85%. Two later tries matched no better and did more harm, so they were dropped.
-- The kept version labels the next, bigger sample. Silver grows 40, 80, 120, 160, and it goes round until silver
-  matches gold.
-- And the errors it finds feed loop 1: short names seen once became rule 6, which the gate kept.
+- A small gold set doesn't cover everything, so loop 2 improves the eval itself.
+- The validator agent labels listings nobody labelled and flags where it and the solver disagree. A person settles
+  only the flags. Where the solver was wrong, the case joins gold; the rest is kept as silver.
+- Each round adds 40 silver, and the settled flags add gold: 160 silver and 43 gold after four rounds.
+- The validator gets better too: version 2 matched gold 85% of the time, against 82.5% for version 1. Two later tries
+  matched no better, so they were dropped.
+- And what it finds goes back to loop 1: short names seen only once became rule 6, which the gate kept.
 
-*Measured:* v1 → v2 (82.5 → 85.0, a later run on 40 human rows), the two dropped tries, 4 rounds of 40, gold rows
-added (23 and 20), flags right (82.4% and 100%), and r6/r7/r8. *Estimated, marked "est." on the slide:* the 90%
-target, v3 and v4, and the next 200. The per-round matches (75, 82.5, 85, 57.5%) are sample noise at 40 listings, so
-they aren't drawn.
+*Measured: fragrance loop 2, four rounds of 40 (`loopb`, Pedia's labels as the person); gold added in rounds 1 and 3
+(23 and 20 settled flags); v1 → v2 is from a later run on 40 human rows.*
 
 ## 9. Loop 3: lessons cross domains, but not both ways (40 s)
 
@@ -272,7 +256,7 @@ customer-feedback models, and other tasks with no ground truth.
 | Agent alone vs rules | 4 | Exact match, tokens and seconds a listing; $ and hours for 2M listings | 400 random sealed listings per domain (run session); $3 per million tokens assumed | measured; $ estimated |
 | Gold and silver examples | 5 (pop-ups) | What a gold row, a silver row and a score look like | example rows; the numbers under them are measured (sealed fragrance; loop 2 rounds V1 and V3) | rows illustrative |
 | Loop 1 rounds | 7 | Exact on sealed gold and share to the agent, per kept round | `memory/rounds/fragrance` on `origin/distill/rounds`; RESULTS.md §2 | measured; $ estimated; rule wording paraphrased |
-| Loop 2 rounds | 8 | Validator vs gold per round, silver and gold growing, the improver's climb | `C:\Work\Kavak-Taxo-runs\fragrance-run\runs\fragrance\loopb\` (V1–V4, 40 listings each); improver step from `docs/fragrance-cycles/cycle1.md` (a later run) | measured, later rounds estimated |
+| Loop 2 rounds | 8 | Silver and gold growing per round; the validator's kept step v1 → v2 | `C:\Work\Kavak-Taxo-runs\fragrance-run\runs\fragrance\loopb\` (V1–V4, 40 listings each); improver step from `docs/fragrance-cycles/cycle1.md` (a later run) | measured, later rounds estimated |
 | Loop 3 grid | 9 | Lessons from each domain tried on each other's sealed gold | diagonal and food's cold start measured; other cells illustrative | partly illustrative |
 
 ## Questions to expect
