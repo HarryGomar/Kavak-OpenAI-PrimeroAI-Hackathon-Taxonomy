@@ -7,13 +7,25 @@ import shutil
 import subprocess
 import tempfile
 import time
+from functools import wraps
 from pathlib import Path
+from threading import BoundedSemaphore
 
 from jsonschema import Draft202012Validator
 
 from taxo.core.config import ROOT
 
 LOCK = Path(__file__).with_name("validator_cli.lock.json")  # Historical name; shared by every role.
+CLI_SLOTS = BoundedSemaphore(50)
+
+
+def bounded_cli(fn):
+    @wraps(fn)
+    def call(*args, **kwargs):
+        # A full loop can evaluate independent candidates concurrently, with one shared process cap.
+        with CLI_SLOTS:
+            return fn(*args, **kwargs)
+    return call
 
 
 def write(path, value):
@@ -30,6 +42,7 @@ def load_pin():
     return json.loads(LOCK.read_text(encoding="utf-8"))
 
 
+@bounded_cli
 def invoke(prompt: str, schema: dict, output: Path, *, web: bool = False) -> dict:
     """One CLI call, refusing invalid output. Reasoning content is never persisted."""
     output = output.resolve()

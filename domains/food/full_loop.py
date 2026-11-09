@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse
 import json
 from collections import Counter
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 from domains.food import loop_roles, validate_paths
@@ -86,18 +87,39 @@ def run(root, baseline, name, setup_path, resume=False):
             raise RuntimeError('Feedback stage has incomplete/failed artifacts; refusing duplicate calls')
         (root/role_name).mkdir()
         write(root/role_name/'feedback-diagnosis.json', read(baseline/'feedback-diagnosis.json'))
-        loop_roles.execute(root, role_name, current/'judgments.json')
     roles = root/(role_name+'-feedback-roles')
-    write(out/'stage-status.json', {'status': 'running', 'stage': 'analysis_and_candidate'})
-    if completed(out/'analyst', 'manifest.json', {'completed'}, ('candidate-card.json', 'final.json')):
-        card = out/'analyst/candidate-card.json'
-    else:
-        card = propose(root, baseline, out/'analyst')
+    analyst_done = completed(out/'analyst', 'manifest.json', {'completed'}, ('candidate-card.json', 'final.json'))
+    write(out/'stage-status.json', {'status': 'running', 'stage': 'parallel_analysis_proposer_improver'})
+    # Both stages depend only on the same frozen authorized feedback. They do not
+    # consume each other's answers and write to separate artifact directories.
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        role_job = None if finished_roles else pool.submit(loop_roles.execute, root, role_name, current/'judgments.json')
+        analyst_job = None if analyst_done else pool.submit(propose, root, baseline, out/'analyst')
+        if role_job is not None:
+            role_job.result()
+        card = out/'analyst/candidate-card.json' if analyst_job is None else analyst_job.result()
     candidate_name = name+'-candidate'
     candidate = root/candidate_name
-    if not completed(candidate, 'manifest.json', {'completed'},
-                     ('placements.jsonl', 'metrics.json', 'gold-rulings.json', 'paired-deltas.json', 'nodes.jsonl')):
-        place(root, candidate_name, card, baseline)
+    candidate_done = completed(candidate, 'manifest.json', {'completed'},
+                               ('placements.jsonl', 'metrics.json', 'gold-rulings.json', 'paired-deltas.json', 'nodes.jsonl'))
+    improvement = read(roles/'improver-decision.json')
+    validator_trial = improvement['accept_for_validator_experiment']
+    validator_done = validator_trial and completed(root/(name+'-validator-candidate'), 'role-manifest.json',
+                                                  {'executed'}, ('judgments.json', 'gold-rulings.json', 'metrics.json'))
+    write(out/'stage-status.json', {'status': 'running', 'stage': 'parallel_candidate_evaluations',
+                                   'validator_trial': 'accepted' if validator_trial else 'skipped_unsupported_proposal',
+                                   'validator_trial_reason': improvement['reason']})
+    # The source-only validator never receives the pipeline card or placements.
+    # The shared CLI transport bounds total active calls across both batch pools.
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        placement_job = None if candidate_done else pool.submit(place, root, candidate_name, card, baseline)
+        validator_job = None if not validator_trial or validator_done else pool.submit(
+            validate_paths.execute, root, roles/'validator-setup-v2.json', name+'-validator-candidate')
+        if placement_job is not None:
+            placement_job.result()
+        if validator_job is not None:
+            validator_job.result()
+    write(out/'stage-status.json', {'status': 'running', 'stage': 'curation_after_completed_evaluations'})
     decision = select(baseline, candidate)
     old_metrics, new_metrics = read(baseline/'metrics.json'), read(candidate/'metrics.json')
     deltas = read(candidate/'paired-deltas.json')
@@ -145,10 +167,6 @@ def run(root, baseline, name, setup_path, resume=False):
     validator_decision = {'status': 'rejected_unsupported_proposal', 'kept_for_development': False,
                           'production_admission': False, 'reason': improvement['reason']}
     if improvement['accept_for_validator_experiment']:
-        next_setup = roles/'validator-setup-v2.json'
-        if not completed(root/(name+'-validator-candidate'), 'role-manifest.json', {'executed'},
-                         ('judgments.json', 'gold-rulings.json', 'metrics.json')):
-            validate_paths.execute(root, next_setup, name+'-validator-candidate')
         vm = read(root/(name+'-validator-candidate')/'metrics.json')
         old = read(current/'metrics.json')
         # Compare on the other dev partition; this is not a fresh/brand-sealed holdout.

@@ -40,7 +40,17 @@ def execute(root, setup_path, name=None):
     started = time.monotonic()
     agent = replace(make_validator('food', setup), tools=[], web=False, output_type=Judgments)
     source = rows(root / "source-snapshot.jsonl")
-    if fingerprint(root/'source-snapshot.jsonl')['sha256'] != read(root/'protocol.json')['source']['sha256']:
+    protocol = read(root/'protocol.json')
+    batch_size = protocol.get('batch_size', 10)
+    parallel_batches = protocol.get('parallel_batches', 3)
+    if type(batch_size) is not int or not 1 <= batch_size <= 10:
+        raise ValueError('Protocol batch_size must be an integer from 1 to 10')
+    if type(parallel_batches) is not int or not 1 <= parallel_batches <= 50:
+        raise ValueError('Protocol parallel_batches must be an integer from 1 to 50')
+    batch_manifest = {'batch_size': batch_size, 'parallel_batches': parallel_batches,
+                      'planned_calls': (len(source)+batch_size-1)//batch_size, 'rows': len(source)}
+    write(out/'role-manifest.json', {'role': 'independent_validator', 'status': 'running', **batch_manifest})
+    if fingerprint(root/'source-snapshot.jsonl')['sha256'] != protocol['source']['sha256']:
         raise ValueError('Independent validator frozen source drift')
     instruction = agent.instructions + """
 Independently judge all supplied source rows; return listing_id, scope include/exclude/uncertain,
@@ -54,10 +64,10 @@ Decision place MUST have a nonempty path; decision abstain MUST have empty path.
 supported, place on that shallow path. Excluded/uncertain scope MUST abstain with empty path.
 """
     def call(offset):
-        batch = source[offset:offset + 10]
+        batch = source[offset:offset + batch_size]
         batch_agent = replace(agent, instructions=instruction)
         answer = run_sync(batch_agent, json.dumps([evidence(r) for r in batch], ensure_ascii=False),
-                          output=out / f'batch-{offset//10:03d}', max_turns=1).final_output.model_dump()['judgments']
+                          output=out / f'batch-{offset//batch_size:03d}', max_turns=1).final_output.model_dump()['judgments']
         if len(answer) != len(batch) or {x["listing_id"] for x in answer} != {x["id"] for x in batch}:
             raise ValueError("Independent validator missing/duplicate/foreign IDs")
         if any((j["decision"] == "abstain") != (not j["path"]) or
@@ -65,8 +75,8 @@ supported, place on that shallow path. Excluded/uncertain scope MUST abstain wit
             raise ValueError("Independent validator path/decision/scope inconsistency")
         return answer
     results, errors = [], []
-    with ThreadPoolExecutor(max_workers=read(root/'protocol.json').get('parallel_batches', 3)) as pool:
-        jobs = {pool.submit(call, offset): offset for offset in range(0, len(source), 10)}
+    with ThreadPoolExecutor(max_workers=parallel_batches) as pool:
+        jobs = {pool.submit(call, offset): offset for offset in range(0, len(source), batch_size)}
         for job in as_completed(jobs):
             try:
                 results.append(job.result())
@@ -79,13 +89,14 @@ supported, place on that shallow path. Excluded/uncertain scope MUST abstain wit
     write(out / "judgments.json", judgments)
     if errors:
         write(out/'role-manifest.json', {'role': 'independent_validator', 'status': 'failed',
-              'model_calls': len(list(out.glob('batch-*/turn-*/manifest.json'))), 'failed_rows': len(source)-len(seen)})
+              **batch_manifest, 'model_calls': len(list(out.glob('batch-*/turn-*/manifest.json'))), 'failed_rows': len(source)-len(seen)})
         raise RuntimeError('Independent validator incomplete; failed rows are not model abstentions')
     predictions = [{"id": j["listing_id"], "path": j["path"], "route": "independent_validator_v2",
                     "confidence": j["confidence"], "reason": j["reason"]} for j in judgments]
     dump_rows(out / "predictions.jsonl", predictions)
     metrics = score(root, out, predictions, None)
     write(out / "role-manifest.json", {"role": "independent_validator", "status": "executed",
+          **batch_manifest,
           "factory": "make_validator + run_sync", "setup": fingerprint(setup_path), "version": version,
           "source": fingerprint(root/'source-snapshot.jsonl'), "gold_in_role_payload": False,
           "evidence": "source-only; no pipeline/gold/proposer cases", "elapsed_seconds": time.monotonic()-started,

@@ -184,6 +184,12 @@ def execute(root, name, card=None, previous=None):
     folder.mkdir(exist_ok=False)
     started = time.monotonic()
     protocol = read(root / "protocol.json")
+    batch_size = protocol.get('batch_size', 10)
+    parallel_batches = protocol.get('parallel_batches', 3)
+    if type(batch_size) is not int or not 1 <= batch_size <= 10:
+        raise ValueError('Protocol batch_size must be an integer from 1 to 10')
+    if type(parallel_batches) is not int or not 1 <= parallel_batches <= 50:
+        raise ValueError('Protocol parallel_batches must be an integer from 1 to 50')
     source = Path(protocol["source"]["path"])
     if fingerprint(source)["sha256"] != protocol["source"]["sha256"]:
         raise ValueError("Frozen source drift")
@@ -197,7 +203,8 @@ def execute(root, name, card=None, previous=None):
                 "code": fingerprint(Path(__file__)), "card": fingerprint(card), "source": fingerprint(source),
                 "previous": str(previous) if previous else None, "production_status": "unadmitted_experiment"}
     manifest.update(git_head=subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip(),
-                    rows=len(listings), batch_size=10, planned_calls=(len(listings)+9)//10,
+                    rows=len(listings), batch_size=batch_size, parallel_batches=parallel_batches,
+                    planned_calls=(len(listings)+batch_size-1)//batch_size,
                     rules=[r.model_dump(mode='json') for r in rules])
     write(folder / "manifest.json", manifest)
     schema = strict_schema(Batch.model_json_schema())
@@ -225,15 +232,15 @@ CARD:
     dump_rows(folder / "source-evidence.jsonl", [evidence(r) for r in listings])
     try:
         def call(offset):
-            batch = listings[offset:offset + 10]
+            batch = listings[offset:offset + batch_size]
             answer = invoke(prompt + "\nSOURCE OBSERVATIONS:\n" + json.dumps([evidence(r) for r in batch], ensure_ascii=False),
-                            schema, folder / f"batch-{offset//10:03d}", web=False)
+                            schema, folder / f"batch-{offset//batch_size:03d}", web=False)
             parsed = Batch.model_validate(answer).proposals
             if len(parsed) != len(batch) or {p.listing_id for p in parsed} != {r["id"] for r in batch}:
                 raise ValueError("Missing/duplicate/foreign placement IDs")
             return parsed
-        with ThreadPoolExecutor(max_workers=protocol.get('parallel_batches', 3)) as pool:
-            jobs = {pool.submit(call, offset): offset for offset in range(0, len(listings), 10)}
+        with ThreadPoolExecutor(max_workers=parallel_batches) as pool:
+            jobs = {pool.submit(call, offset): offset for offset in range(0, len(listings), batch_size)}
             for job in as_completed(jobs):
                 try:
                     for answer in job.result():
