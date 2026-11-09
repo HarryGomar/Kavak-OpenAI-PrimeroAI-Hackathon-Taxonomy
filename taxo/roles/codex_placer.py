@@ -76,7 +76,15 @@ def _call(prompt: str, cache_dir: Path, model: str | None) -> dict:
     return {"key": key, "cached": False, **data}
 
 
-def run_batches(domain, conventions, items, cache_dir: Path, batch_size=40, max_calls=None, workers=4, model=None):
+VALIDATOR_PROMPT = """You are the VALIDATOR for the {domain} product tree. Label each listing on your own, from its full
+evidence below; you are not shown any earlier answer. Be strict: only the listing's own words count, a product named
+after "for"/"compatible with" is never the product sold, and a correct shallower answer beats a wrong deeper one.
+Answer ONLY from the text below; do not run commands or browse.
+""" + PROMPT.split("do not run\ncommands or browse.", 1)[1]
+
+
+def run_batches(domain, conventions, items, cache_dir: Path, batch_size=40, max_calls=None, workers=4, model=None,
+                prompt=None):
     """items: [{listing_id, text, candidates: [{id, path, level}]}]. Returns ({listing_id: decision}, stats)."""
     batches = [items[i:i + batch_size] for i in range(0, len(items), batch_size)]
     if max_calls is not None:
@@ -87,7 +95,7 @@ def run_batches(domain, conventions, items, cache_dir: Path, batch_size=40, max_
         for it in b:
             cands = "\n".join(f"    - {c['id']} [{c['level']}] {' > '.join(c['path'])}" for c in it["candidates"])
             lines.append(f"- listing_id: {it['listing_id']}\n  {it['text']}\n  candidates:\n{cands or '    (none)'}")
-        prompts.append(PROMPT.format(domain=domain, conventions=conventions or "(none)", items="\n".join(lines)))
+        prompts.append((prompt or PROMPT).format(domain=domain, conventions=conventions or "(none)", items="\n".join(lines)))
     with ThreadPoolExecutor(max_workers=workers) as ex:
         results = list(ex.map(lambda p: _call(p, cache_dir, model), prompts))
     out, stats = {}, {"batches": len(batches), "calls": 0, "cached": 0, "errors": 0}
