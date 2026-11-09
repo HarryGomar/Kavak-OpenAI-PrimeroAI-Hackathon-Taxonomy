@@ -5,8 +5,11 @@ pipeline's, and a person settles every disagreement plus a spot check of agreed 
     (the validator writes runs/fragrance/loopb/V1-validator.jsonl: {"id", "path": [brand, ...] | null, "why"})
     uv run python -m taxo.loopb compare fragrance V1         runs/fragrance/loopb/V1-review.json (for the person)
     uv run python -m taxo.loopb settle fragrance V1 <verdicts.json>   V1 gold rows + validator score + KPI silver
+    uv run python -m taxo.loopb pedia fragrance V1           Pedia's label is the reviewer: writes V1-verdicts.json
 
-Verdicts: pipeline_right | validator_right | both_wrong (+ the person's path) | unclear. Only the person writes gold.
+Verdicts: pipeline_right | validator_right | both_wrong (+ the reviewer's path) | unclear. Only the reviewer writes gold:
+a person, or (the project's choice for the Drive data) Pedia's label. `--pool pedia-dev` samples Pedia-labelled
+listings of dev brands only, so sealed stays unread.
 """
 from __future__ import annotations
 
@@ -16,7 +19,7 @@ import random
 from collections import Counter, defaultdict
 from pathlib import Path
 
-from taxo import kpis, score
+from taxo import gold as goldmod, kpis, score
 from taxo.core.config import ROOT, RUNS_DIR
 from taxo.lattice.vocab import tokens
 
@@ -33,14 +36,19 @@ def _placements(domain: str) -> list[dict]:
     return [json.loads(x) for x in open(RUNS_DIR / domain / "placements.jsonl", encoding="utf-8")]
 
 
-def sample(domain: str, version: str, seed: int = 7) -> Path:
-    """Fresh listings where gold is thin: no gold row, brand found. Some the lattice placed, some sent to the agent."""
+def sample(domain: str, version: str, seed: int = 7, pool: str = "unlabelled") -> Path:
+    """Some listings the lattice placed, some it sent to the agent. pool "unlabelled": no gold row (where gold is thin);
+    "pedia-dev": a Pedia label, dev brands only (Pedia reviews them; sealed stays unread)."""
     P = _placements(domain)
     menu: dict[str, Counter] = defaultdict(Counter)
     for p in P:
         if p["level"] == "product":
             menu[p["brand"]][" > ".join(p["path"])] += 1
-    fresh = [p for p in P if not p["gold"] and p["brand"] and p["title"]]
+    if pool == "pedia-dev":
+        fresh = [p for p in P if p["pedia_path"] and p["brand"] and p["title"] and not goldmod.is_sealed(p["pedia_brand"])
+                 and any(g.startswith("pedia:") for g in p["gold"])]
+    else:
+        fresh = [p for p in P if not p["gold"] and p["brand"] and p["title"]]
     rnd = random.Random(seed)
     placed = [p for p in fresh if p["level"] == "product"]
     agent = [p for p in fresh if p["route"] == "agent_title"]
@@ -88,6 +96,27 @@ def compare(domain: str, version: str) -> Path:
     return out
 
 
+def pedia_verdicts(domain: str, version: str) -> Path:
+    """Pedia as the reviewer: for each review item, the answer the scorer calls exact against Pedia's label is right;
+    when neither is, both are wrong and Pedia's path is the truth."""
+    review = json.loads((_dir(domain) / f"{version}-review.json").read_text(encoding="utf-8"))
+    P = {p["id"]: p for p in _placements(domain)}
+    out = []
+    for it in review["items"]:
+        p = P[it["id"]]
+        gb, gp = p["pedia_brand"], p["pedia_path"]
+        bt = set(tokens(gp[0]))
+
+        def exact(path):
+            return bool(path) and tokens(path[0]) == tokens(gp[0]) and                 score.judge(gb, path, gb, gp, bt).cls == "exact"
+        pe, ve = exact(it["pipeline"]), exact(it["validator"])
+        verdict = "pipeline_right" if pe else "validator_right" if ve else "both_wrong"
+        out.append({"id": it["id"], "verdict": verdict, "path": gp, "by": "pedia"})
+    f = _dir(domain) / f"{version}-verdicts.json"
+    f.write_text(json.dumps(out, indent=1, ensure_ascii=False), encoding="utf-8")
+    return f
+
+
 def settle(domain: str, version: str, verdicts: Path) -> dict:
     """The person's verdicts -> frozen V<k> labels (gold for these listings), and the validator's score on them."""
     d = _dir(domain)
@@ -102,17 +131,19 @@ def settle(domain: str, version: str, verdicts: Path) -> dict:
         if it.get("spot_check"):
             c["spot:" + v["verdict"]] += 1
         truth = {"pipeline_right": it["pipeline"], "validator_right": it["validator"],
-                 "both_wrong": v.get("path")}.get(v["verdict"])
+                 "both_wrong": v.get("path") if isinstance(v.get("path"), list) else
+                 [x.strip() for x in (v.get("path") or "").split(">") if x.strip()]}.get(v["verdict"])
         if truth:
             rows.append({"id": f"{version}:{it['id']}", "listing": it["id"], "title": it["title"],
-                         "expected_path": truth, "by": "person", "verdict": v["verdict"],
+                         "expected_path": truth, "by": v.get("by", "person"), "verdict": v["verdict"],
                          "spot_check": bool(it.get("spot_check")), "note": v.get("note", "")})
     (d / f"{version}-gold.jsonl").write_text("".join(json.dumps(r, ensure_ascii=False) + "\n" for r in rows),
                                              encoding="utf-8")
     flagged = [it for it in review["items"] if not it.get("spot_check") and it["id"] in V]
     flags_right = sum(V[it["id"]]["verdict"] in ("validator_right", "both_wrong") for it in flagged)
     pipe_wrong = sum(V[it["id"]]["verdict"] in ("validator_right", "both_wrong") for it in review["items"] if it["id"] in V)
-    silver = {"version": version, "validator": "claude-session-v1",
+    by = {v.get("by", "person") for v in V.values()}
+    silver = {"version": version, "validator": "claude-session-v1", "reviewer": "/".join(sorted(by)),
               "reviewed": sum(c[k] for k in ("pipeline_right", "validator_right", "both_wrong", "unclear")),
               "agreement": round(review["agree"] / max(review["agree"] + review["disagree"], 1), 3),
               "flag_precision": round(flags_right / max(len(flagged), 1), 3),
@@ -128,13 +159,16 @@ def settle(domain: str, version: str, verdicts: Path) -> dict:
 
 def main() -> None:
     ap = argparse.ArgumentParser(prog="taxo.loopb")
-    ap.add_argument("cmd", choices=["sample", "compare", "settle"])
+    ap.add_argument("cmd", choices=["sample", "compare", "pedia", "settle"])
     ap.add_argument("domain")
     ap.add_argument("version")
     ap.add_argument("verdicts", nargs="?")
+    ap.add_argument("--pool", choices=["unlabelled", "pedia-dev"], default="unlabelled")
     a = ap.parse_args()
     if a.cmd == "sample":
-        print(sample(a.domain, a.version))
+        print(sample(a.domain, a.version, pool=a.pool))
+    elif a.cmd == "pedia":
+        print(pedia_verdicts(a.domain, a.version))
     elif a.cmd == "compare":
         print(compare(a.domain, a.version))
     else:

@@ -135,7 +135,7 @@ def test_run_places_supported_clusters_and_vetoes():
     q = by["Lattafa Khamrah Qahwa Eau de Parfum 100 ml"]
     assert q.level == "product" and q.path[-1] == "Khamrah Qahwa" and q.step == "lattice"
     yara = by["Lattafa Yara Eau de Parfum for Women 100ml"]
-    assert yara.level == "brand" and yara.route == "agent_title"          # one listing: under the floor
+    assert yara.level == "product" and yara.step == "rule" and yara.path[-1] == "Yara"   # one listing, a short name
     edt = by["Lattafa Khamrah Eau de Toilette 100ml"]
     assert edt.rule == "veto/concentration-conflict" and edt.route == "agent_title"
     assert by["Lattafa Perfumes"].step == "rule"                           # names nothing: settled at the brand

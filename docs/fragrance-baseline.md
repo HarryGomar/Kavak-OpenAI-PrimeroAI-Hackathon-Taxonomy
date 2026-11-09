@@ -191,3 +191,32 @@ hides the pipeline's answers. It is not fully blind, because the same session wr
 answers are shown as A and B in a fixed order per listing, without saying which labeller gave which. After that,
 `taxo.loopb settle` freezes V1, adds the person's labels as gold, and writes the validator's score as the KPI silver
 row.
+
+### Loop B V1, settled with Pedia as the reviewer; round 6 from its findings
+
+**Setup:** for testing, Pedia's label plays the person. Each Loop B round "reveals" Pedia's labels for a new batch, as if
+someone had just labelled it. Everything is still scored against Pedia. For the presentation, the same flow runs with a
+person reviewing (`taxo.loopb settle` takes a person's verdicts).
+
+**V1 sample** (`taxo.loopb sample fragrance V1 --pool pedia-dev`): 40 Pedia-labelled listings from dev brands. The
+earlier unlabelled sample is kept in `runs/fragrance/loopb/V0-unlabelled/`.
+
+| V1 | Result |
+|---|---:|
+| Validator agrees with the pipeline | 21 of 40 (52.5%) |
+| Validator right when it disagrees | 15 of 19 (79%) |
+| Spot checks of agreed rows that held | 5 of 6 |
+| Pipeline errors found | 16 |
+| New gold rows written (`V1-gold.jsonl`) | 25 |
+
+**Pipeline errors:** 12 of the 16 were short product names seen once ("Invincible", "Aayah", "Big Apple"), which the
+pipeline sent to the agent.
+
+**Validator errors:** it names sets ("Minis Gift Set") where the reviewer uses plain "Gift Set". This became validator
+card v2: `cards/validator-fragrance.md`.
+
+| Round | Change | Dev exact | Sealed exact | Sealed harm | Human sealed | To agent | Gate |
+|---|---|---:|---:|---:|---:|---:|---|
+| 6 | `settle/single-name`: a short name under the floor (3 words or fewer) gets its own product node instead of going to the agent (found by V1) | 65.7% | **68.9%** | 14.2% | 50.3% | **11.1%** | **kept** (93 better, 33 worse) |
+
+**Sealed reads:** 7 in total.

@@ -200,10 +200,13 @@ def run(items: list[Item], brands: Brands, vocab, rules: list[evaluator.Rule], o
     for it in items:
         if only is not None and it.brand not in only:
             continue
-        facts = {"brand": {"slug": it.brand}, "placement": {"level": it.level, "reason": it.reason, "step": it.step}}
+        facts = {"brand": {"slug": it.brand}, "placement": {"level": it.level, "reason": it.reason, "step": it.step,
+                                                            "cluster_units": len(it.cluster.split()) if it.cluster else 0}}
         out = evaluator.evaluate(rules, "route", facts)
         it.shadow += [(r, d) for r, _, d in out.shadow]
-        if out.then.get("settle"):
+        if out.then.get("place") == "cluster" and it.cluster and it.brand:
+            it.path, it.level, it.step, it.rule = [brands.names[it.brand], _title(it.cluster)], "product", "rule", out.rule
+        elif out.then.get("settle"):
             it.step, it.rule = "rule", out.rule
         elif out.then.get("route"):
             it.route, it.rule = out.then["route"], it.rule or out.rule
