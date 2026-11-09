@@ -1,0 +1,10 @@
+id: settle/single-name
+stage: route
+when:
+  - {fact: placement.reason, eq: under_floor}
+  - {fact: placement.cluster_units, le: 3}
+then: {place: cluster}
+status: active
+why: "A short name the brand's listings show only once is still a product name (catalog and brand-site pages name
+  one product: 'Invincible', 'Aayah'). Place it on its own node instead of sending it to the agent."
+found_by: loop-b/V1 (12 of 16 pipeline errors were short names under the floor)

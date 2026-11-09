@@ -17,7 +17,7 @@ from taxo.gold import GoldRow
 
 DRIVE_DIR = Path(os.environ.get("TAXO_DRIVE_DIR", r"G:\My Drive\Hackathon-Kavak-OpenAI-Primero\DATA\Listings"))
 SUBSETS = (1, 2, 3)
-RAW_COLS = ["source_record_key", "listing_name", "brand_name", "manufacturer_name", "source_id"]
+RAW_COLS = ["source_record_key", "listing_name", "brand_name", "manufacturer_name", "source_id", "listing_url"]
 GOLD_COLS = ["silver_id", "pedia_brand_key", "pedia_brand", "pedia_path_json", "pedia_placement_level"]
 
 
@@ -28,7 +28,7 @@ def listings() -> list[dict]:
                                columns=RAW_COLS).to_pylist():
             out.append({"id": str(r["source_record_key"]), "title": r["listing_name"] or "", "subset": k,
                         "brand_name": r["brand_name"], "manufacturer_name": r["manufacturer_name"],
-                        "source": r["source_id"] or ""})
+                        "source": r["source_id"] or "", "url": r["listing_url"]})
     return out
 
 

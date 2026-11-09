@@ -8,7 +8,7 @@ from taxo import memory
 from taxo.core import domain, rules
 from taxo.core.metrics import score
 from taxo.core.schemas import Decision, Listing, Node, RuleSpec
-from taxo.roles import curator
+from taxo.learn import curator
 from taxo.learn.queue import draw
 from taxo.roles.improver import make_improver
 from taxo.roles.validator import make_validator

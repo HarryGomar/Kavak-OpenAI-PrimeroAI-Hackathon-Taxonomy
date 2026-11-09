@@ -17,6 +17,8 @@ _CUT = re.compile(r"\s[-–—|]\s|[,(\[{|:;]|\s-\s?")
 _BRACKET = re.compile(r"\s*\[[^\]]*\]\s*$")
 _BY = re.compile(r"\bby\s+", re.I)
 _SHOP_SUFFIX = re.compile(r"(_fragrance)?_(us|usa|ca|uk|mx|eu)$")
+_URL_BRAND = re.compile(r"/(?:Perfumes|perfume|designers|brands?)/([^/?#]+)/", re.I)   # parfumo, fragrantica, shops
+_URL_BY = re.compile(r"[-_]by[-_]([a-z0-9-]+)", re.I)
 
 
 def _compact(s: str) -> str:
@@ -116,13 +118,24 @@ class Brands:
                         self._compact.setdefault(c, slug)
         return self._compact.get(_compact(_SHOP_SUFFIX.sub("", shop.lower())))
 
+    def url(self, url: str | None) -> str | None:
+        """The brand a catalog or shop URL names: /Perfumes/<Brand>/..., or a slug "...-by-<brand>-for-...". """
+        if not url:
+            return None
+        m = _URL_BRAND.search(url)
+        if m and (s := self.exact(m.group(1).replace("_", " ").replace("-", " ")) or self.site(m.group(1))):
+            return s
+        m = _URL_BY.search(url.rsplit("/", 1)[-1] or url)
+        return self.lead(tokens(m.group(1).replace("-", " "))) if m else None
+
     def find(self, p: Parsed, brand_field: str | None = None, maker_field: str | None = None,
-             shop: str | None = None) -> tuple[str | None, str]:
+             shop: str | None = None, url: str | None = None) -> tuple[str | None, str]:
         """The brand ladder (Pedia ladder.py, trimmed): the first rung that names exactly one known brand wins."""
         rungs = (("brand_field", lambda: self.exact(brand_field) or self.lead(tokens(brand_field))),
                  ("title_by", lambda: self.lead(p.by)),
                  ("title_lead", lambda: self.lead(p.toks)),
                  ("brand_site", lambda: self.site(shop)),
+                 ("url", lambda: self.url(url)),
                  ("maker_field", lambda: self.exact(maker_field) or self.lead(tokens(maker_field))),
                  ("title_any", lambda: self.anywhere(p.toks)))
         for how, rung in rungs:

@@ -11,8 +11,10 @@ places every listing on its node. It also learns **how** to build those trees:
 
 - **Loop A, induction.** In one domain, it turns a small hand-labelled gold set into a cheap pipeline: deterministic
   rules, brand registries, and routes that send only the hard listings to agents.
-- **Loop B, validation.** Gold never covers everything. An agent validator labels fresh listings, and a person settles
-  the cases where the validator and the pipeline disagree. That grows the gold and sharpens the validator.
+- **Loop B, validation.** Gold never covers everything. An agent validator works a line of questions on fresh
+  listings, with a tool for each question, and a person settles the cases where the validator and the pipeline
+  disagree. That grows the gold and sharpens the validator. Once the validator is scored on gold, it is also the
+  wide test that candidate rules run against.
 - **Loop C, transfer.** Everything that worked is stored with its scope, so the next domain starts ahead.
 
 > **Loop A fits the pipeline to the gold. Loop B fits the gold to the world. Loop C carries both to the next domain.**
@@ -28,8 +30,10 @@ places every listing on its node. It also learns **how** to build those trees:
 | **Rule** | A deterministic step written in YAML: parse, count, look up, or route. |
 | **Route** | Which process a listing goes to, and so how much it costs. |
 | **Gold** | Placements a person labelled. **The only truth.** Split into dev and sealed, by whole brand. |
-| **Silver** | Placements the validator agent made on unlabelled listings. **Never truth**: it points to where to look. |
-| **Validator** | An agent (a card, tools and a version number) that labels listings on its own and flags pipeline errors. |
+| **Silver** | Placements the validator agent made on unlabelled listings. **Never truth**: a measurement with an error bar from the validator's score on gold. |
+| **Validator** | An agent (a line of questions, the tools that answer them, and a version number) that labels listings on its own, flags pipeline errors and tests candidate rules. |
+| **Question** | One step in the validator's line of questioning ("who makes this?"), with the tools that answer it. The questions are the validator's skills. |
+| **`ask_person`** | The validator's most expensive tool. The question is saved for a person and the listing is abstained on. The answer becomes a gold row or a convention. |
 | **Validation set V*k*** | A fresh sample labelled by validator v*k*, with every disagreement settled by a person, then frozen. |
 | **Lesson** | Something that worked (a rule shape, a route, a registry source, a validator check), with its scope and record. |
 
@@ -142,7 +146,9 @@ record: {gold_dev: null, gold_sealed: null, cost_per_1k: null}   # filled in by 
 
 **A rule we will not accept.** This is Pedia's real learned rule. It was mined from the judge's own answers, matched
 the judge 145 of 145 times where it was mined and 22 of 24 held out, and was recorded as "holds". Its truth was the
-agent it was meant to replace. In Taxo it fails the gate, because the gate scores rules on gold only (§8).
+agent it was meant to replace. In Taxo it fails twice: it is tested against the validator, a different agent with
+its own questions, tools and budget that is scored on gold, never against the agent it replaces; and the final gate
+is sealed gold (§8).
 
 ```yaml
 # Pedia: scopes/general/rules/loop/brand-learned-not-a-brand.yaml (trimmed)
@@ -158,8 +164,8 @@ metrics:
 
 | Loop | What it changes | What it is measured on | Who decides | What it produces |
 |---|---|---|---|---|
-| **A · Induction** | the pipeline: rules, vocabulary, registries, routes, cards | sealed gold: F1 and cost | the gate, in code | a cheaper, more accurate pipeline |
-| **B · Validation** | the gold set and the validator | disagreements on fresh listings | a person | more gold, a sharper validator, new error shapes for A |
+| **A · Induction** | the pipeline: rules, vocabulary, registries, routes, cards | the scored validator's silver (wide), then sealed gold (final): F1 and cost | the gate, in code | a cheaper, more accurate pipeline |
+| **B · Validation** | the gold set, and the validator's questions and tools | disagreements on fresh listings; the validator's score on gold | a person | more gold, a sharper validator, new error shapes for A |
 | **C · Transfer** | the starting kit of the next domain | rounds and cost to reach a target F1, warm start against cold | measured | lessons with a scope and a record |
 
 ### 5.1 Loop A: induction (one domain)
@@ -177,17 +183,23 @@ Each round:
    - Does an official source group them? (registry)
    - Which rule should have caught them, and which condition failed?
    - How many brands show the same shape?
-3. **Propose one change:** a rule, a vocabulary entry, a registry addition, a route, or a card edit.
-4. **Shadow.** Run the change on gold dev without letting it act. Record what it would change, how much of that is
-   right, and the cost difference.
-5. **Gate (code).** Keep the change only if, on sealed gold:
+3. **Propose one change.** The proposer agent writes one of: a code rule (an existing check plus a decision), a new
+   check, an agentic rule (a line in the placer's prompt), a vocabulary entry, a registry addition, a route, or a
+   **convention question** for a person when the errors come down to policy rather than a missing rule.
+4. **Shadow, against the validator.** Run the change on dev gold and on a fresh sample of listings without letting it
+   act. Score what it would change against gold where gold exists, and against the frozen, gold-scored validator
+   everywhere else. Where the change and the validator disagree, the item goes to a person, plus a spot check of
+   where they agree. Record the cost difference.
+5. **Gate (code).** Keep the change only if, in one logged read of sealed gold:
    - F1 does not fall, and either F1 rises or cost falls;
    - the change touches enough sealed rows that the test could have failed;
    - the lower bound of its precision clears the bar.
 6. **Keep or drop.** A kept change becomes active and is logged. Every read of sealed gold is counted.
 
 **Cheap rule mining.** When agents give the same answer on the same facts again and again, propose that as a rule
-(Pedia's `learn.py`), and measure it on **gold**, never on the agents' answers.
+(Pedia's `learn.py`). The same goes for the validator's trace: a question whose tool always gives the same answer on
+the same facts is a candidate deterministic rule. Measure it against the validator and gold, never against the
+answers of the agent it would replace.
 
 **Figure A:** F1 on sealed gold and cost per 1,000 listings, round by round, with each point labelled by the change kept.
 
@@ -200,24 +212,34 @@ Each round *k*:
 
 1. **Sample** fresh unlabelled listings where gold is thin: new shops, brands not in gold, rules that fire a lot, agent
    routes, and decisions with a small margin.
-2. **Label blind.** Validator v*k* labels each listing without seeing the pipeline's answer. It gets more budget than
-   the pipeline: the full evidence, sibling listings and web search.
+2. **Label blind, by a line of questions.** Validator v*k* labels each listing without seeing the pipeline's answer.
+   It works through its questions in order ("who makes this?", "is it a set or a form?", "what concentration does
+   it state?", "what is the official name?"), and tools answer each one: similar brands, the parsers ported from
+   Pedia, web search. It gets more budget than the pipeline. Its answer carries a trace (question, tools called,
+   answer), so a wrong label shows which question went wrong. When a question needs a person, it calls
+   `ask_person`: the question is saved to `runs/<d>/questions.jsonl` and the listing is abstained on.
 3. **Compare.** Where they agree, the label is silver-agreed. Where they disagree, the item goes to review.
 4. **Review.** A person settles every disagreement, plus a spot check of agreed items. Each verdict is one of: pipeline
    wrong, validator wrong, both wrong, or unclear.
 5. **Use the verdicts:**
    - **Pipeline wrong:** the case joins gold (dev, or sealed when its brand is a sealed brand). Its error shape goes to Loop A.
-   - **Validator wrong:** feedback to the validator, as a card edit, a new tool or a new check. This gives v*k+1*.
+   - **Validator wrong:** the improver agent reads the mistakes and their traces and proposes one change: a new,
+     reworded or reordered question, a new tool (Python, with a case it must fire on and one it must stay quiet
+     on), web or inputs, or the model. Code tries it on dev gold; it becomes v*k+1* only if accuracy rises without
+     the reject and abstain rate drifting.
+   - **`ask_person` answered:** a per-listing answer becomes a gold row (`provenance: review`); a policy answer
+     becomes a convention (`conventions.yaml`), goes into the placer's prompt, and the validator stops asking it.
    - **V*k* is frozen:** its labels are the agreed items plus the reviewed ones, with an error bar from the spot check.
 6. **Score the validator** on gold at every version: agreement, how precise its "wrong" flags are, and its tilt (how
-   often it says wrong or park). Its silver counts only once these are good enough.
+   often it says wrong or park). Its silver counts, as the test for candidate rules, only once these are good
+   enough, and only for the frozen version that was scored.
 7. **Re-read.** v*k+1* re-reads earlier silver-agreed items, and any it now flags go to review. This is how something
    that was considered fine comes back as an error.
 
 **Who changes gold.** Only a person. A claim that a gold label is wrong is a review item, not an edit.
 
-**Example of human feedback.** The validator proposed searching the web for each brand's official product lines, and
-we approved it. It then found products that gold had missed, and these became registry-backed gold cases.
+**Example of human feedback.** The validator proposed the question "what is this brand's official product line?",
+answered by web search, and we approved it. It then found products that gold had missed, and these became registry-backed gold cases.
 
 **Figure B:** rule set R1 scored on gold, V1 and V2. Its score drops on V2, where new error shapes appear. R2, after
 Loop A has learned from V2's errors, recovers. The full grid is R*i* × V*k*.
@@ -289,8 +311,9 @@ Each guardrail comes from something that went wrong in Pedia.
 
 | Guardrail | What happened in Pedia |
 |---|---|
-| A rule's truth is gold, never the agent it replaces. | The learned rule matched the judge 145 of 145 times. The judge was its truth. |
-| Silver counts only after the validator is scored on gold. | A checker card said "When in doubt, disagree". All 25 audited parks from that checker were real products. For the other main park reasons, 72–80% were wrong. |
+| A rule is tested against the validator, never against the agent it replaces; sealed gold has the last word. | The learned rule matched the judge 145 of 145 times. The judge was its truth. |
+| The validator differs from the agents it tests: its own questions, tools, budget and, where possible, model. | Same as above: an agent agreeing with itself measures nothing. |
+| Silver counts only after the validator is scored on gold, and only for that frozen version. | A checker card said "When in doubt, disagree". All 25 audited parks from that checker were real products. For the other main park reasons, 72–80% were wrong. |
 | Agreed cases are spot-checked. | Two judges agreed on 23 conflict cases, and no one checked those against the owner. |
 | Only a person edits gold. | Judges ruled 15 owner examples "unsatisfiable", and they left the yardstick. |
 | A loop is never scored by the judge it trains against. | A loop scored by the LLM judge learned the judge's bias: 15 of 48 changes helped the judge and hurt the owner's labels. |
@@ -344,7 +367,9 @@ domains/<d>/vocab.yaml        variant and strip tokens
 registry/<d>/<brand>.yaml     official structure, with its basis
 rules/<d>/*.yaml              domain rules
 rules/global/*.yaml           rules promoted by Loop C
-cards/                        judge, brand, validator, analyst, registry
+cards/                        judge, brand, analyst, registry
+domains/<d>/validator.yaml    the validator's setup: model, web, inputs, its line of questions
+domains/<d>/validator_tools.py  tools the improver wrote for the validator, kept after the dev-gold test
 lessons/*.yaml                Loop C store
 taxo/                         parse, lattice, rules, pipeline, agents, gate, validate, transfer, score, split
 runs/<run>/                   outside Git: placements.jsonl, metrics.json, ledger.jsonl
@@ -365,4 +390,6 @@ runs/<run>/                   outside Git: placements.jsonl, metrics.json, ledge
   numbers in §4.1 and §8 are Pedia's.
 - Whether lessons transfer across domains, and in which direction.
 - How much review a person must do per Loop B round before the validator's silver can be trusted on its own.
+- Whether rules that pass against the validator also pass sealed gold, or whether the validator and the proposer
+  share blind spots.
 - Cars: no data yet.

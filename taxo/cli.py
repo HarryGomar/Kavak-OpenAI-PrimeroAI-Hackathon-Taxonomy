@@ -1,7 +1,8 @@
 """Entry point.
 
     uv run python -m taxo.cli inspect <domain>        counts, a few listings, rules enabled (no model calls)
-    uv run python -m taxo.cli place <domain> --n 5    run the placer agent on n listings (needs OPENAI_API_KEY)
+    uv run python -m taxo.cli place <domain> --n 5    run the placer agent on n listings (Codex CLI; --runner sdk
+                                                      uses OPENAI_API_KEY)
 """
 from __future__ import annotations
 
@@ -26,12 +27,16 @@ def inspect(name: str, limit: int = 50) -> None:
         print(" -", l.source, "|", l.title[:100])
 
 
-def place(name: str, n: int) -> None:
+def place(name: str, n: int, runner: str = "cli") -> None:
+    from taxo.core.codex import runner as pick_runner  # only needed when calling models
+
+    run = pick_runner(runner)
+    if run is None:
+        raise SystemExit("cli: the `codex` CLI is needed on PATH" if runner == "cli" else "sdk: set OPENAI_API_KEY")
     d = domains.load(name)
     nodes = {x.id: x for x in d.nodes()}
     if not nodes:
         raise ValueError(f"{name}: no taxonomy nodes; use python -m taxo.pipeline {name} --construct before placement")
-    from agents import Runner  # only needed when calling models
     from taxo.roles.placer import PlaceContext, make_placer
     ctx = PlaceContext(name, nodes, memory.rules_for(name, tuple(d.pack.get("families", []))))
     agent = make_placer(name, d.pack.get("conventions", ""))
@@ -39,8 +44,7 @@ def place(name: str, n: int) -> None:
     sample = random.Random(0).sample(list(d.listings()), n)
     for l in sample:
         ctx.listing = l
-        out = Runner.run_sync(agent, "Listing evidence:\n" + json.dumps(l.model_dump(), default=str),
-                              context=ctx).final_output
+        out = run(agent, "Listing evidence:\n" + json.dumps(l.model_dump(), default=str), ctx).final_output
         if out.node_id is not None:
             if out.node_id not in nodes:
                 raise ValueError(f"placer returned unknown node {out.node_id}")
@@ -62,8 +66,10 @@ def main() -> None:
     pl = sub.add_parser("place")
     pl.add_argument("domain", choices=domains.DOMAINS)
     pl.add_argument("--n", type=int, default=5)
+    pl.add_argument("--runner", choices=["cli", "sdk"], default="cli",
+                    help="cli: the Codex CLI (ChatGPT login); sdk: the Agents SDK (OPENAI_API_KEY)")
     a = p.parse_args()
-    inspect(a.domain, a.limit) if a.cmd == "inspect" else place(a.domain, a.n)
+    inspect(a.domain, a.limit) if a.cmd == "inspect" else place(a.domain, a.n, a.runner)
 
 
 if __name__ == "__main__":

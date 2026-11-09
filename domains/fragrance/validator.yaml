@@ -1,27 +1,51 @@
-# Validator setup v1 (fragrance). Checklist steps are the validator's rules: proposals until the validator scores
-# better on gold with them. The improver proposes new steps; code tries them on dev gold.
+# Validator setup v1 (fragrance). The validator works a LINE OF QUESTIONS, in order; each names the tools that answer
+# it (taxo/roles/validator.py: similar_brands, ask_person, web_search, and domains/<d>/validator_tools.py). Questions
+# are proposals until the validator scores better on gold with them. The improver proposes questions and tools.
 version: 1
 model: gpt-6-luna
 web: true
-use_proposals: false        # true = also run proposed steps, to score them on dev gold before admitting
+use_proposals: false        # true = also run proposed questions, to score them on dev gold before admitting
 inputs: [title, brand_field, seller, concentration, volume_ml, gender]
-# Starts empty: the improver induces steps from the validator's mistakes on our labels.
-checklist: []
+# v1 is seeded with two questions translated from the prompt-only card (taxo/validator.py before the merge), which
+# scored 82.5% exact vs the reviewer on Loop B V3. With no questions the agent named no tools and answered generic
+# paths. The improver adds, rewords or branches questions from here, each kept only if it wins an A/B on human labels.
+questions:
+  - id: who_makes_it
+    ask: Which house makes this? Start from the brand given; check that the title, the shop and the URL agree with it.
+    tools: [similar_brands]
+    then: Keep the brand given unless the title clearly names another known house. Put the brand first in the path.
+    status: admitted
+    origin: seeded from the prompt-only card (Loop B V3, 82.5% exact)
+  - id: product_name
+    ask: What is the product's own name? Look at the names this brand already has, then at the title.
+    tools: [brand_products]
+    then: Reuse an existing name only when it is the same product (put it under its line if the line is listed and
+      the title names the line). Otherwise write the product's own name from the title. Size, concentration (EDP, EDT,
+      parfum), audience (men, women, unisex) and pack count are never part of a name. If the listing names no product
+      or is not a fragrance, the path is the brand only.
+    status: admitted
+    origin: seeded from the prompt-only card (Loop B V3, 82.5% exact)
 
-# EXAMPLES of steps the improver might induce (not active):
-#   - id: similar_brands
-#     text: Look up brands with similar names (similar_brands). If the listing's brand could be one of them, web-search both and say which house makes it.
+# EXAMPLES of questions the improver might induce (not active):
+#   - id: who_makes_it
+#     ask: Which house makes this? Is the brand field a seller, a store label or an "inspired by" house?
+#     tools: [similar_brands, web_search]
+#     then: If two houses fit, web-search both; if still unsure, ask_person.
 #     status: proposal
 #     origin: Pedia brand/alias-lookup, brand/inspired-by-mask (dupes name the house they imitate)
-#   - id: official_line
-#     text: Web-search the brand's official site or a fragrance catalogue for the scent's name; place on the official name, not the seller's wording.
+#   - id: official_name
+#     ask: What is the scent's official name on the brand's site or a fragrance catalogue?
+#     tools: [web_search]
+#     then: Place on the official name, not the seller's wording.
 #     status: proposal
 #     origin: Pedia registry (official lines) and SPEC agent_search route
 #   - id: concentration_and_audience
-#     text: Read the concentration (EDT, EDP, parfum, extrait) and audience (men, women) the listing states; reject a path with a different one.
+#     ask: What concentration (EDT, EDP, parfum, extrait) and audience (men, women) does the listing state?
+#     then: Reject a path with a different one.
 #     status: proposal
 #     origin: Pedia DIM_OFFICIAL_MISMATCH flag; checks concentration_conflict, audience_conflict
 #   - id: set_or_form
-#     text: If the listing is a gift set, body mist, lotion or oil, place it on that set or form child, not on the scent itself.
+#     ask: Is this a gift set, body mist, lotion or oil rather than the scent itself?
+#     then: If so, place it on that set or form child, not on the scent.
 #     status: proposal
 #     origin: Pedia SET_PIECES_UNNAMED; Harry v6 forms 38:1

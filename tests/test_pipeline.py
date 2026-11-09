@@ -135,7 +135,7 @@ def test_run_places_supported_clusters_and_vetoes():
     q = by["Lattafa Khamrah Qahwa Eau de Parfum 100 ml"]
     assert q.level == "product" and q.path[-1] == "Khamrah Qahwa" and q.step == "lattice"
     yara = by["Lattafa Yara Eau de Parfum for Women 100ml"]
-    assert yara.level == "brand" and yara.route == "agent_title"          # one listing: under the floor
+    assert yara.level == "product" and yara.step == "rule" and yara.path[-1] == "Yara"   # one listing, a short name
     edt = by["Lattafa Khamrah Eau de Toilette 100ml"]
     assert edt.rule == "veto/concentration-conflict" and edt.route == "agent_title"
     assert by["Lattafa Perfumes"].step == "rule"                           # names nothing: settled at the brand
@@ -168,3 +168,11 @@ def test_brand_site_rung():
     assert b.find(parse("Vanilla Musk 50 ml"), shop="sandandfog_us") == ("sand_and_fog", "brand_site")
     assert b.find(parse("Dua Tobacco Vanille"), shop="sandandfog_us") == ("dua", "title_lead")   # the title wins
     assert b.find(parse("Another Oud"), shop="fragrancenet") == (None, "none")
+
+
+def test_url_rung():
+    b = Brands({"iunx": "IUNX", "gucci": "Gucci", "ghost": "Ghost"})
+    assert b.url("https://www.parfumo.com/Perfumes/IUNX/N08_Eau_Baptiste") == "iunx"
+    assert b.url("https://perfumania.com/products/gucci-guilty-pour-homme-by-gucci-for-men-eau-de-parfum-spray") == "gucci"
+    assert b.find(parse("Daydream Perfume"), url="https://perfumania.com/products/daydream-by-ghost-for-women") == ("ghost", "url")
+    assert b.url("https://example.com/p/123") is None

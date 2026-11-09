@@ -4,6 +4,11 @@
 Fill them in or cut the line; don't present a placeholder as a result. The figures to produce are listed at the end.
 The system is in [SPEC.md](SPEC.md).*
 
+*Every number comes from listings a person labelled at random, and is said with its range and its row count: "84%
+exact, between 72 and 92, on 50 labelled listings." A hand-picked score is "on the brands we labelled", never the
+catalogue's. A change smaller than the range is not a result. How to read and say the numbers:
+[docs/KPIS.md](docs/KPIS.md); the ranges are in `uv run python -m taxo.kpis <domain>`.*
+
 ---
 
 ## 1. Title (10 s)
@@ -121,7 +126,7 @@ Agents handle what is truly hard, rules handle the rest, and a person decides wh
 
 | Figure | What it shows | Axes | From | Status |
 |---|---|---|---|---|
-| **A** | Loop A on one domain | x: round; y1: F1 on sealed gold; y2: cost per 1,000 listings. Each point is labelled by the change kept (lattice, registry, route) | Loop A runs on fragrance | to run |
+| **A** | Loop A on one domain | x: round; y1: F1 on sealed gold, with its 95% range as an error bar; y2: cost per 1,000 listings. Each point is labelled by the change kept (lattice, registry, route) | Loop A runs on fragrance | to run |
 | **B** | Gold is not enough, and Loop B fixes it | grouped bars: R1 and R2 on gold, V1 and V2 | Loop B rounds 1–2 | to run |
 | **C** | Transfer between domains | matrix, source × target: rounds saved to reach the target F1, warm start against cold | food ↔ fragrance; cars if there is data | to run |
 | Oreo tree | Why trees | a tree diagram with listings, search terms and hashtags | hand-drawn from real listings | to make |
@@ -134,5 +139,7 @@ Agents handle what is truly hard, rules handle the rest, and a person decides wh
 | Why not just use an agent for everything? | Cost, and errors you can't see. In Pedia, the agent wrongly set aside most of the listings it parked. Rules are cheap and testable, and agents get only the hard cases. |
 | Isn't the validator just another agent you trust? | No. It is scored on gold at every version, its agreements are spot-checked, and only a person settles a disagreement or changes gold. |
 | How do you know a rule generalises? | Sealed gold is whole brands that the loop never tunes on. And Loop B tests the rules on listings gold doesn't contain. |
+| How sure are you of these numbers? | Each one is measured on listings a person labelled, drawn at random, so it stands for the whole catalogue. 50 labels give about ±10 points; the range shrinks with the number labelled, not with the size of the catalogue. |
+| 50 labels for millions of listings? | A spoonful tells you how salty the pot is, if it's stirred: random sampling is the stirring. And the validator extends them: it labels thousands more, and the 50 human rows measure and correct its bias. The fewer times it disagrees with us, the tighter the range. |
 | What does a person actually do? | Settles the disagreements Loop B raises (about [n] per round), and tells the validator what to look for. |
 | What about cars? | Make, model and year come from a VIN. Version and trim are where listings disagree, and that is where the lattice and routes come in. |
