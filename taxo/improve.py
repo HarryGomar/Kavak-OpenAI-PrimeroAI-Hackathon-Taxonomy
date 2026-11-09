@@ -1,6 +1,7 @@
 """Loop B, iterated: improve the validator several times in a row (SPEC §5.2), each change tested on human rows.
 
     uv run python -m taxo.improve fragrance --iterations 4 --misses 60 --ab 120
+    uv run python -m taxo.improve fragrance --fit 6 --train 120 --test 120      fit on one sample, then a held-out check
 
 One iteration:
   1. human round   a fresh dev sample with human labels (Pedia stands in for the person); the validator labels it blind;
@@ -201,13 +202,122 @@ def iteration(domain: str, k: int, n_miss: int, n_ab: int, change: dict | None =
     return rec
 
 
+def _write(d, name: str, labels: list[dict]) -> None:
+    (d / name).write_text("".join(json.dumps(x, ensure_ascii=False) + "\n" for x in labels), encoding="utf-8")
+
+
+def fit(domain: str, rounds: int, n_train: int, n_test: int) -> dict:
+    """Fit the validator to a fixed training sample of human rows (the improver works its misses round after round;
+    a change is kept when the training sample's exact rises without harm or abstain rising), then ONE held-out check
+    on fresh rows it never saw: the fitted version replaces the current one only if exact does not fall and harm and
+    abstain do not rise there. This is what keeps "match the sample fully" from memorising the sample."""
+    d = RUNS_DIR / domain / "loopb"
+    used = [int(p.name[1:].split("-")[0]) for p in d.glob("F*-blind.jsonl")]
+    F = f"F{max(used, default=0) + 1}"
+    s0 = validator.card(domain)
+    s = s0
+    tools_path = DOMAINS_DIR / domain / "validator_tools.py"
+    tools0 = tools_path.read_text(encoding="utf-8")
+    loopb.sample(domain, F, pool="pedia-dev", n=n_train)
+    items = [json.loads(x) for x in open(d / f"{F}-blind.jsonl", encoding="utf-8")]
+    cur = validator.label(domain, items, d / f"{F}-r0.log", c=s)
+    _write(d, f"{F}-validator.jsonl", cur)
+    cur_pi = per_item(domain, cur)
+    start = {m: round(sum(x[m] for x in cur_pi.values()) / max(len(cur_pi), 1), 3) for m in ("exact", "harm", "abstain")}
+    _say(f"fit {F}: training sample n={len(cur_pi)}, validator v{s0.get('version')}: exact {start['exact']} harm "
+         f"{start['harm']} abstain {start['abstain']}")
+    hist = []
+    for r in range(1, rounds + 1):
+        misses = loop._misses(domain, F)
+        if not misses:
+            _say(f"  round {r}: no misses left on the training sample")
+            break
+        ch = loop.propose_change(domain, misses, d / f"{F}-r{r}-improver.json")
+        rec = {"round": r, "misses": len(misses), "change": ch}
+        tool_src = None
+        if ch and ch.get("kind") == "tool":
+            tool_src, rec["tool_test"] = try_tool(domain, ch)
+            if tool_src:
+                ch = {**ch, "question_id": ch.get("question_id") or f"use_{ch['tool_name']}",
+                      "ask": ch.get("ask") or ch.get("text"),
+                      "tools": sorted(set(ch.get("tools") or []) | {ch["tool_name"]})}
+        why_closed = loop.reopens_closed(domain, ch or {})
+        cand = None if why_closed else (loop.apply_change(s, ch, f"improver fit {F} round {r}: "
+                                                          f"{(ch or {}).get('rationale', '')[:160]}", domain) if ch else None)
+        if cand is None or (ch.get("kind") == "tool" and not tool_src):
+            rec["outcome"] = (f"refused: reopens closed question {why_closed}" if why_closed else
+                              f"nothing testable ({(ch or {}).get('kind')}: {rec.get('tool_test') or (ch or {}).get('text')})")
+            _say(f"  round {r}: {rec['outcome']}")
+            hist.append(rec)
+            continue
+        before_tools = tools_path.read_text(encoding="utf-8")
+        if tool_src:
+            tools_path.write_text(before_tools + tool_src, encoding="utf-8")
+        new = validator.label(domain, items, d / f"{F}-r{r}.log", c=cand)
+        cmp_ = compare(cur_pi, per_item(domain, new))
+        keep = cmp_["exact"]["delta"] > 0 and cmp_["harm"]["delta"] <= 0 and cmp_["abstain"]["delta"] <= 0.05
+        rec |= {"train": cmp_, "kept": keep}
+        if keep:
+            s, cur, cur_pi = cand, new, per_item(domain, new)
+            _write(d, f"{F}-validator.jsonl", cur)
+        elif tool_src:
+            tools_path.write_text(before_tools, encoding="utf-8")
+        e = cmp_["exact"]
+        _say(f"  round {r}: {ch.get('kind')} `{ch.get('question_id')}`: training exact {e['current']} -> {e['candidate']} "
+             f"(delta {e['delta']}, {e['changed']} changed), harm delta {cmp_['harm']['delta']}, abstain delta "
+             f"{cmp_['abstain']['delta']} -> {'kept (v' + str(cand['version']) + ')' if keep else 'dropped'}")
+        hist.append(rec)
+    out = {"fit": F, "start": start, "rounds": hist, "card_start": s0.get("version"), "card_fitted": s.get("version")}
+    if s is s0:
+        _say("fit: no change kept on the training sample; nothing to check")
+        tools_path.write_text(tools0, encoding="utf-8")
+    else:
+        # the held-out check: the fitted version against the starting one, on fresh rows, both at once
+        T = loop._next_v(domain)
+        loopb.sample(domain, T, pool="pedia-dev", n=n_test)
+        test = [json.loads(x) for x in open(d / f"{T}-blind.jsonl", encoding="utf-8")]
+        with ThreadPoolExecutor(2) as pool:
+            fa = pool.submit(validator.label, domain, test, d / f"{T}-validator.log", False, 600, s0)
+            fb = pool.submit(validator.label, domain, test, d / f"{T}-validator-cand.log", False, 600, s)
+            a, b = fa.result(), fb.result()
+        _write(d, f"{T}-validator.jsonl", a)
+        _write(d, f"{T}-validator-cand.jsonl", b)
+        held = compare(per_item(domain, a), per_item(domain, b))
+        adopt = held["exact"]["delta"] >= 0 and held["harm"]["delta"] <= 0 and held["abstain"]["delta"] <= 0.05
+        out |= {"held_out": T, "held": held, "adopted": adopt}
+        e, h = held["exact"], held["harm"]
+        _say(f"  held-out {T} (n={held['n']}): exact {e['current']} {e['current_ci']} -> {e['candidate']} "
+             f"{e['candidate_ci']} (delta {e['delta']} {e['delta_ci']}), harm {h['current']} -> {h['candidate']} "
+             f"(delta {h['delta']} {h['delta_ci']}), abstain delta {held['abstain']['delta']} -> "
+             f"{'ADOPTED v' + str(s.get('version')) if adopt else 'NOT adopted: v' + str(s0.get('version')) + ' stays'}")
+        if adopt:
+            path = DOMAINS_DIR / domain / "validator.yaml"
+            head = "".join(ln for ln in path.read_text(encoding="utf-8").splitlines(keepends=True) if ln.startswith("#"))
+            path.write_text(head + yaml.safe_dump(s, sort_keys=False, allow_unicode=True, width=120), encoding="utf-8")
+            out["commit"] = _commit(f"Validator v{s0.get('version')} -> v{s.get('version')}: fitted on {F} "
+                                    f"({sum(1 for x in hist if x.get('kept'))} improver changes kept), held-out {T}: "
+                                    f"exact {e['current']} -> {e['candidate']}, delta {e['delta']} {e['delta_ci']}, "
+                                    f"n={held['n']}")
+        else:
+            tools_path.write_text(tools0, encoding="utf-8")
+    (d / f"{F}-fit.json").write_text(json.dumps(out, indent=1, ensure_ascii=False), encoding="utf-8")
+    return out
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(prog="taxo.improve")
     ap.add_argument("domain")
     ap.add_argument("--iterations", type=int, default=4)
     ap.add_argument("--misses", type=int, default=60, help="human-round sample per iteration")
     ap.add_argument("--ab", type=int, default=120, help="A/B sample per iteration")
+    ap.add_argument("--fit", type=int, default=0, help="fit mode: this many improver rounds on one training sample, "
+                                                       "then one held-out check")
+    ap.add_argument("--train", type=int, default=120)
+    ap.add_argument("--test", type=int, default=120)
     a = ap.parse_args()
+    if a.fit:
+        print(json.dumps(fit(a.domain, a.fit, a.train, a.test), indent=1, ensure_ascii=False)[-3000:])
+        return
     log = []
     for k in range(1, a.iterations + 1):
         log.append(iteration(a.domain, k, a.misses, a.ab))

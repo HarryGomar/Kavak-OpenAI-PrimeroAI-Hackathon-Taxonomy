@@ -49,7 +49,7 @@ def sample(domain: str, version: str, seed: int | None = None, pool: str = "unla
                  and any(g.startswith("pedia:") for g in p["gold"])]
     else:
         fresh = [p for p in P if not p["gold"] and p["brand"] and p["title"]]
-    seen = {json.loads(x)["id"] for f in _dir(domain).glob("V*-blind.jsonl") if f.name != f"{version}-blind.jsonl"
+    seen = {json.loads(x)["id"] for f in _dir(domain).glob("[VF]*-blind.jsonl") if f.name != f"{version}-blind.jsonl"
             for x in open(f, encoding="utf-8")}          # a listing is sampled in one round only
     fresh = [p for p in fresh if p["id"] not in seen]
     rnd = random.Random(7 if seed is None and version == "V1" else seed if seed is not None else version)

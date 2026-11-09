@@ -75,7 +75,10 @@ def propose_change(domain: str, misses: list[dict], log: Path) -> dict | None:
     s = validator.card(domain)
     qs = [{k: q.get(k) for k in ("id", "ask", "tools", "then")} for q in s.get("questions") or []
           if q.get("status") in ("admitted", "shadow")]
+    closed = closed_questions(domain)
     text = ("Current questions:\n" + json.dumps(qs, ensure_ascii=False, indent=0)
+            + ("\n\nClosed questions: the owner decided these. Never write a question or tool that brings them back "
+               "in any form:\n" + json.dumps(closed, ensure_ascii=False) if closed else "")
             + "\n\nTools: similar_brands, ask_person, brand_products" + (", web_search" if s.get("web") else "")
             + "\n\nA new tool: `code` is one Python function decorated with @function_tool (imported already, with "
               "RunContextWrapper and ValidateContext; ctx.context has .brands (all brand names) and .menus "
@@ -94,9 +97,29 @@ def propose_change(domain: str, misses: list[dict], log: Path) -> dict | None:
     return change
 
 
-def apply_change(s: dict, ch: dict, origin: str) -> dict | None:
-    """A question change applied to a copy of the setup (next version); other kinds are not applied yet."""
+def closed_questions(domain: str) -> list[dict]:
+    f = DOMAINS_DIR / domain / "memory" / "closed_questions.yaml"
+    return (yaml.safe_load(f.read_text(encoding="utf-8")) or []) if f.exists() else []
+
+
+def reopens_closed(domain: str, ch: dict) -> str | None:
+    """The closed-question phrase a change's question text uses, if any (single words are too common to judge by)."""
+    text = f" {ch.get('ask') or ''} {ch.get('then') or ''} ".lower()
+    for q in closed_questions(domain):
+        for w in q.get("words") or []:
+            if " " in w and w.lower() in text:
+                return f"{q['question_id']}: '{w}'"
+    if " mist" in text and "preserve_product_name_tokens" in {q.get("question_id") for q in closed_questions(domain)}:
+        return "preserve_product_name_tokens: 'mist'"
+    return None
+
+
+def apply_change(s: dict, ch: dict, origin: str, domain: str = "fragrance") -> dict | None:
+    """A question change applied to a copy of the setup (next version); other kinds are not applied yet. A change that
+    brings back a closed question is refused."""
     if not ch.get("question_id") or not ch.get("ask"):   # judged by content: the improver may mislabel the kind
+        return None
+    if reopens_closed(domain, ch):
         return None
     q = {"id": ch["question_id"], "ask": ch["ask"], "tools": ch.get("tools") or [], "then": ch.get("then"),
          "status": "admitted", "origin": origin}
