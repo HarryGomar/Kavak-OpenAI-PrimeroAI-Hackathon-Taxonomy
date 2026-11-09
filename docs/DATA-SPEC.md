@@ -20,7 +20,8 @@ are Taxo's job: that is what the system is for. What only a person can give is *
 **Two hard rules:**
 
 - **Internal data never goes in this repo.** The repo is public. Data lives on Drive (§8); the repo keeps pointers only.
-- **Gold is made by people and edited by people only.** No agent, script or validator writes or changes gold.
+- **Gold is never written or changed by an agent, script or validator.** The project gold is Pedia's frozen release
+  (§5.0). Human blind labels (§5) are added on top and edited by people only.
 
 ## 2. What to hand over: one checklist per domain
 
@@ -31,9 +32,8 @@ Each item is a file in your domain's Drive folder (§8). Every folder has a `SOU
 
 Where you start: Edu's subset at `C:\Work\meta-pedia-data\edu-subsets-2026-11-09\food\` has 12,230 listings over 80
 brands and 10,534 nodes. Edu's full exports are at `G:\My Drive\Showcase Data\EDU_FINAL_PEDIA\`, and the build script
-is `C:\Work\meta-pedia-data\make_edu_subsets.py`. **There is no listing gold yet.** Edu's export has
-`matching/acceptance_results.parquet`, but those are 180 search-term tests (term → category, pass or fail), not listing
-placements. Pedia's 113 food owner labels have no known file.
+is `C:\Work\meta-pedia-data\make_edu_subsets.py`. **Project gold exists:** 3 subsets × 4,500 Pedia-labelled listings in
+the shared folder (§5.0). There are no human blind labels yet.
 
 - [ ] `listings/` and `taxonomy/`: Edu's subset **as it is**, plus a `SOURCE.md` (§3). No mapping needed. Note that
       `pedia_*` fields are Pedia's own answer: a baseline, **never truth**, and hidden while labelling.
@@ -48,7 +48,8 @@ placements. Pedia's 113 food owner labels have no known file.
 
 Where you start: Edu's subset at `C:\Work\meta-pedia-data\edu-subsets-2026-11-09\fragrance\` has 14,344 listings
 over 80 brands and 15,580 nodes. It also carries the Pedia rule ids that fired (`rule_ids`, `rules_seen.json`).
-**Gold is already in place** at `G:\My Drive\meta-pedia-data\fragrance\gold\`, with its `SOURCE.md`:
+**Project gold exists:** 3 subsets × 4,500 Pedia-labelled listings in the shared folder (§5.0). **Human gold** is
+also in place, at `G:\My Drive\meta-pedia-data\fragrance\gold\`, with its `SOURCE.md`:
 
 - Harry's **247** labelled rows: `fresh150-harry.yaml` (150: 138 accept, 12 reject) and `exp01-harry-correct.yaml`
   (97). Only 72 of their titles appear word for word in Edu's subset; the rest still run as title-only cases.
@@ -161,9 +162,32 @@ basis:
   P_crunch_bites: {source: official, ref: "acme.example/products", found_by: "human:ana@2026-11-09"}
 ```
 
-## 5. Gold: the only truth
+## 5. Gold
 
-Gold is a person's judgement of where a listing belongs. It is the only thing rules are scored on. The format is that
+### 5.0 Project gold: Pedia's labels (food and fragrance)
+
+The team agreed to use Pedia as the gold source. It lives in the shared folder
+`G:\My Drive\Hackathon-Kavak-OpenAI-Primero\DATA\Listings\` (see its `Labeled\README.md`):
+
+| Domain | Raw listings | Gold | Join | Pedia release |
+|---|---|---|---|---|
+| food | `RAW\food\subset-{1,2,3}\food_listings.parquet` (5,000 each) | `Labeled\food\subset-{1,2,3}\gold.parquet` (4,500 each) | gold `silver_id` = raw `observation_key` | `food-2026-11-09-r41` |
+| fragrance | `RAW\fragrance\subset-{1,2,3}\fragrance_listings.parquet` (5,000 each) | `Labeled\fragrance\subset-{1,2,3}\gold.parquet` (4,500 each) | gold `silver_id` = raw `source_record_key` | `fragrance-2026-10-21-r10` |
+
+- Each gold row is one listing's Pedia placement: `pedia_brand`, `pedia_model`, `pedia_variant`, the
+  sub-brand, family, model and variant paths, `pedia_full_path`, `pedia_placement_level`, `pedia_confidence` and
+  `pedia_rule_ids`. Keep the IDs as signed 64-bit integers. Do not round-trip them through floats.
+- The other **500 listings per subset have no Pedia placement**. They are unlabelled, not wrong.
+- Use subset 1 to develop rules, subset 2 to check them, and keep **subset 3 sealed** for the final score. That
+  replaces the brand-hash split (§5.2, step 5) for this data.
+- **Caveat:** Pedia's labels were made by Pedia's pipeline, not by people, and Pedia's logs record known error
+  shapes. Score against it, but also have a person label 50 random rows of subset 3 blind (§5.2). Agreement with
+  Pedia on those rows says how far the project gold itself can be trusted.
+- Cars has no Pedia release. **Diego's** blind labels are the car gold.
+
+### 5.1 Human gold: blind labels
+
+Human gold is a person's judgement of where a listing belongs. The format is that
 of Harry's `fresh150-harry.yaml`, plus who labelled the row and when. Template:
 [`gold.example.yaml`](templates/gold.example.yaml).
 
@@ -190,7 +214,7 @@ of Harry's `fresh150-harry.yaml`, plus who labelled the row and when. Template:
 - If you cannot tell, write `expected_path: [<brand>]` with `compare: exact` and say why. If the listing is not in
   the domain at all, write `expect: accept`, `expected_path: []` and `why: out of domain`.
 
-### 5.1 Protocol
+### 5.2 Protocol
 
 1. **Sample at random.** Draw uniformly from the listings file with a fixed seed, and record the seed in `SOURCE.md`.
    Do not choose rows by hand: hand-picked rows are the easy or interesting ones, and the score will not hold on the
@@ -207,7 +231,7 @@ of Harry's `fresh150-harry.yaml`, plus who labelled the row and when. Template:
 6. **Never edited by agents.** Once written, a gold row is changed only by a person, with a note in `why`. An agent
    that thinks a label is wrong opens a review item; it does not edit the label.
 
-### 5.2 How many
+### 5.3 How many
 
 Each round, label **50** rows. At an accuracy of 85%, 50 rows give a 95% Wilson interval of about **73–92%**
 (±10 points). That is enough to see a big change, not a small one.
