@@ -102,7 +102,7 @@ node is an icon, a name and one line; agents carry the agent icon.
 - **Loop 3, lessons** (green), on the right: Distil in code (kept changes → lessons) → A lesson (kept in two domains) →
   Every domain.
 
-**Two pop-ups.** Press → to show each, → again to close them, then → for the next slide:
+**Two pop-ups.** Press → to show the gold one, → for the silver one, → again for the next slide:
 - **Gold: a person's labels, used to score everything.** Four listings, each with gold as a small stacked tree beside
   what Taxo placed, and the score: exact, right but stops higher, or wrong product (harm). Underneath, what the three
   scores mean, and sealed fragrance, rules then an agent: 75% exact, 85% right or shallower, 15% harm.
@@ -142,7 +142,12 @@ like a diff (+ added, − removed, × dropped), and its measured effect:
   `child-typed-form.yaml` (a body mist as a typed child, round 4), dropped by the gate and left in shadow, where it
   only logs. **−501** wrong placements with the set check on, on food.
 
-Under them: a gate in code keeps a change only if sealed gold clearly improves. Together: 52% → 69% exact.
+Underneath, two strips:
+- **How the rules place a listing: the lattice.** Three Lattafa titles with the names in bold → count across the
+  brand's titles: Khamrah Qahwa, 2 titles, a product; Khamrah, 3 titles and shared, a family → the tree Lattafa ›
+  Khamrah › Khamrah Qahwa.
+- **How loop 1 changes them: induction.** Errors on gold → proposer agent → one YAML change → gate on sealed gold.
+  Kept only if sealed gold clearly improves: 52% → 69% exact.
 
 **Say:**
 - Loop 1 doesn't touch the agent. It changes three things in the rules, and each is a file you can read.
@@ -152,7 +157,12 @@ Under them: a gate in code keeps a change only if sealed gold clearly improves. 
   With the brand's own store and the shop's URL naming the brand, fifteen points.
 - Tools, checks that stop a wrong placement: the set check works; on food, turning it off adds 501 wrong placements.
   A form check didn't, so the gate dropped it and it only logs now.
-- Together, exact match on sealed gold went from 52% to 69%.
+- Underneath is how it works. The lattice counts names across all of a brand's titles: in two or more, a product;
+  shared by other products, a family. Induction: an agent reads the errors and proposes one YAML change, and the gate
+  keeps it only if sealed gold clearly improves. Together, 52% to 69%.
+
+*Careful with the induction strip:* it shows how the loop is built. The kept fragrance rounds were written by hand
+from the same evidence; the Codex proposer has kept nothing yet (see slide 7's note).
 
 *The YAML is trimmed from the real files on `origin/claude/fragrance-run-d587d6` (`domains/fragrance/vocab.yaml`,
 `rules/global/25-settle-single-name.yaml`, `rules/global/veto-set-conflict.yaml`,

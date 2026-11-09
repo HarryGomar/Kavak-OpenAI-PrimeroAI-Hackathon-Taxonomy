@@ -174,11 +174,11 @@
   .s2-k b { color: var(--ink); font-weight: 600; }
 
   /* ---------- 6 · loop 1: memory, operators, tools, with their YAML ---------- */
-  .l1 { flex: 1; min-height: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 64px; padding-top: 24px; }
+  .l1 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 64px; padding-top: 6px; }
   .l1-col { display: flex; flex-direction: column; min-width: 0; }
-  .l1-n { margin: 0 0 6px; display: flex; align-items: center; gap: 16px; font: 600 46px var(--disp); color: var(--ink); letter-spacing: -.01em; }
-  .l1-w { margin: 0 0 26px; font: 400 24px var(--sans); color: var(--mute); }
-  .l1-y { padding: 18px 0; border-radius: 12px; background: #F4F6F8; min-height: 236px; box-sizing: border-box; font: 400 19px/1.65 var(--mono); color: var(--ink2); }
+  .l1-n { margin: 0 0 2px; display: flex; align-items: center; gap: 14px; font: 600 40px var(--disp); color: var(--ink); letter-spacing: -.01em; }
+  .l1-w { margin: 0 0 16px; font: 400 22px var(--sans); color: var(--mute); }
+  .l1-y { padding: 14px 0; border-radius: 12px; background: #F4F6F8; min-height: 190px; box-sizing: border-box; font: 400 18px/1.6 var(--mono); color: var(--ink2); }
   .l1-y .y { display: grid; grid-template-columns: 34px 1fr auto; align-items: baseline; padding-right: 18px; white-space: pre; }
   .l1-y .y i { font-style: normal; text-align: center; color: var(--faint); }
   .l1-y .y em { font: 500 16px var(--sans); font-style: normal; color: var(--ind); }
@@ -186,10 +186,21 @@
   .l1-y .a { background: #E1EDF9; } .l1-y .a i, .l1-y .a span { color: var(--ind); }
   .l1-y .d span { color: var(--faint); text-decoration: line-through; } .l1-y .d i { color: var(--val); }
   .l1-y .x span { color: var(--faint); } .l1-y .x i, .l1-y .x em { color: var(--val); }
-  .l1-pt { margin: 26px 0 0; font: 400 22px/1.35 var(--sans); color: var(--mute); }
-  .l1-pt b { display: block; font: 600 76px/1 var(--disp); color: var(--ind); letter-spacing: -.02em; margin-bottom: 8px; }
-  .l1-foot { margin: 0; display: flex; align-items: center; gap: 14px; font: 400 27px var(--sans); color: var(--ink2); }
-  .l1-foot b { color: var(--ind); font-weight: 600; }
+  .l1-pt { margin: 16px 0 0; font: 400 20px/1.3 var(--sans); color: var(--mute); display: flex; align-items: baseline; gap: 16px; }
+  .l1-pt b { flex: none; font: 600 60px/1 var(--disp); color: var(--ind); letter-spacing: -.02em; }
+  .l1-band { margin-top: 40px; padding-top: 30px; border-top: 2px solid var(--line); display: grid; grid-template-columns: 1.15fr 1fr; gap: 64px; }
+  .l1-bh { margin: 0 0 16px; font: 600 24px var(--sans); color: var(--ind); }
+  .lat { display: flex; align-items: center; gap: 18px; }
+  .lat p { margin: 0; white-space: nowrap; }
+  .lat-t p { font: 400 19px/1.65 var(--sans); color: var(--faint); } .lat-t b { color: var(--ink); font-weight: 600; }
+  .lat-c p { display: grid; grid-template-columns: auto auto; column-gap: 12px; font: 400 18px/1.3 var(--sans); margin: 4px 0; }
+  .lat-c b { font: 600 21px var(--sans); color: var(--ink); } .lat-c span { grid-row: 2; color: var(--mute); } .lat-c em { grid-row: 1 / span 2; grid-column: 2; align-self: center; font-style: normal; font-weight: 600; color: var(--ind); }
+  .lat-tr p { position: relative; padding-left: calc(var(--k) * 26px); font: 500 20px/1.65 var(--sans); color: var(--ink2); }
+  .lat-tr p + p::before { content: ''; position: absolute; left: calc(var(--k) * 26px - 18px); top: -2px; width: 11px; height: 18px; border-left: 2px solid var(--line); border-bottom: 2px solid var(--line); border-bottom-left-radius: 4px; }
+  .lat-tr b { color: var(--ind); font-weight: 600; }
+  .ind { display: flex; align-items: center; gap: 14px; }
+  .ind p { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; font: 400 19px/1.25 var(--sans); color: var(--ink2); }
+  .ind-k { margin: 16px 0 0; font: 400 21px var(--sans); color: var(--ink2); } .ind-k b { color: var(--ind); font-weight: 600; }
 
   .evt { border-collapse: collapse; width: 100%; }
   .evt th { font: 500 21px var(--sans); color: var(--faint); text-align: left; padding: 0 24px 14px 0; }
@@ -365,8 +376,32 @@
         <p class="l1-pt"><b>−501</b>wrong placements, with the set check on (food)</p>
       </div>
   </div>
-  <p class="l1-foot"><i data-ic="gate" data-s="30" data-c="#0070C0"></i><span>A gate in code keeps a change only if sealed gold clearly improves. Together: <b>52% → 69% exact</b>.</span></p>
-  <aside class="notes">Loop 1 doesn't touch the agent. It changes three things in the rules, and each is a file you can read. Memory, what words mean: the vocabulary learned that hair, travel and mist are never part of a name, and that Elixir and Intense are not concentrations. A point and a half. Operators, the steps in code that rules call: when a name is seen only once, in three listings or fewer, it is still its own product; that came from loop 2. With the brand's own store and the shop's URL naming the brand, fifteen points. Tools, checks that stop a wrong placement: the set check, a gift set is never one product, works; on food, turning it off adds 501 wrong placements. A form check, a body mist as a typed child, didn't: the gate dropped it, and it only logs now. Together, exact match on sealed gold went from 52% to 69%.</aside>
+  <div class="l1-band">
+    <div>
+      <p class="l1-bh">How the rules place a listing: the lattice</p>
+      <div class="lat">
+        <div class="lat-t"><p>Lattafa <b>Khamrah Qahwa</b> EDP 100ml</p><p><b>Khamrah Qahwa</b> by Lattafa 3.4 oz</p><p>Lattafa <b>Khamrah</b> Eau de Parfum</p></div>
+        <i data-ic="next" data-s="30" data-c="#B8BEC7"></i>
+        <div class="lat-c"><p><b>Khamrah Qahwa</b><span>2 titles</span><em>product</em></p><p><b>Khamrah</b><span>3 titles, shared</span><em>family</em></p></div>
+        <i data-ic="next" data-s="30" data-c="#B8BEC7"></i>
+        <div class="lat-tr"><p style="--k:0">Lattafa</p><p style="--k:1">Khamrah</p><p style="--k:2"><b>Khamrah Qahwa</b></p></div>
+      </div>
+    </div>
+    <div>
+      <p class="l1-bh">How loop 1 changes them: induction</p>
+      <div class="ind">
+        <p><i data-ic="flag" data-s="34" data-c="#0070C0"></i>errors<br>on gold</p>
+        <i data-ic="next" data-s="26" data-c="#B8BEC7"></i>
+        <p><i data-ic="agent" data-s="34" data-c="#0070C0"></i>proposer<br>agent</p>
+        <i data-ic="next" data-s="26" data-c="#B8BEC7"></i>
+        <p><i data-ic="rules" data-s="34" data-c="#0070C0"></i>one YAML<br>change</p>
+        <i data-ic="next" data-s="26" data-c="#B8BEC7"></i>
+        <p><i data-ic="gate" data-s="34" data-c="#0070C0"></i>gate on<br>sealed gold</p>
+      </div>
+      <p class="ind-k">Kept only if sealed gold clearly improves: <b>52% → 69% exact</b>.</p>
+    </div>
+  </div>
+  <aside class="notes">Loop 1 doesn't touch the agent. It changes three things in the rules, and each is a file you can read. Memory, what words mean: the vocabulary learned that hair, travel and mist are never part of a name, and that Elixir and Intense are not concentrations. A point and a half. Operators, the steps in code that rules call: when a name is seen only once, in three listings or fewer, it is still its own product; that came from loop 2. With the brand's own store and the shop's URL naming the brand, fifteen points. Tools, checks that stop a wrong placement: the set check, a gift set is never one product, works; on food, turning it off adds 501 wrong placements. A form check, a body mist as a typed child, didn't: the gate dropped it, and it only logs now. Underneath, how it works. The lattice: strip each title, count the names across all of a brand's titles; a name in two or more titles is a product, and a name other products share is a family. That places Khamrah Qahwa under Khamrah, with no agent call. Induction: the proposer agent reads the errors on gold and proposes one YAML change; a gate in code keeps it only if sealed gold clearly improves. Together, exact match on sealed gold went from 52% to 69%.</aside>
 </section>
 
 <!-- 8 · Loop 1: exact match by round (line), and the agent bill by round beside it -->
@@ -555,6 +590,7 @@
   const ICON = {
     db: '<ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5V19A9 3 0 0 0 21 19V5"/><path d="M3 12A9 3 0 0 0 21 12"/>',
     code: '<path d="m16 18 6-6-6-6"/><path d="m8 6-6 6 6 6"/>',
+    next: '<path d="m9 18 6-6-6-6"/>',
     agent: '<path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/>',
     person: '<circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/>',
     gate: '<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/>',
@@ -1034,7 +1070,7 @@
     notesEl.innerHTML = `<b>NOTES · SLIDE ${slides[cur].dataset.n}${v ? ' · VARIANT ' + v : ''}</b>` + (a ? esc(a.textContent.trim()) : '');
   }
   // a slide with k pop-ups takes k + 1 extra presses: each pop-up in turn, then none, then the next slide
-  const next = () => { const k = pops(cur).length; if (k && step <= k) { step++; showStep(); } else if (cur < N - 1) go(cur + 1); };
+  const next = () => { const k = pops(cur).length; if (k && step < k) { step++; showStep(); } else if (cur < N - 1) go(cur + 1); };
   const prev = () => { if (step > 0) { step--; showStep(); } else if (cur > 0) go(cur - 1); };
   function overview(on) {
     body.classList.toggle('overview', on);
