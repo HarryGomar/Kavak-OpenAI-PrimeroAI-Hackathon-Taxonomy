@@ -260,6 +260,10 @@ def agent_step(items: list[Item], brands: Brands, max_calls: int, runner: str = 
     pack = yaml.safe_load((DOMAINS_DIR / domain / "pack.yaml").read_text(encoding="utf-8")) or {}
     agentic = yaml.safe_load((DOMAINS_DIR / domain / "memory" / "rules" / "agentic.yaml").read_text(encoding="utf-8"))
     lines = [f"- {r['text']}" for r in agentic or [] if r.get("status") == "admitted"]
+    conv = DOMAINS_DIR / domain / "conventions.yaml"
+    if conv.exists():   # the owner's decisions are lines in the placer's prompt
+        lines += [f"- {c['statement']} (owner convention {c['id']})"
+                  for c in yaml.safe_load(conv.read_text(encoding="utf-8")) or []]
     agent = make_placer(domain, (pack.get("conventions") or "") + ("\n" + "\n".join(lines) if lines else ""))
     specs = [r for r in memory.rules_for(domain, tuple(pack.get("families", []))) if r.status.value == "admitted"]
     place_rules = [r for r in (rules or []) if r.stage == "place" and r.status == "active"]

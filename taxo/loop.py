@@ -74,6 +74,11 @@ def propose_change(domain: str, misses: list[dict], log: Path) -> dict | None:
           if q.get("status") in ("admitted", "shadow")]
     text = ("Current questions:\n" + json.dumps(qs, ensure_ascii=False, indent=0)
             + "\n\nTools: similar_brands, ask_person, brand_products" + (", web_search" if s.get("web") else "")
+            + "\n\nA new tool: `code` is one Python function decorated with @function_tool (imported already, with "
+              "RunContextWrapper and ValidateContext; ctx.context has .brands (all brand names) and .menus "
+              "(brand -> its known product names)). `fires_on` and `quiet_on` are JSON objects of the function's "
+              "arguments; code runs both and keeps the tool only if both run and give different results. Say in "
+              "`ask` which question uses it."
             + "\n\nMistakes (listing, the validator's answer and trace, the person's answer):\n"
             + json.dumps(misses[:30], ensure_ascii=False, indent=0))
     try:
