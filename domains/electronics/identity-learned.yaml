@@ -1,4 +1,4 @@
-# Rule edits proposed by the Codex proposer and decided by the gate (loop.gate_cfgs).
+# Rule edits proposed by Codex and decided by a gate (loop.gate_cfgs on gold, or silver.phase on silver + a gold checkpoint).
 # Only status: kept is applied (graph.load_cfg). Written by code, never by hand.
 changes:
 - name: prefer_source_model_fields
@@ -117,3 +117,95 @@ changes:
     config_recall_resolved:
     - 0.8068
     - 0.8172
+- name: reject_component_count_specs
+  ops:
+  - op: append
+    path: model.not_model_tokens
+    value: ^(?:\d+mos|\d+-sections?)$
+  rationale: 'The rules mistake count specifications for models: ''3mos'' on a Panasonic
+    camcorder and ''4-section'' on a Digipower tripod. Reject these generic token
+    families.'
+  expected_effect: Removes misleading model candidates, allowing another supported
+    identifier or an unresolved model, without broadening model equivalence rules.
+  proposed_by: codex
+  gate: silver S3
+  at: '2026-11-09T17:33:27'
+  status: dropped
+  silver_before:
+    n: 500
+    exact: 363
+    harm: 74
+    exact_rate: 0.726
+    harm_rate: 0.148
+  silver_after:
+    n: 500
+    exact: 363
+    harm: 73
+    exact_rate: 0.726
+    harm_rate: 0.146
+  pairs_precision:
+  - 0.9404
+  - 0.9404
+  listings_changed: 5
+- name: reject_capacity_version_fragments
+  ops:
+  - op: append
+    path: model.not_model_tokens
+    value: ^\d+(?:\.\d+)?(?:gb|tb|mb|kb)-\d+(?:[.-]\d+)*$
+  rationale: The EP Memory listing incorrectly selects '8gb-2' as its model. Existing
+    specification filters miss capacity tokens followed by a version suffix.
+  expected_effect: Rejects capacity/version fragments across storage sizes, allowing
+    another valid identifier to be considered without broadening identity-merge rules.
+  proposed_by: codex
+  gate: silver S3
+  at: '2026-11-09T17:34:32'
+  status: kept
+  silver_before:
+    n: 500
+    exact: 363
+    harm: 74
+    exact_rate: 0.726
+    harm_rate: 0.148
+  silver_after:
+    n: 500
+    exact: 364
+    harm: 73
+    exact_rate: 0.728
+    harm_rate: 0.146
+  pairs_precision:
+  - 0.9404
+  - 0.9404
+  listings_changed: 13
+- name: reject_scientific_notation_model_fields
+  ops:
+  - op: append
+    path: model.not_model_tokens
+    value: ^\d+\.\d+\s*e[+-]?\d+$
+  - op: set
+    path: model.field_reject_spec_tokens
+    value: true
+  rationale: Scientific-notation artifacts can masquerade as model identifiers, as
+    in '4.3502001 e7' instead of the title's '43502001'. Reject this generic formatting
+    artifact in source fields.
+  expected_effect: Should allow the literal title identifier to replace the malformed
+    field value, without adding equivalences between different identifiers.
+  proposed_by: codex
+  gate: silver S3
+  at: '2026-11-09T17:35:57'
+  status: dropped
+  silver_before:
+    n: 500
+    exact: 364
+    harm: 73
+    exact_rate: 0.728
+    harm_rate: 0.146
+  silver_after:
+    n: 500
+    exact: 362
+    harm: 72
+    exact_rate: 0.724
+    harm_rate: 0.144
+  pairs_precision:
+  - 0.9404
+  - 0.9404
+  listings_changed: 43

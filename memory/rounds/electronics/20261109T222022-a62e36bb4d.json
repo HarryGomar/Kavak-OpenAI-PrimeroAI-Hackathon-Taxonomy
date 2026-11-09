@@ -1,0 +1,44 @@
+{
+ "id": "a62e36bb4d",
+ "domain": "electronics",
+ "ts": "2026-11-09T22:20:22",
+ "loop": "A",
+ "round": 9,
+ "change": "auto-recognize_singleton_title_brands",
+ "label": "DROPPED on dev (owner gold): auto-recognize_singleton_title_brands",
+ "keep": false,
+ "decided_on": "sealed",
+ "lesson": "brand-from-title-when-field-missing",
+ "kind": "rule_shape",
+ "branch": "electronics-on-main",
+ "author": "Diego Mendez",
+ "gate": {
+  "touched": 89,
+  "better": null,
+  "worse": null,
+  "why": "drop (dev)",
+  "agent_before": null,
+  "agent_after": null,
+  "before": {
+   "accept_rows": 50,
+   "exact_rate": 0.72,
+   "right_or_shallower": 0.84,
+   "harm_rate": 0.12
+  },
+  "after": {
+   "accept_rows": 50,
+   "exact_rate": 0.7,
+   "right_or_shallower": 0.82,
+   "harm_rate": 0.14
+  }
+ },
+ "kpi": {
+  "ts": "2026-11-09T22:20:22",
+  "loop": "A",
+  "round": 9,
+  "label": "DROPPED on dev (owner gold): auto-recognize_singleton_title_brands",
+  "code": "917bc9125c",
+  "domain": "electronics",
+  "data": "deepmatcher"
+ }
+}

@@ -1,0 +1,44 @@
+{
+ "id": "8fd3eae6dc",
+ "domain": "electronics",
+ "ts": "2026-11-09T23:07:58",
+ "loop": "B",
+ "round": 13,
+ "change": "validator v2 vs v1",
+ "label": "gate DROPPED: validator v2 vs v1",
+ "keep": false,
+ "decided_on": "sealed",
+ "lesson": "validator-version-recheck",
+ "kind": "validator_check",
+ "branch": "electronics-on-main",
+ "author": "Diego Mendez",
+ "gate": {
+  "touched": 133,
+  "better": null,
+  "worse": null,
+  "why": "re-check on 133 dev gold: v2 (current) vs v1",
+  "agent_before": null,
+  "agent_after": null,
+  "before": {
+   "accept_rows": 133,
+   "exact_rate": 0.752,
+   "right_or_shallower": null,
+   "harm_rate": 0.165
+  },
+  "after": {
+   "accept_rows": 133,
+   "exact_rate": 0.744,
+   "right_or_shallower": null,
+   "harm_rate": 0.173
+  }
+ },
+ "kpi": {
+  "ts": "2026-11-09T23:07:58",
+  "loop": "B",
+  "round": 13,
+  "label": "gate DROPPED: validator v2 vs v1",
+  "code": "072f1994e5",
+  "domain": "electronics",
+  "data": "deepmatcher"
+ }
+}

@@ -1,0 +1,44 @@
+{
+ "id": "8104957221",
+ "domain": "electronics",
+ "ts": "2026-11-09T22:38:43",
+ "loop": "B",
+ "round": 12,
+ "change": "validator v1 vs v2",
+ "label": "gate KEPT: validator v1 vs v2",
+ "keep": true,
+ "decided_on": "sealed",
+ "lesson": "validator-handles-bundles-and-packs",
+ "kind": "validator_check",
+ "branch": "electronics-on-main",
+ "author": "Diego Mendez",
+ "gate": {
+  "touched": 50,
+  "better": null,
+  "worse": null,
+  "why": "v1 vs v2 (bundle/pack question, reuse existing products)",
+  "agent_before": null,
+  "agent_after": null,
+  "before": {
+   "accept_rows": 50,
+   "exact_rate": 0.68,
+   "right_or_shallower": null,
+   "harm_rate": 0.24
+  },
+  "after": {
+   "accept_rows": 50,
+   "exact_rate": 0.76,
+   "right_or_shallower": null,
+   "harm_rate": 0.22
+  }
+ },
+ "kpi": {
+  "ts": "2026-11-09T22:38:43",
+  "loop": "B",
+  "round": 12,
+  "label": "gate KEPT: validator v1 vs v2",
+  "code": "0714ec1f52",
+  "domain": "electronics",
+  "data": "deepmatcher"
+ }
+}

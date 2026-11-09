@@ -1,0 +1,44 @@
+{
+ "id": "ac22806cc0",
+ "domain": "electronics",
+ "ts": "2026-11-09T22:28:13",
+ "loop": "A",
+ "round": 10,
+ "change": "compat-brand-in-reference-yields",
+ "label": "gate KEPT: compat-brand-in-reference-yields",
+ "keep": true,
+ "decided_on": "sealed",
+ "lesson": "reference-brand-is-not-the-maker",
+ "kind": "rule_shape",
+ "branch": "electronics-on-main",
+ "author": "Diego Mendez",
+ "gate": {
+  "touched": 1,
+  "better": null,
+  "worse": null,
+  "why": "keep",
+  "agent_before": null,
+  "agent_after": null,
+  "before": {
+   "accept_rows": 50,
+   "exact_rate": 0.72,
+   "right_or_shallower": 0.84,
+   "harm_rate": 0.12
+  },
+  "after": {
+   "accept_rows": 50,
+   "exact_rate": 0.74,
+   "right_or_shallower": 0.86,
+   "harm_rate": 0.1
+  }
+ },
+ "kpi": {
+  "ts": "2026-11-09T22:28:13",
+  "loop": "A",
+  "round": 10,
+  "label": "gate KEPT: compat-brand-in-reference-yields",
+  "code": "92036308d7",
+  "domain": "electronics",
+  "data": "deepmatcher"
+ }
+}

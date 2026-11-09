@@ -1,0 +1,44 @@
+{
+ "id": "004dda35fe",
+ "domain": "electronics",
+ "ts": "2026-11-09T23:35:59",
+ "loop": "A",
+ "round": 16,
+ "change": "reject_scientific_notation_model_fields",
+ "label": "DROPPED on dev (silver): reject_scientific_notation_model_fields",
+ "keep": false,
+ "decided_on": "sealed",
+ "lesson": "reject_scientific_notation_model_fields",
+ "kind": "rule_shape",
+ "branch": "electronics-on-main",
+ "author": "Diego Mendez",
+ "gate": {
+  "touched": 43,
+  "better": null,
+  "worse": null,
+  "why": "silver gate dropped",
+  "agent_before": null,
+  "agent_after": null,
+  "before": {
+   "accept_rows": 500,
+   "exact_rate": 0.728,
+   "right_or_shallower": null,
+   "harm_rate": 0.146
+  },
+  "after": {
+   "accept_rows": 500,
+   "exact_rate": 0.724,
+   "right_or_shallower": null,
+   "harm_rate": 0.144
+  }
+ },
+ "kpi": {
+  "ts": "2026-11-09T23:35:59",
+  "loop": "A",
+  "round": 16,
+  "label": "DROPPED on dev (silver): reject_scientific_notation_model_fields",
+  "code": "df68f6f4b3",
+  "domain": "electronics",
+  "data": "deepmatcher"
+ }
+}

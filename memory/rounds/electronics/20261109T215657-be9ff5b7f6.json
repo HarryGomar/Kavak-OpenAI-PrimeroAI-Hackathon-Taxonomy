@@ -1,0 +1,44 @@
+{
+ "id": "be9ff5b7f6",
+ "domain": "electronics",
+ "ts": "2026-11-09T21:56:57",
+ "loop": "B",
+ "round": 8,
+ "change": "batch validator v3 -> v4",
+ "label": "gate KEPT: batch validator v3 -> v4",
+ "keep": true,
+ "decided_on": "sealed",
+ "lesson": "validator-reads-structured-fields",
+ "kind": "validator_check",
+ "branch": "electronics-on-main",
+ "author": "Diego Mendez",
+ "gate": {
+  "touched": 9,
+  "better": null,
+  "worse": null,
+  "why": "batch validator, owner review gold (9 rows)",
+  "agent_before": null,
+  "agent_after": null,
+  "before": {
+   "accept_rows": 9,
+   "exact_rate": 0.667,
+   "right_or_shallower": 0.667,
+   "harm_rate": 0.111
+  },
+  "after": {
+   "accept_rows": 9,
+   "exact_rate": 0.889,
+   "right_or_shallower": 0.889,
+   "harm_rate": 0.111
+  }
+ },
+ "kpi": {
+  "ts": "2026-11-09T21:56:57",
+  "loop": "B",
+  "round": 8,
+  "label": "gate KEPT: batch validator v3 -> v4",
+  "code": "ccaf612031",
+  "domain": "electronics",
+  "data": "deepmatcher"
+ }
+}

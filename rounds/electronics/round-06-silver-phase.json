@@ -1,0 +1,57 @@
+{
+ "silver": "S3",
+ "rules_before": "0.6.0",
+ "rules_after": "0.6.0+L1",
+ "kept_in_phase": [
+  "reject_capacity_version_fragments"
+ ],
+ "rolled_back": false,
+ "seconds": 252.5,
+ "silver_agree": [
+  363,
+  364,
+  500
+ ],
+ "gold_right": [
+  {
+   "k": 102,
+   "n": 133,
+   "p": 0.767,
+   "lo": 0.688,
+   "hi": 0.831
+  },
+  {
+   "k": 102,
+   "n": 133,
+   "p": 0.767,
+   "lo": 0.688,
+   "hi": 0.831
+  }
+ ],
+ "gold_not_harmful": [
+  {
+   "k": 124,
+   "n": 133,
+   "p": 0.932,
+   "lo": 0.876,
+   "hi": 0.964
+  },
+  {
+   "k": 124,
+   "n": 133,
+   "p": 0.932,
+   "lo": 0.876,
+   "hi": 0.964
+  }
+ ],
+ "pairs_train": [
+  {
+   "config_precision": 0.9404,
+   "config_recall_resolved": 0.8068
+  },
+  {
+   "config_precision": 0.9404,
+   "config_recall_resolved": 0.8068
+  }
+ ]
+}
