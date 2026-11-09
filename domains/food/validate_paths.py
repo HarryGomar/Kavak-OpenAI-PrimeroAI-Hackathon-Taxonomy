@@ -10,6 +10,7 @@ from dataclasses import replace
 from typing import Literal
 
 from pydantic import BaseModel, Field
+import yaml
 
 from taxo.codex_cli import invoke, write, fingerprint
 from taxo.roles.validator import make_validator
@@ -32,7 +33,7 @@ class Judgments(BaseModel):
 
 
 def execute(root, setup_path, name=None):
-    setup = read(setup_path)
+    setup = yaml.safe_load(setup_path.read_text(encoding='utf-8'))
     version = setup["version"]
     out = root / (name or f"independent-validator-v{version}")
     out.mkdir(exist_ok=False)
