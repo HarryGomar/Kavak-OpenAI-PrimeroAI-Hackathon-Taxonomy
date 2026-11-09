@@ -37,12 +37,21 @@ def execute(root, run_name, validator_path=None):
                   "Propose one general mechanism, no listing/ASIN/title/brand-answer lists. "
                   "Model/CLI pin cannot change; no web or outside evidence. "
                   "A rule must not enforce missing brand fields as missing makers. No per-case exceptions.")
-    setup = {"version": 1, "web": False, "checklist": [], "source_evidence_only": True}
+    from taxo.roles.validator import load_setup
+    setup = load_setup('food')
     if validator_path and (validator_path.parent / "role-manifest.json").exists():
         setup = read(Path(read(validator_path.parent / "role-manifest.json")["setup"]["path"]))
     payload = json.dumps({"constraints": constraint, "cases": cases, "current_setup": setup}, ensure_ascii=False)
     def call(role, factory):
-        result = run_sync(factory("food"), payload, output=folder / role, max_turns=1)
+        scoped = payload
+        if role == 'improver':
+            # This role learns from validator errors, not from the pipeline's card mistakes.
+            mistakes = [c for c in cases if c['independent_validator']['path'] !=
+                        [s['label'] for s in c['human_gold'] if s['level'] in ('brand', 'product', 'model', 'variant')]]
+            scoped = json.dumps({'constraints': constraint, 'current_setup': setup,
+                                 'validator_mistakes': [{k: v for k, v in c.items() if k != 'pipeline'}
+                                                       for c in mistakes]}, ensure_ascii=False)
+        result = run_sync(factory("food"), scoped, output=folder / role, max_turns=1)
         return result.final_output.model_dump(mode="json")
     with ThreadPoolExecutor(max_workers=2) as pool:
         proposer = pool.submit(call, "proposer", make_proposer)
@@ -71,8 +80,8 @@ def execute(root, run_name, validator_path=None):
           "original_role": "validator setup improvement", "production_admission": False,
           "feedback_ids": [c["listing_id"] for c in cases], "proposal": improved})
     if accepted:
-        setup = {"version": 2, "web": False, "use_proposals": True,
-                 "checklist": [{"id": improved["step_id"] or "source_identity_check", "text": improved["text"], "status": "proposal"}]}
+        setup = {**setup, "version": int(setup.get('version', 1))+1, "web": False, "use_proposals": True,
+                 "checklist": setup.get('checklist', []) + [{"id": improved["step_id"] or "source_identity_check", "text": improved["text"], "status": "proposal"}]}
         write(folder / "validator-setup-v2.json", setup)
     write(folder / "manifest.json", {"feedback_partition_only": True, "feedback_ids": [c["listing_id"] for c in cases],
           "source": fingerprint(folder / "feedback-cases.json"), "roles": ["proposer", "improver"],
