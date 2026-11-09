@@ -169,13 +169,13 @@ off, was also dropped, so that check stays on.*
 
 ## 7. Loop 1: each rule kept, more right and cheaper (40 s)
 
-**Show:** two charts side by side.
+**Show:** the accuracy chart, with a simple cost summary beside it.
 - **Left, exact match on sealed gold:** one blue line, 52.4% → 68.9%. Each kept round is labelled with its change and
   the part it changed: hair, travel, mist are variant words (memory); Elixir, Intense are part of the name (memory);
   the brand's own store names the brand (operators); the shop's URL names the brand (operators); a one-word name is its
   own product (operators, from loop 2). Dropped rounds 4, 7 and 8 are hollow rings on the axis.
-- **Right, the agent bill for 2M listings, est.:** $1,140 → $710 → $690 → $420, as the share sent to an agent falls
-  from 30.1% to 11.1%.
+- **Right, the agent bill for 2M listings, est.:** Start $1,140, a downward arrow, then End $420. The summary uses
+  the same estimated starting and ending bills; intermediate rounds and cost axes are omitted.
 
 Under them: a gate in code keeps a change only if it clearly helps on sealed gold. It dropped 3 of 8.
 

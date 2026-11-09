@@ -804,11 +804,11 @@
   }
   const ticks01 = lo => [lo, (lo + 1) / 2, 1].map(v => +v.toFixed(2));
 
-  // 8 · Figure A: loop 1, round by round, as two charts side by side that share the rounds, each with its own axis.
+  // 8 · Figure A: loop 1, round by round, with a start-to-end cost summary beside it.
   //   Left: exact match on sealed gold, one blue line. Each kept change hangs on a thin pole from its point, in the empty
   //   space beside the line (under the high points, under or over the low ones), with the part it changed: memory or
-  //   operator. Dropped rounds are hollow rings on the x axis. Right: the agent bill for 2M listings, one dark line,
-  //   big numbers at both ends.
+  //   operator. Dropped rounds are hollow rings on the x axis. Right: the estimated agent bill for 2M listings,
+  //   shown as the starting cost, a downward arrow, and the ending cost.
   (() => {
     const all = R.A && R.A.rounds ? R.A.rounds : [];
     const rs = all.filter(r => !r.dropped && r.f1 != null);
@@ -875,20 +875,15 @@
     if (tail) s += T(lastX + 32, AX, 'dropped', { fs: 18, c: C.faint });
 
     // ----- right: the agent bill for 2M listings -----
-    const X0 = 1108, XA = 1188, XB = 1530, xR = i => XA + (XB - XA) * i / (n - 1);
-    const TR = 172, BMAX = 1200, yR = v => TR + (BOT - TR) * (1 - v / BMAX);
-    const B = rs.map(r => bill(r.agent));
+    const X0 = 1108, CX = 1380;
+    s += `<g id="agent-cost-summary" role="img" aria-label="Estimated agent bill for 2 million listings: start ${$(bill(rs[0].agent))}, end ${$(bill(rs[n - 1].agent))}.">`;
     s += T(X0, 30, 'Agent bill for 2M listings, est.', { fs: 26, fw: 600, c: C.ink });
-    s += T(X0, 64, 'Sent to an agent: ' + p1(rs[0].agent) + ' → ' + p1(rs[n - 1].agent), { fs: 20, c: C.mute });
-    [0, 500, 1000].forEach(t => { s += grid(XA - 6, XB + 6, yR(t)) + T(XA - 20, yR(t) + 7, $(t), { a: 'end', fs: 19, c: C.faint }); });
-    const Q = B.map((v, i) => [xR(i), yR(v)]);
-    s += line(Q, C.ink2, 3);
-    Q.forEach(q => { s += dot(q, 7, C.ink2); });
-    // big numbers at both ends, small ones where the bill steps down
-    s += T(Q[0][0] - 10, Q[0][1] - 26, $(B[0]), { fs: 46, fw: 600, c: C.ink });
-    s += T(Q[n - 1][0] + 20, Q[n - 1][1] + 16, $(B[n - 1]), { fs: 46, fw: 600, c: C.ink });
-    B.forEach((v, i) => { if (i && i < n - 1 && v !== B[i - 1]) s += T(Q[i][0] + 4, Q[i][1] - 18, $(v), { fs: 20, fw: 500, c: C.mute, halo: true }); });
-    rs.forEach((r, i) => { s += T(xR(i), AX, r.label === 'start' ? 'Start' : r.label, { a: 'middle', fs: 20, c: C.mute }); });
+    s += T(CX, 160, 'Start', { a: 'middle', fs: 28, fw: 500, c: C.mute });
+    s += T(CX, 250, $(bill(rs[0].agent)), { a: 'middle', fs: 76, fw: 600, c: C.ink });
+    s += `<path d="M${CX} 300V390m-18-18 18 18 18-18" fill="none" stroke="${C.faint}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>`;
+    s += T(CX, 455, 'End', { a: 'middle', fs: 28, fw: 500, c: C.mute });
+    s += T(CX, 545, $(bill(rs[n - 1].agent)), { a: 'middle', fs: 76, fw: 600, c: C.ind });
+    s += '</g>';
     put('figA', `0 0 ${VW} ${VH}`, s);
   })();
 
