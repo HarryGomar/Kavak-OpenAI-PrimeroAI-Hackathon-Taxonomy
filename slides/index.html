@@ -164,32 +164,52 @@
   body.overview .pop { display: none; }
   @media print { .pop { display: none !important; } }
 
-  /* ---------- 6 · loop 1: strip, count, place ---------- */
-  .l1 { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 58px; }
-  .l1-h { margin: 0 0 22px; font: 600 28px var(--sans); color: var(--ink); display: flex; align-items: center; gap: 14px; }
+  /* ---------- 2 · three numbers ---------- */
+  .s2 { display: flex; flex-direction: column; gap: 34px; }
+  .s2-r { display: flex; flex-direction: column; gap: 4px; }
+  .s2-r b { font: 600 96px/1 var(--disp); color: var(--ink); letter-spacing: -.02em; }
+  .s2-r b small { font-size: 44px; color: var(--mute); letter-spacing: 0; }
+  .s2-r span { font: 400 27px var(--sans); color: var(--mute); }
+  .s2-k { margin: 18px 0 0; padding-top: 30px; border-top: 2px solid var(--line); font: 500 34px/1.3 var(--sans); color: var(--ink2); }
+  .s2-k b { color: var(--ink); font-weight: 600; }
+
+  /* ---------- 6 · loop 1: three steps, the part each uses, and what loop 1 changed ---------- */
+  .l1 { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+  .l1-raw { margin: 0 0 26px; display: flex; align-items: center; gap: 16px; font: 400 27px var(--sans); color: var(--mute); }
+  .l1-raw svg { height: 22px; width: auto; flex: none; }
+  .l1-g { display: grid; grid-template-columns: minmax(0,1fr) 56px minmax(0,1fr) 56px minmax(0,1fr); }
+  .l1-ar { padding-top: 6px; display: flex; justify-content: center; }
+  .l1-h { margin: 0 0 12px; font: 600 27px var(--sans); color: var(--ink); display: flex; align-items: baseline; gap: 12px; white-space: nowrap; }
   .l1-h > b { color: var(--ind); font: 600 30px var(--disp); }
-  .l1-src { display: inline-flex; align-items: center; gap: 8px; margin-left: 10px; font: 400 21px var(--sans); color: var(--faint); }
-  .l1-src svg { height: 18px; width: auto; }
-  .l1-t { display: flex; gap: 22px; align-items: flex-start; font: 500 40px/1.1 var(--sans); white-space: nowrap; }
-  .l1-t .w { display: flex; flex-direction: column; align-items: center; }
-  .l1-t em { font: 500 20px var(--sans); font-style: normal; margin-top: 12px; color: var(--ind); }
-  .l1-t .b { color: var(--faint); } .l1-t .b em { color: var(--faint); }
-  .l1-t .n { color: var(--ink); font-weight: 600; } .l1-t .n em { color: var(--ink); margin-top: 4px; }
-  .l1-t .n > span { border-bottom: 4px solid var(--ind); padding-bottom: 4px; }
-  .l1-t .v { color: var(--faint); } .l1-t .v > span { text-decoration: line-through; text-decoration-thickness: 3px; }
-  .l1-row { display: grid; grid-template-columns: 700px 1fr; gap: 120px; }
-  .l1-c { display: flex; flex-direction: column; gap: 8px; }
-  .l1-c .r { display: grid; grid-template-columns: 290px 90px 1fr; align-items: center; height: 56px; padding: 0 16px; border-radius: 10px; }
+  .l1-p { margin: 0 0 22px; display: flex; align-items: center; gap: 10px; font: 400 21px var(--sans); color: var(--mute); }
+  .l1-p b { font: 600 23px var(--sans); color: var(--ind); }
+  .l1-tks { display: flex; flex-direction: column; gap: 4px; }
+  .l1-tks .tk { display: flex; align-items: baseline; justify-content: space-between; height: 40px; padding-right: 40px; }
+  .l1-tks span { font: 500 30px var(--sans); } .l1-tks em { font: 500 20px var(--sans); font-style: normal; color: var(--ind); }
+  .l1-tks .b span, .l1-tks .b em { color: var(--faint); }
+  .l1-tks .n span { font-weight: 600; color: var(--ink); border-bottom: 4px solid var(--ind); } .l1-tks .n em { color: var(--ink); }
+  .l1-tks .v span { color: var(--faint); text-decoration: line-through; text-decoration-thickness: 3px; }
+  .l1-c { display: flex; flex-direction: column; gap: 6px; }
+  .l1-c .r { display: grid; grid-template-columns: 220px 66px 1fr; align-items: center; height: 50px; padding: 0 14px; border-radius: 10px; }
   .l1-c .r.me { background: #E8F2FB; }
-  .l1-c .nm { font: 600 28px var(--sans); }
-  .l1-c .sqs { display: flex; gap: 6px; } .l1-c .sqs i { width: 24px; height: 24px; border-radius: 4px; background: var(--ind); }
-  .l1-c .lb { font: 500 22px var(--sans); color: var(--ind); }
+  .l1-c .nm { font: 600 26px var(--sans); }
+  .l1-c .sqs { display: flex; gap: 6px; } .l1-c .sqs i { width: 22px; height: 22px; border-radius: 4px; background: var(--ind); }
+  .l1-c .lb { font: 500 20px var(--sans); color: var(--ind); white-space: nowrap; }
+  .l1-c .nw .lb { font-weight: 600; }
   .l1-c .dim .nm { color: var(--faint); font-weight: 500; } .l1-c .dim .sqs i { background: var(--line); } .l1-c .dim .lb { color: var(--faint); font-weight: 400; }
-  .l1-k { margin: 22px 0 0 16px; font: 400 23px/1.45 var(--sans); color: var(--mute); }
-  .l1-tree { position: relative; height: 300px; }
+  .l1-k { margin: 14px 0 0 14px; font: 400 20px/1.4 var(--sans); color: var(--mute); }
+  .l1-tree { position: relative; height: 270px; }
   .l1-tree .l1-me { color: var(--ind); }
-  .l1-ok { margin: 30px 0 0; display: flex; align-items: center; gap: 12px; font: 600 28px var(--sans); }
-  .l1-ag { margin: 14px 0 0; display: flex; align-items: center; gap: 12px; font: 400 22px var(--sans); color: var(--mute); }
+  .l1-bh { margin: 30px 0 16px; padding-top: 18px; border-top: 2px solid var(--line); display: flex; align-items: center; gap: 12px; font: 600 23px var(--sans); color: var(--ind); }
+  .l1-bh span { font: 400 20px var(--sans); color: var(--faint); margin-left: 8px; }
+  .l1-chs > div { display: flex; flex-direction: column; gap: 8px; }
+  .l1-chs .ch { display: grid; grid-template-columns: minmax(0,1fr) 135px; column-gap: 10px; align-items: center; height: 38px; }
+  .l1-chs .t { font: 500 22px/1.25 var(--sans); color: var(--ink); white-space: nowrap; }
+  .l1-chs .t small { font: 400 18px var(--sans); color: var(--faint); margin-left: 6px; }
+  .l1-chs .pt { display: flex; align-items: center; gap: 8px; }
+  .l1-chs .pt i { height: 14px; border-radius: 0 4px 4px 0; background: var(--ind); }
+  .l1-chs .pt b { font: 600 22px var(--sans); color: var(--ind); }
+  .l1-chs .dr .t { color: var(--faint); } .l1-chs .pt b.x { font-weight: 500; font-size: 19px; color: var(--faint); }
 
   .evt { border-collapse: collapse; width: 100%; }
   .evt th { font: 500 21px var(--sans); color: var(--faint); text-align: left; padding: 0 24px 14px 0; }
@@ -248,7 +268,6 @@
   <symbol id="lg-amazon" viewBox="0 0 24 24"><path fill="#FF9900" d="M.045 18.02c.072-.116.187-.124.348-.022 3.636 2.11 7.594 3.166 11.87 3.166 2.852 0 5.668-.533 8.447-1.595l.315-.14c.138-.06.234-.1.293-.13.226-.088.39-.046.525.13.12.174.09.336-.12.48-.256.19-.6.41-1.006.654-1.244.743-2.64 1.316-4.185 1.726a17.617 17.617 0 01-10.951-.577 17.88 17.88 0 01-5.43-3.35c-.1-.074-.151-.15-.151-.22 0-.047.021-.09.051-.13zm6.565-6.218c0-1.005.247-1.863.743-2.577.495-.71 1.17-1.25 2.04-1.615.796-.335 1.756-.575 2.912-.72.39-.046 1.033-.103 1.92-.174v-.37c0-.93-.105-1.558-.3-1.875-.302-.43-.78-.65-1.44-.65h-.182c-.48.046-.896.196-1.246.46-.35.27-.575.63-.675 1.096-.06.3-.206.465-.435.51l-2.52-.315c-.248-.06-.372-.18-.372-.39 0-.046.007-.09.022-.15.247-1.29.855-2.25 1.82-2.88.976-.616 2.1-.975 3.39-1.05h.54c1.65 0 2.957.434 3.888 1.29.135.15.27.3.405.48.12.165.224.314.283.45.075.134.15.33.195.57.06.254.105.42.135.51.03.104.062.3.076.615.01.313.02.493.02.553v5.28c0 .376.06.72.165 1.036.105.313.21.54.315.674l.51.674c.09.136.136.256.136.36 0 .12-.06.226-.18.314-1.2 1.05-1.86 1.62-1.963 1.71-.165.135-.375.15-.63.045a6.062 6.062 0 01-.526-.496l-.31-.347a9.391 9.391 0 01-.317-.42l-.3-.435c-.81.886-1.603 1.44-2.4 1.665-.494.15-1.093.227-1.83.227-1.11 0-2.04-.343-2.76-1.034-.72-.69-1.08-1.665-1.08-2.94l-.05-.076zm3.753-.438c0 .566.14 1.02.425 1.364.285.34.675.512 1.155.512.045 0 .106-.007.195-.02.09-.016.134-.023.166-.023.614-.16 1.08-.553 1.424-1.178.165-.28.285-.58.36-.91.09-.32.12-.59.135-.8.015-.195.015-.54.015-1.005v-.54c-.84 0-1.484.06-1.92.18-1.275.36-1.92 1.17-1.92 2.43l-.035-.02zm9.162 7.027c.03-.06.075-.11.132-.17.362-.243.714-.41 1.05-.5a8.094 8.094 0 011.612-.24c.14-.012.28 0 .41.03.65.06 1.05.168 1.172.33.063.09.099.228.099.39v.15c0 .51-.149 1.11-.424 1.8-.278.69-.664 1.248-1.156 1.68-.073.06-.14.09-.197.09-.03 0-.06 0-.09-.012-.09-.044-.107-.12-.064-.24.54-1.26.806-2.143.806-2.64 0-.15-.03-.27-.087-.344-.145-.166-.55-.257-1.224-.257-.243 0-.533.016-.87.046-.363.045-.7.09-1 .135-.09 0-.148-.014-.18-.044-.03-.03-.036-.047-.02-.077 0-.017.006-.03.02-.063v-.06z"/></symbol>
   <symbol id="lg-walmart" viewBox="0 8.6 24 6.8"><path fill="#0071CE" d="M21.41818 9.10219c-.22048 0-.39583.12308-.39583.27297l.13393 1.51627c.01478.09132.12669.16185.26197.16185.13555-.00017.24705-.07065.26214-.16185l.13424-1.51627c0-.1499-.17555-.27297-.39645-.27297zM-.00002 10.3184s.59713 2.44699.69242 2.84417c.11123.46362.3117.63419.88954.51913l.37291-1.51718c.0945-.37683.1579-.64553.21866-1.02883h.01065c.04269.3871.10354.65314.18131 1.03017 0 0 .15176.68869.22949 1.05042.07795.36163.29482.5895.86083.46542l.88851-3.3633h-.71735l-.30339 1.45411c-.08155.42325-.15544.75396-.21251 1.14117h-.01022c-.05189-.38347-.11777-.70096-.20072-1.11331l-.31586-1.48197h-.7474l-.3378 1.44462c-.09569.43899-.18528.79337-.2422 1.16745h-.01023c-.05832-.35224-.13599-.7977-.22006-1.22261 0 0-.20074-1.03328-.27115-1.38946zm6.83845 0v3.3633h.68299v-3.3633zm9.6188 0v2.48118c0 .34202.0644.5817.20213.72811.12033.12806.31854.21094.55604.21094.20193 0 .40062-.0383.49426-.07317l-.0088-.53367c-.06968.01711-.1498.03078-.25942.03078-.23265 0-.31068-.149-.31068-.45611v-.94921h.59479v-.64351h-.59481v-.79533zm2.77885 0c-.11446.0027-.24452.08936-.32723.23277-.11062.19096-.09105.40434.03838.47923l1.3799.64254c.0862.03205.20323-.02912.27103-.14597.06814-.11745.0629-.2496-.0088-.3082l-1.24635-.8741c-.03237-.01874-.06877-.02717-.10693-.02627zm4.36427 0c-.03815-.0009-.0745.0075-.1068.02628l-1.2464.8741c-.07112.05846-.07653.1901-.0092.30734.00006.00013.00015.00023.00025.00036.00009.00016.00015.00033.00024.00049.06804.11686.18472.17803.27091.14598l1.38004-.64254c.12997-.0749.14861-.28827.03874-.47923-.08309-.1434-.21333-.23006-.32777-.23277zM5.312 11.0981c-.42444 0-.76136.11916-.94501.22529l.13442.46019c.16808-.10595.43566-.19366.68907-.19366.41954-.0011.48817.23728.48817.39012v.03613c-.9142-.0014-1.49164.31493-1.49164.9598 0 .3937.29399.76266.80512.76266.31466 0 .57778-.12554.73548-.32662h.01545s.10445.4367.67982.26969c-.03022-.18174-.04002-.37546-.04002-.60884v-.89849c0-.57263-.24452-1.07627-1.07086-1.07627zm4.08552 0c-.42739 0-.61944.2166-.7359.40034h-.01016v-.34335h-.65173v2.5266h.68658V12.2c0-.06945.00799-.1429.03223-.2068.05689-.1492.19565-.3237.41725-.3237.27704 0 .40667.2342.40667.57222v1.44h.68585v-1.4996c0-.06636.0091-.14622.02859-.20486.05639-.16969.20602-.30776.41201-.30776.28086 0 .41567.23012.41567.62788v1.38434h.68633v-1.48805c0-.78478-.39845-1.09555-.8483-1.09555-.19922 0-.35646.04996-.49863.13722-.1195.07334-.22655.17753-.32006.3147h-.0101c-.10853-.27228-.36375-.45192-.6963-.45192zm3.7702 0c-.42435 0-.76113.11916-.94495.22529l.13454.46019c.16792-.10595.43572-.19366.689-.19366.41926-.0011.48806.23728.48806.39012v.03613c-.91407-.0014-1.49164.31494-1.49164.9598 0 .3937.29418.76266.8056.76266.31441 0 .57759-.12554.735-.32662h.01557s.10437.4367.67982.26969c-.03027-.18174-.03996-.37546-.03996-.60884v-.89849c0-.57263-.24458-1.07627-1.07104-1.07627zm2.85129 0c-.26292 0-.56205.1697-.68761.53354h-.0191v-.47655h-.6181v2.5266h.70453V12.388c0-.06985.0042-.1307.01527-.1865.0521-.27102.25945-.44425.55696-.44425.08167 0 .1401.0088.20333.018v-.66151c-.05302-.0107-.0893-.01563-.15528-.01563zm4.35946 1.22067c-.01785-.00025-.03513.0026-.05134.0087l-1.3799.6418c-.12943.07519-.149.28868-.03838.47984.11028.1906.30469.28118.43415.20644l1.24634-.87349c.0717-.05929.07696-.19127.0088-.30862l.0006.00025c-.05507-.09558-.14292-.15388-.22027-.15492zm2.07955 0c-.07727.001-.1649.05934-.22012.15491l.00049-.00025c-.06781.11735-.06254.24934.0088.30862l1.2464.87349c.12921.07474.3238-.01584.43458-.20644.10986-.19116.09122-.40466-.03875-.47983l-1.38012-.64181c-.0162-.0061-.03344-.0089-.05128-.0087zm-16.75741.14518v.31519c0 .0466-.00406.09467-.01697.13673-.05286.17506-.23415.32303-.46086.32303-.18901 0-.33916-.1073-.33916-.33422 0-.34707.38204-.443.81699-.44073zm7.85577 0v.31519c0 .0466-.0041.09467-.0169.13673-.05287.17506-.23421.32303-.46093.32303-.18905 0-.3392-.1073-.3392-.33422 0-.34707.38209-.443.81703-.44073zm7.86138.48324c-.13506.00016-.24672.07024-.26148.16137l-.13393 1.5162c0 .15015.17535.27304.39583.27304.2209 0 .39645-.12289.39645-.27303l-.13424-1.51621c-.01509-.09113-.12659-.1612-.26214-.16137z"/></symbol>
   <symbol id="lg-tiktok" viewBox="0 0 24 24"><path style="fill:var(--ink)" d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></symbol>
-
 </svg>
 <div class="viewport"><div class="stage">
 
@@ -266,10 +285,11 @@
   <h2>A system improves only as far as its eval.</h2>
   <div class="fill" style="display:grid;grid-template-columns:1fr 600px;gap:90px;align-items:center">
     <div class="chart" style="height:100%"><div class="plot"><svg class="ch" id="evals"></svg></div></div>
-    <div class="say">
-      <p><b>It climbed its own eval.</b> A human check afterwards found a third of the gain. 15 of the 48 changes it kept made our labels worse.</p>
-      <p>Where a task checks itself, like a loss or a test suite, that's enough: Karpathy's autoresearch can hill-climb on its own.</p>
-      <p>Most useful tasks have no such check. <b>So the eval itself needs a method to improve:</b> what counts as right, and how we check it.</p>
+    <div class="s2">
+      <div class="s2-r"><b style="color:var(--val)">+9</b><span>points on its own eval</span></div>
+      <div class="s2-r"><b>+3</b><span>points when a person checked</span></div>
+      <div class="s2-r"><b>15<small> of 48</small></b><span>kept changes made it worse</span></div>
+      <p class="s2-k">No ground truth?<br><b>Improve the eval too.</b></p>
     </div>
   </div>
   <p class="src">Pedia, our last project · 245 held-out listings · mean of 6 runs</p>
@@ -342,35 +362,43 @@
   <aside class="notes">This is one domain, fragrance, on its own branch. Listings go through the rules first, for free, and the placer agent gets only the 11% the rules can't place. Loop 1: the proposer agent reads the errors on silver and gold and proposes one rule change, and a gate in code keeps it only if exact match on sealed gold rises. Loop 2: the validator agent checks fresh listings the rules have never seen, and a person labels what it flags. The improver agent makes the validator better from those labels, round after round, until its silver agrees with the person's gold. Those labels grow silver and gold, and the patterns behind them go to loop 1. Loop 3: every domain runs the same loops on its own branch, distil turns kept changes into lessons, and a lesson kept in two domains goes to all of them.</aside>
 </section>
 
-<!-- 6 · Loop 1: one listing, in three steps: strip, count, place. No agent call -->
+<!-- 6 · Loop 1: one listing in three steps; each step is a part of the rules, and loop 1 changes those parts -->
 <section class="slide" data-n="6">
-  <h2><span style="color:var(--ind)">Loop 1:</span> rules place a listing with no agent call.</h2>
+  <h2><span style="color:var(--ind)">Loop 1</span> edits the rules' memory, operators and tools.</h2>
   <div class="l1">
-    <div class="l1-s">
-      <p class="l1-h"><b>1</b> Strip the words that are never a name <span class="l1-src"><svg class="wm" viewBox="0 0 24 6.8"><use href="#lg-walmart"/></svg> listing</span></p>
-      <div class="l1-t"><span class="w b"><span>Lattafa</span><em>brand</em></span><span class="w n"><span>Khamrah Qahwa</span><em>the name</em></span><span class="w v"><span>Eau De Parfum</span><em>concentration</em></span><span class="w v"><span>3.4 Oz</span><em>size</em></span><span class="w v"><span>Unisex</span><em>audience</em></span><span class="w v"><span>Fragrance</span><em>generic word</em></span><span class="w b"><span>Lattafa</span><em>brand</em></span></div>
-    </div>
-    <div class="l1-row">
-      <div class="l1-s">
-        <p class="l1-h"><b>2</b> Count the names in all of Lattafa's titles</p>
-        <div class="l1-c"><div class="r me"><span class="nm">Khamrah Qahwa</span><span class="sqs"><i></i><i></i></span><span class="lb">product</span></div><div class="r "><span class="nm">Khamrah</span><span class="sqs"><i></i><i></i></span><span class="lb">product</span></div><div class="r dim"><span class="nm">Khamrah Dukhan</span><span class="sqs"><i></i></span><span class="lb">seen once</span></div><div class="r dim"><span class="nm">Yara</span><span class="sqs"><i></i></span><span class="lb">seen once</span></div></div>
-        <p class="l1-k">In two or more titles: a product.<br>A name two products share: a family.</p>
-      </div>
-      <div class="l1-s">
-        <p class="l1-h"><b>3</b> Place it in the tree</p>
+    <p class="l1-raw"><svg class="wm" viewBox="0 0 24 6.8"><use href="#lg-walmart"/></svg><span>Lattafa Khamrah Qahwa Eau De Parfum 3.4 Oz Unisex Fragrance Lattafa</span></p>
+    <div class="l1-g">
+      <div class="l1-col">
+        <p class="l1-h"><b>1</b>Strip the words that are never a name</p>
+        <p class="l1-p"><i data-ic="db" data-s="30" data-c="#0070C0"></i><b>Memory</b><span>the vocabulary, in YAML</span></p>
+        <div class="l1-tks"><div class="tk b"><span>Lattafa</span><em>brand</em></div><div class="tk n"><span>Khamrah Qahwa</span><em>the name</em></div><div class="tk v"><span>Eau De Parfum</span><em>concentration</em></div><div class="tk v"><span>3.4 Oz</span><em>size</em></div><div class="tk v"><span>Unisex</span><em>audience</em></div><div class="tk v"><span>Fragrance</span><em>generic word</em></div></div>
+      </div><div class="l1-ar"><i data-ic="next" data-s="34" data-c="#C9CDD4"></i></div>
+      <div class="l1-col">
+        <p class="l1-h"><b>2</b>Count the names in Lattafa's titles</p>
+        <p class="l1-p"><i data-ic="code" data-s="30" data-c="#0070C0"></i><b>Operators</b><span>count, in code</span></p>
+        <div class="l1-c"><div class="r me"><span class="nm">Khamrah Qahwa</span><span class="sqs"><i></i><i></i></span><span class="lb">product</span></div><div class="r "><span class="nm">Khamrah</span><span class="sqs"><i></i><i></i></span><span class="lb">product</span></div><div class="r nw"><span class="nm">Yara</span><span class="sqs"><i></i></span><span class="lb">one word: product</span></div><div class="r dim"><span class="nm">Khamrah Dukhan</span><span class="sqs"><i></i></span><span class="lb">to an agent</span></div></div>
+        <p class="l1-k">Two or more titles: a product. Shared by two products: a family.</p>
+      </div><div class="l1-ar"><i data-ic="next" data-s="34" data-c="#C9CDD4"></i></div>
+      <div class="l1-col">
+        <p class="l1-h"><b>3</b>Place it in the tree</p>
+        <p class="l1-p"><i data-ic="wrench" data-s="30" data-c="#0070C0"></i><b>Operators, tools</b><span>find the brand, check, place</span></p>
         <div class="l1-tree tree">
           <svg class="links"></svg>
-          <div class="nd" id="l1-lat" style="left:330px;top:0">Lattafa<small>brand</small></div>
-          <div class="nd sm" id="l1-khf" data-p="l1-lat" style="left:330px;top:118px">Khamrah<small>family</small></div>
-          <div class="nd sm" id="l1-kh" data-p="l1-khf" style="left:130px;top:236px">Khamrah<small>product</small></div>
-          <div class="nd sm l1-me" id="l1-kq" data-p="l1-khf" style="left:530px;top:236px">Khamrah Qahwa<small>product</small></div>
+          <div class="nd sm" id="l1-lat" style="left:255px;top:0">Lattafa<small>brand</small></div>
+          <div class="nd sm" id="l1-khf" data-p="l1-lat" style="left:255px;top:104px">Khamrah<small>family</small></div>
+          <div class="nd sm" id="l1-kh" data-p="l1-khf" style="left:110px;top:208px">Khamrah<small>product</small></div>
+          <div class="nd sm l1-me" id="l1-kq" data-p="l1-khf" style="left:390px;top:208px">Khamrah Qahwa<small>no agent call</small></div>
         </div>
-        <p class="l1-ok"><i data-ic="check" data-s="30" data-c="#1E9E6E"></i>Placed, with no agent call</p>
-        <p class="l1-ag"><i data-ic="agent" data-s="26"></i>What the rules can't settle goes to an agent: 11% of listings.</p>
       </div>
     </div>
+    <p class="l1-bh"><i data-ic="gate" data-s="26" data-c="#0070C0"></i>What loop 1 changed, kept by the gate <span>points of exact match on sealed gold</span></p>
+    <div class="l1-g l1-chs">
+      <div><div class="ch "><span class="t">hair, travel, mist: never a name <small>r1</small></span><span class="pt"><i style="width:4px"></i><b>+0.4</b></span></div><div class="ch "><span class="t">Elixir, Intense: part of the name <small>r2</small></span><span class="pt"><i style="width:11px"></i><b>+1.0</b></span></div></div><div></div>
+      <div><div class="ch "><span class="t">a one-word name is a product <small>r6</small></span><span class="pt"><i style="width:31px"></i><b>+2.9</b></span></div></div><div></div>
+      <div><div class="ch "><span class="t">the brand's own store names it <small>r3</small></span><span class="pt"><i style="width:120px"></i><b>+11.3</b></span></div><div class="ch "><span class="t">the shop's URL names it <small>r5</small></span><span class="pt"><i style="width:10px"></i><b>+0.9</b></span></div><div class="ch dr"><span class="t">tried: a veto, a tool <small>r7</small></span><span class="pt"><b class="x">dropped</b></span></div></div>
+    </div>
   </div>
-  <aside class="notes">Here is what the rules do with one Walmart listing. Step one: strip the words that are never a name. The vocabulary says Eau de Parfum is a concentration, 3.4 ounces a size, unisex an audience. What's left is Khamrah Qahwa. Step two: do the same to all of Lattafa's titles and count the names. A name in two or more titles is a product, and the name two products share, Khamrah, is a family. Step three: the listing lands on Lattafa, Khamrah, Khamrah Qahwa, with no agent call. Only what the rules can't settle goes to an agent: 11% of fragrance listings. Each of these rules is a file you can read, and loop 1 is how they're learned.</aside>
+  <aside class="notes">Loop 1 doesn't change the agent. It changes the rules, and the rules have three parts. Here is one Walmart listing going through them. Step one uses memory: the vocabulary, a YAML file, says Eau de Parfum is a concentration, 3.4 ounces a size, unisex an audience. What's left is Khamrah Qahwa. Step two is an operator, count, in code: a name in two or more of Lattafa's titles is a product, and a name two products share is a family. Step three: operators find the brand, tools check the placement, and the listing lands on Lattafa, Khamrah, Khamrah Qahwa, with no agent call. Underneath is what loop 1 changed in each part, and what each change was worth on sealed gold. The vocabulary learned that hair, travel and mist are never a name. The count learned that a one-word name like Yara is a product, an idea that came from loop 2. And the biggest step: when a listing is sold on the brand's own store, the brand is known: eleven points. A tool, a concentration veto, was tried and the gate dropped it.</aside>
 </section>
 
 <!-- 8 · Loop 1: one row per kept rule; exact match up, agent share and the bill down -->
@@ -560,6 +588,9 @@
   // ---------- icons: Lucide (ISC licence), 24x24, stroke only ----------
   // Ic(name, x, y, size, colour) draws one inside an SVG, top-left at x,y. IcH(name, size, colour) gives an inline <svg> for HTML.
   const ICON = {
+    db: '<ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5V19A9 3 0 0 0 21 19V5"/><path d="M3 12A9 3 0 0 0 21 12"/>',
+    code: '<path d="m16 18 6-6-6-6"/><path d="m8 6-6 6 6 6"/>',
+    next: '<path d="m9 18 6-6-6-6"/>',
     agent: '<path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/>',
     person: '<circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/>',
     gate: '<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/>',

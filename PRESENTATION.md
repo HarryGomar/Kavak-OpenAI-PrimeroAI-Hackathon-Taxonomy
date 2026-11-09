@@ -28,8 +28,9 @@ partly agent-built system. Against Harry's own labels the rules moved less: 47% 
 
 ## 2. A system improves only as far as its eval (60 s)
 
-**Show:** left, the system's own eval climbing round by round, 78% → 87%; then the human check done afterwards, 81% →
-84%. Right, three short points.
+**Show:** left, the system's own eval climbing round by round, 78% → 87%, and the human check done afterwards, 81% →
+84%. Right, three numbers: +9 points on its own eval; +3 when a person checked; 15 of 48 kept changes made it worse.
+Then: No ground truth? Improve the eval too.
 
 **Say:**
 - Evals are what drive performance. In our last project a loop improved its own rules and climbed its own eval, an LLM
@@ -128,29 +129,37 @@ node is an icon, a name and one line; agents carry the agent icon.
 - Loop 3: every domain runs the same loops on its own branch. Distil turns kept changes into lessons, and a lesson kept
   in two domains goes to every domain.
 
-## 6. Loop 1: rules place a listing with no agent call (40 s)
+## 6. Loop 1 edits the rules' memory, operators and tools (45 s)
 
-**Show:** three numbered steps.
-1. **Strip the words that are never a name.** The Walmart title "Lattafa Khamrah Qahwa Eau De Parfum 3.4 Oz Unisex
-   Fragrance Lattafa", marked up in place: Eau De Parfum (concentration), 3.4 Oz (size), Unisex (audience) and
-   Fragrance (generic word) are struck through; the brand is faint; Khamrah Qahwa is bold.
-2. **Count the names in all of Lattafa's titles.** Khamrah Qahwa ×2 and Khamrah ×2 are products; Khamrah Dukhan and
-   Yara are each seen once. In two or more titles: a product. A name two products share: a family.
-3. **Place it in the tree.** Lattafa › Khamrah (family) › Khamrah and Khamrah Qahwa, with our listing landing on Khamrah
-   Qahwa. "Placed, with no agent call." What the rules can't settle goes to an agent: 11% of listings.
+**Show:** one Walmart title across the top, then three steps left to right. Each step names the part of the rules
+that runs it:
+1. **Strip the words that are never a name.** *Memory:* the vocabulary, in YAML. The title's words, one per line:
+   Eau De Parfum (concentration), 3.4 Oz (size), Unisex (audience), Fragrance (generic word) struck through; Khamrah
+   Qahwa is the name.
+2. **Count the names in Lattafa's titles.** *Operators:* count, in code. Khamrah Qahwa ×2 and Khamrah ×2 are
+   products; Yara, one word, is a product; Khamrah Dukhan, seen once, goes to an agent.
+3. **Place it in the tree.** *Operators and tools:* find the brand, check, place. Lattafa › Khamrah › Khamrah Qahwa,
+   no agent call.
+
+Underneath, **what loop 1 changed, kept by the gate**, in points of exact match on sealed gold, under the part it
+changed:
+- memory: hair, travel, mist are never a name (r1, +0.4); Elixir, Intense are part of the name (r2, +1.0);
+- operators: a one-word name is a product (r6, +2.9, an idea from loop 2);
+- operators and tools: the brand's own store names the brand (r3, +11.3); the shop's URL names it (r5, +0.9); tried a
+  concentration veto, a tool (r7): dropped.
 
 **Say:**
-- Here is what the rules do with one Walmart listing.
-- Step one: the vocabulary strips the words that are never a name: the concentration, the size, the audience. What's
-  left is Khamrah Qahwa.
-- Step two: do the same to all of Lattafa's titles and count the names. A name in two or more titles is a product, and
-  the name two products share is a family.
-- Step three: the listing lands on Lattafa › Khamrah › Khamrah Qahwa, with no agent call. Only what the rules can't
-  settle goes to an agent: 11% of fragrance listings.
-- Each of these rules is a file you can read, and loop 1 is how they're learned.
+- Loop 1 doesn't change the agent. It changes the rules, and the rules have three parts: memory, operators and tools.
+- Here's one Walmart listing. The vocabulary, memory, strips what's never a name. Count, an operator, finds the
+  products and families across all of Lattafa's titles. Then operators find the brand, tools check, and it's placed,
+  with no agent call.
+- Underneath is what loop 1 changed in each part, and what each change was worth on sealed gold. The big one: when a
+  listing is sold on the brand's own store, the brand is known. Eleven points.
+- The gate dropped a tool that didn't clearly help.
 
-*The six Lattafa titles and their counts are an illustration; the variant groups and the floor of two match the run's
-files.*
+*The six Lattafa titles and their counts are an illustration; the changes and their points are measured
+(`memory/rounds/fragrance` on `origin/distill/rounds`). Which part each change touched comes from the round
+records: r1, r2 and r8 changed the vocabulary; r3, r5 and r6 changed code and rules; r7 was a veto.*
 
 ## 7. Loop 1: each rule kept, more right and cheaper (40 s)
 
