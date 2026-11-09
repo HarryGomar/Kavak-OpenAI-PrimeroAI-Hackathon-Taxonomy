@@ -1,0 +1,18 @@
+- id: ft-identity
+  text: Preserve footwear model/style identifiers and numbered model versions; do
+    not strip bare numbers as sizes.
+  status: proposal
+  origin: current footwear RAW titles and identity convention
+  evidence: Unvalidated starting proposal.
+- id: ft-attributes
+  text: Keep size, width and colour as listing attributes unless maker evidence establishes
+    a distinct product; a pair is not an outer multipack.
+  status: proposal
+  origin: footwear starting convention
+  evidence: Requires reviewed labels.
+- id: ft-brand-accessory
+  text: Distinguish maker from seller and compatibility target, and keep standalone
+    footwear accessories separate from complete footwear.
+  status: proposal
+  origin: source field semantics and scope convention
+  evidence: Requires reviewed labels.

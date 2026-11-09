@@ -1,0 +1,77 @@
+- id: ty-identity-and-contents
+  text: Preserve set and model numbers, numbered characters, editions and scales;
+    distinguish construction pieces and named set contents from repeated-unit pack
+    multiplicity, and create no pack nodes.
+  status: proposal
+  origin: toys source inspection and explicit bootstrap conventions
+  evidence: Mixed Amazon RAW has numeric building-set identities, RC model codes and
+    scales, piece contents and repeated-unit offers; machine inspection only, no human
+    gold.
+- id: ty-brand-provenance
+  text: Treat the marketplace brand as an unverified claim and keep maker, licensor,
+    character, seller and compatibility target distinct; missing maker evidence means
+    unknown, never infer it from a shop or franchise.
+  status: proposal
+  origin: toys source inspection and user instruction
+  evidence: Source brand, byline, merchant and titles are distinct fields; licensed
+    figure and compatibility titles demonstrate different roles, without human validation.
+- id: ty-variants-and-accessories
+  text: Place only on variants explicitly evidenced in the listing, keep random or
+    assorted offers unresolved, and never place an accessory-only product on the complete
+    toy merely because it names that toy.
+  status: proposal
+  origin: toys source inspection and proposed identity convention
+  evidence: Mixed RAW contains colors-may-vary offers and replacement/display/compatibility
+    goods; no gold measurement or trusted catalogue yet.
+- id: ty-game-gm-kind-boundary
+  text: 'For game subtypes: Keep board/card/dice/domino games, puzzles, tabletop accessories,
+    video-game software, hardware, accessories, DLC and currency separate by subtype;
+    hold evidence conflicts rather than forcing a kind.'
+  origin: explicit task scope and mixed-source inspection
+  evidence: broad departments include toys and nonplay products; no human gold
+  status: proposal
+- id: ty-game-gm-base-expansion
+  text: 'For game subtypes: Preserve base game, standalone expansion, dependent expansion
+    and base-plus-expansion bundle distinctions; a word expansion alone does not prove
+    it needs a base game.'
+  origin: games source titles and descriptions
+  evidence: observed expansion-only, base-required and standalone-play wording; machine
+    inspection only
+  status: proposal
+- id: ty-game-gm-platform-distribution
+  text: 'For game subtypes: Preserve platform generations, editions, language and
+    physical versus digital evidence; distinguish full games from DLC, passes, currency
+    and subscriptions, holding unestablished content.'
+  origin: games source titles and specific category ranks
+  evidence: numbered console generations, Digital Code and Disc wording; no human
+    validation
+  status: proposal
+- id: ty-game-gm-compatible-not-maker
+  text: 'For game subtypes: Identify the accessory''s own product and source maker
+    independently of its compatible game or console; a seller, licensed character
+    or compatible-with phrase is never brand evidence.'
+  origin: explicit task convention and source accessory patterns
+  evidence: third-party faceplates, power supplies and flight controls; proposal only
+  status: proposal
+- id: ty-game-gm-puzzle-identity
+  text: 'For game subtypes: Preserve the puzzle''s named artwork or subject, model
+    or set identifier and piece count as identity evidence; outer multipacks, age
+    guidance and dimensions remain attributes.'
+  origin: source jigsaw puzzle patterns
+  evidence: 100, 300, 1000 and 2000-piece source titles; no human validation
+  status: proposal
+- id: ty-game-gm-numerals
+  text: 'For game subtypes: Preserve meaningful numerals and model codes such as numbered
+    sequels and console generations; do not apply a generic size/count stripping rule
+    to them.'
+  origin: explicit task convention and conservative vocabulary proposal
+  evidence: numbered tabletop titles and gaming model codes; no human gold
+  status: proposal
+- id: ty-game-gm-collector-bundle
+  text: 'For game subtypes: Distinguish collector editions and bundles by named contents;
+    a figure with a redemption code remains a toy, and an accessory bundle is not
+    the compatible game itself.'
+  origin: mixed-source licensed figures, bundles and collector editions
+  evidence: observed figures with DLC codes and collector software; machine evidence
+    only
+  status: proposal

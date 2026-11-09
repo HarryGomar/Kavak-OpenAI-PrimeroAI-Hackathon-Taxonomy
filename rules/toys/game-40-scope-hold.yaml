@@ -1,0 +1,8 @@
+id: toys/scope-hold
+stage: route
+when: [{fact: toys.scope_status, not_in: [accept]}]
+then: {route: agent_evidence}
+status: proposal
+origin: deterministic games source-evidence screen
+why: Review unsupported or contradictory scope evidence; adapter admits only supported toys.
+evidence: docs/toys.md; scope screen is an ingestion policy, not learned placement truth

@@ -26,6 +26,8 @@ from taxo import drive, evaluator, gold as goldmod, kpis, score
 from taxo.core.config import DOMAINS_DIR, ROOT, RUNS_DIR
 from taxo.core.io import read_jsonl
 from taxo.core.schemas import Listing, Node
+from taxo.core.domain import DOMAINS
+from taxo.core.rules import run_rules
 from taxo.lattice import vocab as vocabmod
 from taxo.lattice.count import NameRecord, count_brand
 from taxo.parse import _BRACKET, Brands, parse, strip_seq
@@ -125,8 +127,10 @@ def brand_names() -> dict[str, str]:
     return {r["brand"]: r["label"] for r in read_jsonl(EDU_DIR / "fragrance" / "taxonomy.jsonl") if r["level"] == "brand"}
 
 
-def _node_text(name: str, variants: dict[str, Counter], n: int) -> str:
+def _node_text(name: str, variants: dict[str, Counter], n: int, domain: str = "fragrance") -> str:
     """The cluster name plus each variant value most of its listings carry, so the pair checks can compare them."""
+    if domain != "fragrance":
+        return name
     words = [name]
     for axis in ("concentration", "audience", "form", "pack"):
         vs = Counter()
@@ -140,7 +144,10 @@ def _node_text(name: str, variants: dict[str, Counter], n: int) -> str:
 
 
 def run(items: list[Item], brands: Brands, vocab, rules: list[evaluator.Rule], only: set[str] | None = None,
-        lattice: dict | None = None) -> dict:
+        lattice: dict | None = None, *, domain: str = "fragrance", full_title: bool = False,
+        candidate_rules: list | None = None, dedupe_support: bool = False,
+        listings: dict[str, Listing] | None = None, candidate_facts=None, node_fields: dict | None = None,
+        trace: list[dict] | None = None) -> dict:
     """Place every item in place. `only`: count and place just these brands (experiments). `lattice`: count_brand options."""
     by_brand: dict[str, list[Item]] = defaultdict(list)
     for it in items:
@@ -149,13 +156,21 @@ def run(items: list[Item], brands: Brands, vocab, rules: list[evaluator.Rule], o
         it.brand, it.brand_how = brands.find(p, it.brand_field, it.maker_field, it.source)
         if it.brand:
             it.path, it.level, it.step = [brands.names[it.brand]], "brand", "brand"
-            it.key = " ".join(strip_seq(p.head, brands.runs(it.brand)))
+            head = vocabmod.tokens(it.title) if full_title else p.head
+            if full_title:
+                # Raw bootstrap preserves internal names, graphics and repeated brand-like words.
+                lead = next((s for s in sorted(brands.runs(it.brand), key=len, reverse=True) if head[:len(s)] == s), ())
+                it.key = " ".join(head[len(lead):])
+            else:
+                it.key = " ".join(strip_seq(head, brands.runs(it.brand)))
             if only is None or it.brand in only:
                 by_brand[it.brand].append(it)
     stats = Counter()
     for slug, its in by_brand.items():
         name = brands.names[slug]
         recs = [NameRecord(rid=it.id, key=it.key, family=it.source or "listing") for it in its if it.key]
+        if dedupe_support:
+            recs = list({r.key: r for r in reversed(recs)}.values())
         bc = count_brand(slug, recs, vocab, brand_words=[name, slug.replace("_", " ")], **(lattice or {}))
         stats["clusters"] += len(bc.clusters)
         stats["supported"] += sum(c.supported for c in bc.clusters.values())
@@ -179,11 +194,26 @@ def run(items: list[Item], brands: Brands, vocab, rules: list[evaluator.Rule], o
                 continue
             fam = [_title(root_of[ck])] if ck in root_of else []
             if ck not in tax:
-                tax[ck] = Node(id=f"{slug}/{ck}", domain="fragrance", name=_title(ck),
-                               path=[name] + fam + [_node_text(ck, c.variants, c.n)])
+                tax[ck] = Node(id=f"{slug}/{ck}", domain=domain, name=_title(ck),
+                               path=[name] + fam + [_node_text(ck, c.variants, c.n, domain)], fields=node_fields or {})
             facts = {"placement": {"step": "lattice", "level": "product", "cluster_n": c.n}, "brand": {"slug": slug}}
-            ctx = {"listing": Listing(id=it.id, domain="fragrance", title=it.title, brand=name), "node": tax[ck], "tax": tax}
+            listing = listings[it.id] if listings is not None else Listing(id=it.id, domain=domain, title=it.title, brand=name)
+            ctx = {"listing": listing, "node": tax[ck], "tax": tax}
+            if candidate_facts:
+                facts.update(candidate_facts(listing, tax[ck]))
+            pair = run_rules(candidate_rules or [], ctx["listing"], tax[ck], tax)
+            it.shadow += [(f.check, f.detail) for f in pair.shadow]
+            if pair.vetoed or pair.abstain:
+                it.reason, it.rule = "candidate_rule_review", pair.decided[0].check
+                if trace is not None:
+                    trace.append({"listing_id": it.id, "stage": "candidate", "candidate": tax[ck].model_dump(),
+                                  "selected": False, "rules": asdict(pair), "reason": it.reason})
+                continue
             out = evaluator.evaluate(rules, "place", facts, ctx)
+            if trace is not None:
+                trace.append({"listing_id": it.id, "stage": "candidate", "candidate": tax[ck].model_dump(),
+                              "selected": not out.then.get("veto", False), "rules": asdict(pair),
+                              "evaluator": asdict(out), "facts": facts})
             it.shadow += [(r, d) for r, _, d in out.shadow]
             if out.then.get("veto"):
                 it.reason, it.rule = f"vetoed:{out.rule}", out.rule
@@ -193,7 +223,11 @@ def run(items: list[Item], brands: Brands, vocab, rules: list[evaluator.Rule], o
         if only is not None and it.brand not in only:
             continue
         facts = {"brand": {"slug": it.brand}, "placement": {"level": it.level, "reason": it.reason, "step": it.step}}
+        if candidate_facts and listings is not None:
+            facts.update(candidate_facts(listings[it.id], Node(id="route-context", domain=domain, name="", fields=node_fields or {})))
         out = evaluator.evaluate(rules, "route", facts)
+        if trace is not None:
+            trace.append({"listing_id": it.id, "stage": "route", "evaluator": asdict(out), "facts": facts})
         it.shadow += [(r, d) for r, _, d in out.shadow]
         if out.then.get("settle"):
             it.step, it.rule = "rule", out.rule
@@ -359,7 +393,10 @@ def try_vocab(label: str, doc: dict, items, brands, rules, rows, by_gold, only: 
 # ---------------------------------------------------------------- main
 def main() -> None:
     ap = argparse.ArgumentParser(prog="taxo.pipeline")
-    ap.add_argument("domain", choices=["fragrance"])
+    ap.add_argument("domain", choices=DOMAINS)
+    ap.add_argument("--construct", action="store_true", help="raw-only offline proposal construction; no gold or model calls")
+    ap.add_argument("--limit", type=int, help="bound adapter input rows for construction")
+    ap.add_argument("--output", type=Path, help="construction output directory")
     ap.add_argument("--data", choices=["drive", "edu"], default="drive",
                     help="drive: the hackathon's 3x5,000 listings, Pedia labels as gold; edu: Edu's subset, human gold")
     ap.add_argument("--sealed", action="store_true", help="read sealed gold once at the end (logged)")
@@ -369,6 +406,16 @@ def main() -> None:
     ap.add_argument("--round", type=int, default=0, help="the loop round (0 = baseline)")
     ap.add_argument("--label", default="baseline", help="what changed in this round")
     a = ap.parse_args()
+    if a.construct:
+        if a.sealed or a.agent_calls or a.loop != "A":
+            ap.error("--construct is offline and gold-free; omit --sealed/--agent-calls and use loop A")
+        from taxo.bootstrap import construct
+        print(json.dumps(construct(a.domain, a.limit, a.output), indent=2))
+        return
+    if a.domain != "fragrance":
+        ap.error(f"{a.domain} has no configured human gold/scorer; use --construct for raw-only proposals, then collect blind gold")
+    if a.limit is not None or a.output is not None:
+        ap.error("--limit/--output apply only to --construct")
     t0 = time.time()
     out_dir = RUNS_DIR / a.domain
     out_dir.mkdir(parents=True, exist_ok=True)

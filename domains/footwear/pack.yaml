@@ -1,0 +1,20 @@
+name: footwear
+families: []
+levels:
+- brand
+- line
+- product
+- variant
+data: footwear/subset-1/
+truth: none; no human gold supplied
+checks_module: taxo.tools.footwear
+construction:
+  full_title: true
+  global_evaluator_rules: false
+conventions: Preserve model/style codes, numbered models, intended use and supported
+  model versions. Size, width, colour and pack count are listing attributes unless
+  product evidence establishes a distinct model. A pair of shoes is not a two-item
+  product bundle. Standalone insoles, laces and shoe-care products are separate from
+  complete footwear. Source brand is unverified; seller, licensor and compatibility
+  target do not supply maker identity. Missing evidence stays unknown; do not erase
+  bare numerals or guess size systems.

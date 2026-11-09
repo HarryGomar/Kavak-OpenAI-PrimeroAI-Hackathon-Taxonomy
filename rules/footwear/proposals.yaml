@@ -1,0 +1,16 @@
+- id: ft-model-conflict
+  check: footwear_model_conflict
+  decision: abstain
+  domains:
+  - footwear
+  status: proposal
+  origin: explicit style/model evidence
+  evidence: Not evaluated on gold.
+- id: ft-accessory-conflict
+  check: footwear_accessory_conflict
+  decision: abstain
+  domains:
+  - footwear
+  status: proposal
+  origin: complete footwear versus accessory convention
+  evidence: Not evaluated on gold.

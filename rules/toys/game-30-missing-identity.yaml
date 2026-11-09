@@ -1,0 +1,8 @@
+id: toys/missing-identity
+stage: place
+when: [{fact: toys.candidate_identity_missing, eq: true}]
+then: {route: agent_evidence}
+status: proposal
+origin: games bootstrap proposal
+why: A candidate without subtype or matching identity evidence cannot establish compatibility.
+evidence: no trusted games taxonomy supplied
