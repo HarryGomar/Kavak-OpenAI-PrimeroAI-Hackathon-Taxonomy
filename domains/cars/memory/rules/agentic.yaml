@@ -1,0 +1,16 @@
+# Cars agentic rule proposals (DATA-SPEC §7.2). Proposals until they hold on gold. Paraphrased examples only.
+- id: cr-model-year
+  text: The year node is the model year printed in the listing, never the year it was sold or published. With no year, stop at the model.
+  origin: cars owner convention (DATA-SPEC §7.2)
+  evidence: "convention; to be tested on gold round 01"
+  status: proposal
+- id: cr-dealer-not-make
+  text: A dealer or seller name is never the make; a parent company (General Motors, Chrysler) is not the make when the model belongs to one of its brands.
+  origin: DATA-SPEC §7.2 + owner feedback on the Chrysler/Dodge Attitude case (Taxonomy repo cars-manual-20-v1)
+  evidence: "owner feedback on 1 case; untested on random gold"
+  status: proposal
+- id: cr-version-as-stated
+  text: Place on the version the listing states (trim words, engine, gearbox) even when the catalogue lacks that year, and say whether the catalogue backs it; never invent trim words the listing does not have.
+  origin: owner decision "go as specific as possible" (2026-11-09); replaces DATA-SPEC's cr-version-from-catalogue
+  evidence: "owner decision; 20/20 Correct on a purposeful review batch (not random gold)"
+  status: proposal

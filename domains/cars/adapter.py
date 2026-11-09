@@ -16,12 +16,21 @@ def _slug(s) -> str:
     return re.sub(r"[^a-z0-9]+", "-", str(s or "").lower()).strip("-")
 
 
+def listing_id(r: dict) -> str:
+    """Stable id: the source's own id; Kavak feed rows use stockId (their URL repeats across cars of one version);
+    rows with neither (Kavak promo cards) use the URL plus their page position."""
+    own = r.get("id") or r.get("stockId")
+    if own:
+        return f"{r['_source']}:{own}"
+    return f"{r['_source']}:{r.get('url')}#p{r.get('page')}-{r.get('position_on_page', r.get('position'))}"
+
+
 def load_listings(limit: int | None = None) -> Iterator[Listing]:
     for r in read_jsonl(config.data_dir() / DOMAIN / "listings.jsonl", limit):
         make = r.get("make") or r.get("brand") or r.get("slice_brand")
         parts = [make, r.get("model"), r.get("version"), r.get("year")]
         title = r.get("title") or " ".join(str(p) for p in parts if p)
-        yield Listing(id=f"{r['_source']}:{r.get('id') or r.get('url')}", domain=DOMAIN, title=title,
+        yield Listing(id=listing_id(r), domain=DOMAIN, title=title,
                       source=r["_source"], brand=make,
                       fields={k: r.get(k) for k in ("model", "version", "year", "km", "kilometers", "price_mxn",
                                                      "price", "url") if r.get(k) is not None})

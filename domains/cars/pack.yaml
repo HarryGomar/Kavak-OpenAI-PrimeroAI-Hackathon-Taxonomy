@@ -1,10 +1,18 @@
 name: cars
 families: [vehicles]                 # family rules shared with car_parts (year ranges, make/model vocab)
-levels: [make, model, year, version]
+levels: [make, model, year, version] # year before version, as the adapter orders it; DATA-SPEC §4.1 leaves the order to the owner
 data: cars/                          # under TAXO_DATA_DIR; Mexico, scraped 2026-11-09
 taxonomy_source: catalogue (Autocosmos + brand sites), given - not proposed
-truth: none yet - blind-label a random sample
+truth: none yet - blind-label the random sample (uv run python -m domains.cars.gold_sample), gold in cars/gold/*.yaml
+pipeline: domains/cars/pipeline.py   # SPEC §4 steps; rules in identity.yaml + vocab.yaml (ported from the Taxonomy repo @0.2.0)
 conventions: |
-  - TODO while labelling: version names vary by seller ("Advance" vs "Advance CVT"); when is it the same trim?
   - Model year, not sale year. A listing without a year stops at model (abstain on year).
-  - Body style changes (sedan vs hatchback) are different models when the catalogue says so.
+  - Body type (sedan, hatchback, SUV...) is a browse category, never part of a car's identity.
+  - Price, mileage, colour, seller, location and condition describe the listing, never the product.
+  - Go as specific as the listing states (owner, 2026-11-09), but say how each level is backed: catalogue,
+    two marketplaces agree, or this listing only. Only catalogue or agreement settles a level without an agent.
+  - A title starting "Chrysler" can name the parent company: when the make field says Dodge, Jeep, Ram or Fiat, use it.
+  - One-letter misspellings of a known model are that model (Jhon Cooper Works = John Cooper Works).
+  - When two catalogue versions differ only by gearbox (SE AT vs SE MT), the listing's gearbox picks one.
+  - Carshop "Sin Definir / SIN AUTO DE INTERES" records and Kavak "Vende tu auto" cards are not car listings.
+  - TODO while labelling: when are two version names the same trim ("Advance" vs "Advance CVT")?

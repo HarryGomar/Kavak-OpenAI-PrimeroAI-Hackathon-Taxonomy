@@ -1,0 +1,52 @@
+schema_version: 1
+domain: cars
+version: 0.3.0
+status: draft
+note: Identity rules for the cars pipeline (steps 2-4). Ported from the Taxonomy repo scopes/cars/identity-rules.yaml @0.2.0; owner feedback on cars-manual-20-v1 is cited inline.
+brands:
+  note: Keys are normalized source spellings (lowercase, accents removed, hyphens -> spaces). Values are canonical make ids (catalogue slugs where they exist).
+  aliases:
+    mercedes benz: mercedes
+    mercedes: mercedes
+    mb: mercedes
+    vw: volkswagen
+    great wall: gwm
+    land rover: land-rover
+    alfa romeo: alfa-romeo
+    lynk co: lynk-and-co
+    lynk & co: lynk-and-co
+    chevy: chevrolet
+  extra_makes: [mg, mini, abarth, smart, hongqi, kenworth, honey whale, isuzu, mitsubishi, suzuki, infiniti, jmc, maserati, hummer, pontiac, saab, mercury, international]
+  multiword_makes: [mercedes benz, land rover, alfa romeo, great wall, honey whale, aston martin, lynk co]
+  manufacturers:
+    general motors: [chevrolet, gmc, buick, cadillac]
+    gm: [chevrolet, gmc, buick, cadillac]
+    stellantis: [chrysler, dodge, jeep, ram, fiat, peugeot]
+  unresolved: ['sin definir', '']
+  title_group_makes:
+    note: A title that starts with this word may name the parent company; when the structured make is one of its brands, use that brand (owner feedback cars-manual-20-v1 C14).
+    chrysler: [chrysler, dodge, jeep, ram, fiat]
+  # 0.3.0 (round 01, validator flag on the random sample; owner: "fix make errors first"): a group word in the title
+  # also gives way when the catalogue files the named model under exactly one of the group's brands
+  # ("CHRYSLER ATTITUDE" -> Dodge Attitude), even with no conflicting make field.
+  rebrands:
+    # 0.3.0 (round 01, validator flag): Ram became its own make; "Dodge Ram 2500" of model year >= 2010 is Ram > 2500.
+    - {from: dodge, prefix: ram, to: ram, from_year: 2010}
+non_listing_title_patterns: ['sin auto de interes']  # owner feedback cars-manual-20-v1 C15: Carshop placeholder records are not car listings
+models:
+  note: Catalogue model slugs ending in these descriptor tokens are model lines of the shorter nameplate (if the remainder is non-empty).
+  line_suffixes: [sedan, hatchback, hb, hibrida, hibrido, hybrid, hev, phev, e power, mildhybrid, 2 puertas, 4 puertas, coupe, convertible, gran coupe, amg, chasis, tradesman, coupe 4 puertas]
+  strip_prefixes: [ram]
+  placeholders: [otro modelo, otro, sin definir, otros]
+  nameplate_head_words: [clase, serie, grand, gran, range, santa, model, land, new, nuevo, town, super]
+  next_token_stopwords: [sedan, hatchback, coupe, pickup, van, lx, ex, le, se, gl, gls, glx, ls, lt, ltz, base, sport, std, sin, de]  # take the next word too when reading a nameplate from the title
+  typo_min_token_length: 4  # owner feedback C13: one-letter typos (Jhon -> John) on tokens of 4+ letters
+  aliases:
+    note: Map (make, normalized source text) -> nameplate key when catalogue and sources spell a nameplate differently.
+    mercedes: {clase c: clase c, c: clase c, clase a: clase a, clase e: clase e, gla: clase gla, glc: clase glc, gle: clase gle, glb: clase glb}
+    bmw: {serie 3: serie 3, serie 1: serie 1, serie 5: serie 5}
+    chevrolet: {aveo hb: aveo}
+    nissan: {np 300: np300}
+year:
+  min: 1980
+  max: 2027
