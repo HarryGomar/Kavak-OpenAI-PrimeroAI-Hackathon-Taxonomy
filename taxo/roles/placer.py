@@ -15,7 +15,8 @@ class PlaceContext:
     """What the placer's tools can see: the domain's taxonomy and its enabled rules. Never labels."""
     domain: str
     nodes: dict[str, Node]
-    rules: list[RuleSpec] = field(default_factory=list)
+    rules: list[RuleSpec] = field(default_factory=list)   # admitted rule specs (taxo/core/rules.py)
+    yaml_rules: list = field(default_factory=list)        # the pipeline's active place rules (taxo/evaluator.py)
 
 
 class PlacementOut(BaseModel):
@@ -48,11 +49,19 @@ def read_node(ctx: RunContextWrapper[PlaceContext], node_id: str) -> dict:
 @function_tool
 def check_rules(ctx: RunContextWrapper[PlaceContext], listing_title: str, node_id: str) -> list[dict]:
     """Run the domain's enabled rules on (title, node). Any reject or abstain means: do not choose this node."""
+    from taxo import evaluator
     n = ctx.context.nodes.get(node_id)
     if not n:
         return [{"error": f"no node {node_id}"}]
     listing = Listing(id="probe", domain=ctx.context.domain, title=listing_title)
-    return [v.model_dump(mode="json") for v in rule_engine.apply_all(ctx.context.rules, listing, n)]
+    out = [{"rule": f.check, "decision": f.decision, "detail": f.detail}
+           for f in rule_engine.run_rules(ctx.context.rules, listing, n, ctx.context.nodes).decided]
+    if ctx.context.yaml_rules:
+        o = evaluator.evaluate(ctx.context.yaml_rules, "place", {"placement": {"step": "lattice", "level": "product"}},
+                               {"listing": listing, "node": n, "tax": ctx.context.nodes})
+        if o.then.get("veto"):
+            out.append({"rule": o.rule, "decision": "veto", "detail": o.detail})
+    return out
 
 
 INSTRUCTIONS = """You place one marketplace listing into the {domain} taxonomy.

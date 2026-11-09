@@ -1,0 +1,27 @@
+# Validator setup v1 (cars). A line of questions, each with the tools that answer it; proposals until the validator
+# scores better on gold with them.
+version: 1
+model: gpt-6-luna
+web: true
+use_proposals: false
+inputs: [title, make, model, version, year, km, price]
+# Starts empty: the improver induces questions from the validator's mistakes on our labels.
+questions: []
+
+# EXAMPLES of questions the improver might induce (not active):
+#   - id: which_make_model
+#     ask: Which make and model is this, allowing for spelling variants (VW / Volkswagen, Mercedes-Benz / Mercedes Benz)?
+#     tools: [similar_brands]
+#     status: proposal
+#     origin: cars catalogue vs seller spellings
+#   - id: version_in_catalogue
+#     ask: Does the make's Mexican catalogue sell the stated version in the stated year?
+#     tools: [web_search]
+#     then: If not, abstain.
+#     status: proposal
+#     origin: SPEC.md hypothesis (registry routes carry cars)
+#   - id: price_sanity
+#     ask: Is the price far below the catalogue list price for that year and version?
+#     then: If so, say so; it may be another version or a damaged car.
+#     status: proposal
+#     origin: new

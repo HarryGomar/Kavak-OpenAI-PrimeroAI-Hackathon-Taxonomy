@@ -23,7 +23,11 @@ def test_domains_do_not_import_each_other():
             assert not bad, f"{f.relative_to(ROOT)} imports another domain: {bad}"
 
 
+RUNNERS = {"codex.py", "codex_tools.py"}   # run any Agents SDK agent on the Codex CLI: the SDK, but no role or domain
+
+
 def test_core_knows_no_domain_and_no_agent():
     for f in (ROOT / "taxo" / "core").glob("*.py"):
-        bad = {m for m in imports(f) if m.startswith(("domains", "taxo.roles", "agents"))}
+        banned = ("domains", "taxo.roles") if f.name in RUNNERS else ("domains", "taxo.roles", "agents")
+        bad = {m for m in imports(f) if m.startswith(banned)}
         assert not bad, f"{f.relative_to(ROOT)} imports {bad}"

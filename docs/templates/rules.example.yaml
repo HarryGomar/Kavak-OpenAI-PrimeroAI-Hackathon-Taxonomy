@@ -1,0 +1,32 @@
+# Code rule proposals: one check from taxo/tools/checks.py, the decision it takes, its params. See docs/DATA-SPEC.md §7.1.
+# Every rule starts as `status: proposal`; only the gold gate moves it on.
+# check: count_agree | count_omission | measure_agree | set_conflict | concentration_conflict | audience_conflict |
+#        form_conflict | title_lacks_product | sibling_word | too_shallow | twin_of | new (describe it; a dev writes it)
+# decision: veto (node removed, the agent cannot override) | abstain (no auto-accept) | info (a hint to the agent)
+
+- id: fd-count-agree
+  check: count_agree
+  decision: veto
+  params: {tolerance: 0.12}
+  description: The pack count in the listing must match the node's; a 4-pack node cannot take a 12-pack listing.
+  origin: Pedia food gate
+  evidence: "held on human labels in Pedia; to be re-tested on gold round 01"
+  status: proposal
+
+- id: fd-title-names-product
+  check: title_lacks_product
+  decision: abstain
+  params: {}
+  description: The node's own name words must all be in the title; if not, do not auto-accept.
+  origin: Pedia card_check
+  evidence: "untested on gold"
+  status: proposal
+
+- id: fd-sibling-format
+  check: sibling_word
+  decision: info
+  params: {}
+  description: A format word in the title (minis, zero) that a sibling node has points the agent to that sibling.
+  origin: Pedia card_check
+  evidence: "untested on gold"
+  status: proposal

@@ -16,3 +16,5 @@ data/
 !memory/*.jsonl
 .pytest_cache/
 !.env.example
+!docs/templates/*.jsonl
+.claude/

@@ -1,0 +1,22 @@
+# Validator setup v1 (car parts). A line of questions, each with the tools that answer it; proposals until the
+# validator scores better on gold with them.
+version: 1
+model: gpt-6-luna
+web: true
+use_proposals: false
+inputs: [title, brand, part_type, fitment_text, condition]
+# Starts empty: the improver induces questions from the validator's mistakes on our labels.
+questions: []
+
+# EXAMPLES of questions the improver might induce (not active):
+#   - id: maker_or_fitment
+#     ask: Is the named brand the part's maker, or the vehicle make it fits ("para Toyota" is fitment, not the brand)?
+#     tools: [similar_brands]
+#     status: proposal
+#     origin: Pedia licensor rule (brand != licensor); DATA-SPEC car parts
+#   - id: part_number
+#     ask: Does the title's part number, searched on the web, confirm the part type and maker?
+#     tools: [web_search]
+#     then: A number alone never decides.
+#     status: proposal
+#     origin: Pedia "identifiers never decide alone"

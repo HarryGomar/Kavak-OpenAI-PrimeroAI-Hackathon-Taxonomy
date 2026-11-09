@@ -8,8 +8,10 @@ from taxo import memory
 from taxo.core import domain, rules
 from taxo.core.metrics import score
 from taxo.core.schemas import Decision, Listing, Node, RuleSpec
-from taxo.roles import curator
-from taxo.roles.judge import make_judge
+from taxo.learn import curator
+from taxo.learn.queue import draw
+from taxo.roles.improver import make_improver
+from taxo.roles.validator import make_validator
 from taxo.roles.placer import make_placer
 from taxo.roles.proposer import make_proposer
 
@@ -57,8 +59,20 @@ def test_curator_needs_a_real_check(tmp_path, monkeypatch):
 def test_agents_build_for_every_domain(name):
     d = domain.load(name)
     assert make_placer(name, d.pack.get("conventions", "")).name == f"placer-{name}"
-    assert make_judge(name, strong=True).name.startswith("judge-strong")
+    v = make_validator(name)
+    assert v.name.startswith(f"validator-{name}-v") and "similar_brands" in [t.name for t in v.tools]
+    assert make_improver(name).output_type is not None
     assert make_proposer(name).output_type is not None
+
+
+def test_queue_is_random_plus_lowest_confidence():
+    verdicts = [{"listing_id": str(i), "confidence": i / 100} for i in range(100)]
+    titles = {str(i): f"t{i}" for i in range(100)}
+    rows = draw(verdicts, titles, n_random=10, n_low=5, already={"0"})
+    assert len(rows) == 15 and "0" not in {r["listing_id"] for r in rows}
+    low = {r["listing_id"] for r in rows if r["why"] == "low_confidence"}
+    assert all(int(i) <= 20 for i in low)  # the least confident ones (some may already be in the random draw)
+    assert "decision" not in rows[0] and "confidence" not in rows[0]  # blind sheet
 
 
 data = os.environ.get("TAXO_DATA_DIR")

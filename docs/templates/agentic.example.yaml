@@ -1,0 +1,21 @@
+# Agentic rule proposals: one instruction line each, added to the prompt of the agent that places listings and
+# creates nodes. See docs/DATA-SPEC.md §7.2. Every rule starts as `status: proposal`; only the gold gate moves it on.
+# No real titles here: these may be copied into the public repo.
+
+- id: cr-model-year
+  text: The year node is the model year printed in the listing, never the year it was sold or published. With no year, stop at the version.
+  origin: cars owner convention
+  evidence: "convention; to be tested on gold round 01"
+  status: proposal
+
+- id: cr-version-from-catalogue
+  text: Place on a version only if it matches a catalogue version for that make, model and year; otherwise stop at the model.
+  origin: cars owner convention
+  evidence: "untested on gold"
+  status: proposal
+
+- id: cr-dealer-not-make
+  text: A dealer or seller name is never the make.
+  origin: universal convention (a shop is not a brand)
+  evidence: "untested on gold"
+  status: proposal
