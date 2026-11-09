@@ -4,8 +4,8 @@
     uv run python -m taxo.pipeline fragrance --sealed     dev, then ONE logged read of sealed gold
 
 Per listing: parse -> brand ladder -> lattice (the brand's listings counted, the title joins its cluster) -> place
-rules (vetoes from taxo/tools/checks.py) -> route rules -> agent (a count only, unless OPENAI_API_KEY is set; then at
-most --agent-calls calls). There is no registry step yet (SPEC step 3).
+rules (vetoes from taxo/tools/checks.py) -> route rules -> agent (a count only, unless --agent-calls is set; then at
+most that many calls, on the Codex CLI or, with --runner sdk, OPENAI_API_KEY). There is no registry step yet (SPEC step 3).
 
 Data (never in Git): TAXO_EDU_DIR (Edu's subset: <dir>/fragrance/{listings,taxonomy}.jsonl), TAXO_GOLD_DIR (Pedia
 fixtures), TAXO_PEDIA_REPO (owner reviews at a commit). Output: runs/fragrance/.
@@ -21,6 +21,7 @@ from dataclasses import asdict, dataclass, field
 from pathlib import Path
 
 import yaml
+from pydantic import BaseModel, Field
 
 from taxo import drive, evaluator, gold as goldmod, kpis, score
 from taxo.core.config import DOMAINS_DIR, ROOT, RUNS_DIR
@@ -202,16 +203,28 @@ def run(items: list[Item], brands: Brands, vocab, rules: list[evaluator.Rule], o
     return dict(stats)
 
 
-def agent_step(items: list[Item], brands: Brands, max_calls: int) -> int:
-    """SPEC step 6, kept to a stub: with OPENAI_API_KEY set, ask (for at most `max_calls` < 50 gold-linked items) which
-    of the brand's placed names the title is. Code checks the answer: a name not on the list is refused."""
-    max_calls = min(max_calls, 49)
-    if not os.environ.get("OPENAI_API_KEY") or max_calls <= 0:
-        return 0
-    from openai import OpenAI
+class NodePick(BaseModel):
+    node: str | None = Field(description="the exact option, or null if none fits")
 
+
+def agent_step(items: list[Item], brands: Brands, max_calls: int, runner: str = "cli") -> int:
+    """SPEC step 6, kept to a stub: ask (for at most `max_calls` < 50 gold-linked items) which of the brand's placed
+    names the title is, on the chosen runner (taxo.core.codex.runner). Code checks the answer: a name not on the list
+    is refused."""
+    max_calls = min(max_calls, 49)
+    if max_calls <= 0:
+        return 0
+    from agents import Agent
+
+    from taxo.core.codex import runner as pick_runner
     from taxo.core.config import model
-    client, calls = OpenAI(), 0
+    run = pick_runner(runner)
+    if run is None:
+        return 0
+    agent = Agent(name="agent-step-fragrance", model=model("placer"), output_type=NodePick,
+                  instructions="Pick the product node a fragrance listing belongs to, from the list only. "
+                               "Answer null if none fits.")
+    calls = 0
     names: dict[str, set[str]] = defaultdict(set)
     for it in items:
         if it.level == "product":
@@ -222,15 +235,8 @@ def agent_step(items: list[Item], brands: Brands, max_calls: int) -> int:
         if not (it.route == "agent_title" and it.gold and names.get(it.brand)):
             continue
         calls += 1
-        r = client.chat.completions.create(model=model("placer"), response_format={"type": "json_object"}, messages=[
-            {"role": "system", "content": "Pick the product node a fragrance listing belongs to, from the list only. "
-                                          'Answer JSON {"node": "<exact option>"} or {"node": null} if none fits.'},
-            {"role": "user", "content": f"Title: {it.title}\nBrand: {brands.names[it.brand]}\nOptions:\n"
-                                        + "\n".join(sorted(names[it.brand])[:300])}])
-        try:
-            pick = json.loads(r.choices[0].message.content).get("node")
-        except (json.JSONDecodeError, AttributeError, TypeError):
-            pick = None
+        pick = run(agent, f"Title: {it.title}\nBrand: {brands.names[it.brand]}\nOptions:\n"
+                   + "\n".join(sorted(names[it.brand])[:300])).final_output.node
         if pick in names[it.brand]:
             it.path, it.level, it.step = [brands.names[it.brand]] + pick.split(" > "), "product", "agent"
     return calls
@@ -363,7 +369,9 @@ def main() -> None:
     ap.add_argument("--data", choices=["drive", "edu"], default="drive",
                     help="drive: the hackathon's 3x5,000 listings, Pedia labels as gold; edu: Edu's subset, human gold")
     ap.add_argument("--sealed", action="store_true", help="read sealed gold once at the end (logged)")
-    ap.add_argument("--agent-calls", type=int, default=0, help="with OPENAI_API_KEY set: at most this many (< 50)")
+    ap.add_argument("--agent-calls", type=int, default=0, help="at most this many agent calls (< 50)")
+    ap.add_argument("--runner", choices=["cli", "sdk"], default="cli",
+                    help="cli: the Codex CLI (ChatGPT login); sdk: the Agents SDK (OPENAI_API_KEY)")
     ap.add_argument("--no-experiments", action="store_true")
     ap.add_argument("--loop", default="A", choices=["A", "B", "C"], help="which loop this run belongs to (KPI history)")
     ap.add_argument("--round", type=int, default=0, help="the loop round (0 = baseline)")
@@ -384,7 +392,7 @@ def main() -> None:
     rules = evaluator.load(ROOT / "rules" / a.domain, ROOT / "rules" / "global")
 
     stats = run(items, brands, vocab, rules)
-    calls = agent_step(items, brands, a.agent_calls)
+    calls = agent_step(items, brands, a.agent_calls, a.runner)
     subset = [it for it in items if not it.id.startswith("gold:")]
     dev = gold.dev
     dev_rep, dev_j = score_rows(dev, by_gold, brands)

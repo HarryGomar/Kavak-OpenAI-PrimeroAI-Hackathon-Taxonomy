@@ -96,10 +96,11 @@ def _runner(kind: str = "cli"):
         from agents import Runner
         return lambda agent, msg, ctx: Runner.run(agent, msg, context=ctx)
     try:
-        from taxo.core.codex import Runner as CodexRunner
+        from taxo.core.codex import runner
     except ImportError:
         return None
-    return lambda agent, msg, ctx: asyncio.to_thread(CodexRunner.run_sync, agent, msg, context=ctx)
+    run = runner("cli")
+    return run and (lambda agent, msg, ctx: asyncio.to_thread(run, agent, msg, ctx))
 
 
 async def ask_live(domain: str, names: list[str], todo: list[dict], concurrency: int, on_done,
