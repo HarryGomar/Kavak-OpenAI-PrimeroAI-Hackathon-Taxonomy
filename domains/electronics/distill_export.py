@@ -28,6 +28,9 @@ SHAPES = {
     "auto-allow_three_character_models": ("short-model-codes", "rule_shape"),
     "auto-tighten_sibling_suffix_aliasing": ("sibling-part-numbers-stay-apart", "rule_shape"),
     "auto-recognize_singleton_title_brands": ("brand-from-title-when-field-missing", "rule_shape"),
+    "reject_capacity_version_fragments": ("spec-tokens-are-not-model-names", "rule_shape"),
+    "reject_component_count_specs": ("spec-tokens-are-not-model-names", "rule_shape"),
+    "reject_scientific_notation_model_fields": ("spec-tokens-are-not-model-names", "rule_shape"),
 }
 DEBUG = {"field-part-capacity-and-own-text", "field-spec-only", "field-own-text-only", "field-both"}
 

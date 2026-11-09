@@ -8,7 +8,7 @@
  "label": "DROPPED on dev (silver): reject_component_count_specs",
  "keep": false,
  "decided_on": "sealed",
- "lesson": "reject_component_count_specs",
+ "lesson": "spec-tokens-are-not-model-names",
  "kind": "rule_shape",
  "branch": "electronics-on-main",
  "author": "Diego Mendez",
