@@ -2,12 +2,12 @@
 The candidate is not used until the curator admits it on dev labels."""
 from __future__ import annotations
 
-from agents import Agent
 from pydantic import BaseModel, Field
 
-from taxo.core import config
+from taxo.roles.runtime import CliAgent
+
 from taxo.tools.checks import CHECKS
-from taxo.core.schemas import Decision, Scope
+from taxo.core.schemas import Scope
 
 
 class RuleProposal(BaseModel):
@@ -28,10 +28,10 @@ Prefer abstain over reject when the evidence is an omission. Never propose a rul
 system's own output (an echo check)."""
 
 
-def make_proposer(domain: str) -> Agent:
-    return Agent(
+def make_proposer(domain: str) -> CliAgent:
+    return CliAgent(
         name=f"proposer-{domain}",
         instructions=INSTRUCTIONS.format(domain=domain, checks=sorted(CHECKS)),
-        model=config.model("proposer"),
+        domain=domain,
         output_type=RuleProposal,
     )
