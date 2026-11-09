@@ -195,7 +195,8 @@ is why the slide says "clearly helps" and not "rises".
 **Show:** left, the loop as a circle: a validator labels fresh listings, blind → flags where it and the solver
 disagree → a person settles them (gold 2, and more silver) → better rules and a better validator.
 
-Right, **each new eval: loop 1 climbs again.** Three full loop 1 climbs, side by side:
+Right, **each new eval: loop 1 adds rules and climbs again.** Three full loop 1 climbs, side by side, with a blue
+square under each rule loop 1 keeps (5 rules, then 8, then 10). In the circle, better rules are labelled "by loop 1":
 - **Eval 1, gold only:** 52% → 69%, the climb from slide 7. 2,233 gold, no silver, no validator.
 - **Eval 2, + silver** (est.): loop 2 adds the validator's silver and the flags a person settled as new gold (+23).
   On the new eval the solver drops, and lowest on silver; loop 1 climbs again. Validator v1, 80 silver.
@@ -209,16 +210,18 @@ dropped.
 - A small gold set doesn't cover everything, so loop 2 improves the eval itself.
 - The validator labels listings nobody labelled and flags where it and the solver disagree. A person settles only the
   flags. Where the solver was wrong, the case joins gold; the rest is kept as silver.
-- Every new eval gets a full loop 1 hill climb. On eval 1, gold alone, loop 1 climbed from 52% to 69%.
+- Every new eval gets a full loop 1 hill climb, and each climb adds rules. On eval 1, gold alone, loop 1 kept five
+  rules and climbed from 52% to 69%.
 - Loop 2 then builds eval 2: more gold, and silver. The solver scores lower on it, lowest on silver, so loop 1 climbs
-  again. Eval 3 has more of both, from a better validator.
+  again, adding rules: eight by eval 2. Eval 3 has more of both, from a better validator, and ten rules.
 - Each time the gap between silver and gold closes. The loop runs until silver matches gold: then the validator can
   be trusted to label the rest.
 - And what it finds goes back to loop 1: short names seen only once became rule 6.
 
 *Measured: eval 1's climb (sealed gold, slide 7); the validator's v1 → v2 step (82.5 → 85.0, a later run on 40 human
 rows); gold added in the reviewed rounds (23 and 20 settled flags); silver 40 a round. **The eval 2 and eval 3 climbs
-are estimates**, marked "est." on the slide: no solver score was recorded on each new silver set.*
+are estimates**, marked "est." on the slide: no solver score was recorded on each new silver set, and the rule counts
+after eval 1 (8, 10) are illustrative.*
 
 ## 9. Loop 3: lessons cross domains, but not both ways (40 s)
 

@@ -389,9 +389,9 @@
   <h2><span style="color:var(--val)">Loop 2, validation:</span> improve the eval itself.</h2>
   <div class="vgrid" style="grid-template-columns:780px 1fr;gap:90px">
     <div class="chart"><div class="plot"><svg class="ch" id="loop2"></svg></div><p class="ex"><b style="color:#B07F0C">Gold</b>: labelled by a person. <b style="color:#7C8390">Silver</b>: labelled by the validator, every disagreement settled by a person.</p><p class="ex">Errors it found, like short names seen only once, became a rule, kept in round 6.</p></div>
-    <div class="chart"><h3>Each new eval: loop 1 climbs again</h3><div class="plot"><svg class="ch" id="figB"></svg></div><p class="ex">The validator: v1 → v2 kept, <b style="color:var(--val)">82.5% → 85%</b> match with gold. Two later tries matched no better, so they were dropped.</p></div>
+    <div class="chart"><h3>Each new eval: loop 1 adds rules and climbs again</h3><div class="plot"><svg class="ch" id="figB"></svg></div><p class="ex">The validator: v1 → v2 kept, <b style="color:var(--val)">82.5% → 85%</b> match with gold. Two later tries matched no better, so they were dropped.</p></div>
   </div>
-  <aside class="notes">A small gold set doesn't cover everything, so loop 2 improves the eval itself. Going round the loop: a validator agent checks listings nobody labelled. It flags errors, and cases it isn't confident about. A person settles them. Where the solver was wrong, the case joins gold: gold 2. The rest is kept as silver. From that come better rules, and a better validator. So each round there is more silver, and it is built better: the eval covers more and gets stricter. Then it asks what is going on: for example, short product names seen only once; that became a rule, which the gate kept in round 6. That goes back into the rules, and into a stricter check, so confidence goes up. On the graph: each eval gets a full loop 1 climb. Eval 1 is gold alone: loop 1 climbs from 52% to 69%. Loop 2 then builds eval 2: the validator's silver, and the flags a person settled as new gold. On it the solver scores lower, lowest on silver, and loop 1 climbs again. Eval 3 has more of both, labelled by a better validator, version 2, which matched gold 85% of the time against 82.5% for version 1. Each time the gap between silver and gold closes, and the loop runs until silver matches gold. We improve two things at once: the eval, and the solver underneath it.</aside>
+  <aside class="notes">A small gold set doesn't cover everything, so loop 2 improves the eval itself. Going round the loop: a validator agent checks listings nobody labelled. It flags errors, and cases it isn't confident about. A person settles them. Where the solver was wrong, the case joins gold: gold 2. The rest is kept as silver. From that come better rules, and a better validator. So each round there is more silver, and it is built better: the eval covers more and gets stricter. Then it asks what is going on: for example, short product names seen only once; that became a rule, which the gate kept in round 6. That goes back into the rules, and into a stricter check, so confidence goes up. On the graph: each eval gets a full loop 1 climb. Eval 1 is gold alone: loop 1 climbs from 52% to 69%. Loop 2 then builds eval 2: the validator's silver, and the flags a person settled as new gold. On it the solver scores lower, lowest on silver, and loop 1 climbs again. Eval 3 has more of both, labelled by a better validator, version 2, which matched gold 85% of the time against 82.5% for version 1. Each climb adds rules: five on eval 1, eight by eval 2, ten by eval 3. Each time the gap between silver and gold closes, and the loop runs until silver matches gold. We improve two things at once: the eval, and the solver underneath it.</aside>
 </section>
 
 <!-- 10 · Loop 3: meta -->
@@ -717,7 +717,7 @@
     s += Nd(cx, cy - r - 70, 'A validator', ['labels fresh listings, blind'], { fs: 34, sfs: 22 });
     s += Nd(cx + r + 34, cy - 16, 'Flags', ['where it and the', 'solver disagree'], { fs: 34, sfs: 22, a: 'start' });
     s += Nd(cx, cy + r + 64, 'A person settles them', [`<tspan style="fill:${GOLD_T};font-weight:600">gold 2</tspan>, and <tspan style="fill:${SILV_T};font-weight:600">more silver</tspan>`], { fs: 34, sfs: 22 });
-    s += Nd(cx - r - 34, cy - 16, 'Better rules', [`and a <tspan style="fill:${C.val};font-weight:600">better validator</tspan>`], { fs: 34, sfs: 22, a: 'end' });
+    s += Nd(cx - r - 34, cy - 16, 'Better rules', [`<tspan style="fill:${C.ind};font-weight:600">by loop 1</tspan>`, `and a <tspan style="fill:${C.val};font-weight:600">better validator</tspan>`], { fs: 34, sfs: 22, a: 'end' });
     s += Tx(cx, cy - 30, 'each round', { a: 'middle', fs: 24, c: C.mute }) + Tx(cx, cy + 8, 'more silver,', { a: 'middle', fs: 32, fw: 600, c: SILV_T })
       + Tx(cx, cy + 46, 'built better', { a: 'middle', fs: 32, fw: 600, c: C.val });
     put('loop2', '0 40 800 640', s);
@@ -844,9 +844,9 @@
   //   Evals 2 and 3 add the validator's silver and the settled flags as gold; their climbs are estimates (marked est.).
   (() => {
     const E = [
-      { name: 'Eval 1', sub: 'gold only', gold: [0.524, 0.528, 0.538, 0.651, 0.660, 0.689], foot: ['2,233 gold', 'no silver', 'no validator'] },
-      { name: 'Eval 2', sub: '+ silver', est: true, gold: [0.66, 0.68, 0.695, 0.705], silver: [0.55, 0.58, 0.60, 0.62], foot: ['+23 gold', '80 silver', 'validator v1'] },
-      { name: 'Eval 3', sub: 'more of both', est: true, gold: [0.69, 0.71, 0.725], silver: [0.64, 0.68, 0.71], foot: ['+43 gold', '160 silver', 'validator v2'] } ];
+      { name: 'Eval 1', sub: 'gold only', gold: [0.524, 0.528, 0.538, 0.651, 0.660, 0.689], rules: '5 rules', foot: ['2,233 gold', 'no silver', 'no validator'] },
+      { name: 'Eval 2', sub: '+ silver', est: true, gold: [0.66, 0.68, 0.695, 0.705], silver: [0.55, 0.58, 0.60, 0.62], rules: '8 rules', foot: ['+23 gold', '80 silver', 'validator v1'] },
+      { name: 'Eval 3', sub: 'more of both', est: true, gold: [0.69, 0.71, 0.725], silver: [0.64, 0.68, 0.71], rules: '10 rules', foot: ['+43 gold', '160 silver', 'validator v2'] } ];
     const lo = 0.48, hi = 0.76, T = 70, B = 400, y = v => B - (B - T) * (v - lo) / (hi - lo), st = 50, gap = 64;
     let s = '', x0 = 80;
     [0.5, 0.6, 0.7].forEach(t => { s += `<line x1="70" x2="890" y1="${y(t)}" y2="${y(t)}" stroke="${C.grid}" stroke-width="2"/>` + Tx(58, y(t) + 7, Math.round(t * 100) + '%', { a: 'end', fs: 19, c: C.faint }); });
@@ -861,12 +861,15 @@
       if (prev) s += Tx((prev[0] + xs[0]) / 2, Math.min(y(prev[1]), y(e.gold[0])) - 14, 'loop 2', { a: 'middle', fs: 18, fw: 600, c: C.val });
       if (e.silver) s += line(e.silver, xs, SILV_T, 3);
       s += line(e.gold, xs, GOLD, 4);
-      e.foot.forEach((t, i) => { s += Tx(xm, B + 50 + i * 30, t, { a: 'middle', fs: 20, fw: i === 2 ? 600 : 500, c: [GOLD_T, SILV_T, C.val][i] }); });
+      xs.slice(1).forEach(x => { s += `<rect x="${x - 7}" y="${B + 18}" width="14" height="14" rx="3" fill="${C.ind}"/>`; });
+      s += Tx(xm, B + 66, e.rules, { a: 'middle', fs: 21, fw: 600, c: C.ind });
+      e.foot.forEach((t, i) => { s += Tx(xm, B + 96 + i * 28, t, { a: 'middle', fs: 20, fw: i === 2 ? 600 : 500, c: [GOLD_T, SILV_T, C.val][i] }); });
       prev = [xs[xs.length - 1], e.gold[e.gold.length - 1]]; x0 = xs[xs.length - 1] + gap + st / 2;
     });
     const xe = prev[0] + 18;
     s += Tx(xe, y(0.725) - 4, 'gold', { fs: 21, fw: 600, c: GOLD_T }) + Tx(xe, y(0.71) + 20, 'silver', { fs: 21, fw: 600, c: SILV_T });
-    put('figB', '0 0 900 500', s);
+    s += Tx(58, B + 30, 'rule', { a: 'end', fs: 18, fw: 600, c: C.ind });
+    put('figB', '0 0 900 540', s);
   })();
 
   // 11 · results table (the slide is cut; this draws nothing while #res is missing)
