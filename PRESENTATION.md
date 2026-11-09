@@ -57,28 +57,32 @@ listings) and speed (time to place them all), each with what an agent on everyth
 - Cost and speed check themselves. Accuracy doesn't, so that's where the loops do their work. That's what makes it a
   good task for self-improvement.
 
-## 5. Over 2 million listings, and every constraint points to rules (30 s)
+## 5. Every constraint points to rules (30 s)
 
-**Show:** four problems and what we do about each: little time to label → loop 1; agents too expensive to run on
-everything → the solver; we don't know if we're improving → loop 2; every domain starts from zero → loop 3.
-
-**Say:**
-- We have little time to label cases, agents cost too much to run on everything, we don't know if we're improving, and
-  we don't want each new domain to start from zero.
-- That's why we want rules: they are free, you can read and test them, and they carry over. Each problem is one part of
-  the system.
-
-## 6. The architecture: a solver and three loops (40 s)
-
-**Show:** one domain opened up on the left: the solver in the middle (listings → free rules → an agent only for what
-rules can't settle → product tree), loop 1 above it, loop 2 below. On the right, loop 3: food, fragrance and cars joined
-by lessons.
+**Show:** four columns, each a problem on top, a small picture of what we do, and the part of the system it becomes:
+- 2 million listings, few labelled (a grid with a few blue squares) → learn rules from the few we label → loop 1;
+- an agent on every listing costs [$C] a pass (most squares blue for rules, a few dark for an agent) → the solver;
+- no way to tell if we're improving (its own eval climbing past a person's check, from slide 2) → loop 2;
+- each domain starts from zero (food's rules, then fragrance and cars starting with green lessons) → loop 3.
 
 **Say:**
-- We propose this architecture. The solver places listings with free rules, and sends an agent only what they can't
-  settle.
-- Three loops improve it. Loop 1 learns rules from a small gold set. Loop 2 improves the eval itself. Loop 3 carries what
-  worked to the next domain. We'll go through each with an example.
+- We have time to label only a few listings, so loop 1 learns rules from those.
+- An agent on every listing costs [$C] a pass, so rules settle most for free and an agent gets the rest: the solver.
+- We can't tell if we're improving, so loop 2 improves the eval itself, with a person's labels.
+- And each new domain would start from zero, so loop 3 carries the lessons over.
+
+## 6. The architecture: one flow, three loops (40 s)
+
+**Show:** one flow, top to bottom: Fragrance → Listings → Rules + agents → Taxonomy → Validation → A person. On the
+left, two loops: loop 1 (blue) from Validation back into the rules; loop 2 (orange) from the person back into
+Validation. Top right, loop 3 (green): Fragrance → Food, cars, …. A muted example sits beside each step.
+
+**Say:**
+- We propose this architecture. In one domain, say fragrance, listings go through rules and agents, the solver, and
+  come out as a taxonomy.
+- Validation scores it on gold and checks listings nobody labelled. A person sees what it flags and labels a sample.
+- Loop 1 takes what validation finds and improves the rules. Loop 2 takes the person's labels and improves the validation
+  itself. Loop 3 carries the lessons to the next domain. We'll go through each with an example.
 
 ## 7. Loop 1, induction: a few labelled cases become rules (50 s)
 
@@ -119,15 +123,17 @@ Khamrah Qahwa; Dukhan and Yara left unclear.
 
 ## 10. Loop 2, validation: improve the eval itself (55 s)
 
-**Show:** the loop in four steps. Beside it, Figure B: F1 of the solver as the checks get stricter (gold, then checks 1
-and 2), for rule set 1 and rule set 2.
+**Show:** the loop drawn as a circle, clockwise: a validator (checks listings nobody labelled) → flags (errors, and
+doubts) → a person labels (what counts as right sharpens) → a new rule and a stricter check → back to the validator. In
+the middle: each round, a stricter eval. Under it, one example from the run. Beside it, Figure B: F1 of the solver as
+the checks get stricter (gold, then checks 1 and 2), for rule set 1 and rule set 2.
 
 **Say:**
-- A small gold set doesn't cover everything, so loop 2 improves the eval itself.
-- A validator agent runs on listings nobody labelled, raises errors and cases it isn't confident about, and brings them
-  to us. We label them, and what counts as right gets sharper.
-- Then it asks what is going on. For example, [confirm from the run: small houses with no barcode name the product only
-  in the description]. That goes back into the rules, and into a stricter check, so confidence goes up.
+- A small gold set doesn't cover everything, so loop 2 improves the eval itself. Going round the loop:
+- A validator agent checks listings nobody labelled. It flags errors, and cases it isn't confident about.
+- A person labels them, and what counts as right gets sharper.
+- Then it asks what is going on, and that becomes a new rule and a stricter check. For example, [confirm from the run:
+  small houses with no barcode name the product only in the description].
 - On the graph: as the checks get stricter, rule set 1 falls from [x] to [z]; after refining, rule set 2 gets back to
   [w]. We improve the definition of right, the way we check it, and the solver underneath.
 
@@ -153,13 +159,14 @@ after loop 1, after loop 2, and with loop 3's head start.
 
 ## 13. Everything is in the evals (30 s)
 
-**Show:** Everything is in the evals. We improved a task that isn't directly verifiable by improving how we check it,
-with feedback. Next: customer-feedback models, and any task without a ground truth.
+**Show:** the point cloud. Left: Everything is in the evals. We improved a task that isn't directly verifiable by
+improving how we check it, with feedback. Next: customer-feedback models, and any task without a ground truth. Right, a
+chain going down: a person's labels → a better eval → better rules → a better taxonomy → the next domain, ahead.
 
 **Say:**
 - What matters is that we improved a task that isn't directly verifiable.
-- We showed different kinds of verification, and improved the evaluation itself with feedback. We think it extends to
-  other tasks, like customer-feedback models.
+- A person's labels make a better eval; a better eval makes better rules; better rules make a better taxonomy, and the
+  next domain starts ahead. We think it extends to other tasks, like customer-feedback models.
 - Everything is in the evals. As we improve the system, we have to improve the evals.
 
 ---
