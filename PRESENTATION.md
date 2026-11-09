@@ -131,26 +131,34 @@ node is an icon, a name and one line; agents carry the agent icon.
 
 ## 6. Loop 1 changes three things in the rules (40 s)
 
-**Show:** three columns, each with a big icon, what it is, one example and the points it added on sealed gold:
-- **Memory**, what words mean, in YAML. "Khamrah Qahwa ~~Hair Mist~~". **+1.4**: hair, travel, mist are never a name
-  (r1); Elixir, Intense are part of the name (r2).
-- **Operators**, the steps, in code. "sold on lattafa.com → brand: Lattafa". **+15.1**: the brand's own store names
-  the brand (r3); the shop's URL names the brand (r5); a one-word name is a product (r6).
-- **Tools**, checks, in code. "a check on concentration words". **0**: tried, and the gate dropped it (r7).
+**Show:** three columns. Each has an icon, what it is, a short excerpt of the real YAML with loop 1's change marked
+like a diff (+ added, − removed, × dropped), and its measured effect:
+- **Memory**, what words mean. `vocab.yaml`: Elixir, Intense taken out of the concentrations (round 2); hair, travel,
+  mist added to the words that are never a name (round 1). **+1.4** points.
+- **Operators**, the steps in code, called by rules. `settle-single-name.yaml`, new in round 6: a name seen once, in
+  three listings or fewer, is its own product, found by loop 2. **+15.1** points, with the brand's own store and the
+  shop's URL (rounds 3 and 5).
+- **Tools**, checks that stop a wrong placement. One that works: `veto-set-conflict.yaml`, active. One that doesn't:
+  `child-typed-form.yaml` (a body mist as a typed child, round 4), dropped by the gate and left in shadow, where it
+  only logs. **−501** wrong placements with the set check on, on food.
 
-Under it: a gate in code keeps a change only if sealed gold clearly improves. Together: 52% → 69% exact.
+Under them: a gate in code keeps a change only if sealed gold clearly improves. Together: 52% → 69% exact.
 
 **Say:**
-- Loop 1 doesn't touch the agent. It changes three things in the rules.
-- Memory, what words mean: it learned that hair, travel and mist are never part of a name. A point and a half.
-- Operators, the steps in code: when a listing is sold on the brand's own store, the brand is known. With the shop's
-  URL and one-word names, fifteen points.
-- Tools, checks in code: one was tried, and the gate dropped it.
+- Loop 1 doesn't touch the agent. It changes three things in the rules, and each is a file you can read.
+- Memory, what words mean: the vocabulary learned that hair, travel and mist are never part of a name, and that Elixir
+  and Intense aren't concentrations. A point and a half.
+- Operators, the steps in code that rules call: a name seen only once is still its own product, an idea from loop 2.
+  With the brand's own store and the shop's URL naming the brand, fifteen points.
+- Tools, checks that stop a wrong placement: the set check works; on food, turning it off adds 501 wrong placements.
+  A form check didn't, so the gate dropped it and it only logs now.
 - Together, exact match on sealed gold went from 52% to 69%.
 
-*The points are measured (`memory/rounds/fragrance` on `origin/distill/rounds`). Which part each change touched comes
-from the round records: r1 and r2 changed the vocabulary; r3, r5 and r6 changed code and rules; r7 was a veto. The two
-example lines are illustrations.*
+*The YAML is trimmed from the real files on `origin/claude/fragrance-run-d587d6` (`domains/fragrance/vocab.yaml`,
+`rules/global/25-settle-single-name.yaml`, `rules/global/veto-set-conflict.yaml`,
+`rules/fragrance/child-typed-form.yaml`); the settle rule's `when` is paraphrased. Points are from the round records.
+The 501 is food (the peer session's run: the set veto turned off on food). Round 7, turning the concentration check
+off, was also dropped, so that check stays on.*
 
 ## 7. Loop 1: each rule kept, more right and cheaper (40 s)
 

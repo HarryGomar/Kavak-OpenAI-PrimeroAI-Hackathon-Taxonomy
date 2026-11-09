@@ -173,21 +173,21 @@
   .s2-k { margin: 18px 0 0; padding-top: 30px; border-top: 2px solid var(--line); font: 500 34px/1.3 var(--sans); color: var(--ink2); }
   .s2-k b { color: var(--ink); font-weight: 600; }
 
-  /* ---------- 6 · loop 1: memory, operators, tools ---------- */
-  .l1 { flex: 1; min-height: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 90px; padding-top: 30px; }
-  .l1-col { display: flex; flex-direction: column; align-items: flex-start; }
-  .l1-n { margin: 22px 0 4px; font: 600 50px var(--disp); color: var(--ink); letter-spacing: -.01em; }
-  .l1-w { margin: 0 0 30px; font: 400 26px var(--sans); color: var(--mute); }
-  .l1-ex { margin: 0 0 34px; font: 500 28px var(--sans); color: var(--ink2); }
-  .l1-ex s { color: var(--faint); text-decoration-thickness: 3px; }
-  .l1-ex u { text-decoration: none; border-bottom: 3px solid var(--ind); }
-  .l1-pt { margin: 0 0 18px; font: 400 26px var(--sans); color: var(--ind); }
-  .l1-pt b { font: 600 80px/1 var(--disp); letter-spacing: -.02em; margin-right: 8px; }
-  .l1-li { margin: 0; padding: 18px 0 0; list-style: none; border-top: 2px solid var(--line); width: 100%; display: flex; flex-direction: column; gap: 12px; }
-  .l1-li li { font: 400 23px/1.3 var(--sans); color: var(--ink2); }
-  .l1-li li span { margin-left: 10px; font-size: 19px; color: var(--faint); }
-  .l1-col.off .l1-n, .l1-col.off .l1-pt { color: var(--faint); }
-  .l1-col.off .l1-ex, .l1-col.off .l1-li li { color: var(--mute); }
+  /* ---------- 6 · loop 1: memory, operators, tools, with their YAML ---------- */
+  .l1 { flex: 1; min-height: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 64px; padding-top: 24px; }
+  .l1-col { display: flex; flex-direction: column; min-width: 0; }
+  .l1-n { margin: 0 0 6px; display: flex; align-items: center; gap: 16px; font: 600 46px var(--disp); color: var(--ink); letter-spacing: -.01em; }
+  .l1-w { margin: 0 0 26px; font: 400 24px var(--sans); color: var(--mute); }
+  .l1-y { padding: 18px 0; border-radius: 12px; background: #F4F6F8; min-height: 236px; box-sizing: border-box; font: 400 19px/1.65 var(--mono); color: var(--ink2); }
+  .l1-y .y { display: grid; grid-template-columns: 34px 1fr auto; align-items: baseline; padding-right: 18px; white-space: pre; }
+  .l1-y .y i { font-style: normal; text-align: center; color: var(--faint); }
+  .l1-y .y em { font: 500 16px var(--sans); font-style: normal; color: var(--ind); }
+  .l1-y .c span { color: var(--faint); }
+  .l1-y .a { background: #E1EDF9; } .l1-y .a i, .l1-y .a span { color: var(--ind); }
+  .l1-y .d span { color: var(--faint); text-decoration: line-through; } .l1-y .d i { color: var(--val); }
+  .l1-y .x span { color: var(--faint); } .l1-y .x i, .l1-y .x em { color: var(--val); }
+  .l1-pt { margin: 26px 0 0; font: 400 22px/1.35 var(--sans); color: var(--mute); }
+  .l1-pt b { display: block; font: 600 76px/1 var(--disp); color: var(--ind); letter-spacing: -.02em; margin-bottom: 8px; }
   .l1-foot { margin: 0; display: flex; align-items: center; gap: 14px; font: 400 27px var(--sans); color: var(--ink2); }
   .l1-foot b { color: var(--ind); font-weight: 600; }
 
@@ -342,37 +342,31 @@
   <aside class="notes">This is one domain, fragrance, on its own branch. Listings go through the rules first, for free, and the placer agent gets only the 11% the rules can't place. Loop 1: the proposer agent reads the errors on silver and gold and proposes one rule change, and a gate in code keeps it only if exact match on sealed gold rises. Loop 2: the validator agent checks fresh listings the rules have never seen, and a person labels what it flags. The improver agent makes the validator better from those labels, round after round, until its silver agrees with the person's gold. Those labels grow silver and gold, and the patterns behind them go to loop 1. Loop 3: every domain runs the same loops on its own branch, distil turns kept changes into lessons, and a lesson kept in two domains goes to all of them.</aside>
 </section>
 
-<!-- 6 · Loop 1: what it changes. Memory, operators, tools, each with an example and its gain on sealed gold -->
+<!-- 6 · Loop 1: what it changes. Memory, operators, tools, each with its YAML and its effect -->
 <section class="slide" data-n="6">
   <h2><span style="color:var(--ind)">Loop 1</span> changes three things in the rules.</h2>
   <div class="l1">
-      <div class="l1-col ">
-        <i data-ic="db" data-s="64" data-c="#0070C0"></i>
-        <p class="l1-n">Memory</p>
-        <p class="l1-w">what words mean, in YAML</p>
-        <p class="l1-ex">Khamrah Qahwa <s>Hair Mist</s></p>
-        <p class="l1-pt"><b>+1.4</b> points</p>
-        <ul class="l1-li"><li>hair, travel, mist are never a name<span>r1</span></li><li>Elixir, Intense are part of the name<span>r2</span></li></ul>
+      <div class="l1-col">
+        <p class="l1-n"><i data-ic="db" data-s="44" data-c="#0070C0"></i>Memory</p>
+        <p class="l1-w">what words mean</p>
+        <div class="l1-y"><div class="y c"><i> </i><span># vocab.yaml</span></div><div class="y "><i> </i><span>concentration: [eau de parfum, edt,</span></div><div class="y d"><i>−</i><span>  elixir, intense]</span><em>round 2</em></div><div class="y "><i> </i><span>strip: [perfume, fragrance, cologne,</span></div><div class="y a"><i>+</i><span>  hair, travel, mist]</span><em>round 1</em></div></div>
+        <p class="l1-pt"><b>+1.4</b>points: hair, travel, mist; Elixir, Intense</p>
       </div>
-      <div class="l1-col ">
-        <i data-ic="code" data-s="64" data-c="#0070C0"></i>
-        <p class="l1-n">Operators</p>
-        <p class="l1-w">the steps, in code</p>
-        <p class="l1-ex">sold on <u>lattafa.com</u> → brand: Lattafa</p>
-        <p class="l1-pt"><b>+15.1</b> points</p>
-        <ul class="l1-li"><li>the brand's own store names the brand<span>r3</span></li><li>the shop's URL names the brand<span>r5</span></li><li>a one-word name is a product<span>r6</span></li></ul>
+      <div class="l1-col">
+        <p class="l1-n"><i data-ic="code" data-s="44" data-c="#0070C0"></i>Operators</p>
+        <p class="l1-w">the steps, in code, called by rules</p>
+        <div class="l1-y"><div class="y c"><i> </i><span># rules/settle-single-name.yaml</span></div><div class="y a"><i>+</i><span>when: name seen once,</span><em>round 6</em></div><div class="y a"><i>+</i><span>  in 3 listings or fewer</span></div><div class="y a"><i>+</i><span>then: {place: own product}</span></div><div class="y a"><i>+</i><span>found_by: loop 2</span></div></div>
+        <p class="l1-pt"><b>+15.1</b>points, with the brand's own store and the shop's URL</p>
       </div>
-      <div class="l1-col off">
-        <i data-ic="wrench" data-s="64" data-c="#9AA0AA"></i>
-        <p class="l1-n">Tools</p>
-        <p class="l1-w">checks, in code</p>
-        <p class="l1-ex">a check on concentration words</p>
-        <p class="l1-pt"><b>0</b> points</p>
-        <ul class="l1-li"><li>tried, and the gate dropped it<span>r7</span></li></ul>
+      <div class="l1-col">
+        <p class="l1-n"><i data-ic="wrench" data-s="44" data-c="#0070C0"></i>Tools</p>
+        <p class="l1-w">checks that stop a wrong placement</p>
+        <div class="l1-y"><div class="y c"><i> </i><span># rules/veto-set-conflict.yaml</span></div><div class="y a"><i>+</i><span>check: set_conflict</span></div><div class="y a"><i>+</i><span>status: active</span><em>kept</em></div><div class="y c"><i> </i><span># rules/child-typed-form.yaml</span></div><div class="y x"><i>×</i><span>check: form_conflict</span></div><div class="y x"><i>×</i><span>status: shadow</span><em>dropped</em></div></div>
+        <p class="l1-pt"><b>−501</b>wrong placements, with the set check on (food)</p>
       </div>
   </div>
-  <p class="l1-foot"><i data-ic="gate" data-s="30" data-c="#0070C0"></i>A gate in code keeps a change only if sealed gold clearly improves. Together: <b>52% → 69% exact</b>.</p>
-  <aside class="notes">Loop 1 doesn't touch the agent. It changes three things in the rules. Memory: what words mean, a YAML file. It learned that hair, travel and mist are never part of a name, and that Elixir and Intense are. That's worth a point and a half. Operators: the steps, in code. The big one: when a listing is sold on the brand's own store, the brand is known. With the shop's URL and one-word names, fifteen points. Tools: checks in code. One was tried, a check on concentration words, and the gate dropped it. The gate keeps a change only if sealed gold clearly improves. Together, exact match went from 52% to 69%.</aside>
+  <p class="l1-foot"><i data-ic="gate" data-s="30" data-c="#0070C0"></i><span>A gate in code keeps a change only if sealed gold clearly improves. Together: <b>52% → 69% exact</b>.</span></p>
+  <aside class="notes">Loop 1 doesn't touch the agent. It changes three things in the rules, and each is a file you can read. Memory, what words mean: the vocabulary learned that hair, travel and mist are never part of a name, and that Elixir and Intense are not concentrations. A point and a half. Operators, the steps in code that rules call: when a name is seen only once, in three listings or fewer, it is still its own product; that came from loop 2. With the brand's own store and the shop's URL naming the brand, fifteen points. Tools, checks that stop a wrong placement: the set check, a gift set is never one product, works; on food, turning it off adds 501 wrong placements. A form check, a body mist as a typed child, didn't: the gate dropped it, and it only logs now. Together, exact match on sealed gold went from 52% to 69%.</aside>
 </section>
 
 <!-- 8 · Loop 1: exact match by round (line), and the agent bill by round beside it -->
