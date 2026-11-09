@@ -14,11 +14,13 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import random
 import re
 import subprocess
 import sys
 from collections import Counter
+from concurrent.futures import ProcessPoolExecutor
 from pathlib import Path
 
 import yaml
@@ -31,6 +33,7 @@ from taxo.parse import Brands
 from taxo.pipeline import Item, brand_spread, load_gold, load_items, run, score_rows, shares, vocab_candidates
 
 N_SILVER, BATCH, MIN_TOUCHED, BAR = 200, 40, 5, 0.5
+WORKERS = max(1, min(24, (os.cpu_count() or 2) - 2))   # candidates of a round run in parallel
 TOGGLE = ("veto/", "child/", "settle/single-name")    # rules whose on/off changes a placement
 
 
@@ -111,6 +114,29 @@ def _toggled(rules: list[evaluator.Rule], rid: str) -> list[evaluator.Rule]:
             else r for r in rules]
 
 
+_W: dict = {}
+
+
+def _worker_init(domain: str, name: str) -> None:
+    """Each worker loads the data once: listings, gold, silver rows, the base rules."""
+    rows, human, names = load_gold("drive")
+    _W["brands"] = Brands(names)
+    _W["items"] = load_items("drive", rows, human)
+    _W["srows"] = silver_rows(domain, name)
+    _W["by_gold"] = _attach(_W["items"], _W["srows"])
+    _W["only"] = {g.brand for g in _W["srows"]}
+    _W["rules"] = evaluator.load(ROOT / "rules" / domain, ROOT / "rules" / "global")
+    _W["tmp"] = _sdir(domain) / f"vocab-try-{os.getpid()}.yaml"
+
+
+def _worker_eval(arg: tuple[dict, dict]) -> dict:
+    """One candidate (vocab doc, rule statuses) -> per silver row (class, path)."""
+    doc, statuses = arg
+    rules = [evaluator.Rule(**{**r.__dict__, "status": statuses.get(r.id, r.status)}) for r in _W["rules"]]
+    run(_W["items"], _W["brands"], _vocab_of(doc, _W["tmp"]), rules, only=_W["only"])
+    return _judge(_W["srows"], _W["by_gold"], _W["brands"])[0]
+
+
 def phase(domain: str, name: str, ph: int, rounds: int) -> list[dict]:
     rows, human, names = load_gold("drive")
     brands = Brands(names)
@@ -133,9 +159,10 @@ def phase(domain: str, name: str, ph: int, rounds: int) -> list[dict]:
         cands += [(f"rule {r.id}: {r.status} -> {'shadow' if r.status == 'active' else 'active'}", doc,
                    _toggled(rules, r.id)) for r in rules if r.id.startswith(TOGGLE) and r.status in ("active", "shadow")]
         best = None
-        for lbl, d, rs in cands:
-            run(items, brands, _vocab_of(d, tmp), rs, only=only)
-            after, s, _ = _judge(srows, by_gold, brands)
+        with ProcessPoolExecutor(max_workers=min(len(cands), WORKERS), initializer=_worker_init,
+                                 initargs=(domain, name)) as pool:   # every candidate at once
+            outs = list(pool.map(_worker_eval, [(d, {r.id: r.status for r in rs}) for _, d, rs in cands]))
+        for (lbl, d, rs), after in zip(cands, outs):
             ok, info = _gate(cur, after)
             if ok and (best is None or info["better"] - info["worse"] > best[3]["better"] - best[3]["worse"]):
                 best = (lbl, d, rs, info, after)
