@@ -207,24 +207,29 @@ is why the slide says "clearly helps" and not "rises".
 
 ## 8. Loop 2, validation: improve the eval itself (55 s)
 
-**Show:** left, the loop as a circle: a validator labels fresh listings, blind → flags where it and the solver
-disagree → a person settles them (gold 2, and more silver) → better rules and a better validator.
+**Show:** left, the loop as a circle, as it runs: a validator labels 40 fresh listings (silver) → a person labels the
+same 40 (gold) → compare: how often silver = gold → improve the validator from the differences → again, on a new
+sample. Under it, the measured KPIs: the validator's silver matched the person's gold 75%, 82.5%, 85% and 57.5% in
+rounds 1 to 4. Card v1 → v2 was kept: flags right 79% → 96%. The new cards tried in rounds 2 and 4 matched no better
+and were dropped.
 
 Right, **each new eval: loop 1 adds rules and climbs again.** Three full loop 1 climbs, side by side, with a blue
-square under each rule loop 1 keeps (5 rules, then 8, then 10). In the circle, better rules are labelled "by loop 1":
+square under each rule loop 1 keeps (5 rules, then 8, then 10):
 - **Eval 1, gold only:** 52% → 69%, the climb from slide 7. 2,233 gold, no silver, no validator.
 - **Eval 2, + silver** (est.): loop 2 adds the validator's silver and the flags a person settled as new gold (+23).
   On the new eval the solver drops, and lowest on silver; loop 1 climbs again. Validator v1, 80 silver.
 - **Eval 3, more of both** (est.): +43 gold, 160 silver, labelled by validator v2. The drop is smaller, and silver
   climbs almost to gold.
 
-Under it: the validator, v1 → v2 kept, 82.5% → 85% match with gold; two later tries matched no better, so they were
-dropped.
+Under it: errors it found, like short names seen once, became rule 6 in loop 1.
 
 **Say:**
 - A small gold set doesn't cover everything, so loop 2 improves the eval itself.
-- The validator labels listings nobody labelled and flags where it and the solver disagree. A person settles only the
-  flags. Where the solver was wrong, the case joins gold; the rest is kept as silver.
+- Each round the validator labels a fresh sample of 40, blind: that's silver. A person labels the same 40: that's
+  gold. We compare them, and how often silver matches gold says how good the validator is.
+- From the differences the improver writes a new card for the validator, and we go again on a new sample. A card is
+  kept only if it matches the person better. v1 to v2 was kept: its flags went from 79% right to 96%. The validator
+  matched the person 75%, 82.5%, 85%, then 57.5% on round 4's sample; the cards tried in rounds 2 and 4 were no better.
 - Every new eval gets a full loop 1 hill climb, and each climb adds rules. On eval 1, gold alone, loop 1 kept five
   rules and climbed from 52% to 69%.
 - Loop 2 then builds eval 2: more gold, and silver. The solver scores lower on it, lowest on silver, so loop 1 climbs
@@ -233,8 +238,12 @@ dropped.
   be trusted to label the rest.
 - And what it finds goes back to loop 1: short names seen only once became rule 6.
 
-*Measured: eval 1's climb (sealed gold, slide 7); the validator's v1 → v2 step (82.5 → 85.0, a later run on 40 human
-rows); gold added in the reviewed rounds (23 and 20 settled flags); silver 40 a round. **The eval 2 and eval 3 climbs
+*Measured: eval 1's climb (sealed gold, slide 7). The validator bars: card v2 against Pedia's labels standing in for
+the person, 40 fresh fragrance listings a round, Codex CLI run (`loopb` V1 30/40, V2 33/40, V3 34/40, V4 23/40; V2 and
+V4 were A/B rounds where a candidate card tied and was dropped). Card v1 → v2, flags right 78.9% → 95.5%: the
+Claude-session rounds. Each round is a new sample, so the bars are not one validator getting steadily better; round 4's
+sample was harder for it (9 deeper, 7 shallower, 1 wrong). Gold added in the reviewed rounds: 23 and 20; silver 40 a
+round. An earlier draft said "v1 → v2, 82.5% → 85%": that was wrong, both are card v2 on different samples. **The eval 2 and eval 3 climbs
 are estimates**, marked "est." on the slide: no solver score was recorded on each new silver set, and the rule counts
 after eval 1 (8, 10) are illustrative.*
 

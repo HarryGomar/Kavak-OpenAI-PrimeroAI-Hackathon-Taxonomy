@@ -428,10 +428,10 @@
 <section class="slide" data-n="8">
   <h2><span style="color:var(--val)">Loop 2, validation:</span> improve the eval itself.</h2>
   <div class="vgrid" style="grid-template-columns:780px 1fr;gap:90px">
-    <div class="chart"><div class="plot"><svg class="ch" id="loop2"></svg></div><p class="ex"><b style="color:#B07F0C">Gold</b>: labelled by a person. <b style="color:#7C8390">Silver</b>: labelled by the validator, every disagreement settled by a person.</p><p class="ex">Errors it found, like short names seen only once, became a rule, kept in round 6.</p></div>
-    <div class="chart"><h3>Each new eval: loop 1 adds rules and climbs again</h3><div class="plot"><svg class="ch" id="figB"></svg></div><p class="ex">The validator: v1 → v2 kept, <b style="color:var(--val)">82.5% → 85%</b> match with gold. Two later tries matched no better, so they were dropped.</p></div>
+    <div class="chart"><div class="plot"><svg class="ch" id="loop2"></svg></div></div>
+    <div class="chart"><h3>Each new eval: loop 1 adds rules and climbs again</h3><div class="plot"><svg class="ch" id="figB"></svg></div><p class="ex">Errors it found, like short names seen once, became rule 6 in loop 1.</p></div>
   </div>
-  <aside class="notes">A small gold set doesn't cover everything, so loop 2 improves the eval itself. Going round the loop: a validator agent checks listings nobody labelled. It flags errors, and cases it isn't confident about. A person settles them. Where the solver was wrong, the case joins gold: gold 2. The rest is kept as silver. From that come better rules, and a better validator. So each round there is more silver, and it is built better: the eval covers more and gets stricter. Then it asks what is going on: for example, short product names seen only once; that became a rule, which the gate kept in round 6. That goes back into the rules, and into a stricter check, so confidence goes up. On the graph: each eval gets a full loop 1 climb. Eval 1 is gold alone: loop 1 climbs from 52% to 69%. Loop 2 then builds eval 2: the validator's silver, and the flags a person settled as new gold. On it the solver scores lower, lowest on silver, and loop 1 climbs again. Eval 3 has more of both, labelled by a better validator, version 2, which matched gold 85% of the time against 82.5% for version 1. Each climb adds rules: five on eval 1, eight by eval 2, ten by eval 3. Each time the gap between silver and gold closes, and the loop runs until silver matches gold. We improve two things at once: the eval, and the solver underneath it.</aside>
+  <aside class="notes">A small gold set doesn't cover everything, so loop 2 improves the eval itself. Going round the loop: each round, the validator labels a fresh sample of 40 listings, blind. That's silver. A person labels the same 40. That's gold. We compare them: how often silver matches gold tells us how good the validator is. From the differences, the improver writes a better card for the validator, and we go again on a new sample. The card is kept only if it matches the person more: v1 to v2 was kept, and its flags went from 79% right to 96%. Round by round the validator matched the person 75%, 82.5%, 85%, then 57.5% on round 4's sample. The new cards tried in rounds 2 and 4 matched no better, so they were dropped. What the differences show also goes to loop 1: short names seen only once became rule 6. On the graph: each eval gets a full loop 1 climb. Eval 1 is gold alone: loop 1 climbs from 52% to 69%. Loop 2 then builds eval 2: the validator's silver, and the flags a person settled as new gold. On it the solver scores lower, lowest on silver, and loop 1 climbs again. Eval 3 has more of both, labelled by a better validator, version 2, which matched gold 85% of the time against 82.5% for version 1. Each climb adds rules: five on eval 1, eight by eval 2, ten by eval 3. Each time the gap between silver and gold closes, and the loop runs until silver matches gold. We improve two things at once: the eval, and the solver underneath it.</aside>
 </section>
 
 <!-- 10 · Loop 3: meta -->
@@ -762,17 +762,34 @@
   // ---------- 10 · loop 2, drawn as a loop ----------
   const GOLD = '#E3AC2A', GOLD_T = '#B07F0C', SILV = '#C3C8D0', SILV_T = '#7C8390';
   (() => {
+    // the loop: validator labels a sample (silver) -> a person labels the same sample (gold) -> compare -> improve -> again
     let s = '';
-    const cx = 400, cy = 330, r = 175;
-    [[-76, -14], [14, 76], [104, 166], [194, 256]].forEach(([a, b]) => { s += arc(cx, cy, r, a, b, C.val, 5); });
-    [[cx, cy - r], [cx + r, cy], [cx, cy + r], [cx - r, cy]].forEach(([x, y]) => { s += `<circle cx="${x}" cy="${y}" r="11" fill="${C.val}"/>`; });
-    s += Nd(cx, cy - r - 70, 'A validator', ['labels fresh listings, blind'], { fs: 34, sfs: 22 });
-    s += Nd(cx + r + 34, cy - 16, 'Flags', ['where it and the', 'solver disagree'], { fs: 34, sfs: 22, a: 'start' });
-    s += Nd(cx, cy + r + 64, 'A person settles them', [`<tspan style="fill:${GOLD_T};font-weight:600">gold 2</tspan>, and <tspan style="fill:${SILV_T};font-weight:600">more silver</tspan>`], { fs: 34, sfs: 22 });
-    s += Nd(cx - r - 34, cy - 16, 'Better rules', [`<tspan style="fill:${C.ind};font-weight:600">by loop 1</tspan>`, `and a <tspan style="fill:${C.val};font-weight:600">better validator</tspan>`], { fs: 34, sfs: 22, a: 'end' });
-    s += Tx(cx, cy - 30, 'each round', { a: 'middle', fs: 24, c: C.mute }) + Tx(cx, cy + 8, 'more silver,', { a: 'middle', fs: 32, fw: 600, c: SILV_T })
-      + Tx(cx, cy + 46, 'built better', { a: 'middle', fs: 32, fw: 600, c: C.val });
-    put('loop2', '0 40 800 640', s);
+    const cx = 390, cy = 236, r = 122;
+    const sv = t => `<tspan style="fill:${SILV_T};font-weight:600">${t}</tspan>`, gd = t => `<tspan style="fill:${GOLD_T};font-weight:600">${t}</tspan>`;
+    [[-74, -16], [16, 74], [106, 164], [196, 254]].forEach(([p, q]) => { s += arc(cx, cy, r, p, q, C.val, 5); });
+    [[cx, cy - r], [cx + r, cy], [cx, cy + r], [cx - r, cy]].forEach(([x, y]) => { s += `<circle cx="${x}" cy="${y}" r="10" fill="${C.val}"/>`; });
+    s += Nd(cx, cy - r - 62, 'A validator labels', [`40 fresh listings: ${sv('silver')}`], { fs: 30, sfs: 21 });
+    s += Nd(cx + r + 30, cy - 14, 'A person labels', [`the same 40: ${gd('gold')}`], { fs: 30, sfs: 21, a: 'start' });
+    s += Nd(cx, cy + r + 50, 'Compare', [`how often ${sv('silver')} = ${gd('gold')}`], { fs: 30, sfs: 21 });
+    s += Nd(cx - r - 30, cy - 14, 'Improve it', ['from the differences'], { fs: 30, sfs: 21, a: 'end' });
+    s += Tx(cx, cy - 6, 'each round', { a: 'middle', fs: 20, c: C.mute }) + Tx(cx, cy + 24, 'a new sample', { a: 'middle', fs: 24, fw: 600, c: C.val });
+
+    // the KPIs: validator vs the person, per round of 40 (measured)
+    const K = [['round 1', 0.75, '75%'], ['round 2', 0.825, '82.5%'], ['round 3', 0.85, '85%'], ['round 4', 0.575, '57.5%']];
+    const T0 = 506, base = 712, H = 150, bw = 60, x0 = 112, step = 186;
+    s += `<line x1="40" x2="760" y1="${T0 - 34}" y2="${T0 - 34}" stroke="${C.line}" stroke-width="2"/>`;
+    s += Tx(40, T0, `Validator ${sv('silver')} = person's ${gd('gold')}, each round`, { fs: 23, fw: 600, c: C.ink });
+    K.forEach(([lab, v, t], i) => {
+      const x = x0 + i * step, h = H * v / 0.85;
+      s += `<rect x="${x - bw / 2}" y="${base - h}" width="${bw}" height="${h}" rx="4" fill="${C.val}"/>`;
+      s += Tx(x, base - h - 12, t, { a: 'middle', fs: 26, fw: 600, c: C.ink });
+      s += Tx(x, base + 30, lab, { a: 'middle', fs: 20, c: C.mute });
+    });
+    s += `<line x1="40" x2="760" y1="${base}" y2="${base}" stroke="${C.wire}" stroke-width="2"/>`;
+    s += Tx(40, base + 74, `Card v1 → v2 kept: flags right ${'<tspan style="fill:' + C.ink + ';font-weight:600">79% → 96%</tspan>'}.`, { fs: 21, c: C.ink2 });
+    s += Tx(40, base + 102, 'New cards tried in rounds 2 and 4 matched no better: dropped.', { fs: 21, c: C.mute });
+    put('loop2', '34 0 766 820', s);
+    document.getElementById('loop2')?.setAttribute('preserveAspectRatio', 'xMinYMid meet');
   })();
 
   // ---------- line charts ----------
