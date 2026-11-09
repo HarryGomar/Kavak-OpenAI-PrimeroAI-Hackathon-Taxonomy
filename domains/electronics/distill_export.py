@@ -51,7 +51,7 @@ def main():
     L = [json.loads(x) for x in open(LEDGER, encoding="utf-8")]
     out, rnd = [], 0
     for e in L:
-        if e["kind"] == "gate" and e["change"] not in DEBUG:
+        if e["kind"] == "gate" and e["change"] not in DEBUG and e["change"] != "field-":
             rnd += 1
             keep = e["decision"] == "keep"
             sealed = e.get("sealed") is not None

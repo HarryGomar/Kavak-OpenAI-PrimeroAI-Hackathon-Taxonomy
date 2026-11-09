@@ -135,6 +135,12 @@ def collect(fetch: bool = True) -> dict[str, dict]:
     return out
 
 
+def _delta(a: dict, b: dict, key: str) -> float | None:
+    """after - before, or None when a side lacks the rate (records from other domains may carry counts only)."""
+    x, y = (a or {}).get(key), (b or {}).get(key)
+    return round(x - y, 4) if isinstance(x, (int, float)) and isinstance(y, (int, float)) else None
+
+
 def lessons(records: dict[str, dict]) -> list[dict]:
     """Group decided rounds into lessons and scope each one by where it was kept (SPEC §5.3 step 4)."""
     groups: dict[str, list[dict]] = defaultdict(list)
@@ -152,8 +158,8 @@ def lessons(records: dict[str, dict]) -> list[dict]:
             rows.append({"domain": r["domain"], "loop": r["loop"], "round": r["round"], "branch": r["branch"],
                          "author": r["author"], "keep": r["keep"], "decided_on": r["decided_on"],
                          "better": g.get("better"), "worse": g.get("worse"),
-                         "delta_exact": round(a["exact_rate"] - b["exact_rate"], 4) if a and b else None,
-                         "delta_harm": round(a["harm_rate"] - b["harm_rate"], 4) if a and b else None,
+                         "delta_exact": _delta(a, b, "exact_rate"),
+                         "delta_harm": _delta(a, b, "harm_rate"),
                          "delta_agent": round(g["agent_after"] - g["agent_before"], 4)
                          if g.get("agent_after") is not None else None,
                          "record": r["id"]})
@@ -166,17 +172,19 @@ def lessons(records: dict[str, dict]) -> list[dict]:
 def write_lessons(ls: list[dict]) -> None:
     """lessons/<id>.yaml. A claim or kind a person already wrote is kept; the record is always rewritten from the runs."""
     LESSONS_DIR.mkdir(exist_ok=True)
-    for le in ls:
+    for i, le in enumerate(ls):
         p = LESSONS_DIR / f"{le['id'].split('/', 1)[1]}.yaml"
         if p.exists():
             old = yaml.safe_load(p.read_text(encoding="utf-8").split("\n", 1)[1]) or {}
             le = le | {k: old[k] for k in ("claim", "kind") if old.get(k)}
+            ls[i] = le                                   # the report shows the claim a person wrote
         p.write_text("# Written by taxo.distill from memory/rounds/. Edit the claim or kind; the record is regenerated.\n"
                      + yaml.safe_dump(le, sort_keys=False, allow_unicode=True, width=120), encoding="utf-8")
 
 
 def _pct(a: dict, b: dict, key: str) -> str:
-    return f"{(a[key] - b[key]) * 100:+.1f}" if a and b else ""
+    d = _delta(a, b, key)
+    return f"{d * 100:+.1f}" if d is not None else ""
 
 
 def report(records: dict[str, dict], ls: list[dict]) -> str:
