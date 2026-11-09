@@ -3,3 +3,4 @@
 - question_id: preserve_product_name_tokens
   record: "asked by the proposer (silver climb phase 1); answered yes by the owner; vocab test dropped (silver S3 exact
     0.745 -> 0.725, dev 0.657 -> 0.646); then removed by the owner on 2026-11-09"
+  words: [body mist, hair mist, body spray, travel spray, gift set, hair, mist, travel]   # code refuses vocab edits on these

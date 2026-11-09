@@ -172,8 +172,10 @@ def ask_proposer(domain: str, cl: list[dict], doc: dict, log: Path, history: lis
     closed = yaml.safe_load(closed_f.read_text(encoding="utf-8")) if closed_f.exists() else []
     text = (PAYLOAD_HELP + "\n\nCurrent vocabulary (variant axes and strip words):\n"
             + json.dumps({"variant": doc.get("variant"), "strip": doc.get("strip")}, ensure_ascii=False)
-            + ("\n\nClosed questions: decided already. Never propose them again, nor a vocab or rule change that only "
-               "restates them:\n" + json.dumps(closed, ensure_ascii=False) if closed else "")
+            + ("\n\nClosed questions: decided already. Never propose them again in any form: not as a question, and "
+               "not as a vocab or rule change that keeps or drops the same words (for preserve_product_name_tokens: "
+               "no change to how body mist, hair mist, body spray, travel spray, gift set, hair, mist or travel are "
+               "stripped or tagged):\n" + json.dumps(closed, ensure_ascii=False) if closed else "")
             + ("\n\nYour earlier proposals this phase and what happened to them. Do not repeat one. A kind that is "
                "not testable this round changes nothing now, so prefer a vocab edit or a code_rule:\n"
                + json.dumps(history, ensure_ascii=False) if history else "")
@@ -196,6 +198,11 @@ def proposal_candidate(domain: str, p: dict, doc: dict, rules: list[evaluator.Ru
     except json.JSONDecodeError:
         payload = {}
     kind, pid = p.get("kind"), re.sub(r"[^a-z0-9_]+", "_", (p.get("id") or "proposal").lower())
+    closed_f = DOMAINS_DIR / domain / "memory" / "closed_questions.yaml"
+    closed_words = {w for q in (yaml.safe_load(closed_f.read_text(encoding="utf-8")) if closed_f.exists() else []) or []
+                    for w in q.get("words") or []}
+    if kind == "vocab" and set(payload.get("tokens") or []) & closed_words:
+        return None   # a closed question restated as a vocab edit: refused, never tested
     if kind == "vocab" and payload.get("tokens"):
         d = yaml.safe_load(yaml.safe_dump(doc))
         axis = payload.get("axis") or "strip"
@@ -276,12 +283,9 @@ def phase(domain: str, name: str, ph: int, rounds: int) -> list[dict]:
               f"{'tested ' + str(prop_info) if pc else 'not testable this round (recorded)'}", flush=True)
         if best is None:
             record.append(rec | {"kept": None})
-            empty = len(record) >= 2 and all(r.get("kept") is None for r in record[-2:])
             print(f"  round {rnd}: none of {len(cands)} candidates passes the silver gate"
-                  + ("; two empty rounds in a row, phase ends" if empty else "; next round"), flush=True)
-            if empty:
-                break
-            continue
+                  + ("; next round" if rnd < rounds else ""), flush=True)
+            continue   # a phase always runs its rounds (the owner's cadence: 3 rule rounds, then 1 validator change)
         lbl, doc, rules, info, cur, _, src = best
         run(items, brands, _vocab_of(doc, tmp), rules, only=only)
         _, summ, judged = _judge(srows, by_gold, brands)
