@@ -32,6 +32,8 @@ import yaml
 
 from domains.electronics import adapter, graph
 from domains.electronics.classify import Categories
+
+CATS = Categories()
 from taxo import gold as goldmod, score
 from taxo.core import config
 from taxo.core.config import RUNS_DIR
@@ -54,8 +56,31 @@ def load():
     return rows, listings
 
 
-def tree(nodes):
-    """Scaffold tree nodes: brand > product > variant, with paths of labels. Trade items stay off the tree."""
+def type_id(brand_id, cat):
+    return "ty_" + hashlib.sha256(f"type|{brand_id}|{cat}".encode()).hexdigest()[:12]
+
+
+def brand_of(n, tnodes):
+    while n["level"] != "brand":
+        n = tnodes[n["parent_id"]]
+    return n["id"]
+
+
+def add_type(out, brand_id, cat, cats):
+    """Browse level Brand > product type (owner convention, review r01). Never part of a product's id."""
+    tid = type_id(brand_id, cat)
+    if tid not in out:
+        b = out[brand_id]
+        label = cats.categories[cat]["label"]
+        out[tid] = {"id": tid, "level": "type", "name": label, "parent_id": brand_id, "path": b["path"] + [label],
+                    "status": b["status"], "category": cat}
+    return tid
+
+
+def tree(nodes, edges, cats):
+    """Scaffold tree: brand > product type > product > variant, paths of labels. Trade items stay off the tree.
+    The type level is the product's category (CLASSIFIED_AS); ids of products and variants never include it."""
+    cat_of = {e["from"]: e["to"][len("cat:"):] for e in edges if e["type"] == "CLASSIFIED_AS"}
     out = {}
     for n in nodes.values():
         if n["type"] == "Brand":
@@ -63,9 +88,10 @@ def tree(nodes):
                             "status": n["status"]}
     for n in nodes.values():
         if n["type"] == "ProductModel":
-            b = out[n["brand"]]
-            out[n["id"]] = {"id": n["id"], "level": "product", "name": n["label"], "parent_id": n["brand"],
-                            "path": b["path"] + [n["label"]], "status": n["status"], "listings": n["listing_count"],
+            t = out[add_type(out, n["brand"], cat_of[n["id"]], cats)]
+            out[n["id"]] = {"id": n["id"], "level": "product", "name": n["label"], "parent_id": t["id"],
+                            "path": t["path"] + [n["label"]], "status": n["status"], "listings": n["listing_count"],
+                            "category": cat_of[n["id"]],
                             "identifier_keys": n["identifier_keys"], "variant_axes": n.get("variant_axes", [])}
     for n in nodes.values():
         if n["type"] == "ProductVariant":
@@ -100,11 +126,13 @@ def place(rows, previews, nodes, gplacements, cats, tnodes):
             rec.update(step="brand", route="agent_evidence", reason="brand unresolved", outcome="unmatched")
         else:
             nid, trade = tree_node(nodes, p["target_node_id"])
+            if tnodes[nid]["level"] == "brand":
+                nid = add_type(tnodes, nid, prev["proposed_category"], cats)
             t = tnodes[nid]
             rec.update(node_id=nid, path=t["path"], level=t["level"], trade_item=trade, rule_ids=p["rule_ids"],
                        reason="; ".join(p["reason_codes"]), outcome=p["outcome"],
                        confidence=1.0 if p["outcome"] == "matched" else 0.6)
-            if t["level"] == "brand":
+            if t["level"] == "type":
                 rec.update(step="brand", route="agent_title", confidence=0.5)
             else:
                 rec.update(step="lattice")
@@ -145,20 +173,22 @@ def candidates_for(p, tnodes, by_brand, k=25):
                 sc.append((round(s, 6), n["id"]))
         return [tnodes[i] for _, i in sorted(sc, reverse=True)[:k]]
 
-    if p["node_id"] and tnodes[p["node_id"]]["level"] == "brand":
-        head, picked = [tnodes[p["node_id"]]], rank(by_brand.get(p["node_id"], []))
+    if p["node_id"] and tnodes[p["node_id"]]["level"] in ("brand", "type"):
+        bid = brand_of(tnodes[p["node_id"]], tnodes)
+        head, picked = [tnodes[bid]], rank([n for n in by_brand.get(bid, []) if n["level"] != "type"])
     else:
         named = [n for n in tnodes.values() if n["level"] == "brand" and len(n["name"]) >= 2
                  and f" {' '.join(re.findall(r'[a-z0-9]+', n['name'].casefold()))} " in title_key]
         named.sort(key=lambda n: -len(n["name"]))
         head = named[:3]
-        picked = rank([x for b in head for x in by_brand.get(b["id"], [])])
+        picked = rank([x for b in head for x in by_brand.get(b["id"], []) if x["level"] != "type"])
         if len(picked) < k:
             # Anywhere in the tree only on a rare shared word (e.g. a model number), never on "series" or "black".
-            extra = [n for n in rank([n for n in tnodes.values() if n["level"] != "brand"], floor=5.0) if n not in picked]
+            extra = [n for n in rank([n for n in tnodes.values() if n["level"] not in ("brand", "type")], floor=5.0)
+                     if n not in picked]
             picked += extra[:k - len(picked)]
             for n in extra[:k]:
-                bid = n["parent_id"] if tnodes[n["parent_id"]]["level"] == "brand" else tnodes[n["parent_id"]]["parent_id"]
+                bid = brand_of(n, tnodes)
                 if tnodes[bid] not in head and len(head) < 6:
                     head.append(tnodes[bid])
     return [{"id": n["id"], "path": n["path"], "level": n["level"]} for n in head + picked]
@@ -171,16 +201,17 @@ def codex_step(placements, tnodes, max_calls, model=None):
     by_brand = {}
     for n in tnodes.values():
         if n["level"] != "brand":
-            b = n["parent_id"] if tnodes[n["parent_id"]]["level"] == "brand" else tnodes[n["parent_id"]]["parent_id"]
-            by_brand.setdefault(b, []).append(n)
+            by_brand.setdefault(brand_of(n, tnodes), []).append(n)
     items = []
     for p in sorted(routed, key=lambda p: hashlib.sha256(p["listing_id"].encode()).hexdigest()):
         items.append({"listing_id": p["listing_id"], "title": p["title"],
-                      "brand_id": p["node_id"] if p["node_id"] else None,
+                      "brand_id": brand_of(tnodes[p["node_id"]], tnodes) if p["node_id"] else None, "category": p["category"],
                       "text": f"title: {p['title']} | source: {p['source']} | category: {p['category']}",
                       "candidates": candidates_for(p, tnodes, by_brand)})
+    from taxo.core.ledger import Ledger
     answers, stats = codex_placer.run_batches(DOMAIN, pack.get("conventions", ""), items, OUT / "codex-cache",
-                                              max_calls=max_calls, model=model)
+                                              max_calls=max_calls, model=model, workers=6,
+                                              ledger=Ledger(OUT / "ledger.jsonl"), role="placer")
     by_id = {p["listing_id"]: p for p in placements}
     log, outcome = [], Counter()
     for it in items:
@@ -201,7 +232,7 @@ def codex_step(placements, tnodes, max_calls, model=None):
             n = tnodes[d["node_id"]]
             p.update(node_id=n["id"], path=n["path"], level=n["level"], step="agent", route=None)
         elif a == "new_product":
-            b = tnodes[d["node_id"]]
+            b = tnodes[add_type(tnodes, d["node_id"], it["category"], CATS)]
             name = d["new_product"].strip()
             nid = f"pa_{hashlib.sha256(('agent-product|' + b['id'] + '|' + codex_placer.alnum(name)).encode()).hexdigest()[:12]}"
             tnodes.setdefault(nid, {"id": nid, "level": "product", "name": name, "parent_id": b["id"],
@@ -210,8 +241,8 @@ def codex_step(placements, tnodes, max_calls, model=None):
             tnodes[nid]["listings"] += 1
             p.update(node_id=nid, path=tnodes[nid]["path"], level="product", step="agent", route=None)
         elif a == "brand_only":
-            n = tnodes[d["node_id"]]
-            p.update(node_id=n["id"], path=n["path"], level="brand", step="agent", route=None)
+            n = tnodes[add_type(tnodes, d["node_id"], it["category"], CATS)]
+            p.update(node_id=n["id"], path=n["path"], level="type", step="agent", route=None)
         else:
             p.update(step="agent", route="park")
         p.update(by="codex", confidence=d["confidence"], reason=f"agent {a}: {d['reason']}", outcome="agent")
@@ -285,14 +316,22 @@ def main():
     ap.add_argument("--model", default=None, help="model override for the agent backend")
     args = ap.parse_args()
     t0 = time.time()
+    timings = {}
     rows, _ = load()
+    timings["load"] = round(time.time() - t0, 2)
     cats = Categories()
+    t = time.time()
     previews = {k: cats.categorize(r) for k, r in rows.items()}                                    # step 1 (category)
+    timings["parse_category"] = round(time.time() - t, 2)
+    t = time.time()
     cfg = graph.read_yaml(graph.CONFIG_PATH)
     nodes, edges, gplacements, review, _, checks = graph.construct(rows, list(previews.values()), cats, cfg)  # 1, 2, 4
-    tnodes = tree(nodes)
+    timings["brand_lattice"] = round(time.time() - t, 2)
+    tnodes = tree(nodes, edges, cats)
     placements = place(rows, previews, nodes, gplacements, cats, tnodes)                          # 5 route
+    t = time.time()
     agent = agent_step(placements, tnodes, args.agent_calls, args.agent, args.model)                                      # 6
+    timings["agent"] = round(time.time() - t, 2)
     labels = config.data_dir() / DOMAIN / "listings" / "public_match_labels.csv"
     pairs = graph.evaluate(labels, {p["mention_id"]: p for p in gplacements}, nodes) if labels.exists() else None
 
@@ -313,7 +352,7 @@ def main():
         "identity_rules_version": cfg["version"],
         "tree": dict(Counter(t["level"] for t in tnodes.values())),
         "tree_status": {lv: dict(Counter(t["status"] for t in tnodes.values() if t["level"] == lv))
-                        for lv in ("brand", "product", "variant")},
+                        for lv in ("brand", "type", "product", "variant")},
         "trade_items": sum(1 for x in nodes.values() if x["type"] == "TradeItem"),
         "placement_levels_in_scope": dict(Counter(p["level"] for p in in_scope)),
         "settled_by_step_in_scope": {s: round(c / max(len(in_scope), 1), 3) for s, c in
@@ -323,10 +362,15 @@ def main():
         "registry": "skipped: no official electronics catalogue",
         "agent": agent, "checks": checks,
         "pair_evaluation": pairs, "gold": score_gold(placements),
-        "seconds": round(time.time() - t0, 1),
+        "seconds": round(time.time() - t0, 1), "timings": timings,
         "tree_sha256": hashlib.sha256(json.dumps(tree_list, sort_keys=True).encode()).hexdigest(),
     }
     (OUT / "metrics.json").write_text(json.dumps(metrics, indent=2) + "\n", encoding="utf-8")
+    from taxo.core.ledger import Ledger
+    Ledger(OUT / "ledger.jsonl").append("pipeline_run", domain=DOMAIN, **{k: metrics[k] for k in (
+        "listings", "in_scope", "rules_sha256", "identity_rules_version", "tree", "placement_levels_in_scope",
+        "settled_by_step_in_scope", "agent", "checks", "gold", "seconds", "timings", "tree_sha256")},
+        pair_eval=(metrics["pair_evaluation"] or {}).get("validation"))
     print(json.dumps({k: metrics[k] for k in ("listings", "in_scope", "tree", "placement_levels_in_scope",
                                               "settled_by_step_in_scope", "agent", "gold")}, indent=1))
     print("checks all passed:", checks["all_passed"])

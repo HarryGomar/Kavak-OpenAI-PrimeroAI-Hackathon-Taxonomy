@@ -129,6 +129,7 @@ def extract(row, prev, ident, brand_vocab, cat_ancestors):
     rids = ident.cfg["model"]["rule_ids"]
     subj_tokens = tokens(subject, ident.strip_prefixes)
     subj_loose = alnum(subject)
+    own_loose = alnum(subject + " " + (prev.get("included_text") or ""))   # own text: everything before "for ..."
     ref_loose = alnum(reference)
     cand_tokens = [t for t in subj_tokens if ident.is_model_token(t) and alnum(t) != bkey]
     # Model from the source field, checked against the title's own-product part
@@ -146,7 +147,11 @@ def extract(row, prev, ident, brand_vocab, cat_ancestors):
         key = alnum(part)
         if len(key) < 3:
             continue
-        if key in subj_loose:
+        if ident.cfg["model"].get("field_reject_spec_tokens", False) and any(pt.search(part.casefold()) or pt.search(key)
+                                                                   for pt in ident.not_model):
+            claims["rejected_models"].append({"raw": part, "reason": "not_a_model_token"})
+            continue
+        if key in (own_loose if ident.cfg["model"].get("field_confirm_in_own_text", False) else subj_loose):
             field_choice = {"key": key, "raw": part, "rule": ident.rid(rids["field_confirmed"]), "field": "manufacturer_model"}
             break
         if ref_loose and key in ref_loose:
@@ -517,7 +522,9 @@ def run_checks(nodes, edges, placements, listings):
     for k, L in listings.items():
         m = L["claims"]["model"]
         subj = alnum(L["prev"]["subject_text"] or L["row"]["title"])
-        if m and not m.get("unconfirmed") and m["key"] not in subj:
+        own = alnum((L["prev"]["subject_text"] or L["row"]["title"]) + " " + (L["prev"].get("included_text") or ""))
+        field_agrees = m and m["key"] in alnum(L["row"]["manufacturer_model"]) and m["key"] in own
+        if m and not m.get("unconfirmed") and m["key"] not in subj and not field_agrees:
             ok = False
     results["own_model_from_own_product_text"] = ok
     # Every model's listings share one brand

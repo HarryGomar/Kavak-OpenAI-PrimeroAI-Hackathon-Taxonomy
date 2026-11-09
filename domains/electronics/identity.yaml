@@ -1,6 +1,6 @@
 schema_version: 1
 scope: electronics
-version: 0.4.0
+version: 0.5.0
 status: draft
 purpose: >
   Draft identity-construction rules for the first electronics graph build.
@@ -38,6 +38,10 @@ model:
   # Loose key: casefold, keep only letters and digits. Used inside one resolved brand only.
   key_rule: identity/model-key-alnum
   min_key_length: 4
+  # v2 (round 02, owner gold r01 Kingston): a model-field part that looks like a size/spec token is never a model, and a
+  # field part is confirmed anywhere in the listing's own text (title before "for ..."), not only before "with ...".
+  field_reject_spec_tokens: false
+  field_confirm_in_own_text: true
   not_model_tokens:
     - '^\d+(?:\.\d+)?(?:gb|tb|mb|kb|mp|mm|cm|in|inch|ft|w|v|mah|rpm|hz|khz|mhz|ghz|x|p|ms|oz|lb|lbs|pk|pack|gbps|mbps|db|ohm|ohms|watt|watts|ch|bit|ppm|dpi)$'
     - '^(?:usb|mp3|mp4|mp5|hdmi|sata|ide|ieee|wifi|dvd|cd|hd|lcd|led|tft|ipod|iphone|ipad|802\.11[a-z]*)\d*(?:\.\d+)?$'

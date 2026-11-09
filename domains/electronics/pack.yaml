@@ -1,12 +1,12 @@
 name: electronics
 families: [consumer_durables]        # no family rules shared yet
-levels: [brand, product, variant]    # product = manufacturer model; variant = colour or capacity; packs/bundles/refurbished are trade items, never nodes
+levels: [brand, type, product, variant]  # type = product type (browse category; owner review r01); product = manufacturer model; variant = colour or capacity; packs/bundles/refurbished are trade items, never nodes
 data: electronics/                   # under TAXO_DATA_DIR: listings/products.csv (+ public_match_labels.csv), gold/
 taxonomy_source: none given - the lattice step builds the tree from the brand's listings (DATA-SPEC 4.3)
 category: separate browse field (categories/), never a tree level or part of a node id
 truth: none yet - blind-label a random sample (gold/round-01.yaml); benchmark match labels are pair evaluation only
 conventions: |
-  - Brand is the top level; category is a browse filter, so moving a product to another category never changes its node.
+  - Path is Brand / product type / model / variant (owner, review r01). The type is a browse level from the category step: moving a product to another type never changes its id.
   - Product = one manufacturer model in its own product role; a model named after "for"/"compatible with" is a reference, never the product.
   - Colour and capacity are variants only when the same model is sold in more than one value; otherwise the listing stays on the product.
   - Packs, bundles and refurbished/remanufactured items never merge with the single new product (trade items, not nodes).

@@ -38,7 +38,7 @@ def load_taxonomy() -> list[Node]:
     nodes = []
     for line in path.read_text(encoding="utf-8").splitlines():
         n = json.loads(line)
-        if n["level"] in ("brand", "product", "variant"):
+        if n["level"] in ("brand", "type", "product", "variant"):
             nodes.append(Node(id=n["id"], domain=DOMAIN, name=n["name"], parent_id=n.get("parent_id"), level=n["level"],
                               path=n["path"], fields={k: n[k] for k in ("status", "category") if n.get(k)}))
     return link_children(nodes)
