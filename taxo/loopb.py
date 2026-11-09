@@ -120,6 +120,22 @@ def pedia_verdicts(domain: str, version: str) -> Path:
     return f
 
 
+def validator_vs_pedia(domain: str, version: str, suffix: str = "") -> dict:
+    """The validator's own score on the whole sample against Pedia's label (every listing of a pedia-dev sample has one)."""
+    P = {p["id"]: p for p in _placements(domain)}
+    c = Counter()
+    for x in open(_dir(domain) / f"{version}-validator{suffix}.jsonl", encoding="utf-8"):
+        v = json.loads(x)
+        p = P[v["id"]]
+        if not p["pedia_path"]:
+            continue
+        gp = p["pedia_path"]
+        c[score.judge(p["pedia_brand"], v["path"], p["pedia_brand"], gp, set(tokens(gp[0]))).cls] += 1
+    n = sum(c.values()) or 1
+    return {"n": sum(c.values()), "exact": c["exact"], "exact_rate": round(c["exact"] / n, 3),
+            "harm_rate": round((c["deeper"] + c["wrong"] + c["wrong_brand"]) / n, 3), "classes": dict(c)}
+
+
 def settle(domain: str, version: str, verdicts: Path) -> dict:
     """The person's verdicts -> frozen V<k> labels (gold for these listings), and the validator's score on them."""
     d = _dir(domain)
@@ -146,13 +162,18 @@ def settle(domain: str, version: str, verdicts: Path) -> dict:
     flags_right = sum(V[it["id"]]["verdict"] in ("validator_right", "both_wrong") for it in flagged)
     pipe_wrong = sum(V[it["id"]]["verdict"] in ("validator_right", "both_wrong") for it in review["items"] if it["id"] in V)
     by = {v.get("by", "person") for v in V.values()}
-    cards = {json.loads(x).get("card", "v1") for x in open(d / f"{version}-validator.jsonl", encoding="utf-8")}
-    silver = {"version": version, "validator": "claude-session/card-" + "+".join(sorted(cards)), "reviewer": "/".join(sorted(by)),
+    vs = [json.loads(x) for x in open(d / f"{version}-validator.jsonl", encoding="utf-8")]
+    who = {v.get("validator", "claude-session") for v in vs}
+    cards = {v.get("card", "v1") for v in vs}
+    silver = {"version": version, "validator": "+".join(sorted(who)) + "/card-" + "+".join(sorted(cards)),
+              "reviewer": "/".join(sorted(by)),
               "reviewed": sum(c[k] for k in ("pipeline_right", "validator_right", "both_wrong", "unclear")),
               "agreement": round(review["agree"] / max(review["agree"] + review["disagree"], 1), 3),
               "flag_precision": round(flags_right / max(len(flagged), 1), 3),
               "spot_agreed_held": f"{c['spot:pipeline_right']}/{sum(1 for it in review['items'] if it.get('spot_check'))}",
               "pipeline_wrong_found": pipe_wrong, "verdicts": dict(c)}
+    if "pedia" in by:
+        silver["validator_vs_pedia"] = validator_vs_pedia(domain, version)
     (d / f"{version}-silver.json").write_text(json.dumps(silver, indent=1), encoding="utf-8")
     m = json.loads((RUNS_DIR / domain / "metrics.json").read_text(encoding="utf-8"))
     kpis.append(domain, kpis.row(domain, m, "B", int(version.lstrip("V") or 0), f"Loop B {version}: settled by {silver['reviewer']}",
