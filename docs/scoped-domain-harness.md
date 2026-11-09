@@ -1,5 +1,10 @@
 # Toys, clothing and footwear harness hooks
 
+For the bounded four-domain run, independent installed-CLI validation is documented
+in [codex-cli-validator.md](codex-cli-validator.md). It also supports food after its
+domain-specific adapter is configured for current RAW inputs. Construction alone
+does not complete the validation/review loop.
+
 These hooks load the three domain packs, local proposal checks and admitted agent instructions. Raw-only construction retains numeric identity tokens and source-reported brands. It saves provisional nodes, placements, scope decisions, rule events, observations, errors and a hashed run manifest under ignored runs/<domain>/ directories. Construction makes no model calls or gold reads and promotes no rules.
 
 Fragrance-specific normalization, pack, rule files, brand parser and evaluation gate are unchanged. No food or games domain files are changed by this integration.

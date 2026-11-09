@@ -57,7 +57,8 @@
   status: proposal
 
 - id: fd-not-found-abstain
-  text: Reject a brand node only with a named counterpart and a source. "Not found online" means unverified: abstain.
+  text: >-
+    Reject a brand node only with a named counterpart and a source. "Not found online" means unverified: abstain.
   origin: v9e flip-flop
   evidence: "357 of 1,152 earlier rejections flipped to keep on re-check"
   status: proposal

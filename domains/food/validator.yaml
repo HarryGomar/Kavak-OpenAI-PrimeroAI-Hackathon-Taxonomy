@@ -1,7 +1,7 @@
 # Validator setup v1 (food). Checklist steps are proposals until the validator scores better on gold with them.
 version: 1
-model: gpt-6-luna
-web: true
+model: gpt-6.1-sol                 # transport/model pins are owned by taxo/validator_cli.lock.json
+web: false                       # bounded CLI validator uses supplied evidence only
 use_proposals: false
 inputs: [title, brand_field, seller, size, pack]
 # Starts empty: the improver induces steps from the validator's mistakes on our labels.
