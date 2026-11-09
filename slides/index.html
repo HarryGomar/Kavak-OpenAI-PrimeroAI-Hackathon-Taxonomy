@@ -375,12 +375,13 @@
   <aside class="notes">Loop 1 doesn't touch the agent. It changes three things in the rules. Memory: what words mean, a YAML file. It learned that hair, travel and mist are never part of a name, and that Elixir and Intense are. That's worth a point and a half. Operators: the steps, in code. The big one: when a listing is sold on the brand's own store, the brand is known. With the shop's URL and one-word names, fifteen points. Tools: checks in code. One was tried, a check on concentration words, and the gate dropped it. The gate keeps a change only if sealed gold clearly improves. Together, exact match went from 52% to 69%.</aside>
 </section>
 
-<!-- 8 · Loop 1: one row per kept rule; exact match up, agent share and the bill down -->
+<!-- 8 · Loop 1: exact match by round (line), and the agent bill by round beside it -->
 <section class="slide" data-n="7">
   <h2><span style="color:var(--ind)">Loop 1:</span> each rule kept, more right and cheaper.</h2>
   <div class="fill"><svg class="ch" id="figA"></svg></div>
-  <p class="src">Fragrance. Sealed gold: 2,233 listings with Pedia's labels. Bill: 632 tokens a listing at an assumed $3 per million.</p>
-  <aside class="notes">Each row is one rule we kept, written by hand, from the start down to round 6. The blue bar is exact match on sealed gold, and it grows from 52% to 69%. The dark bar is the share of listings that still go to an agent. It shrinks from 30% to 11%, so the bill for 2 million listings falls from about $1,100 to about $400. The big step is round 3: a listing sold on the brand's own store tells us the brand. Round 6 came from loop 2: most of the errors the validator found were one-word names like Yara. A gate in code keeps a rule only if it clearly helps, and it dropped three of eight.</aside>
+  <p class="bottom" style="font-size:28px;color:var(--ink2)">A gate in code keeps a change only if it clearly helps on sealed gold. It dropped 3 of 8.</p>
+  <p class="src">Fragrance: 2,233 sealed listings with Pedia's labels, read only by the gate. Bill: 632 tokens a listing at an assumed $3 per million tokens.</p>
+  <aside class="notes">This is loop 1 on fragrance, round by round. The blue line is exact match on sealed gold, and it climbs from 52% to 69%. Rounds 1 and 2 changed memory: which words are variants, and which are part of the name. Rounds 3, 5 and 6 changed operators: the brand's own store and the shop's URL now name the brand, and a one-word name becomes its own product. That last one came from loop 2. On the right is the agent bill for 2 million listings: fewer listings go to an agent, 30% down to 11%, so it falls from about $1,100 to about $400. A gate in code keeps a change only if it clearly helps on sealed gold, and it dropped 3 of 8.</aside>
 </section>
 
 <!-- 9 · Loop 2: validation -->
@@ -388,9 +389,9 @@
   <h2><span style="color:var(--val)">Loop 2, validation:</span> improve the eval itself.</h2>
   <div class="vgrid" style="grid-template-columns:780px 1fr;gap:90px">
     <div class="chart"><div class="plot"><svg class="ch" id="loop2"></svg></div><p class="ex"><b style="color:#B07F0C">Gold</b>: labelled by a person. <b style="color:#7C8390">Silver</b>: labelled by the validator, every disagreement settled by a person.</p><p class="ex">Errors it found, like short names seen only once, became a rule, kept in round 6.</p></div>
-    <div class="chart"><h3>Each round: more silver, and more gold</h3><div class="plot"><svg class="ch" id="figB"></svg></div><p class="ex">The validator: v1 → v2 kept, <b style="color:var(--val)">82.5% → 85%</b> match with gold. Two later tries matched no better, so they were dropped.</p></div>
+    <div class="chart"><h3>Each new eval: loop 1 climbs again</h3><div class="plot"><svg class="ch" id="figB"></svg></div><p class="ex">The validator: v1 → v2 kept, <b style="color:var(--val)">82.5% → 85%</b> match with gold. Two later tries matched no better, so they were dropped.</p></div>
   </div>
-  <aside class="notes">A small gold set doesn't cover everything, so loop 2 improves the eval itself. Going round the loop: a validator agent checks listings nobody labelled. It flags errors, and cases it isn't confident about. A person settles them. Where the solver was wrong, the case joins gold: gold 2. The rest is kept as silver. From that come better rules, and a better validator. So each round there is more silver, and it is built better: the eval covers more and gets stricter. Then it asks what is going on: for example, short product names seen only once; that became a rule, which the gate kept in round 6. That goes back into the rules, and into a stricter check, so confidence goes up. On the graph: each round the validator labels 40 more listings, so silver grows to 160; the flags a person settled become gold, 43 rows. The validator itself got better: version 2 matched gold 85% of the time, against 82.5% for version 1, and two later tries that matched no better were dropped. We improve two things at once: the eval, and the solver underneath it.</aside>
+  <aside class="notes">A small gold set doesn't cover everything, so loop 2 improves the eval itself. Going round the loop: a validator agent checks listings nobody labelled. It flags errors, and cases it isn't confident about. A person settles them. Where the solver was wrong, the case joins gold: gold 2. The rest is kept as silver. From that come better rules, and a better validator. So each round there is more silver, and it is built better: the eval covers more and gets stricter. Then it asks what is going on: for example, short product names seen only once; that became a rule, which the gate kept in round 6. That goes back into the rules, and into a stricter check, so confidence goes up. On the graph: each eval gets a full loop 1 climb. Eval 1 is gold alone: loop 1 climbs from 52% to 69%. Loop 2 then builds eval 2: the validator's silver, and the flags a person settled as new gold. On it the solver scores lower, lowest on silver, and loop 1 climbs again. Eval 3 has more of both, labelled by a better validator, version 2, which matched gold 85% of the time against 82.5% for version 1. Each time the gap between silver and gold closes, and the loop runs until silver matches gold. We improve two things at once: the eval, and the solver underneath it.</aside>
 </section>
 
 <!-- 10 · Loop 3: meta -->
@@ -451,24 +452,25 @@
     agentOnly: { f1: 0.85, cost: 1.90, hours: 572 },
     // Slide 8, loop 1 on fragrance: one entry per round, in order, start first. f1: exact match on sealed gold (0–1);
     //   agent: share of listings sent to the agent (0–1); better/worse: sealed rows the change fixed and broke;
-    //   rule, ex: the change in plain words and a tiny example, written for the slide (the run log names each change in
-    //   brackets); from: where the idea came from. dropped: the gate dropped that round; it is not drawn.
+    //   say: the change in plain words, two lines, written for the slide (the run log names each change in brackets);
+    //   part: the part of the system it changed (memory: the YAML the rules read; operator: a code step of the pipeline; the tag says 'operators', as on slide 6);
+    //   from: where the idea came from. dropped: the gate dropped that round; it shows as a ring on the x axis.
     // Fragrance: sealed gold is 2,233 listings with Pedia's labels, read only by the gate. From Kavak-Taxo-runs RESULTS.md §2.
     //   Rounds 1–6 were written by hand.
     A: { rounds: [
-      { label: 'start', f1: 0.524, agent: 0.301, rule: 'The first rules', ex: 'variant words, counting names' },
+      { label: 'start', f1: 0.524, agent: 0.301 },
       // [strip mist/travel words; 'eau de perfume']
-      { label: '1', f1: 0.528, agent: 0.301, better: 26, worse: 11, rule: 'Hair, travel, mist are variant words', ex: 'Yara Hair Mist → Yara' },
+      { label: '1', f1: 0.528, agent: 0.301, better: 26, worse: 11, part: 'memory', say: ['Hair, travel, mist', 'are variant words'] },
       // [elixir, intense are names]
-      { label: '2', f1: 0.538, agent: 0.301, better: 28, worse: 4, rule: 'Elixir, Intense are part of the name', ex: '"Sauvage Elixir" is a product, not Sauvage' },
+      { label: '2', f1: 0.538, agent: 0.301, better: 28, worse: 4, part: 'memory', say: ['Elixir, Intense are', 'part of the name'] },
       // [brand rung: the shop is the brand's own store]
-      { label: '3', f1: 0.651, agent: 0.188, better: 313, worse: 45, rule: "The brand's own store names the brand", ex: 'sold on lattafa.com → brand is Lattafa' },
-      // [typed child when the form differs]: dropped on dev
+      { label: '3', f1: 0.651, agent: 0.188, better: 313, worse: 45, part: 'operator', say: ["The brand's own store", 'names the brand'] },
+      // [typed child when the form differs]: dropped on dev, 171 better, 295 worse
       { label: '4', dropped: true },
       // [brand rung: catalog and shop URLs]
-      { label: '5', f1: 0.660, agent: 0.181, better: 32, worse: 6, rule: "The shop's URL names the brand", ex: 'walmart.com/…/lattafa-… → Lattafa', mono: true },
+      { label: '5', f1: 0.660, agent: 0.181, better: 32, worse: 6, part: 'operator', say: ["The shop's URL", 'names the brand'] },
       // [short single names get their own node], found by validator round V1
-      { label: '6', f1: 0.689, agent: 0.111, better: 93, worse: 33, rule: 'A one-word name is its own product', ex: '"Yara" alone is a product', from: 'from loop 2' },
+      { label: '6', f1: 0.689, agent: 0.111, better: 93, worse: 33, part: 'operator', say: ['A one-word name', 'is its own product'], from: 'from loop 2' },
       // [concentration veto]: 69.1%, 8 better, 5 worse, not clear enough; [audience words]: 1 sealed row touched
       { label: '7', dropped: true }, { label: '8', dropped: true }] },
     // Slide 9: F1 of rule set 1 and rule set 2 on gold, validation set 1 and validation set 2 (0–1).
@@ -750,52 +752,122 @@
   }
   const ticks01 = lo => [lo, (lo + 1) / 2, 1].map(v => +v.toFixed(2));
 
-  // 8 · Figure A: loop 1 as a staircase of rows, one per kept rule, read top to bottom. Each row: the rule and a tiny
-  //   example; exact match on sealed gold (blue bar, 0–80%); the share sent to the agent (dark bar, 0–35%) with the bill
-  //   for 2M listings beside it. Under each bar, a pale ghost of the row above, so each step shows. No axes.
+  // 8 · Figure A: loop 1, round by round, as two charts side by side that share the rounds, each with its own axis.
+  //   Left: exact match on sealed gold, one blue line. Each kept change hangs on a thin pole from its point, in the empty
+  //   space beside the line (under the high points, under or over the low ones), with the part it changed: memory or
+  //   operator. Dropped rounds are hollow rings on the x axis. Right: the agent bill for 2M listings, one dark line,
+  //   big numbers at both ends.
   (() => {
-    const rs = R.A && R.A.rounds ? R.A.rounds.filter(r => !r.dropped && r.f1 != null) : [];
+    const all = R.A && R.A.rounds ? R.A.rounds : [];
+    const rs = all.filter(r => !r.dropped && r.f1 != null);
     if (!rs.length) { chart('figA', { r: 40, xs: ['start', 'rule 1', 'rule 2', 'rule 3', '…'], ph: "waiting for today's run" }); return; }
     // the bill for 2M listings: 632 tokens a listing (measured, sealed run) at $3 per million tokens (assumed), to the nearest $10
-    const bill = sh => '$' + (Math.round(sh * 2e6 * 632 * 3 / 1e6 / 10) * 10).toLocaleString('en-US');
+    const bill = sh => Math.round(sh * 2e6 * 632 * 3 / 1e6 / 10) * 10, $ = v => '$' + v.toLocaleString('en-US');
     const p1 = v => (v * 100).toFixed(1) + '%';
-    const T = (x, y, t, o = {}) => `<text x="${x}" y="${y}" text-anchor="${o.a || 'start'}" style="font:${o.fw || 400} ${o.fs || 20}px ${o.mono ? "'JetBrains Mono',monospace" : 'Inter,system-ui,sans-serif'};fill:${o.c || C.mute}">${t}</text>`;
-    // a bar from the left, flat at its start and rounded at its end
-    const hb = (x, y, w, h, c, r = 5) => `<path d="M${x} ${y}H${x + w - r}Q${x + w} ${y} ${x + w} ${y + r}V${y + h - r}Q${x + w} ${y + h} ${x + w - r} ${y + h}H${x}Z" fill="${c}"/>`;
-    const VW = 1664, XR = 24, XT = 150, XE = 760, XA = 1240, LE = 380, LA = 290, EMAX = .8, AMAX = .35;
-    const TOP = 46, RH = 106, GE = '#B9D5EC', GA = '#D3D7DD';
+    const halo = ';paint-order:stroke;stroke:#fff;stroke-width:7px;stroke-linejoin:round';
+    const T = (x, y, t, o = {}) => `<text x="${x}" y="${y}" text-anchor="${o.a || 'start'}" style="font:${o.fw || 400} ${o.fs || 20}px Inter,system-ui,sans-serif;fill:${o.c || C.mute}${o.halo ? halo : ''}">${t}</text>`;
+    // the parts of the system, Lucide icons (ISC): memory = database, operator = code
+    const PART = { memory: '<ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5V19A9 3 0 0 0 21 19V5"/><path d="M3 12A9 3 0 0 0 21 12"/>',
+                   operator: '<path d="m16 18 6-6-6-6"/><path d="m8 6-6 6 6 6"/>' };
+    const pic = (k, x, y, sz, c) => `<g transform="translate(${x} ${y}) scale(${sz / 24})" fill="none" stroke="${c}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">${PART[k]}</g>`;
+    const line = (pts, c, w) => `<path d="M${pts.map(q => q[0].toFixed(1) + ' ' + q[1].toFixed(1)).join('L')}" fill="none" stroke="${c}" stroke-width="${w}" stroke-linejoin="round" stroke-linecap="round"/>`;
+    const dot = (q, r, c) => `<circle cx="${q[0]}" cy="${q[1]}" r="${r}" fill="${c}" stroke="#fff" stroke-width="2.5"/>`;
+    const grid = (x1, x2, y) => `<line x1="${x1}" x2="${x2}" y1="${y}" y2="${y}" stroke="${C.grid}" stroke-width="2"/>`;
+    const VW = 1664, VH = 663, TOP = 118, BOT = 590, AX = BOT + 44;
+    const n = rs.length;
     let s = '';
-    s += T(XT, 26, 'Rule kept', { fs: 21, c: C.faint }) + T(XE, 26, 'Exact match on sealed gold', { fs: 21, c: C.faint })
-      + T(XA, 26, 'Sent to an agent · bill for 2M listings', { fs: 21, c: C.faint });
+
+    // ----- left: exact match on sealed gold -----
+    const XL = 78, XE = 820, xL = i => XL + (XE - XL) * i / (n - 1);
+    const lo = .48, hi = .72, yL = v => TOP + (BOT - TOP) * (hi - v) / (hi - lo);
+    s += T(0, 30, 'Exact match on sealed gold', { fs: 26, fw: 600, c: C.ink });
+    s += T(0, 64, 'Each step is a change the gate kept', { fs: 20, c: C.mute });
+    [.5, .6, .7].forEach(t => { s += grid(XL - 6, XE + 160, yL(t)) + T(XL - 20, yL(t) + 7, pct(t), { a: 'end', fs: 19, c: C.faint }); });
+    const P = rs.map((r, i) => [xL(i), yL(r.f1)]);
+    // where each label goes: under its point (down) or over it, to the left (up); pole: gap between the point and the label
+    // block. The high points stack their labels down and to the left, so no label crosses another's pole or the line.
+    const place = { '1': ['down', 22], '2': ['up', 52], '3': ['down', 196], '5': ['down', 106], '6': ['down', 36] };
+    const LH = 27, RW = 24;
     rs.forEach((r, i) => {
-      const top = TOP + i * RH, cy = top + RH / 2, last = i === rs.length - 1, pv = i ? rs[i - 1] : null;
-      // the last row is the result: a light panel behind it, bigger numbers
-      if (last) s += `<rect x="0" y="${top + 6}" width="${VW}" height="${RH - 8}" rx="16" fill="${C.panel}"/>`;
-      else s += `<line x1="0" x2="${VW}" y1="${top}" y2="${top}" stroke="${C.line}" stroke-width="2"/>`;
-      s += T(XR, cy - 6, r.label === 'start' ? 'Start' : 'Round ' + r.label, { fs: 20, fw: 600, c: C.faint });
-      s += T(XT, cy - 6, esc(r.rule), { fs: 26, fw: 600, c: C.ink });
-      s += T(XT, cy + 24, esc(r.ex || '') + (r.from ? `<tspan dx="16" style="font:600 19px Inter,system-ui,sans-serif;fill:${C.val}">${r.from}</tspan>` : ''), { fs: 19, mono: r.mono, c: C.faint });
-      const fs = last ? 34 : 24, dy = last ? 12 : 8;
-      // exact match: the blue bar, the row above as a pale ghost under it, the % at its end
-      const we = LE * r.f1 / EMAX;
-      if (pv) s += hb(XE, cy + 19, LE * pv.f1 / EMAX, 7, GE, 3.5);
-      s += hb(XE, cy - 15, we, 30, C.ind) + T(XE + we + 14, cy + dy, p1(r.f1), { fs, fw: 600, c: C.ink });
-      // sent to the agent: the dark bar with its share on it, the ghost under it, the bill beside it
-      const wa = LA * r.agent / AMAX;
-      if (pv) s += hb(XA, cy + 19, LA * pv.agent / AMAX, 7, GA, 3.5);
-      s += hb(XA, cy - 15, wa, 30, C.ink2) + T(XA + 10, cy + 6, p1(r.agent), { fs: 18, fw: 600, c: '#fff' });
-      s += T(XA + wa + 14, cy + dy, bill(r.agent), { fs, fw: 600, c: C.ink });
+      if (!r.say) return;
+      const [px, py] = P[i], [dir, gap] = place[r.label] || ['down', 22];
+      const rows = r.say.length + 1 + (r.from ? 1 : 0), h = (rows - 1) * LH + 6;
+      // the label block: its first baseline, the pole along its inner side, the text beside the pole
+      const top = dir === 'down' ? py + gap + 18 : py - gap - h;
+      const tx = dir === 'down' ? px + 14 : px - 14, a = dir === 'down' ? 'start' : 'end';
+      const y1 = dir === 'down' ? py + 12 : top - 18, y2 = dir === 'down' ? top + h : py - 12;
+      s += `<line x1="${px}" x2="${px}" y1="${y1}" y2="${y2}" stroke="#D3D7DE" stroke-width="2"/>`;
+      r.say.forEach((t, k) => { s += T(tx, top + k * LH, esc(t), { a, fs: 22, fw: 500, c: C.ink, halo: true }); });
+      // the part tag: icon then word, set from the pole side (end-anchored when the label sits left of its pole)
+      const ty = top + r.say.length * LH + 2, word = r.part === 'memory' ? 'memory' : 'operators', wl = word.length * 12.4;
+      const ix = a === 'start' ? tx : tx - wl - RW;
+      s += pic(r.part === 'memory' ? 'memory' : 'operator', ix, ty - 16, 19, C.mute)
+        + (a === 'start' ? T(ix + RW, ty, word, { fs: 19, fw: 500, c: C.mute, halo: true }) : T(tx, ty, word, { a: 'end', fs: 19, fw: 500, c: C.mute, halo: true }));
+      if (r.from) s += T(tx, ty + LH, r.from, { a, fs: 19, fw: 600, c: C.val, halo: true });
     });
-    // the gate, one quiet line
-    const gy = TOP + rs.length * RH + 44;
-    s += Ic('gate', XR - 2, gy - 22, 28, C.mute) + T(XR + 38, gy, 'A gate in code keeps a rule only if it clearly helps. It dropped 3 of 8.', { fs: 21, c: C.mute });
-    put('figA', `0 0 ${VW} 745`, s);
+    s += line(P, C.ind, 3);
+    P.forEach(q => { s += dot(q, 8, C.ind); });
+    // start and end values
+    s += T(P[0][0] - 10, P[0][1] - 24, p1(rs[0].f1), { fs: 26, fw: 600, c: C.ink2 });
+    s += T(P[n - 1][0] + 22, P[n - 1][1] + 8, p1(rs[n - 1].f1), { fs: 46, fw: 600, c: C.ind });
+    // the x axis: the kept rounds, and a hollow ring for each round the gate dropped
+    rs.forEach((r, i) => { s += T(xL(i), AX, r.label === 'start' ? 'Start' : 'Round ' + r.label, { a: 'middle', fs: 20, c: C.mute }); });
+    const num = r => r.label === 'start' ? 0 : +r.label;
+    let tail = 0, lastX = 0;
+    all.filter(r => r.dropped).forEach(r => {
+      const k = num(r), pi = rs.map(num).filter(v => v < k).length - 1, nx = pi + 1;
+      const x = nx < n ? (xL(pi) + xL(nx)) / 2 - 8 : xL(n - 1) + 62 + 44 * tail++;
+      s += `<circle cx="${x}" cy="${AX - 7}" r="6" fill="#fff" stroke="${C.faint}" stroke-width="2"/>` + T(x + 11, AX, r.label, { fs: 18, c: C.faint });
+      lastX = Math.max(lastX, x);
+    });
+    if (tail) s += T(lastX + 32, AX, 'dropped', { fs: 18, c: C.faint });
+
+    // ----- right: the agent bill for 2M listings -----
+    const X0 = 1108, XA = 1188, XB = 1530, xR = i => XA + (XB - XA) * i / (n - 1);
+    const TR = 172, BMAX = 1200, yR = v => TR + (BOT - TR) * (1 - v / BMAX);
+    const B = rs.map(r => bill(r.agent));
+    s += T(X0, 30, 'Agent bill for 2M listings, est.', { fs: 26, fw: 600, c: C.ink });
+    s += T(X0, 64, 'Sent to an agent: ' + p1(rs[0].agent) + ' → ' + p1(rs[n - 1].agent), { fs: 20, c: C.mute });
+    [0, 500, 1000].forEach(t => { s += grid(XA - 6, XB + 6, yR(t)) + T(XA - 20, yR(t) + 7, $(t), { a: 'end', fs: 19, c: C.faint }); });
+    const Q = B.map((v, i) => [xR(i), yR(v)]);
+    s += line(Q, C.ink2, 3);
+    Q.forEach(q => { s += dot(q, 7, C.ink2); });
+    // big numbers at both ends, small ones where the bill steps down
+    s += T(Q[0][0] - 10, Q[0][1] - 26, $(B[0]), { fs: 46, fw: 600, c: C.ink });
+    s += T(Q[n - 1][0] + 20, Q[n - 1][1] + 16, $(B[n - 1]), { fs: 46, fw: 600, c: C.ink });
+    B.forEach((v, i) => { if (i && i < n - 1 && v !== B[i - 1]) s += T(Q[i][0] + 4, Q[i][1] - 18, $(v), { fs: 20, fw: 500, c: C.mute, halo: true }); });
+    rs.forEach((r, i) => { s += T(xR(i), AX, r.label === 'start' ? 'Start' : r.label, { a: 'middle', fs: 20, c: C.mute }); });
+    put('figA', `0 0 ${VW} ${VH}`, s);
   })();
 
-  // 9 · Figure B: silver and gold 2 by round (fragrance loopb, 4 rounds of 40; gold 2 = flags a person settled)
-  chart('figB', { w: 900, h: 520, r: 190, xs: ['start', 'round 1', 'round 2', 'round 3', 'round 4'], ymin: 0, ymax: 170,
-    ticks: [0, 80, 160], fmt: v => String(v),
-    series: [{ v: [0, 40, 80, 120, 160], c: SILV_T, label: '160 silver' }, { v: [0, 23, 23, 43, 43], c: GOLD, label: '43 gold' }] });
+  // 9 · Figure B: one full loop 1 climb per eval. Eval 1 = sealed gold (measured, fragrance rounds start..r6).
+  //   Evals 2 and 3 add the validator's silver and the settled flags as gold; their climbs are estimates (marked est.).
+  (() => {
+    const E = [
+      { name: 'Eval 1', sub: 'gold only', gold: [0.524, 0.528, 0.538, 0.651, 0.660, 0.689], foot: ['2,233 gold', 'no silver', 'no validator'] },
+      { name: 'Eval 2', sub: '+ silver', est: true, gold: [0.66, 0.68, 0.695, 0.705], silver: [0.55, 0.58, 0.60, 0.62], foot: ['+23 gold', '80 silver', 'validator v1'] },
+      { name: 'Eval 3', sub: 'more of both', est: true, gold: [0.69, 0.71, 0.725], silver: [0.64, 0.68, 0.71], foot: ['+43 gold', '160 silver', 'validator v2'] } ];
+    const lo = 0.48, hi = 0.76, T = 70, B = 400, y = v => B - (B - T) * (v - lo) / (hi - lo), st = 50, gap = 64;
+    let s = '', x0 = 80;
+    [0.5, 0.6, 0.7].forEach(t => { s += `<line x1="70" x2="890" y1="${y(t)}" y2="${y(t)}" stroke="${C.grid}" stroke-width="2"/>` + Tx(58, y(t) + 7, Math.round(t * 100) + '%', { a: 'end', fs: 19, c: C.faint }); });
+    const line = (v, xs, c, w, dash) => `<path d="M${v.map((p, i) => xs[i] + ' ' + y(p).toFixed(1)).join('L')}" fill="none" stroke="${c}" stroke-width="${w}" stroke-linejoin="round" stroke-linecap="round"${dash ? ' stroke-dasharray="2 9"' : ''}/>`
+      + v.map((p, i) => `<circle cx="${xs[i]}" cy="${y(p).toFixed(1)}" r="7" fill="${c}" stroke="#fff" stroke-width="2"/>`).join('');
+    let prev = null;
+    E.forEach((e, k) => {
+      const xs = e.gold.map((_, i) => x0 + i * st), xm = (xs[0] + xs[xs.length - 1]) / 2;
+      if (k) s += `<line x1="${x0 - gap / 2}" x2="${x0 - gap / 2}" y1="20" y2="${B + 10}" stroke="${C.line}" stroke-width="2"/>`;
+      s += Tx(xm, 34, e.name, { a: 'middle', fs: 24, fw: 600, c: C.ink }) + Tx(xm, 60, e.sub + (e.est ? ' · est.' : ''), { a: 'middle', fs: 19, c: C.faint });
+      if (prev) s += `<path d="M${prev[0]} ${y(prev[1])}L${xs[0]} ${y(e.gold[0])}" fill="none" stroke="${C.val}" stroke-width="2.5" stroke-dasharray="5 6"/>`;
+      if (prev) s += Tx((prev[0] + xs[0]) / 2, Math.min(y(prev[1]), y(e.gold[0])) - 14, 'loop 2', { a: 'middle', fs: 18, fw: 600, c: C.val });
+      if (e.silver) s += line(e.silver, xs, SILV_T, 3);
+      s += line(e.gold, xs, GOLD, 4);
+      e.foot.forEach((t, i) => { s += Tx(xm, B + 50 + i * 30, t, { a: 'middle', fs: 20, fw: i === 2 ? 600 : 500, c: [GOLD_T, SILV_T, C.val][i] }); });
+      prev = [xs[xs.length - 1], e.gold[e.gold.length - 1]]; x0 = xs[xs.length - 1] + gap + st / 2;
+    });
+    const xe = prev[0] + 18;
+    s += Tx(xe, y(0.725) - 4, 'gold', { fs: 21, fw: 600, c: GOLD_T }) + Tx(xe, y(0.71) + 20, 'silver', { fs: 21, fw: 600, c: SILV_T });
+    put('figB', '0 0 900 500', s);
+  })();
 
   // 11 · results table (the slide is cut; this draws nothing while #res is missing)
   (() => {

@@ -154,20 +154,24 @@ example lines are illustrations.*
 
 ## 7. Loop 1: each rule kept, more right and cheaper (40 s)
 
-**Show:** one row per kept rule, top to bottom. Each row has the rule in plain words with a tiny example, a blue bar
-for exact match on sealed gold, and a dark bar for the share sent to an agent, with the agent bill for 2M listings
-beside it. A pale ghost under each bar shows the row above.
+**Show:** two charts side by side.
+- **Left, exact match on sealed gold:** one blue line, 52.4% → 68.9%. Each kept round is labelled with its change and
+  the part it changed: hair, travel, mist are variant words (memory); Elixir, Intense are part of the name (memory);
+  the brand's own store names the brand (operators); the shop's URL names the brand (operators); a one-word name is its
+  own product (operators, from loop 2). Dropped rounds 4, 7 and 8 are hollow rings on the axis.
+- **Right, the agent bill for 2M listings, est.:** $1,140 → $710 → $690 → $420, as the share sent to an agent falls
+  from 30.1% to 11.1%.
 
-| Round | Rule kept (as worded on the slide) | Exact | To an agent | Bill, 2M listings |
-|---|---|---:|---:|---:|
-| Start | the first rules | 52.4% | 30.1% | $1,140 |
-| 1 | hair, travel, mist are variant words | 52.8% | 30.1% | $1,140 |
-| 2 | Elixir, Intense are part of the name | 53.8% | 30.1% | $1,140 |
-| 3 | the brand's own store names the brand | 65.1% | 18.8% | $710 |
-| 5 | the shop's URL names the brand | 66.0% | 18.1% | $690 |
-| 6 | a one-word name is its own product (from loop 2) | 68.9% | 11.1% | $420 |
+Under them: a gate in code keeps a change only if it clearly helps on sealed gold. It dropped 3 of 8.
 
-Under it: a gate in code keeps a rule only if it clearly helps. It dropped 3 of 8.
+| Round | Change | Part | Exact | To an agent | Bill, 2M listings |
+|---|---|---|---:|---:|---:|
+| Start | the first rules | | 52.4% | 30.1% | $1,140 |
+| 1 | hair, travel, mist are variant words | memory | 52.8% | 30.1% | $1,140 |
+| 2 | Elixir, Intense are part of the name | memory | 53.8% | 30.1% | $1,140 |
+| 3 | the brand's own store names the brand | operators | 65.1% | 18.8% | $710 |
+| 5 | the shop's URL names the brand | operators | 66.0% | 18.1% | $690 |
+| 6 | a one-word name is its own product (from loop 2) | operators | 68.9% | 11.1% | $420 |
 
 **Say:**
 - Each round tries one change, and a gate in code keeps it only if it clearly helps on sealed gold, which the loop never
@@ -178,30 +182,43 @@ Under it: a gate in code keeps a rule only if it clearly helps. It dropped 3 of 
 - The big step, round 3: when a listing is sold on the brand's own store, the brand is known. Round 6 came from loop 2.
 - The gate dropped three rounds that didn't clearly help.
 
-*Don't say* an agent proposed these rounds: they were written by hand. The Codex rule proposer kept nothing in 8
-rounds; with a table of the words that make placements wrong, 5 of 8 of its later proposals passed dev, and were then
-dropped on sealed for moving fewer than 10 rows. Round 7 reached 69.1% and was still dropped (8 better, 5 worse), which
+*Don't say* an agent proposed these rounds: they were written by hand. The Codex rule proposer, over 15 rounds and 36
+proposals, kept nothing. Before it had a table of the words that make placements wrong, 0 of 10 passed dev; with it,
+11 of 14 on fragrance did, and the 4 sent to sealed were all dropped (three moved under 10 rows; a bundle moved 23 rows
+but changed none from wrong to right). On food, 2 of 12 passed dev, both dropped on sealed. If asked: the proposer now
+finds changes that help the brands it learns from; the gate shows they don't carry to held-out brands, so nothing was
+kept. Round 7 reached 69.1% and was still dropped (8 better, 5 worse), which
 is why the slide says "clearly helps" and not "rises".
 
-## 8. Loop 2, validation: improve the eval itself (50 s)
+## 8. Loop 2, validation: improve the eval itself (55 s)
 
 **Show:** left, the loop as a circle: a validator labels fresh listings, blind → flags where it and the solver
-disagree → a person settles them (gold 2, and more silver) → better rules and a better validator. In the middle:
-each round, more silver, built better. Right, the chart: silver grows 0 → 40 → 80 → 120 → 160 over four rounds, and
-gold from the settled flags 0 → 23 → 23 → 43 → 43. Under it: the validator, v1 → v2 kept, 82.5% → 85% match with gold;
-two later tries matched no better, so they were dropped.
+disagree → a person settles them (gold 2, and more silver) → better rules and a better validator.
+
+Right, **each new eval: loop 1 climbs again.** Three full loop 1 climbs, side by side:
+- **Eval 1, gold only:** 52% → 69%, the climb from slide 7. 2,233 gold, no silver, no validator.
+- **Eval 2, + silver** (est.): loop 2 adds the validator's silver and the flags a person settled as new gold (+23).
+  On the new eval the solver drops, and lowest on silver; loop 1 climbs again. Validator v1, 80 silver.
+- **Eval 3, more of both** (est.): +43 gold, 160 silver, labelled by validator v2. The drop is smaller, and silver
+  climbs almost to gold.
+
+Under it: the validator, v1 → v2 kept, 82.5% → 85% match with gold; two later tries matched no better, so they were
+dropped.
 
 **Say:**
 - A small gold set doesn't cover everything, so loop 2 improves the eval itself.
-- The validator agent labels listings nobody labelled and flags where it and the solver disagree. A person settles
-  only the flags. Where the solver was wrong, the case joins gold; the rest is kept as silver.
-- Each round adds 40 silver, and the settled flags add gold: 160 silver and 43 gold after four rounds.
-- The validator gets better too: version 2 matched gold 85% of the time, against 82.5% for version 1. Two later tries
-  matched no better, so they were dropped.
-- And what it finds goes back to loop 1: short names seen only once became rule 6, which the gate kept.
+- The validator labels listings nobody labelled and flags where it and the solver disagree. A person settles only the
+  flags. Where the solver was wrong, the case joins gold; the rest is kept as silver.
+- Every new eval gets a full loop 1 hill climb. On eval 1, gold alone, loop 1 climbed from 52% to 69%.
+- Loop 2 then builds eval 2: more gold, and silver. The solver scores lower on it, lowest on silver, so loop 1 climbs
+  again. Eval 3 has more of both, from a better validator.
+- Each time the gap between silver and gold closes. The loop runs until silver matches gold: then the validator can
+  be trusted to label the rest.
+- And what it finds goes back to loop 1: short names seen only once became rule 6.
 
-*Measured: fragrance loop 2, four rounds of 40 (`loopb`, Pedia's labels as the person); gold added in rounds 1 and 3
-(23 and 20 settled flags); v1 → v2 is from a later run on 40 human rows.*
+*Measured: eval 1's climb (sealed gold, slide 7); the validator's v1 → v2 step (82.5 → 85.0, a later run on 40 human
+rows); gold added in the reviewed rounds (23 and 20 settled flags); silver 40 a round. **The eval 2 and eval 3 climbs
+are estimates**, marked "est." on the slide: no solver score was recorded on each new silver set.*
 
 ## 9. Loop 3: lessons cross domains, but not both ways (40 s)
 
