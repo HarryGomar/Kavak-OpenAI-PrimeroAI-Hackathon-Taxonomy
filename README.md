@@ -1,16 +1,18 @@
 # Kavak × OpenAI — PrimeroAI Hackathon: Taxonomy
 
 **Taxo** learns how to build product trees (brand › line › product › variant) from marketplace listings, for any
-commerce domain. It has three loops:
+commerce domain. It is a two-fold system:
 
-- **Induction** turns a hand-labelled gold set into cheap rules.
-- **Validation** has an agent hunt for errors on fresh listings, and a person settles them.
-- **Transfer** carries what worked to the next domain.
+- **Inside one domain**, two loops:
+  - the **induction loop** turns a hand-labelled gold set into cheap rules;
+  - the **validation loop** has an agent hunt for errors on fresh listings, and a person settles them.
+- **Across domains**, the **meta loop** carries what worked to the next domain.
 
 | File | For |
 |---|---|
-| [SPEC.md](SPEC.md) | The system: the tree, the pipeline and its YAML rules, the three loops, data, metrics, guardrails, and what to port from Pedia |
+| [SPEC.md](SPEC.md) | The system: why trees, the pipeline and its YAML rules, the induction, validation and meta loops, data, metrics, guardrails, and what to port from Pedia |
 | [PRESENTATION.md](PRESENTATION.md) | The talk script, slide by slide, with the figures still to produce and questions to expect |
+| [slides/index.html](slides/index.html) | The deck: open it in a browser. Three looks to choose from (`?look=1` Paper, `?look=2` Night, `?look=3` Studio, or press L); N shows the notes. Run results go in `RESULTS` at the top of its script |
 
 Built on what worked in Pedia ([Mantis4Real/pedia-harness](https://github.com/Mantis4Real/pedia-harness), local at
 `C:\Work\Pedia-Harness\repo`). The original notes are in `C:\Work\Kavak-OpenAI-Primero-Hackathon\Taxo.md`.
