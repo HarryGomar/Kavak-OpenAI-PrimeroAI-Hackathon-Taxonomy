@@ -1,15 +1,14 @@
 # Taxo: presentation script
 
-*About 9 minutes, 17 slides (if you must cut, cut 4 and 14). **Show** is what is on screen; **Say** is what you say. Numbers in [brackets] come from
-today's runs: fill them in or cut the line, and never present a placeholder as a result. The figures still to produce
-are listed at the end. The system is in [SPEC.md](SPEC.md); the deck is [slides/index.html](slides/index.html).*
+*About 7 minutes, 12 slides. **Show** is what is on screen; **Say** is what you say. Numbers in [brackets] come from
+today's runs: fill them in or cut the line, and never present a placeholder as a result. The system is in
+[SPEC.md](SPEC.md); the deck is [slides/index.html](slides/index.html). Slides 3, 6 and 7 have variants in the deck
+(3A/3B, 6A/6B/6C, 7A/7B): pick one of each and delete the rest.*
 
-The story, in one breath: to understand a market you connect listings into product trees; at four million listings that
-is hard, and an agent alone is too expensive and wrong in ways you can't see; Taxo is a two-fold system that learns to
-do it. Inside one domain, the **induction loop** turns gold into cheap
-rules and the **validation loop** finds the errors gold can't show. Across domains, the **meta loop** carries what worked
-to the next one. It is not a labelling system: the tree is the first task, and the method (turn agent judgment into
-rules you can test, never let a system grade itself, carry what worked) is the point.
+The story, in one breath: self-improving systems are hard to trust because they grade themselves; to understand a
+market you connect listings into product trees; at four million listings an agent alone is too expensive and wrong in
+ways you can't see; Taxo is a pipeline of free rules with three loops that improve it, and no loop lets the system grade
+itself. The tree is the first task; the method is the point.
 
 ---
 
@@ -20,215 +19,159 @@ rules you can test, never let a system grade itself, carry what worked) is the p
 **Say:** We're going to show you Taxo, a system that learns how to turn messy marketplace listings into clean product
 trees, and gets faster at it with every domain it sees.
 
-## 2. Understanding a market means connecting listings (35 s)
+## 2. A system that grades its own work climbs the wrong hill (40 s)
 
-**Show:** one product, Lattafa Khamrah 100 ml, as five listings: the brand's own site, Amazon, Walmart and two TikTok
-Shop sellers. Each has its logo, its photo and its real title. They all point to one node.
-
-**Say:**
-- To understand a commerce market, you have to connect listings from different marketplaces.
-- This is one perfume. Five shops, five titles. Until you know they are the same product, you can't add up its price,
-  its reviews or its demand.
-
-## 3. Food and fragrance taxonomies (30 s)
-
-**Show:** two trees side by side. Food: Oreo › Double Stuf › Golden. Fragrance: Lattafa › Khamrah › Khamrah Qahwa.
+**Show:** Pedia replay `pe2`: the LLM judge's score against the owner's labels over four rounds (the mean of six runs,
+with the runs faint behind). Beside it: 15 of 48.
 
 **Say:**
-- The way to connect them is a tree. In food, a brand has products and the products have variants: Oreo has Double
-  Stuf, and Double Stuf comes in Golden.
-- Fragrance has one more level: Lattafa has the Khamrah family, and Khamrah Qahwa is a product inside it.
-- A size or a 12-pack is never a new node.
+- Before the problem, the lesson that shaped Taxo. Self-improving systems are easy to build and hard to trust.
+- In Pedia, a loop changed its own rules and an LLM judge scored each round. The judge went from 78% to 87%. The
+  owner's labels went from 81% to 84%.
+- 15 of the 48 changes made the judge happier and the labels worse, and the loop kept every one.
+- To improve a system you need a score it can't move by itself. That is the constraint on everything that follows.
 
-## 4. A variant connects listings, search terms and hashtags (30 s)
+## 3. Understanding a market means connecting its listings into a tree (40 s)
 
-**Show:** Oreo › Double Stuf › Golden. On it, listings from Amazon, Walmart and TikTok Shop; under them, the search terms
-and hashtags that lead to them; on the right, what rolls up.
+**Show (3A):** Lattafa › Khamrah, with its five listings as photos (the brand's site, Amazon, Walmart, two TikTok Shop
+sellers), and Lattafa › Khamrah Qahwa with its Walmart listing.
 
-**Say:**
-- Oreo has products, those products have variants, and each variant connects to listings in different shops, and to
-  the hashtags and search terms people use.
-- Once they are connected you can see interest in Double Stuf Golden, not just in one listing, and make better
-  predictions.
-
-## 5. Doing this is hard (35 s)
-
-**Show:** four million listings, and four traps with their photos: a shop posing as a brand, a gift set, a flanker,
-a 12-pack.
+**Show (3B):** two trees with a photo at each leaf. Food: Oreo › Double Stuf › Golden. Fragrance: Lattafa › Khamrah ›
+Khamrah, Khamrah Qahwa.
 
 **Say:**
-- Doing this is hard, and with four million listings it gets really complicated.
-- The same product is written fifty different ways. Shops pose as brands. A gift set belongs to its maker. A 12-pack
-  is not a new product, but a flanker like Khamrah Qahwa is.
+- To understand a commerce market you connect listings from different marketplaces. This is one perfume: five shops,
+  five titles. Until you know they're the same product, you can't add up its price, its reviews or its demand.
+- The way to connect them is a tree, in every domain: brand, product, variant, listings.
+- A size, a 12-pack or a gift set is never a new node. A flanker like Khamrah Qahwa is.
+
+## 4. Four million listings, and the hard ones look easy (30 s)
+
+**Show:** 4M, and three photos: a variety pack sold by Muchai (a shop, not a brand), a Khamrah gift set, an Oreo Minis
+Golden 12-pack.
+
+**Say:**
+- With four million listings this gets really complicated. The same product is written fifty different ways.
+- Shops pose as brands. A gift set is still its maker's product. A 12-pack is not a new product.
 - Labelling four million listings by hand doesn't scale.
 
-## 6. Why not just an agent? (40 s)
+## 5. Why not send every listing to an agent? (40 s)
 
-**Show:** the bill: 4M listings × [$c] per 1,000 = [$C] for one pass. Next to it, three ways an agent is wrong without
-saying so: its F1 on gold [f]; 59% of the food listings our earlier agent parked were real products; an LLM judge said
-87% where the owner's labels said 84%.
+**Show:** the bill, 4M × [$c] per 1,000 = [$C]; and the errors: the agent's F1 on gold [f], and Pedia's 59%.
 
 **Say:**
-- The obvious answer is to send every listing to an agent. At [$c] per thousand listings, four million listings cost
-  [$C] for one pass, and again for every refresh and every new domain.
-- And it is wrong in ways you can't see. On gold, the agent alone scores [f]. In our earlier system, 59% of the food
-  listings the agent set aside as unplaceable were real products. When we let a loop grade itself with an LLM judge, the
-  judge said 87%; the owner's labels said 84%.
-- So this is not over-engineering a labeller. Rules are free, and you can read them and test them. Taxo sends an agent
-  only what the rules can't settle.
+- The obvious answer is an agent for every listing. At [$c] per thousand, four million cost [$C] for one pass, and again
+  for every refresh and every new domain.
+- And it is wrong in ways you can't see: on gold the agent alone scores [f]; in Pedia, 59% of the food listings the
+  agent set aside as unplaceable were real products.
+- So this is not over-engineering a labeller. Rules are free, and you can read and test them. Taxo sends an agent only
+  what the rules can't settle.
 
-## 7. Taxo: a two-fold system (40 s)
+## 6. The system (50 s)
 
-**Show:** the two folds. Inside one domain: the induction loop and the validation loop, with gold and a person between
-them. Across domains: the meta loop.
+**Show (6A):** the pipeline in the middle (listings → free rules → a paid agent for what's left → the tree), the
+induction loop above it, the validation loop below, the meta loop on the right.
 
-**Say:**
-- We introduce Taxo, a two-fold system with generalisable learning for this task.
-- First, inside one domain, two loops. **Induction** turns a hand-labelled gold set into rules. **Validation** goes
-  looking for the errors gold can't show.
-- Second, across domains, a **meta loop** carries what worked to the next domain.
+**Show (6B):** the two folds: food, fragrance and cars on the left, joined by lessons; one domain zoomed in on the right.
 
-## 8. The induction loop (50 s)
-
-**Show:** the gold set, and the three kinds of rule it turns into: the lattice, a registry of official brands, and a
-route to an agent. Under them, one round: run, read the errors, propose one change, keep it only if sealed gold improves.
+**Show (6C):** who does what. Rows: code, agents, a person. Columns: placing listings, induction, validation, meta.
 
 **Say:**
-- Inside one domain, we start from a gold set that a person labelled by hand.
-- The induction loop tries to turn it into deterministic rules, so that agents only see the hard cases. Three kinds:
-  - **The lattice** counts word sequences across all of a brand's listings. "Khamrah" is in five titles and "Khamrah
-    Qahwa" in two, so Khamrah is a family and Khamrah Qahwa is a product. No word lists.
-  - **A registry.** An agent searches the web for each brand's official lines, and code writes them as a file the rules
-    can read.
-  - **A route.** What is left goes to the cheapest agent that can settle it: the title alone, the title plus the
-    description, or a web search.
-- Each round, an agent reads the errors and proposes one change. A gate in code keeps it only if it helps on gold that
-  nobody tuned on.
-- The goal is two numbers: more of gold labelled right, at a lower cost.
+- Taxo is a pipeline of free rules, and three loops that improve it.
+- **Induction:** run the rules on a hand-labelled gold set; an agent reads the errors and proposes one rule; a gate in
+  code keeps it only if F1 on sealed gold rises.
+- **Validation:** a validator agent labels fresh listings blind; where it disagrees with the pipeline, a person settles
+  it, and that becomes new gold.
+- **Meta:** what worked, with its scope, starts the next domain.
+- Code does the work, agents do the judgment, and a person decides what is true. No loop lets the system grade itself.
 
-## 9. What induction buys (40 s)
+## 7. Induction turns the gold set into rules you can read (50 s)
 
-**Show:** Figure A. F1 on gold and cost per 1,000 listings, round by round. Each point is labelled with the rule it
-kept: rule 1, rule 2, and so on.
+**Show (7A):** one Walmart title, "Lattafa Khamrah Qahwa Eau De Parfum 3.4 Oz Unisex Fragrance Lattafa", through the
+four free rules (vocabulary, registry, lattice, route), each with its YAML. It lands on Lattafa › Khamrah › Khamrah
+Qahwa with no agent call.
 
-**Say:**
-- This is the induction loop on fragrance. Each round keeps one rule.
-- F1 on gold goes from [x] to [y], while the cost per thousand listings falls from [$a] to [$b].
-
-## 10. How much each rule saves (35 s)
-
-**Show:** Figure D, a waterfall: cost per 1,000 listings for the agent alone, then the drop from each rule the gate kept,
-then Taxo. Beside it: agent only at 4M listings [$C], Taxo at 4M listings [$B], and [p] of listings settled without an
-agent.
+**Show (7B):** the round in five lines, beside a kept rule as YAML (the Lattafa registry and the lattice counts).
 
 **Say:**
-- This is the answer to "why not just an agent". Each step is one rule the gate kept, and how much it cut the cost.
-- At four million listings the agent alone costs [$C]; Taxo costs [$B], and [p] of the listings never see an agent.
+- Here is what a rule looks like. The vocabulary strips sizes, concentrations and audiences: they are variants, never
+  names. The registry holds each brand's official lines, found once by an agent and written down by code.
+- The lattice counts word sequences across all of a brand's listings: Khamrah is in five titles and Khamrah Qahwa in
+  two, so Khamrah is a family and Khamrah Qahwa a product. No word lists.
+- Only the unclear ones go to an agent, the cheapest one that can settle them.
+- Induction learns these files. Each round an agent proposes one change, and a gate in code keeps it only if F1 on
+  sealed gold rises and the cost doesn't.
+
+## 8. What induction buys, round by round (40 s)
+
+**Show:** Figure A. F1 on sealed gold, and cost per 1,000 listings against the agent alone, round by round, each point
+labelled with the rule it kept. Under it: the 4M bill both ways, and the share of listings that never sees an agent.
+
+**Say:**
+- This is induction on fragrance. Each round keeps one rule. F1 on gold goes from [x] to [y], while the cost per
+  thousand listings falls from [$a] to [$b].
+- At four million listings the agent alone costs [$C]; Taxo costs [$B], and [p] of listings never see an agent.
 - None of it costs accuracy: the gate refuses any rule that lowers F1 on sealed gold.
 
-## 11. Gold doesn't cover everything (40 s)
+## 9. Gold doesn't cover everything (45 s)
 
-**Show:** the validation loop. Fresh listings → an agent validator labels them blind → where it disagrees with the
-rules, a person settles it → new gold, and new errors for induction.
-
-**Say:**
-- But the gold set doesn't cover everything. Even with a clean test split, we can't say the rules generalise: a person
-  chose those cases, and they can't contain every error a rule will make.
-- That is why we have the validation loop. An agent labels new listings on its own, with more budget than the pipeline,
-  and brings up the errors the system is making. Where it disagrees, a person settles it.
-- Each round gives a new, frozen validation set.
-
-## 12. Rule set 1 drops on fresh listings (30 s)
-
-**Show:** Figure B, first half. Rule set 1 on gold, on validation set 1 and on validation set 2. The line falls.
+**Show:** the validation loop as four steps, and Figure B: rule set 1 on gold, validation set 1 and validation set 2.
 
 **Say:**
-- Rule set 1 scores [x] on gold, [y] on validation set 1 and [z] on validation set 2.
-- Fresh listings find errors gold never showed us.
+- Even with a clean test split we can't say the rules generalise: a person chose the gold cases, and they can't contain
+  every error a rule will make.
+- So an agent labels fresh listings on its own, with more budget than the pipeline, and brings up the errors. Where it
+  disagrees with the rules, a person settles it. Each round gives a new frozen validation set.
+- Rule set 1 scores [x] on gold, [y] on validation set 1 and [z] on validation set 2. Fresh listings find errors gold
+  never showed us.
 
-## 13. We iterate (45 s)
+## 10. So we iterate, and a person teaches the validator (45 s)
 
-**Show:** the new rule that came out of validation (the routing YAML), and Figure B, second half: rule set 2 recovers on
-validation set 2.
+**Show:** the new routing rule as YAML, and rule set 1 → 2 on validation set 2, [z] → [w]. Beside it, what the person
+added, and gold growing from [n] to [m] cases.
 
 **Say:**
-- So we iterate. New rules come from those errors. We join more brands, run more of the process, and look for the
-  pattern underneath, not the single case.
+- New rules come from those errors. We join more brands and look for the pattern underneath, not the single case.
 - For example, [confirm from the run: small fragrance houses with no barcode name the product only in the description,
-  and our rules stopped at the brand]. Induction turned that into a route: no barcode and a long description → the agent
-  that reads the description.
-- Rule set 2 recovers on validation set 2: [z] → [w].
+  and our rules stopped at the brand]. Induction turned that into a route to the agent that reads the description. Rule
+  set 2 recovers on validation set 2: [z] → [w].
+- A person improves the validator. It proposed searching the web for each brand's official lines; we approved it, and
+  it found gold cases we were missing. When it is wrong, the person tells it why, and each new version re-reads what
+  earlier ones accepted. Gold grows from [n] to [m] cases.
 
-## 14. A person teaches the validator (40 s)
+## 11. Across domains, what worked carries over (40 s)
 
-**Show:** what the validator proposed (search the web for each brand's official lines), a person approving it, and
-what it found. Gold grows from [n] to [m] cases.
-
-**Say:**
-- Human feedback matters here: it improves what the validator looks for.
-- For example, the validator proposed searching the web for each brand's official products. We approved it, and it
-  found gold cases we were missing.
-- When the validator is wrong, the person tells it why. Each new version re-reads what earlier ones accepted, so errors
-  we had marked as fine come back.
-- This grows the correct cases and the overall accuracy: gold grows from [n] to [m] cases.
-
-## 15. The meta loop: across domains (45 s)
-
-**Show:** Figure C, the transfer matrix (food, fragrance, cars): rounds saved by starting from the other domain's
-lessons. Next to it, what carried over and what didn't.
+**Show:** Figure C, rounds saved against a cold start: food → fragrance [n], fragrance → food [m], fragrance → cars [k].
 
 **Say:**
-- This is where the meta loop comes in: we take which rules worked, with which validation, and apply them to other
-  domains.
-- Running the induction loop from those distilled rules, the next domain gets there faster.
-- It doesn't transfer equally. From food to fragrance there was learning: [n] rounds saved. From fragrance to food,
-  not much: [m].
-- From fragrance to cars it is clear why: cars have a much more defined catalogue. Make, model and version are
-  published and a VIN decodes them, so the registry does the work there, not the lattice.
+- The meta loop takes which rules worked, with which validation, and starts the next domain's induction from them.
+- It doesn't transfer equally. From food to fragrance there was learning. From fragrance to food, not much.
+- From fragrance to cars it's clear why: make, model and version are published and a VIN decodes them, so the registry
+  does the work there, not the lattice.
 
-## 16. Why it matters beyond labels (40 s)
+## 12. Close (35 s)
 
-**Show:** the tree is the first task; the method is the point. The pattern underneath, in three lines, and four places it
-goes next: matching across shops, cars at Kavak, demand and trends, and any agent work that has to be trusted at scale.
+**Show:** "Systems will always say they're right. Taxo doesn't take their word for it." Under it, the method in three
+lines and where it goes next.
 
 **Say:**
 - This is not a labelling system. The tree is the first task; the method is the point.
-- The pattern underneath: turn agent judgment into procedures you can read, test and run for free; never let the system
-  grade itself, so agents hunt for errors and a person decides what is true; keep what worked, with its scope, so the
-  next problem starts ahead.
-- It extends to more interesting tasks: matching the same product across shops; cars at Kavak, where make, model,
-  version and trim decide the price; demand and trends, once search terms and hashtags roll up to a product; and any
-  agent work that has to be trusted at scale.
-
-## 17. Close (25 s)
-
-**Show:** Systems will always say they're right. Taxo doesn't take their word for it. Three numbers, one per loop.
-
-**Say:** Systems will always say they're right. Taxo doesn't take their word for it. Inside a domain it raises F1 on
-gold it never tuned on and lowers the cost, and it grows its own validation with agents and a person. Across domains it
-starts every new one ahead. Agents for what is truly hard, rules for the rest, and a person decides what is true.
+- Turn agent judgment into rules you can read, test and run for free. Never let a system grade itself: agents hunt for
+  errors and a person decides what is true. Keep what worked, with its scope, so the next problem starts ahead.
+- It goes to matching across shops, cars at Kavak, demand and trends, and any agent work that has to be trusted at
+  scale.
+- Systems will always say they're right. Taxo doesn't take their word for it.
 
 ---
-
-## Backup slides
-
-| Slide | For the question |
-|---|---|
-| Where we're coming from (two versions: side by side, stacked) | "Why not let the system grade itself?" Pedia replay `pe2`: the LLM judge's score climbed from 78% to 87%; the owner's labels went from 81% to 84%. 15 of the 48 changes made the judge happier and our labels worse, and the loop kept all 15. |
-| Three trees | Food, fragrance and cars, level by level. |
-| The lattice, step by step | How counting finds families and products. |
-| The rules in YAML (two slides) | The vocabulary, a registry, a route, and the Pedia rule we will not accept (it matched the agent 145 of 145 times; its truth was the agent). |
-| Guardrails | What went wrong in Pedia, and the rule that stops it here. |
 
 ## Figures to produce
 
 | Figure | What it shows | Axes | From | Status |
 |---|---|---|---|---|
-| **A** | The induction loop on one domain | x: round. Two panels: F1 on sealed gold; cost per 1,000 listings. Each point labelled with the rule kept | induction runs on fragrance | to run |
-| **B** | Gold is not enough, and iterating fixes it | F1 of rule set 1 (and then rule set 2) on gold, validation set 1, validation set 2 | validation rounds 1–2 | to run |
-| **D** | How much each rule saves | waterfall: cost per 1,000 listings for the agent alone, the drop from each rule kept, the final pipeline; plus the 4M-listing bill both ways and the share settled without an agent | the agent-only baseline and the induction rounds on fragrance | to run |
-| **C** | Transfer between domains | matrix, source × target: rounds saved to reach the target F1, warm start against cold | food ↔ fragrance; cars if there is data | to run |
-| Says vs finds (backup) | Why we don't let a system grade itself | the LLM judge's score against the owner's labels, by round | Pedia replay `pe2` (`C:\Work\RSI\hackathon\runs\`) | in the deck |
+| **A** | Induction on one domain (slide 8) | x: round. Two panels: F1 on sealed gold; cost per 1,000 listings against the agent alone. Each point labelled with the rule kept | the agent-only baseline and the induction runs on fragrance | to run |
+| **B** | Gold is not enough, and iterating fixes it (slides 9, 10) | F1 of rule set 1 (then rule set 2) on gold, validation set 1 and validation set 2; gold's size before and after | validation rounds 1–2 | to run |
+| **C** | Transfer between domains (slide 11) | source × target: rounds saved to reach the target F1, warm start against cold | food ↔ fragrance; fragrance → cars | to run |
+| Says vs finds | Why we don't let a system grade itself (slide 2) | the LLM judge's score against the owner's labels, by round | Pedia replay `pe2` (`C:\Work\RSI\hackathon\runs\`) | in the deck |
 
 ## Questions to expect
 

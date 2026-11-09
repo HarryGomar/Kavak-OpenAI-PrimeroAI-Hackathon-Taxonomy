@@ -1,430 +1,195 @@
 <!doctype html>
 <!--
   The pitch deck. One file, no build step. Open it in a browser (it needs internet for the fonts and product photos).
-  The talk is slides 1-17 (PRESENTATION.md, slide by slide). The slides after it are backup for questions.
+  12 slides (PRESENTATION.md, slide by slide). Where a slide has variants (3A/3B, 6A/6B/6C, 7A/7B) they sit next to
+  each other; delete the ones not chosen.
 
-  Three looks of the same deck, to choose from:  ?look=1 Paper   ?look=2 Night   ?look=3 Studio   (or press L).
-  Once one is chosen, set it as the default in the <html data-look> attribute below and delete the other two blocks
-  marked LOOK 2 / LOOK 3 in the CSS if you like.
-
-  Keys:  → Space  next   ← back   Home / End   F fullscreen   O or Esc overview   N speaker notes   L next look
-  URL:   #5 opens slide 5.  ?all turns off animation (for screenshots).
+  Keys:  → Space  next   ← back   Home / End   F fullscreen   O or Esc overview   N speaker notes
+  URL:   #5 opens the 5th page.  ?all turns off the fade (for screenshots).
   PDF:   print (Ctrl+P), "Save as PDF", margins none, background graphics on: one slide per page.
 
-  The name is not decided: change NAME at the top of the script (and the <title>). Nothing else.
+  The name is one line: NAME at the top of the script (and the <title>).
 
-  Results from today's runs go in RESULTS at the top of the script. While a figure's entry is null it is drawn as a
-  placeholder that says "to run", and the [x] brackets stay visible. Fill it in and the figure draws itself, and every
-  bracket that depends on it fills in. Set preliminary: true while the run is still going.
+  Results from today's runs go in RESULTS at the top of the script. While an entry is null its chart says "waiting for
+  today's run" and its [x] brackets stay visible. Fill it in and the chart draws itself and the brackets fill.
 
   Product photos are linked from the shops' own image servers (not stored here). If one fails, its tile says so.
 -->
-<html lang="en" data-look="1">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Taxo</title>
-<script>
-  (function () { var l = new URLSearchParams(location.search).get('look'); if (/^[123]$/.test(l || '')) document.documentElement.dataset.look = l; })();
-</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600&family=Marcellus&family=JetBrains+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600&family=JetBrains+Mono:wght@400;500&display=swap">
 <style>
-  /* ============ tokens ============ */
   :root {
-    --sans: "Inter", "Segoe UI", system-ui, sans-serif;
-    --grot: "Space Grotesk", "Inter", "Segoe UI", sans-serif;
-    --serif: "Marcellus", "Albertus MT", Georgia, serif;
-    --mono: "JetBrains Mono", "Cascadia Mono", Consolas, monospace;
+    --bg: #FFFFFF; --ink: #0B0D12; --ink2: #3A3F4A; --mute: #6B7280; --faint: #A3A8B3; --line: #E2E5EA; --tile: #F5F6F8;
+    --wire: #C5CAD3;
+    --ind: #0070C0; --val: #D9622B; --meta: #1E9E6E;
+    --sans: 'Inter', system-ui, sans-serif; --disp: 'Space Grotesk', 'Inter', sans-serif; --mono: 'JetBrains Mono', ui-monospace, monospace;
     --ease: cubic-bezier(.2, .7, .2, 1);
   }
-  /* LOOK 1 · Paper: white, hairlines, Space Grotesk */
-  html[data-look="1"] {
-    --bg: #FFFFFF; --slidebg: #FFFFFF; --card: #FFFFFF; --tile: #F5F6F8; --code: #F7F8FA; --codeB: #E6E8EC;
-    --ink: #0B0D12; --ink2: #3A3F4A; --mute: #6B7280; --faint: #A3A8B3; --line: #E2E5EA; --line2: #EEF0F3; --chip: #F0F1F4;
-    --ind: #0070C0; --indT: #E8F2FB; --val: #D9622B; --valT: #FCEEE6; --meta: #1E9E6E; --metaT: #E4F4EC;
-    --bad: #C62828; --badT: #FCEBEB; --phC: #7A5A00; --phB: #FFF0B3; --phLine: #C9A227;
-    --cardB: 1px solid #E2E5EA; --cardS: none; --rad: 18px; --photoB: 1px solid #EEF0F3;
-    --tf: 500 64px/1.1 var(--grot); --tls: -.02em; --hf: 400 184px/1 var(--serif);
-    --nf: 500 1em/1 var(--grot); --kf: 500 19px/1 var(--mono); --kls: .1em; --kt: uppercase; --kc: var(--mute);
-  }
-  /* LOOK 2 · Night: dark keynote, Inter */
-  html[data-look="2"] {
-    --bg: #0B0E13; --slidebg: radial-gradient(1400px 700px at 88% -12%, rgba(57,135,224,.13), transparent 62%), #0E1116;
-    --card: #151A21; --tile: #11151B; --code: #0B0E13; --codeB: #252C36;
-    --ink: #F3F5F8; --ink2: #C6CDD7; --mute: #8C96A6; --faint: #5E6878; --line: #2A313C; --line2: #1F252E; --chip: #1F252E;
-    --ind: #3987E0; --indT: rgba(57,135,224,.16); --val: #C76A22; --valT: rgba(199,106,34,.18); --meta: #2E9E6E; --metaT: rgba(46,158,110,.18);
-    --bad: #E66767; --badT: rgba(230,103,103,.15); --phC: #FFD866; --phB: rgba(255,216,102,.13); --phLine: #FFD866;
-    --cardB: 1px solid #252C36; --cardS: none; --rad: 20px; --photoB: none;
-    --tf: 600 62px/1.1 var(--sans); --tls: -.03em; --hf: 700 184px/1 var(--sans);
-    --nf: 700 1em/1 var(--sans); --kf: 600 18px/1 var(--sans); --kls: .16em; --kt: uppercase; --kc: var(--ink2);
-  }
-  /* LOOK 3 · Studio: warm paper, serif titles, soft cards, a colour band per section */
-  html[data-look="3"] {
-    --bg: #F6F4EF; --slidebg: #F6F4EF; --card: #FFFFFF; --tile: #EFECE5; --code: #FBFAF7; --codeB: #ECE8DF;
-    --ink: #1B1A17; --ink2: #45423B; --mute: #77736A; --faint: #ABA69B; --line: #E3DFD5; --line2: #ECE9E1; --chip: #EFECE5;
-    --ind: #2A62D0; --indT: #E9EFFB; --val: #D9622B; --valT: #FBEDE5; --meta: #1E9E6E; --metaT: #E3F3EB;
-    --bad: #B83227; --badT: #F9E9E7; --phC: #7A5A00; --phB: #FDEDB0; --phLine: #C9A227;
-    --cardB: none; --cardS: 0 1px 2px rgba(40,30,10,.05), 0 12px 32px rgba(40,30,10,.07); --rad: 22px; --photoB: none;
-    --tf: 400 70px/1.08 var(--serif); --tls: -.005em; --hf: 400 200px/1 var(--serif);
-    --nf: 400 1em/1 var(--serif); --kf: 500 20px/1 var(--sans); --kls: .01em; --kt: none; --kc: var(--ink2);
-  }
-
   * { box-sizing: border-box; }
   html, body { margin: 0; height: 100%; background: var(--bg); overflow: hidden; }
-  body { font-family: var(--sans); color: var(--ink); -webkit-font-smoothing: antialiased;
-         -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-
-  /* stage: a 1920×1080 canvas scaled to the window */
+  body { font-family: var(--sans); color: var(--ink); -webkit-font-smoothing: antialiased; }
   .viewport { position: fixed; inset: 0; }
   .stage { position: absolute; left: 50%; top: 50%; width: 1920px; height: 1080px; transform: translate(-50%, -50%) scale(var(--s, 1)); }
-  .frame { position: absolute; inset: 0; opacity: 0; visibility: hidden; transition: opacity .3s var(--ease), visibility .3s; }
+  .frame { position: absolute; inset: 0; opacity: 0; visibility: hidden; transition: opacity .25s var(--ease), visibility .25s; }
   .frame.active { opacity: 1; visibility: visible; }
   .static .frame { transition: none; }
 
-  /* ============ slide ============ */
-  .slide { width: 1920px; height: 1080px; padding: 80px 120px 100px; position: relative; overflow: hidden; isolation: isolate;
-           display: flex; flex-direction: column; gap: 34px; background: var(--slidebg); color: var(--ink);
-           --sec: var(--ink); }
-  .slide[data-sec="ind"] { --sec: var(--ind); --secT: var(--indT); }
-  .slide[data-sec="val"] { --sec: var(--val); --secT: var(--valT); }
-  .slide[data-sec="meta"] { --sec: var(--meta); --secT: var(--metaT); }
-  html[data-look="3"] .slide:not(.cover)::after { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 12px; background: var(--sec); }
+  /* ---------- the slide ---------- */
+  .slide { position: absolute; inset: 0; padding: 96px 128px 120px; display: flex; flex-direction: column; gap: 44px;
+           background: var(--bg); overflow: hidden; }
+  h2 { font: 600 62px/1.08 var(--disp); letter-spacing: -.022em; margin: 0; max-width: 1560px; }
+  .lede { font: 400 30px/1.4 var(--sans); color: var(--ink2); margin: -18px 0 0; max-width: 1400px; }
+  .fill { position: relative; flex: 1; min-height: 0; }
+  .pgn { position: absolute; right: 128px; bottom: 54px; margin: 0; font: 500 18px var(--sans); color: var(--faint); }
+  .vtag { position: absolute; left: 128px; bottom: 54px; margin: 0; font: 600 18px var(--sans); color: var(--val); }
+  .note { font: 400 24px/1.45 var(--sans); color: var(--mute); margin: 0; }
+  .ph { color: var(--mute); border-bottom: 2px dashed var(--faint); }
+  b, strong { font-weight: 600; }
   aside.notes { display: none; }
-  p { margin: 0; }
-  h1, h2, h3 { margin: 0; font-weight: 400; }
-  .hd { display: flex; flex-direction: column; gap: 20px; }
-  .kick { display: flex; align-items: center; gap: 14px; font: var(--kf); letter-spacing: var(--kls); text-transform: var(--kt); color: var(--kc); }
-  .kick i { flex: none; width: 30px; height: 3px; background: var(--sec); }
-  html[data-look="2"] .kick i, html[data-look="3"] .kick i { width: 11px; height: 11px; border-radius: 50%; }
-  html[data-look="3"] .kick { align-self: flex-start; padding: 11px 20px; border-radius: 999px; background: var(--card); box-shadow: var(--cardS); }
-  h2.t { font: var(--tf); letter-spacing: var(--tls); max-width: 1660px; text-wrap: balance; }
-  .sub { font-size: 28px; line-height: 1.4; color: var(--mute); max-width: 1560px; margin-top: -6px; text-wrap: balance; }
-  .bd { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 26px; }
-  .cite { position: absolute; left: 120px; bottom: 42px; font-size: 18px; line-height: 1; color: var(--mute); }
-  .pgn { position: absolute; right: 120px; bottom: 42px; font: 500 17px/1 var(--mono); color: var(--faint); }
-  .cb { color: var(--ind); } .cv { color: var(--val); } .cm { color: var(--meta); } .cr { color: var(--bad); }
+  code, pre { font-family: var(--mono); }
+  pre.y { margin: 0; padding: 26px 30px; background: var(--tile); border-radius: 14px; font: 400 21px/1.55 var(--mono); color: var(--ink2); white-space: pre; }
+  pre.y i { font-style: normal; color: var(--faint); }
+  pre.y em { font-style: normal; color: var(--ind); }
 
-  /* cards */
-  .card { background: var(--card); border: var(--cardB); border-radius: var(--rad); box-shadow: var(--cardS);
-          padding: 28px 30px; display: flex; flex-direction: column; gap: 16px; min-width: 0; position: relative; }
-  .ch { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; }
-  .ch b { font: 600 27px/1.2 var(--sans); }
-  .ch span { font: 500 17px/1.2 var(--mono); color: var(--mute); }
-  .cap { font-size: 22px; line-height: 1.42; color: var(--ink2); }
-  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 36px; }
+  /* ---------- cover ---------- */
+  .cover { justify-content: center; gap: 0; padding-left: 160px; }
+  .cover h1 { font: 600 220px/0.9 var(--disp); letter-spacing: -.045em; margin: 0 0 40px -8px; }
+  .cover .subt { font: 400 54px/1.2 var(--sans); letter-spacing: -.015em; margin: 0; max-width: 1200px; }
+  .cover .ev { font: 500 24px var(--sans); color: var(--mute); margin: 64px 0 0; }
 
-  /* labels */
-  .chip { display: inline-flex; align-items: center; gap: 9px; height: 38px; padding: 0 16px; border-radius: 999px; background: var(--chip);
-          font: 500 20px/1 var(--sans); color: var(--ink2); white-space: nowrap; flex: none; }
-  .chip.sm { height: 32px; padding: 0 13px; font-size: 18px; }
-  .chip.ind { color: var(--ind); background: var(--indT); } .chip.val { color: var(--val); background: var(--valT); }
-  .chip.meta { color: var(--meta); background: var(--metaT); } .chip.bad { color: var(--bad); background: var(--badT); }
-  .chip.wait { color: var(--phC); background: var(--phB); }
-  .ph { color: var(--phC); background: var(--phB); border-radius: 8px; padding: 0 .18em; font-weight: 600; white-space: nowrap; }
-  .ph.got { color: inherit; background: none; padding: 0; font-weight: inherit; }
+  /* ---------- photos ---------- */
+  .pic { position: absolute; margin: 0; }
+  .pic .im { width: 100%; aspect-ratio: 1; border-radius: 14px; background: #fff; border: 1px solid var(--line); overflow: hidden;
+             display: flex; align-items: center; justify-content: center; position: relative; }
+  .pic img { width: 100%; height: 100%; object-fit: contain; padding: 10px; }
+  .pic.noimg img { display: none; }
+  .pic.noimg .im::after { content: "photo did not load"; font: 500 16px var(--sans); color: var(--faint); }
+  .pic figcaption { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 14px;
+                    font: 500 19px/1.2 var(--sans); color: var(--mute); text-align: center; }
+  .pic figcaption svg { height: 22px; width: auto; flex: none; }
+  .pic figcaption svg.wm { height: 18px; }
 
-  /* marketplace logos and product photos */
-  .src { display: flex; align-items: center; gap: 11px; height: 36px; font: 600 21px/1 var(--sans); color: var(--ink); white-space: nowrap; }
-  .src svg { height: 30px; width: auto; flex: none; }
-  .src svg.wmt { height: 30px; }
-  .src .wm { font: 400 25px/1 var(--serif); letter-spacing: .14em; text-transform: uppercase; }
-  .src small { font: 500 16px/1 var(--mono); color: var(--mute); margin-left: auto; }
-  .photo { background: #fff; border: var(--photoB); border-radius: 14px; display: grid; place-items: center; overflow: hidden; position: relative; }
-  .photo img { width: 84%; height: 84%; object-fit: contain; mix-blend-mode: multiply; }
-  .photo.noimg img { display: none; }
-  .photo.noimg::after { content: "photo did not load"; font: 500 16px/1.3 var(--sans); color: #8C96A6; }
-  .photo.empty { background: var(--tile); border: 2px dashed var(--line); }
-  .photo.empty svg { width: 64px; height: 64px; opacity: .35; }
-  .lc { padding: 22px; gap: 14px; }
-  .lc .photo { height: 236px; }
-  .lc q { font-size: 21px; line-height: 1.38; color: var(--ink); quotes: none; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
-  .lc .by { font-size: 17px; color: var(--mute); margin-top: auto; }
+  /* ---------- trees ---------- */
+  .tree svg.links { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+  .nd { position: absolute; width: 400px; margin-left: -200px; text-align: center; font: 600 38px/1.1 var(--disp); letter-spacing: -.01em; }
+  .nd small { display: block; font: 400 19px var(--sans); color: var(--mute); letter-spacing: 0; margin-top: 6px; }
+  .nd.sm { font-size: 32px; }
+  .nd.dim { color: var(--faint); }
+  .lvl { position: absolute; left: 0; font: 500 20px var(--sans); color: var(--faint); }
 
-  /* charts and diagrams */
-  .chart { display: block; width: 100%; height: auto; overflow: visible; }
-  .slide svg text { font-family: var(--sans); }
-  .slide svg text.mono { font-family: var(--mono); }
+  /* ---------- the hard ones ---------- */
+  .hard { display: grid; grid-template-columns: 440px 1fr; gap: 80px; align-items: start; }
+  .big { font: 600 240px/0.85 var(--disp); letter-spacing: -.05em; }
+  .hard .big + p { font: 400 30px/1.35 var(--sans); color: var(--ink2); margin: 28px 0 0; }
+  .traps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 48px; }
+  .trap .pic { position: static; }
+  .trap p { font: 400 25px/1.4 var(--sans); color: var(--ink2); margin: 10px 0 0; }
+  .trap p b { color: var(--ink); }
 
-  /* YAML */
-  .code { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
-  .fn { display: flex; align-items: center; gap: 12px; font: 500 18px/1.2 var(--mono); color: var(--mute); }
-  pre.yaml { margin: 0; padding: 22px 26px; border-radius: 14px; background: var(--code); border: 1px solid var(--codeB);
-             font: 500 20px/1.55 var(--mono); color: var(--ink2); white-space: pre; overflow: hidden; tab-size: 2; }
-  pre.yaml.big { font-size: 23px; padding: 28px 32px; }
-  pre.yaml .k { color: var(--ind); } pre.yaml .s { color: var(--meta); } pre.yaml .n { color: var(--val); } pre.yaml .c { color: var(--faint); }
+  /* ---------- two columns split by a rule ---------- */
+  .split { display: grid; grid-template-columns: 1fr 1fr; gap: 0; flex: 1; min-height: 0; }
+  .split > div { padding-right: 80px; display: flex; flex-direction: column; gap: 22px; }
+  .split > div + div { padding: 0 0 0 80px; border-left: 2px solid var(--line); }
+  .split h3 { font: 600 32px/1.2 var(--sans); margin: 0; }
+  .eq { font: 400 40px/1.3 var(--sans); color: var(--ink2); margin: 0; }
+  .num { font: 600 112px/1 var(--disp); letter-spacing: -.03em; margin: 0; }
+  .num small { font: 400 30px var(--sans); color: var(--ink2); letter-spacing: 0; }
+  .split p.t { font: 400 28px/1.4 var(--sans); color: var(--ink2); margin: 0; }
+  .pair { display: grid; grid-template-columns: 220px 1fr; gap: 28px; align-items: baseline; }
+  .pair .num { font-size: 88px; }
+  .bottom { font: 500 32px/1.35 var(--sans); margin: 0; padding-top: 30px; border-top: 2px solid var(--line); }
 
-  /* big numbers */
-  .num { font: var(--nf); letter-spacing: -.03em; }
+  /* ---------- induction worked example ---------- */
+  .ltitle { font: 400 40px/1.3 var(--sans); margin: 0; }
+  .ltitle .b { border-bottom: 5px solid var(--ind); }
+  .ltitle .p { border-bottom: 5px solid var(--ink); font-weight: 600; }
+  .ltitle s { color: var(--faint); text-decoration-thickness: 2px; }
+  .ltitle + .note { margin-top: -30px; font-size: 21px; }
+  .steps4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; }
+  .steps4 > div { border-top: 3px solid var(--ink); padding-top: 22px; display: flex; flex-direction: column; gap: 14px; }
+  .steps4 h3 { font: 600 28px var(--sans); margin: 0; }
+  .steps4 h3 span { color: var(--faint); margin-right: 10px; }
+  .steps4 p { font: 400 23px/1.4 var(--sans); color: var(--ink2); margin: 0; }
+  .steps4 pre.y { font-size: 17px; padding: 18px 20px; line-height: 1.5; }
+  .result { font: 600 36px var(--disp); margin: 0; }
+  .result span { font: 400 26px var(--sans); color: var(--mute); margin-left: 18px; }
 
-  /* ============ 1 · cover ============ */
-  .cover .kick { position: absolute; left: 128px; top: 232px; }
-  .cover h1 { position: absolute; left: 120px; top: 284px; font: var(--hf); letter-spacing: -.02em; }
-  .cover .subt { position: absolute; left: 128px; top: 500px; max-width: 1040px; font: 400 50px/1.22 var(--serif); color: var(--ink2); }
-  html[data-look="2"] .cover .subt { font: 500 46px/1.25 var(--sans); letter-spacing: -.015em; }
-  .cover .levels { position: absolute; left: 128px; top: 676px; display: flex; gap: 14px; align-items: center; font: 500 25px/1 var(--mono); color: var(--mute); }
-  .cover .levels b { color: var(--ink); font-weight: 500; }
-  .cover .date { position: absolute; left: 128px; bottom: 96px; font-size: 26px; color: var(--ink2); }
-  .cloud { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; z-index: -1; pointer-events: none; }
+  .round { display: flex; flex-direction: column; gap: 0; }
+  .round li { list-style: none; display: grid; grid-template-columns: 70px 1fr; align-items: baseline; padding: 20px 0;
+              border-bottom: 1px solid var(--line); font: 400 30px/1.35 var(--sans); }
+  .round li:first-child { border-top: 1px solid var(--line); }
+  .round li span { font: 600 30px var(--disp); color: var(--ind); }
+  .round ul { margin: 0; padding: 0; }
 
-  /* ============ 2 · one product, five listings ============ */
-  .mk { display: grid; grid-template-columns: repeat(5, 1fr); gap: 26px; }
-  .one { align-self: center; display: flex; align-items: center; gap: 18px; padding: 16px 30px; border-radius: 999px;
-         border: 2px solid var(--ind); background: var(--indT); font: 600 28px/1 var(--sans); color: var(--ind); margin-top: -6px; }
-  .one span { font-weight: 500; color: var(--ink2); }
+  /* ---------- charts ---------- */
+  svg.ch { width: 100%; height: 100%; display: block; overflow: visible; }
+  .charts2 { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; flex: 1; min-height: 0; }
+  .charts2 h3, .chart h3 { font: 600 28px var(--sans); margin: 0 0 6px; }
+  .charts2 > div, .chart { display: flex; flex-direction: column; min-height: 0; }
+  .charts2 .plot, .chart .plot { flex: 1; min-height: 0; }
+  .sub3 { font: 400 22px var(--sans); color: var(--mute); margin: 0 0 18px; }
 
-  /* ============ 3 · trees ============ */
-  .tc .ch b { font-size: 30px; }
-  .tc svg { margin: auto 0; }
-  .rule-line { text-align: center; font-size: 25px; color: var(--ink2); }
-  .rule-line b { color: var(--ink); font-weight: 600; }
+  /* ---------- validation ---------- */
+  .vgrid { display: grid; grid-template-columns: 640px 1fr; gap: 100px; flex: 1; min-height: 0; }
+  .flow { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; }
+  .flow li { font: 400 29px/1.35 var(--sans); color: var(--ink2); padding: 0 0 0 0; }
+  .flow li b { color: var(--ink); }
+  .flow li + li::before { content: "↓"; display: block; color: var(--val); font: 400 34px/1 var(--sans); margin: 16px 0 14px; }
+  .flow li:last-child::before { color: var(--ind); }
 
-  /* ============ 4 · one variant connects ============ */
-  .var { display: grid; grid-template-columns: 1fr 460px; gap: 48px; align-items: stretch; flex: 1; min-height: 0; }
-  .var .left { display: flex; flex-direction: column; min-width: 0; }
-  .crumb { align-self: center; display: flex; gap: 14px; align-items: center; font: 600 28px/1 var(--sans); }
-  .crumb span { padding: 14px 22px; border-radius: 14px; border: 2px solid var(--ind); background: var(--indT); color: var(--ind); }
-  .crumb span.on { background: var(--ind); color: #fff; }
-  .crumb i { color: var(--faint); font-style: normal; font-weight: 400; }
-  .l3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
-  .l3 .lc .photo { height: 168px; }
-  .l3 .lc q { font-size: 19px; -webkit-line-clamp: 3; }
-  .tags { display: flex; justify-content: center; gap: 48px; align-items: center; }
-  .tg { display: flex; gap: 10px; align-items: center; }
-  .tg > em { font: 500 17px/1 var(--mono); color: var(--mute); font-style: normal; margin-right: 6px; text-transform: uppercase; letter-spacing: .08em; }
-  .roll { justify-content: center; gap: 0; padding: 34px 36px; }
-  .roll .rt { font: 600 26px/1.25 var(--sans); margin-bottom: 20px; }
-  .roll ul { list-style: none; margin: 0; padding: 0; }
-  .roll li { display: flex; align-items: center; gap: 16px; padding: 17px 0; border-top: 1px solid var(--line); font-size: 25px; color: var(--ink2); }
-  .roll li i { width: 10px; height: 10px; border-radius: 50%; background: var(--ind); flex: none; }
-  .roll .so { margin-top: 22px; padding: 22px 24px; border-radius: 14px; background: var(--indT); color: var(--ind); font: 600 26px/1.3 var(--sans); }
+  /* ---------- meta matrix ---------- */
+  .mx { border-collapse: collapse; font-family: var(--sans); }
+  .mx th { font: 500 22px var(--sans); color: var(--mute); text-align: left; padding: 0 0 16px; }
+  .mx td { border-top: 2px solid var(--line); padding: 28px 40px 28px 0; vertical-align: top; width: 360px; }
+  .mx td.rh { font: 600 34px var(--disp); width: 240px; }
+  .mx .n { font: 600 64px/1 var(--disp); letter-spacing: -.02em; }
+  .mx .n small { font: 400 22px var(--sans); color: var(--mute); letter-spacing: 0; margin-left: 8px; }
+  .mx p { font: 400 23px/1.4 var(--sans); color: var(--ink2); margin: 12px 0 0; }
+  .mx .self { color: var(--faint); font: 400 40px var(--sans); }
 
-  /* ============ 5 · hard ============ */
-  .hard { display: grid; grid-template-columns: 470px 1fr; gap: 56px; flex: 1; min-height: 0; }
-  .scale { display: flex; flex-direction: column; justify-content: center; gap: 22px; }
-  .scale .num { font-size: 230px; line-height: .85; }
-  .scale .u { font: 600 34px/1.2 var(--sans); }
-  .scale p { font-size: 26px; line-height: 1.42; color: var(--ink2); }
-  .traps { display: grid; grid-template-columns: 1fr 1fr; grid-auto-rows: 1fr; gap: 24px; }
-  .trap { display: grid; grid-template-columns: 176px 1fr; gap: 24px; padding: 22px; align-items: start; }
-  .trap .photo { height: 176px; }
-  .trap .tx { display: flex; flex-direction: column; gap: 10px; min-width: 0; height: 100%; }
-  .trap .kd { font: 600 25px/1.2 var(--sans); }
-  .trap q { font-size: 19px; line-height: 1.38; color: var(--ink2); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-  .trap .meta { font: 500 16px/1.3 var(--mono); color: var(--mute); }
-  .trap .src { height: 26px; font-size: 17px; gap: 8px; }
-  .trap .src svg { height: 22px; }
-  .trap .chip { align-self: flex-start; margin-top: auto; }
+  /* ---------- close ---------- */
+  .closing { justify-content: center; gap: 64px; }
+  .closing h2 { font-size: 84px; line-height: 1.08; max-width: 1500px; }
+  .closing h2 span { color: var(--mute); }
+  .cols2 { display: grid; grid-template-columns: 1fr 1fr; gap: 100px; }
+  .cols2 h3 { font: 600 22px var(--sans); color: var(--mute); margin: 0 0 14px; }
+  .cols2 ul { margin: 0; padding: 0; list-style: none; }
+  .cols2 li { font: 400 28px/1.35 var(--sans); padding: 14px 0; border-top: 1px solid var(--line); }
 
-  /* ============ 6 · two-fold ============ */
-  .fold { display: grid; grid-template-columns: 1.75fr 1fr; gap: 34px; flex: 1; min-height: 0; }
-  .fold .card { justify-content: space-between; padding: 30px 34px; }
-  .fl { display: flex; align-items: baseline; gap: 14px; font: 600 28px/1.2 var(--sans); }
-  .fl em { font: 500 18px/1 var(--mono); color: var(--mute); font-style: normal; text-transform: uppercase; letter-spacing: .1em; }
-  .lt { display: grid; grid-template-columns: 1fr 1fr; gap: 34px; }
-  .lt.one-col { grid-template-columns: 1fr; }
-  .lt p { font-size: 22px; line-height: 1.42; color: var(--ink2); padding-top: 16px; border-top: 3px solid var(--c); }
-  .lt b { display: block; font: 600 24px/1.2 var(--sans); color: var(--ink); margin-bottom: 6px; }
-
-  /* ============ 7 · induction ============ */
-  .rules { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; flex: 1; min-height: 0; }
-  .rn { display: flex; align-items: center; gap: 16px; }
-  .rn i { width: 48px; height: 48px; border-radius: 50%; background: var(--indT); color: var(--ind); display: grid; place-items: center;
-          font: 600 22px/1 var(--sans); font-style: normal; flex: none; }
-  .rn b { display: block; font: 600 28px/1.15 var(--sans); }
-  .rn small { display: block; font: 500 16px/1 var(--mono); color: var(--mute); margin-bottom: 7px; text-transform: uppercase; letter-spacing: .08em; }
-  .rules p.d { font-size: 22px; line-height: 1.42; color: var(--ink2); }
-  .rules .vis { margin-top: auto; }
-  .ladr { display: flex; flex-direction: column; }
-  .ladr div { display: grid; grid-template-columns: 1fr auto; align-items: center; padding: 15px 4px; border-top: 1px solid var(--line); font-size: 22px; color: var(--ink2); }
-  .ladr div:first-child { border-top: none; }
-  .ladr b { font: 600 22px/1 var(--mono); color: var(--ink); letter-spacing: .04em; }
-  .ladr .hd2 { font: 500 16px/1 var(--mono); color: var(--mute); text-transform: uppercase; letter-spacing: .08em; padding-top: 0; }
-  .round { display: flex; align-items: center; list-style: none; margin: 0; padding: 22px 30px; border-radius: var(--rad); background: var(--tile); }
-  .round li { display: flex; align-items: center; gap: 12px; font-size: 22px; color: var(--ink2); white-space: nowrap; }
-  .round li b { width: 34px; height: 34px; border-radius: 50%; background: var(--ind); color: #fff; display: grid; place-items: center; font: 600 17px/1 var(--sans); flex: none; }
-  .round li + li::before { content: "→"; margin: 0 18px 0 6px; color: var(--faint); font-size: 24px; }
-  .round li.goal { margin-left: auto; font-weight: 600; color: var(--ind); }
-  .round li.goal::before { content: none; }
-  .round .lab { font: 600 17px/1 var(--mono); color: var(--mute); text-transform: uppercase; letter-spacing: .08em; margin-right: 22px; }
-
-  /* ============ 8 / 10 / 11 · figures ============ */
-  .kpi { display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap; }
-  .kpi .num { font-size: 58px; }
-  .kpi small { font-size: 21px; color: var(--mute); }
-  .fig { justify-content: space-between; }
-  .b1 { display: grid; grid-template-columns: 1fr 430px; gap: 36px; flex: 1; min-height: 0; }
-  .stack3 { display: flex; flex-direction: column; justify-content: center; padding: 10px 34px; }
-  .stack3 > div { padding: 24px 0; border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: 8px; }
-  .stack3 > div:first-child { border-top: none; }
-  .stack3 .num { font-size: 66px; }
-  .stack3 .l { font: 600 24px/1.2 var(--sans); }
-  .stack3 .l small { display: block; font: 400 19px/1.3 var(--sans); color: var(--mute); margin-top: 4px; }
-  .b2 { display: grid; grid-template-columns: 730px 1fr; gap: 36px; flex: 1; min-height: 0; }
-  .iter { display: flex; gap: 10px; flex-wrap: wrap; }
-
-  /* ============ 9 · validation loop ============ */
-  .vl { display: grid; grid-template-columns: 590px 1fr; gap: 40px; align-items: center; flex: 1; min-height: 0; }
-  .pts { display: flex; flex-direction: column; gap: 28px; }
-  .pts p { font-size: 26px; line-height: 1.45; color: var(--ink2); }
-  .pts p b { color: var(--ink); font-weight: 600; }
-  .callout { border-left: 4px solid var(--val); padding: 4px 0 4px 24px; font-size: 22px !important; color: var(--mute) !important; }
-
-  /* ============ 12 · a person teaches the validator ============ */
-  .teach { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 64px; }
-  .teach .card { padding: 30px 32px; }
-  .teach .card + .card::before { content: ""; position: absolute; left: -48px; top: 50%; width: 30px; height: 2px; background: var(--faint); }
-  .teach .card + .card::after { content: ""; position: absolute; left: -24px; top: calc(50% - 7px); border: 8px solid transparent; border-left: 10px solid var(--faint); border-right: none; }
-  .who { display: flex; align-items: center; gap: 12px; font: 600 17px/1 var(--mono); color: var(--mute); text-transform: uppercase; letter-spacing: .08em; }
-  .who i { width: 12px; height: 12px; border-radius: 50%; background: var(--c); }
-  .said { font: 500 30px/1.32 var(--sans); letter-spacing: -.01em; color: var(--ink); }
-  .teach .cap { margin-top: auto; }
-  .g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 36px; }
-  .stat { display: flex; align-items: center; gap: 32px; padding: 26px 32px; }
-  .stat .num { font-size: 72px; white-space: nowrap; }
-  .stat p { font-size: 24px; line-height: 1.38; color: var(--ink2); }
-
-  /* ============ 13 · meta loop ============ */
-  .mx { display: grid; grid-template-columns: 640px 1fr; gap: 40px; flex: 1; min-height: 0; }
-  .matrix { display: grid; grid-template-columns: 170px repeat(3, 1fr); }
-  .matrix > div { padding: 18px 14px; border-top: 1px solid var(--line); font-size: 24px; display: flex; flex-direction: column; justify-content: center; gap: 6px; min-height: 118px; }
-  .matrix .mh { font: 500 17px/1.25 var(--mono); color: var(--mute); min-height: 52px; justify-content: flex-end; border-top: none; text-transform: uppercase; letter-spacing: .06em; }
-  .matrix .rh { font: 600 25px/1.2 var(--sans); }
-  .matrix .cell { align-items: center; text-align: center; border-left: 1px solid var(--line2); }
-  .matrix .cell b { font: 600 40px/1 var(--sans); }
-  .matrix .cell small { font-size: 17px; color: var(--mute); }
-  .matrix .diag b { color: var(--faint); }
-  .matrix .dim { opacity: .55; }
-  .tx { display: flex; flex-direction: column; }
-  .tx .tr { display: grid; grid-template-columns: 300px 1fr; gap: 24px; padding: 22px 0; border-top: 1px solid var(--line); align-items: start; }
-  .tx .tr:first-child { border-top: none; padding-top: 6px; }
-  .tx .route { font: 600 26px/1.25 var(--sans); }
-  .tx .route small { display: block; margin-top: 10px; }
-  .tx p { font-size: 22px; line-height: 1.42; color: var(--ink2); }
-  .lessons { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-top: 8px; }
-  .lessons em { font: 500 16px/1 var(--mono); color: var(--mute); font-style: normal; text-transform: uppercase; letter-spacing: .08em; margin-right: 6px; }
-
-  /* ============ 14 · close ============ */
-  .closing h2.t { font-size: 80px; max-width: 1500px; }
-  html[data-look="3"] .closing h2.t { font-size: 86px; }
-  .g3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
-  .g3 .card { border-top: 6px solid var(--c); gap: 12px; }
-  html[data-look="3"] .g3 .card, html[data-look="2"] .g3 .card { border-top: 6px solid var(--c); }
-  .g3 .num { font-size: 60px; white-space: nowrap; }
-  .g3 p { font-size: 22px; line-height: 1.4; color: var(--ink2); }
-  .g3 .who { margin-bottom: 4px; }
-  .last { font: 500 36px/1.3 var(--sans); letter-spacing: -.01em; color: var(--ink2); max-width: 1500px; }
-  html[data-look="3"] .last { font: 400 42px/1.25 var(--serif); }
-
-  /* ============ why not just an agent ============ */
-  .agent { display: grid; grid-template-columns: 1fr 1fr; gap: 36px; flex: 1; min-height: 0; }
-  .agent .card { padding: 32px 36px; }
-  .calc { display: flex; align-items: flex-end; gap: 20px; margin: 18px 0 8px; }
-  .calc > div { display: flex; flex-direction: column; gap: 12px; }
-  .calc .num { font-size: 80px; white-space: nowrap; }
-  .calc small { font-size: 20px; color: var(--mute); }
-  .calc .op { font: 300 54px/1 var(--sans); color: var(--faint); padding-bottom: 36px; }
-  .agent .cap { font-size: 23px; }
-  .agent .calc { margin: auto 0; }
-  .ev { display: grid; grid-template-columns: 200px 1fr; gap: 24px; align-items: center; padding: 22px 0; border-top: 1px solid var(--line); }
-  .ev.first { border-top: none; padding-top: 6px; }
-  .ev .num { font-size: 62px; white-space: nowrap; }
-  .ev p { font-size: 22px; line-height: 1.42; color: var(--ink2); }
-  .ev p b { color: var(--ink); font-weight: 600; }
-  .bl { font: 500 30px/1.35 var(--sans); text-align: center; color: var(--ink2); }
-  .bl b { color: var(--ind); font-weight: 600; }
-
-  /* ============ why it matters ============ */
-  .why { display: grid; grid-template-columns: 620px 1fr; gap: 36px; flex: 1; min-height: 0; }
-  .pat { justify-content: flex-start; gap: 36px; padding: 34px 38px; }
-  .pat ol { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 30px; }
-  .pat li { display: grid; grid-template-columns: 50px 1fr; gap: 20px; align-items: start; font-size: 25px; line-height: 1.42; color: var(--ink2); }
-  .pat li i { width: 50px; height: 50px; border-radius: 50%; background: var(--ink); color: var(--bg); display: grid; place-items: center; font: 600 22px/1 var(--sans); font-style: normal; }
-  .pat li b { color: var(--ink); font-weight: 600; }
-  .ext { display: grid; grid-template-columns: 1fr 1fr; grid-auto-rows: 1fr; gap: 24px; }
-  .ext .card { gap: 12px; padding: 28px 30px; }
-  .ext h3 { font: 600 27px/1.2 var(--sans); }
-  .ext p { font-size: 22px; line-height: 1.42; color: var(--ink2); }
-  .ext .chip { align-self: flex-start; margin-top: auto; }
-
-  /* section tracker, top right of every talk slide */
-  .trk { position: absolute; right: 120px; top: 80px; display: flex; gap: 22px; font: 500 15px/1 var(--mono); color: var(--faint);
-         text-transform: uppercase; letter-spacing: .08em; }
-  .trk span.on { color: var(--sec); font-weight: 700; }
-  .trk span.done { color: var(--mute); }
-  html[data-look="3"] .trk { top: 92px; }
-
-  /* ============ backup ============ */
-  .sf { display: grid; grid-template-columns: 1fr 1fr; gap: 36px; flex: 1; min-height: 0; }
-  .sfh { display: flex; flex-direction: column; gap: 10px; }
-  .sfh b { font: 600 26px/1.2 var(--sans); }
-  .sfh small { font-size: 20px; color: var(--mute); }
-  .sfn { display: flex; align-items: baseline; gap: 18px; }
-  .sfn .num { font-size: 72px; }
-  .punch { font: 500 30px/1.35 var(--sans); color: var(--ink); text-align: center; }
-  .punch b { color: var(--bad); font-weight: 600; }
-  .sfv { display: flex; flex-direction: column; gap: 22px; flex: 1; min-height: 0; }
-  .sfv .card { display: grid; grid-template-columns: 400px 1fr; gap: 36px; align-items: center; padding: 22px 34px; flex: 1; }
-  .tree3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; flex: 1; }
-  .ladder { list-style: none; margin: 4px 0 0; padding: 0; display: flex; flex-direction: column; gap: 22px; }
-  .ladder li { display: grid; grid-template-columns: 130px 1fr; align-items: center; }
-  .ladder li > span { font: 500 17px/1 var(--mono); color: var(--mute); }
-  .ladder b { justify-self: start; position: relative; margin-left: calc(var(--d, 0) * 24px); padding: 12px 18px; border: 2px solid var(--line);
-              border-radius: 12px; font: 600 24px/1 var(--sans); background: var(--card); color: var(--ink2); }
-  .ladder li + li b::before { content: ""; position: absolute; left: -16px; top: -26px; width: 14px; height: 46px;
-                              border-left: 2px solid var(--faint); border-bottom: 2px solid var(--faint); border-bottom-left-radius: 8px; }
-  .ladder b.leaf { color: #fff; border-color: var(--ind); background: var(--ind); }
-  .lat { display: grid; grid-template-columns: 1fr 640px; gap: 36px; flex: 1; min-height: 0; }
-  .toks { display: flex; flex-direction: column; }
-  .toks .tr { display: grid; grid-template-columns: 1fr 210px; gap: 20px; align-items: baseline; padding: 13px 0; border-top: 1px solid var(--line2); font-size: 24px; line-height: 1.3; }
-  .toks .tr.h0 { border-top: none; padding-top: 0; font: 500 16px/1 var(--mono); color: var(--mute); text-transform: uppercase; letter-spacing: .08em; }
-  .toks s { color: var(--faint); text-decoration-thickness: 2px; }
-  .toks i { font-style: normal; color: var(--faint); }
-  .toks b { font-weight: 600; }
-  .toks code { font: 500 21px/1.3 var(--mono); color: var(--ind); }
-  .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 36px; align-items: start; }
-  .guard { display: flex; flex-direction: column; }
-  .guard .gr { display: grid; grid-template-columns: 640px 1fr; gap: 48px; padding: 12px 0; border-top: 1px solid var(--line2); align-items: baseline; }
-  .guard .gr.h0 { border-top: none; padding-top: 0; font: 500 16px/1 var(--mono); color: var(--mute); text-transform: uppercase; letter-spacing: .08em; }
-  .guard b { font: 600 23px/1.3 var(--sans); }
-  .guard p { font-size: 21px; line-height: 1.35; color: var(--mute); }
-
-  /* ============ motion: one quick cross-fade, nothing else ============ */
-  @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
-
-  /* ============ HUD ============ */
+  /* ---------- HUD, overview, print ---------- */
   .progress { position: fixed; left: 0; bottom: 0; height: 3px; width: 0; background: var(--ink); z-index: 20; transition: width .3s var(--ease); }
   .static .progress { display: none; }
   .hint { position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%); z-index: 21; padding: 10px 18px; border-radius: 999px;
-          background: var(--ink); color: var(--bg); font: 500 13px/1 var(--sans); box-shadow: 0 4px 14px rgba(0,0,0,.18); transition: opacity .8s; pointer-events: none; white-space: nowrap; }
+          background: rgba(11, 13, 18, .85); color: #fff; font: 500 14px var(--sans); transition: opacity .5s; pointer-events: none; }
   .hint.gone { opacity: 0; }
   .notes-panel { position: fixed; left: 0; right: 0; bottom: 0; z-index: 22; max-height: 40vh; overflow: auto; padding: 22px 28px 30px;
-                 background: var(--card); color: var(--ink); border-top: 1px solid var(--line); box-shadow: 0 -10px 30px rgba(0,0,0,.08);
-                 font: 17px/1.55 var(--sans); display: none; white-space: pre-wrap; }
+                 background: #fff; border-top: 1px solid var(--line); font: 400 18px/1.5 var(--sans); color: var(--ink2); display: none; white-space: pre-wrap; }
   .notes-panel b { font: 500 12px/1 var(--sans); letter-spacing: .08em; color: var(--mute); display: block; margin-bottom: 8px; }
   body.notes .notes-panel { display: block; }
-
-  /* overview grid */
   body.overview { background: var(--tile); }
   body.overview .viewport { overflow: auto; }
   body.overview .stage { position: static; transform: none; width: auto; height: auto; display: grid;
-                         grid-template-columns: repeat(auto-fill, 384px); gap: 28px; padding: 48px; justify-content: center; }
+                         grid-template-columns: repeat(auto-fill, 384px); gap: 24px; padding: 32px; justify-content: center; }
   body.overview .frame { position: relative; inset: auto; width: 384px; height: 216px; opacity: 1; visibility: visible; overflow: hidden;
-                         border-radius: 12px; cursor: pointer; border: 1px solid var(--line); outline: 2px solid transparent; outline-offset: 4px; transition: outline-color .2s; }
+                         outline: 2px solid transparent; outline-offset: 4px; cursor: pointer; background: #fff; }
   body.overview .frame:hover { outline-color: var(--faint); }
   body.overview .frame.active { outline-color: var(--ink); }
-  body.overview .frame .slide { transform: scale(.2); transform-origin: 0 0; }
+  body.overview .frame .slide { width: 1920px; height: 1080px; transform: scale(.2); transform-origin: 0 0; }
   body.overview .progress, body.overview .hint { display: none; }
 
-  /* print: one slide per page */
   @page { size: 1920px 1080px; margin: 0; }
   @media print {
     html, body { overflow: visible; height: auto; }
     .viewport { position: static; }
     .stage { position: static; transform: none; width: 1920px; height: auto; }
     .frame { position: relative; opacity: 1; visibility: visible; width: 1920px; height: 1080px; break-after: page; }
-    * { animation: none !important; transition: none !important; }
+    * { animation: none !important; transition: none !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     .progress, .hint, .notes-panel { display: none !important; }
   }
 </style>
@@ -439,748 +204,297 @@
 <div class="viewport"><div class="stage">
 
 <!-- 1 · Title -->
-<section class="slide cover" data-sec="taxo">
-  <svg class="cloud" data-cloud="cover" data-seed="7" aria-hidden="true"></svg>
-  <p class="kick clear"><i></i>Kavak × OpenAI × Primero · hackathon</p>
-  <h1 class="clear" data-name>Taxo</h1>
-  <p class="subt clear">Learning to build product trees for any commerce domain</p>
-  <p class="levels clear"><b>brand</b> › <b>product</b> › <b>variant</b> › listings</p>
-  <p class="date clear">9 November 2026</p>
-  <aside class="notes">We're going to show you Taxo, a system that learns how to turn messy marketplace listings into clean product trees, and gets faster at it with every domain it sees.</aside>
+<section class="slide cover" data-n="1">
+  <h1 data-name>Taxo</h1>
+  <p class="subt">Learning to build product trees for any commerce domain</p>
+  <p class="ev">Kavak × OpenAI × Primero hackathon · 9 November 2026</p>
+  <aside class="notes">We're going to show you Taxo: a system that learns how to turn messy marketplace listings into clean product trees, and gets faster at it with every domain it sees.</aside>
 </section>
 
-<!-- 2 · One product, five listings -->
-<section class="slide" data-sec="problem">
-  <div class="hd">
-    <p class="kick"><i></i>The problem</p>
-    <h2 class="t">Understanding a market means connecting its listings</h2>
-    <p class="sub">One perfume, Lattafa Khamrah 100 ml: five listings, five shops, five ways of writing it.</p>
-  </div>
-  <div class="bd">
-    <div class="mk">
-      <div class="card lc">
-        <div class="src"><span class="wm">Lattafa</span><small>brand site</small></div>
-        <div class="photo"><img alt="Khamrah, on Lattafa's site" referrerpolicy="no-referrer" src="https://cdn.shopify.com/s/files/1/0754/4936/8799/files/Khamrah-1_0ffa4f52-30e3-4dea-9399-9bae4b8cb4af.png?v=1747421472&width=500"></div>
-        <q>Khamrah</q>
-        <p class="by">lattafa-usa.com</p>
-      </div>
-      <div class="card lc">
-        <div class="src"><svg viewBox="0 0 24 24"><use href="#lg-amazon"/></svg>Amazon</div>
-        <div class="photo"><img alt="Khamrah on Amazon" referrerpolicy="no-referrer" src="https://m.media-amazon.com/images/I/41y4j5kGFML._AC_SL500_.jpg"></div>
-        <q>Lattafa Khamrah for Unisex Eau de Parfum Spray, 3.4 Ounce</q>
-        <p class="by">amazon.com</p>
-      </div>
-      <div class="card lc">
-        <div class="src"><svg class="wmt" viewBox="0 0 24 6.8"><use href="#lg-walmart"/></svg></div>
-        <div class="photo"><img alt="Khamrah on Walmart" referrerpolicy="no-referrer" src="https://i5.walmartimages.com/seo/Lattafa-Khamrah-3-4-oz-EDP-Spray_cf860d92-b02d-4aa7-87c6-820430d33edc.79ad3221c1ca65ae1b0f38f85e7f2c3b.jpeg?odnHeight=400&odnWidth=400&odnBg=FFFFFF"></div>
-        <q>Lattafa Khamrah , 3.4 oz EDP Spray</q>
-        <p class="by">sold by Sellet Wholesale LLC</p>
-      </div>
-      <div class="card lc">
-        <div class="src"><svg viewBox="0 0 24 24"><use href="#lg-tiktok"/></svg>TikTok Shop</div>
-        <div class="photo"><img alt="Khamrah on TikTok Shop, Oudphoria" referrerpolicy="no-referrer" src="https://p16-oec-general-useast5.ttcdn-us.com/tos-useast5-i-omjb5zjo8w-tx/4885fed045bf46b3963691a4e108aded~tplv-fhlh96nyum-crop-webp:800:800.webp?dr=12190&t=555f072d&ps=933b5bde&shp=c940a200&shcp=9b759fb9&idc=useast5&from=3376456192"></div>
-        <q>Khamrah by Lattafa for Men and Women 3.4 Ounce (100ml) Eau De Parfum Spray Perfume Fragrance Vanilla Amber</q>
-        <p class="by">shop: Oudphoria</p>
-      </div>
-      <div class="card lc">
-        <div class="src"><svg viewBox="0 0 24 24"><use href="#lg-tiktok"/></svg>TikTok Shop</div>
-        <div class="photo"><img alt="Khamrah on TikTok Shop, Fragrant Villa" referrerpolicy="no-referrer" src="https://p16-oec-general-useast5.ttcdn-us.com/tos-useast5-i-omjb5zjo8w-tx/f9ac660d486c0a55156179cf3cdbe843~tplv-fhlh96nyum-crop-webp:800:800.webp?dr=12190&t=555f072d&ps=933b5bde&shp=c940a200&shcp=9b759fb9&idc=useast5&from=3376456192"></div>
-        <q>Lattafa Khamrah Unisex Eau de Parfum Spray, 3.4 Oz, Aromatic Sweet Spicy Cinnamon Flavor Fragrance - Cologne, Perfumes, Signature Scent, Smelling Good</q>
-        <p class="by">shop: Fragrant Villa</p>
-      </div>
+<!-- 2 · Hill-climbing is hard -->
+<section class="slide" data-n="2">
+  <h2>A system that grades its own work climbs the wrong hill.</h2>
+  <p class="lede">In our last project, Pedia, an LLM judge scored every round of rule changes. The owner's labels told a different story.</p>
+  <div class="fill" style="display:grid;grid-template-columns:1fr 460px;gap:90px;align-items:center">
+    <div class="chart" style="height:100%">
+      <h3>Share of 245 sealed listings placed right</h3>
+      <div class="plot"><svg class="ch" id="pe2"></svg></div>
     </div>
-    <svg class="chart" id="conv5" viewBox="0 0 1680 70" aria-hidden="true"></svg>
-    <div class="one">one product <span>Lattafa › Khamrah</span></div>
+    <div>
+      <p class="num">15 <small>of 48</small></p>
+      <p class="t" style="font:400 30px/1.4 var(--sans);color:var(--ink2);margin:18px 0 0">changes made the judge happier and the labels worse. The loop kept all 15.</p>
+      <p class="t" style="font:600 30px/1.4 var(--sans);margin:40px 0 0">To improve a system, you need a score it can't move by itself.</p>
+    </div>
   </div>
-  <p class="cite">Titles and photos as the shops publish them (M4R extracts).</p>
-  <aside class="notes">- To understand a commerce market, you have to connect listings from different marketplaces.
-- This is one perfume. Five shops, five titles. Until you know they are the same product, you can't add up its price, its reviews or its demand.</aside>
+  <aside class="notes">Before the problem, the lesson that shaped Taxo. Self-improving systems are easy to build and hard to trust. In Pedia, our last project, a loop changed its own rules and an LLM judge scored each round. The judge went from 78% to 87%. The owner's hand labels went from 81% to 84%. 15 of the 48 changes made the judge happier and the labels worse, and the loop kept every one. Hill-climbing only works if the score can't be moved by the system itself. That is the design constraint for everything that follows.
+Data: Pedia replay pe2, 245 sealed listings, mean of 6 runs (faint lines are the runs).</aside>
 </section>
 
-<!-- 3 · Food and fragrance trees -->
-<section class="slide" data-sec="problem">
-  <div class="hd">
-    <p class="kick"><i></i>The problem</p>
-    <h2 class="t">The way to connect them is a tree, in every domain</h2>
+<!-- 3A · Listings into a tree (one product, many shops) -->
+<section class="slide" data-n="3" data-var="A">
+  <h2>Understanding a market means connecting its listings into a tree.</h2>
+  <div class="fill tree">
+    <svg class="links"></svg>
+    <p class="lvl" style="top:6px">brand</p>
+    <p class="lvl" style="top:152px">product</p>
+    <p class="lvl" style="top:300px">listings</p>
+    <div class="nd" id="a-lat" style="left:1135px;top:0">Lattafa</div>
+    <div class="nd" id="a-kh" data-p="a-lat" style="left:770px;top:146px">Khamrah</div>
+    <div class="nd" id="a-kq" data-p="a-lat" style="left:1500px;top:146px">Khamrah Qahwa<small>a flanker: its own product</small></div>
+    <figure class="pic" data-p="a-kh" style="left:239px;top:300px;width:190px"><div class="im"><img referrerpolicy="no-referrer" alt="Lattafa Khamrah on the brand's site" src="https://cdn.shopify.com/s/files/1/0754/4936/8799/files/Khamrah-1_0ffa4f52-30e3-4dea-9399-9bae4b8cb4af.png?v=1747421472&width=500"></div><figcaption>lattafa.com</figcaption></figure>
+    <figure class="pic" data-p="a-kh" style="left:457px;top:300px;width:190px"><div class="im"><img referrerpolicy="no-referrer" alt="Khamrah on Amazon" src="https://m.media-amazon.com/images/I/41y4j5kGFML._AC_SL500_.jpg"></div><figcaption><svg viewBox="0 0 24 24"><use href="#lg-amazon"/></svg>Amazon</figcaption></figure>
+    <figure class="pic" data-p="a-kh" style="left:675px;top:300px;width:190px"><div class="im"><img referrerpolicy="no-referrer" alt="Khamrah on Walmart" src="https://i5.walmartimages.com/seo/Lattafa-Khamrah-3-4-oz-EDP-Spray_cf860d92-b02d-4aa7-87c6-820430d33edc.79ad3221c1ca65ae1b0f38f85e7f2c3b.jpeg?odnHeight=400&odnWidth=400&odnBg=FFFFFF"></div><figcaption><svg class="wm" viewBox="0 0 24 6.8"><use href="#lg-walmart"/></svg></figcaption></figure>
+    <figure class="pic" data-p="a-kh" style="left:893px;top:300px;width:190px"><div class="im"><img referrerpolicy="no-referrer" alt="Khamrah on TikTok Shop, Oudphoria" src="https://p16-oec-general-useast5.ttcdn-us.com/tos-useast5-i-omjb5zjo8w-tx/4885fed045bf46b3963691a4e108aded~tplv-fhlh96nyum-crop-webp:800:800.webp?dr=12190&t=555f072d&ps=933b5bde&shp=c940a200&shcp=9b759fb9&idc=useast5&from=3376456192"></div><figcaption><svg viewBox="0 0 24 24"><use href="#lg-tiktok"/></svg>Oudphoria</figcaption></figure>
+    <figure class="pic" data-p="a-kh" style="left:1111px;top:300px;width:190px"><div class="im"><img referrerpolicy="no-referrer" alt="Khamrah on TikTok Shop, Fragrant Villa" src="https://p16-oec-general-useast5.ttcdn-us.com/tos-useast5-i-omjb5zjo8w-tx/f9ac660d486c0a55156179cf3cdbe843~tplv-fhlh96nyum-crop-webp:800:800.webp?dr=12190&t=555f072d&ps=933b5bde&shp=c940a200&shcp=9b759fb9&idc=useast5&from=3376456192"></div><figcaption><svg viewBox="0 0 24 24"><use href="#lg-tiktok"/></svg>Fragrant Villa</figcaption></figure>
+    <figure class="pic" data-p="a-kq" style="left:1405px;top:300px;width:190px"><div class="im"><img referrerpolicy="no-referrer" alt="Khamrah Qahwa on Walmart" src="https://i5.walmartimages.com/seo/Lattafa-Khamrah-Qahwa-Eau-De-Parfum-3-4-Oz-Unisex-Fragrance-Lattafa_97970d71-3809-466a-86c2-a6622eb2052b.847378a05cda93ada488988400606dbb.jpeg?odnHeight=400&odnWidth=400&odnBg=FFFFFF"></div><figcaption><svg class="wm" viewBox="0 0 24 6.8"><use href="#lg-walmart"/></svg></figcaption></figure>
+    <p class="note" style="position:absolute;left:0;bottom:0;max-width:1500px">Five shops, five titles, one product. Until you know they're the same, you can't add up its price, its reviews or its demand. A size or a gift set is never a new node.</p>
   </div>
-  <div class="bd">
-    <div class="two" style="flex:1">
-      <div class="card tc">
-        <div class="ch"><b>Food</b><span>brand › product › variant</span></div>
-        <svg class="chart" data-tree="food" role="img" aria-label="Oreo has Original, Double Stuf and Thins. Double Stuf comes in Chocolate, Golden and Mint."></svg>
-      </div>
-      <div class="card tc">
-        <div class="ch"><b>Fragrance</b><span>brand › family › product</span></div>
-        <svg class="chart" data-tree="fragrance" role="img" aria-label="Lattafa has the Khamrah and Yara families. Khamrah has Khamrah, Khamrah Qahwa and Khamrah Dukhan."></svg>
-      </div>
-    </div>
-    <p class="rule-line">A size or a 12-pack is <b>never</b> a new node. A flanker like Khamrah Qahwa <b>is</b>.</p>
-  </div>
-  <aside class="notes">- The way to connect them is a tree. In food, a brand has products and the products have variants: Oreo has Double Stuf, and Double Stuf comes in Golden.
-- Fragrance has one more level: Lattafa has the Khamrah family, and Khamrah Qahwa is a product inside it.
-- A size or a 12-pack is never a new node.</aside>
+  <aside class="notes">To understand a commerce market you have to connect listings across marketplaces. This is one perfume, Lattafa Khamrah: the brand's own site, Amazon, Walmart and two TikTok Shop sellers. Five titles, one product. Until you know they're the same, you can't add up its price, its reviews or its demand. The way to connect them is a tree: brand, product, listings. A size or a gift set is never a new node; a flanker like Khamrah Qahwa is.</aside>
 </section>
 
-<!-- 4 · A variant connects listings, search terms and hashtags -->
-<section class="slide" data-sec="problem">
-  <div class="hd">
-    <p class="kick"><i></i>The problem</p>
-    <h2 class="t">One variant connects listings, search terms and hashtags</h2>
-  </div>
-  <div class="var">
-    <div class="left">
-      <div class="crumb"><span>Oreo</span><i>›</i><span>Double Stuf</span><i>›</i><span class="on">Golden</span></div>
-      <svg class="chart" id="fan3" viewBox="0 0 1172 64" aria-hidden="true"></svg>
-      <div class="l3">
-        <div class="card lc">
-          <div class="src"><svg viewBox="0 0 24 24"><use href="#lg-amazon"/></svg>Amazon</div>
-          <div class="photo"><img alt="Oreo Double Stuf Golden on Amazon" referrerpolicy="no-referrer" src="https://m.media-amazon.com/images/I/713KTU5Cw1L._SL500_.jpg"></div>
-          <q>OREO Double Stuf Golden Sandwich Cookies, Family Size, 18.71 oz</q>
-        </div>
-        <div class="card lc">
-          <div class="src"><svg class="wmt" viewBox="0 0 24 6.8"><use href="#lg-walmart"/></svg></div>
-          <div class="photo empty"><svg viewBox="0 0 24 6.8" style="width:120px;height:auto"><use href="#lg-walmart"/></svg></div>
-          <q>(3 pack) OREO Double Stuf Golden Sandwich Cookies, 14.03 oz</q>
-        </div>
-        <div class="card lc">
-          <div class="src"><svg viewBox="0 0 24 24"><use href="#lg-tiktok"/></svg>TikTok Shop</div>
-          <div class="photo empty"><svg viewBox="0 0 24 24"><use href="#lg-tiktok"/></svg></div>
-          <q><span class="ph">[TikTok Shop listing]</span></q>
-        </div>
-      </div>
-      <svg class="chart" id="fan3b" viewBox="0 0 1172 56" aria-hidden="true"></svg>
-      <div class="tags">
-        <div class="tg"><em>search terms</em><span class="chip"><span class="ph">[search terms]</span></span></div>
-        <div class="tg"><em>hashtags</em><span class="chip">#goldenoreo</span><span class="chip">#oreos</span></div>
-      </div>
-    </div>
-    <div class="card roll">
-      <p class="rt">Everything attached rolls up to Double Stuf Golden</p>
-      <ul>
-        <li><i></i>Price, across shops</li>
-        <li><i></i>Reviews and ratings</li>
-        <li><i></i>What people search for</li>
-        <li><i></i>What people post about</li>
-      </ul>
-      <p class="so">→ interest in the variant, not one listing, and better predictions</p>
-    </div>
-  </div>
-  <p class="cite">Titles: Amazon and Walmart US extracts · hashtags: TikTok hashtag data · <span class="ph">[ ]</span> still to fill in</p>
-  <aside class="notes">- Oreo has products, those products have variants, and each variant connects to listings in different shops, and to the hashtags and search terms people use.
-- Once they are connected you can see interest in Double Stuf Golden, not just in one listing, and make better predictions.
+<!-- 3B · Two trees with photos -->
+<section class="slide" data-n="3" data-var="B">
+  <h2>Understanding a market means connecting its listings into a tree, in every domain.</h2>
+  <div class="fill tree">
+    <svg class="links"></svg>
+    <div class="nd" id="b-oreo" style="left:380px;top:0">Oreo<small>brand</small></div>
+    <div class="nd sm dim" id="b-orig" data-p="b-oreo" style="left:110px;top:150px">Original</div>
+    <div class="nd sm" id="b-ds" data-p="b-oreo" style="left:380px;top:150px">Double Stuf<small>product</small></div>
+    <div class="nd sm dim" id="b-th" data-p="b-oreo" style="left:650px;top:150px">Thins</div>
+    <div class="nd sm dim" id="b-choc" data-p="b-ds" style="left:200px;top:300px">Chocolate</div>
+    <div class="nd sm" id="b-gold" data-p="b-ds" style="left:500px;top:300px">Golden<small>variant</small></div>
+    <figure class="pic" data-p="b-gold" style="left:395px;top:440px;width:210px"><div class="im"><img referrerpolicy="no-referrer" alt="Oreo Double Stuf Golden on Amazon" src="https://m.media-amazon.com/images/I/713KTU5Cw1L._SL500_.jpg"></div><figcaption><svg viewBox="0 0 24 24"><use href="#lg-amazon"/></svg>Amazon</figcaption></figure>
 
-Data: the Amazon and Walmart titles and the hashtags #goldenoreo and #oreos are real (M4R extracts). Our extracts have no Double Stuf Mint, so the slide uses Double Stuf Golden. The TikTok Shop listing and the search terms are still to fill in.</aside>
+    <div class="nd" id="b-lat" style="left:1240px;top:0">Lattafa<small>brand</small></div>
+    <div class="nd sm" id="b-khf" data-p="b-lat" style="left:1120px;top:150px">Khamrah<small>family</small></div>
+    <div class="nd sm dim" id="b-yara" data-p="b-lat" style="left:1500px;top:150px">Yara</div>
+    <div class="nd sm" id="b-kh" data-p="b-khf" style="left:920px;top:300px">Khamrah<small>product</small></div>
+    <div class="nd sm" id="b-kq" data-p="b-khf" style="left:1320px;top:300px">Khamrah Qahwa<small>product</small></div>
+    <figure class="pic" data-p="b-kh" style="left:815px;top:440px;width:210px"><div class="im"><img referrerpolicy="no-referrer" alt="Lattafa Khamrah on the brand's site" src="https://cdn.shopify.com/s/files/1/0754/4936/8799/files/Khamrah-1_0ffa4f52-30e3-4dea-9399-9bae4b8cb4af.png?v=1747421472&width=500"></div><figcaption>lattafa.com</figcaption></figure>
+    <figure class="pic" data-p="b-kq" style="left:1215px;top:440px;width:210px"><div class="im"><img referrerpolicy="no-referrer" alt="Khamrah Qahwa on Walmart" src="https://i5.walmartimages.com/seo/Lattafa-Khamrah-Qahwa-Eau-De-Parfum-3-4-Oz-Unisex-Fragrance-Lattafa_97970d71-3809-466a-86c2-a6622eb2052b.847378a05cda93ada488988400606dbb.jpeg?odnHeight=400&odnWidth=400&odnBg=FFFFFF"></div><figcaption><svg class="wm" viewBox="0 0 24 6.8"><use href="#lg-walmart"/></svg></figcaption></figure>
+  </div>
+  <aside class="notes">The way to connect listings is a tree, in every domain. In food, a brand has products and products have variants: Oreo has Double Stuf, and Double Stuf comes in Golden. Fragrance has one more level: Lattafa has the Khamrah family, and Khamrah Qahwa is a product inside it. Each leaf is where the listings from every shop attach. A size or a 12-pack is never a new node.</aside>
 </section>
 
-<!-- 5 · Why it's hard -->
-<section class="slide" data-sec="problem">
-  <div class="hd">
-    <p class="kick"><i></i>The problem</p>
-    <h2 class="t">Doing this by hand is hard, and there are four million listings</h2>
-  </div>
-  <div class="hard">
-    <div class="scale">
-      <p class="num">4M</p>
-      <p class="u">listings to place</p>
-      <p>The same product is written fifty different ways, and every shop has its own habits.</p>
+<!-- 4 · Hard -->
+<section class="slide" data-n="4">
+  <h2>Four million listings, and the hard ones look easy.</h2>
+  <div class="fill hard">
+    <div>
+      <div class="big">4M</div>
+      <p>listings to place. The same product is written fifty different ways.</p>
     </div>
     <div class="traps">
-      <div class="card trap">
-        <div class="photo"><img alt="Cookie variety pack" referrerpolicy="no-referrer" src="https://i5.walmartimages.com/seo/Cookie-Variety-Pack-3-Flavors-30-Original-Oreo-20-Chips-Ahoy-10-Golden-Vanilla-Oreo-Individually-Wrapped-Packs-Sweet-Treat-Snack-60-Total_0259ce30-0a06-4fd4-85f0-7bdfc9c03351.9e42956bc41d6ccd6bcccb5949c82f9f.jpeg?odnHeight=400&odnWidth=400&odnBg=FFFFFF"></div>
-        <div class="tx">
-          <div class="src"><svg class="wmt" viewBox="0 0 24 6.8"><use href="#lg-walmart"/></svg></div>
-          <p class="kd">A shop posing as a brand</p>
-          <q>Cookie Variety Pack 3 Flavors 30 Original Oreo, 20 Chips Ahoy, &amp; 10 Golden Vanilla Oreo…</q>
-          <p class="meta">brand: Muchai Innovations</p>
-          <span class="chip bad sm">a shop, not a brand</span>
-        </div>
-      </div>
-      <div class="card trap">
-        <div class="photo"><img alt="Khamrah gift set" referrerpolicy="no-referrer" src="https://m.media-amazon.com/images/I/411L14HlHEL._AC_SL500_.jpg"></div>
-        <div class="tx">
-          <div class="src"><svg viewBox="0 0 24 24"><use href="#lg-amazon"/></svg>Amazon</div>
-          <p class="kd">A gift set</p>
-          <q>Lattafa Khamrah 2 Pcs Giftset With 100ml Edp + 200ml…</q>
-          <span class="chip sm">belongs to Lattafa › Khamrah</span>
-        </div>
-      </div>
-      <div class="card trap">
-        <div class="photo"><img alt="Khamrah Qahwa" referrerpolicy="no-referrer" src="https://i5.walmartimages.com/seo/Lattafa-Khamrah-Qahwa-Eau-De-Parfum-3-4-Oz-Unisex-Fragrance-Lattafa_97970d71-3809-466a-86c2-a6622eb2052b.847378a05cda93ada488988400606dbb.jpeg?odnHeight=400&odnWidth=400&odnBg=FFFFFF"></div>
-        <div class="tx">
-          <div class="src"><svg class="wmt" viewBox="0 0 24 6.8"><use href="#lg-walmart"/></svg></div>
-          <p class="kd">A flanker</p>
-          <q>Lattafa Khamrah Qahwa Eau De Parfum 3.4 Oz Unisex Fragrance Lattafa</q>
-          <span class="chip ind sm">a new product</span>
-        </div>
-      </div>
-      <div class="card trap">
-        <div class="photo"><img alt="Oreo Minis Golden 12-pack" referrerpolicy="no-referrer" src="https://m.media-amazon.com/images/I/816bTRzo9gL._SL500_.jpg"></div>
-        <div class="tx">
-          <div class="src"><svg viewBox="0 0 24 24"><use href="#lg-amazon"/></svg>Amazon</div>
-          <p class="kd">A 12-pack</p>
-          <q>OREO Minis Golden Sandwich Cookies, 12 - 3.5 oz Snack Cups</q>
-          <span class="chip sm">not a new product</span>
-        </div>
-      </div>
+      <div class="trap"><figure class="pic"><div class="im"><img referrerpolicy="no-referrer" alt="Cookie variety pack on Walmart" src="https://i5.walmartimages.com/seo/Cookie-Variety-Pack-3-Flavors-30-Original-Oreo-20-Chips-Ahoy-10-Golden-Vanilla-Oreo-Individually-Wrapped-Packs-Sweet-Treat-Snack-60-Total_0259ce30-0a06-4fd4-85f0-7bdfc9c03351.9e42956bc41d6ccd6bcccb5949c82f9f.jpeg?odnHeight=400&odnWidth=400&odnBg=FFFFFF"></div><figcaption><svg class="wm" viewBox="0 0 24 6.8"><use href="#lg-walmart"/></svg></figcaption></figure>
+        <p><b>Muchai</b> is the shop, not the brand.</p></div>
+      <div class="trap"><figure class="pic"><div class="im"><img referrerpolicy="no-referrer" alt="Khamrah 2-piece gift set on Amazon" src="https://m.media-amazon.com/images/I/411L14HlHEL._AC_SL500_.jpg"></div><figcaption><svg viewBox="0 0 24 24"><use href="#lg-amazon"/></svg>Amazon</figcaption></figure>
+        <p>A <b>gift set</b> is still Lattafa Khamrah.</p></div>
+      <div class="trap"><figure class="pic"><div class="im"><img referrerpolicy="no-referrer" alt="Oreo Minis Golden 12-pack on Amazon" src="https://m.media-amazon.com/images/I/816bTRzo9gL._SL500_.jpg"></div><figcaption><svg viewBox="0 0 24 24"><use href="#lg-amazon"/></svg>Amazon</figcaption></figure>
+        <p>A <b>12-pack</b> is not a new product.</p></div>
     </div>
   </div>
-  <aside class="notes">- Doing this is hard, and with four million listings it gets really complicated.
-- The same product is written fifty different ways. Shops pose as brands. A gift set belongs to its maker. A 12-pack is not a new product, but a flanker like Khamrah Qahwa is.
-- Labelling four million listings by hand doesn't scale.</aside>
+  <aside class="notes">Doing this is hard, and with four million listings it gets really complicated. The same product is written fifty different ways. Shops pose as brands: Muchai is a shop. A gift set belongs to its maker's product. A 12-pack is not a new product, but a flanker like Khamrah Qahwa is. Labelling four million listings by hand doesn't scale.</aside>
 </section>
 
-<!-- 6 · Why not just an agent? -->
-<section class="slide" data-sec="problem">
-  <div class="hd">
-    <p class="kick"><i></i>The obvious answer</p>
-    <h2 class="t">Why not just send every listing to an agent?</h2>
-  </div>
-  <div class="agent">
-    <div class="card">
-      <p class="who" style="--c:var(--bad)"><i></i>The bill, agent only</p>
-      <div class="calc">
-        <div><span class="num">4M</span><small>listings</small></div>
-        <span class="op">×</span>
-        <div><span class="num"><span class="ph" data-r="AO.cost">[$c]</span></span><small>per 1,000 listings</small></div>
-        <span class="op">=</span>
-        <div><span class="num cr"><span class="ph" data-r="AO.cost4M">[$C]</span></span><small>for one pass</small></div>
-      </div>
-      <p class="cap">And again for every refresh, every new shop and every new domain. The bill grows with the number of listings, not with how hard they are.</p>
+<!-- 5 · Why not just an agent -->
+<section class="slide" data-n="5">
+  <h2>Why not send every listing to an agent?</h2>
+  <div class="split">
+    <div>
+      <h3>It costs</h3>
+      <p class="eq">4M listings × <span class="ph" data-r="AO.cost">[$c]</span> per 1,000</p>
+      <p class="num">= <span class="ph" data-r="AO.cost4M">[$C]</span></p>
+      <p class="t">for one pass. Again for every refresh, and again for every new domain.</p>
     </div>
-    <div class="card">
-      <p class="who" style="--c:var(--bad)"><i></i>And it is wrong in ways you can't see</p>
-      <div class="ev first"><span class="num"><span class="ph" data-r="AO.f1">[f]</span></span><p><b>F1 of the agent alone</b> on gold that a person labelled.</p></div>
-      <div class="ev"><span class="num">59%</span><p>of the food listings our earlier agent set aside as unplaceable <b>were real products.</b></p></div>
-      <div class="ev"><span class="num">87%</span><p>is what an LLM judge said our earlier loop reached. <b>The owner's labels said 84%,</b> and 15 of its 48 changes made them worse.</p></div>
+    <div>
+      <h3>And it's wrong without saying so</h3>
+      <div class="pair"><p class="num"><span class="ph" data-r="AO.f1">[f]</span></p><p class="t">F1 of the agent alone on the gold set.</p></div>
+      <div class="pair"><p class="num">59%</p><p class="t">of the food listings our earlier agent set aside as unplaceable were real products.</p></div>
     </div>
   </div>
-  <p class="bl">Rules are free, readable and testable. <b><span data-name></span> sends an agent only what the rules can't settle.</b></p>
-  <aside class="notes">- The obvious answer is to send every listing to an agent. It doesn't scale. At [$c] per thousand listings, four million listings cost [$C] for one pass, and again for every refresh and every new domain.
-- And it is wrong in ways you can't see. On gold, the agent alone scores [f]. In our earlier system, 59% of the food listings the agent set aside as unplaceable were real products. And when we let a loop grade itself with an LLM judge, the judge said 87%; the owner's labels said 84%.
-- So this isn't over-engineering a labeller. Rules are free, you can read them and test them. Taxo sends an agent only what the rules can't settle.
-
-Source of the 87% / 84%: Pedia replay pe2, mean of six runs after round 4 (78% → 87% by the judge, 81% → 84% by the owner). Backup slides 1–2 show the curves.</aside>
+  <p class="bottom">Rules are free, and you can read and test them. Taxo sends an agent only what the rules can't settle.</p>
+  <aside class="notes">The obvious answer is to send every listing to an agent. At [$c] per thousand listings, four million cost [$C] for one pass, and again for every refresh and every new domain. And it is wrong in ways you can't see: on gold the agent alone scores [f]; in Pedia, 59% of the food listings the agent set aside as unplaceable were real products. So this is not over-engineering a labeller. Rules are free, readable and testable; the agent gets only what they can't settle.</aside>
 </section>
 
-<!-- 7 · Taxo: a two-fold system -->
-<section class="slide" data-sec="taxo">
-  <div class="hd">
-    <p class="kick"><i></i>Introducing <span data-name></span></p>
-    <h2 class="t"><span data-name></span> is a two-fold system that learns how to build the trees</h2>
-  </div>
-  <div class="fold">
-    <div class="card">
-      <p class="fl"><em>Fold 1</em>Inside one domain</p>
-      <svg class="chart" id="fold1" viewBox="0 0 1000 420" role="img" aria-label="Two loops. Induction turns gold into rules. Validation finds errors on fresh listings, a person settles them, and they become gold."></svg>
-      <div class="lt">
-        <p style="--c:var(--ind)"><b>Induction loop</b>Turns a hand-labelled gold set into cheap rules. Raises F1 on gold, lowers the cost.</p>
-        <p style="--c:var(--val)"><b>Validation loop</b>Finds the errors gold can't show, on fresh listings. Grows the gold and sharpens the validator.</p>
-      </div>
-    </div>
-    <div class="card">
-      <p class="fl"><em>Fold 2</em>Across domains</p>
-      <svg class="chart" id="fold2" viewBox="0 0 560 420" role="img" aria-label="The meta loop carries lessons from food to fragrance to cars."></svg>
-      <div class="lt one-col">
-        <p style="--c:var(--meta)"><b>Meta loop</b>Carries the rules and checks that worked to the next domain, so it starts ahead.</p>
-      </div>
-    </div>
-  </div>
-  <aside class="notes">- We introduce Taxo, a two-fold system with generalisable learning for this task.
-- First, inside one domain, two loops. Induction turns a hand-labelled gold set into rules. Validation goes looking for the errors gold can't show.
-- Second, across domains, a meta loop carries what worked to the next domain.</aside>
+<!-- 6A · Architecture: pipeline in the middle, loops around it -->
+<section class="slide" data-n="6" data-var="A">
+  <h2>Taxo: a pipeline of free rules, and three loops that improve it.</h2>
+  <div class="fill"><svg class="ch" id="archA"></svg></div>
+  <aside class="notes">This is the system. In the middle, the pipeline: listings go through free rules (parse, brand, registry, lattice), and only what they can't settle goes to an agent, paid per call. Above it, the induction loop: run on the hand-labelled gold set, an agent reads the errors and proposes one rule, and a gate in code keeps it only if F1 on sealed gold rises. Below it, the validation loop: a validator agent labels fresh listings blind; where it disagrees with the pipeline a person settles it, and that becomes new gold. On the right, the meta loop: what worked, with its scope, starts the next domain.</aside>
 </section>
 
-<!-- 7 · The induction loop -->
-<section class="slide" data-sec="ind">
-  <div class="hd">
-    <p class="kick"><i></i>Inside one domain · Induction loop</p>
-    <h2 class="t">From a hand-labelled gold set, induction learns deterministic rules</h2>
-  </div>
-  <div class="bd">
-    <div class="rules">
-      <div class="card">
-        <div class="rn"><i>1</i><div><small>count</small><b>The lattice</b></div></div>
-        <p class="d">Counts word runs across all of a brand's listings. Runs seen twice are products; a shared root is a family. No word lists.</p>
-        <div class="vis"><svg class="chart" id="lat-small" viewBox="0 0 470 250" role="img" aria-label="Counts across six Lattafa titles: khamrah 5, khamrah qahwa 2, khamrah dukhan 1, yara 1."></svg></div>
-      </div>
-      <div class="card">
-        <div class="rn"><i>2</i><div><small>look up</small><b>A registry of official brands</b></div></div>
-        <p class="d">An agent searches the web for each brand's official lines. Code writes them as a file the rules can read.</p>
-        <div class="vis code">
-          <div class="fn">registry/fragrance/lattafa.yaml</div>
-<pre class="yaml">brand: Lattafa
+<!-- 6B · Architecture: two folds, zoom into one domain -->
+<section class="slide" data-n="6" data-var="B">
+  <h2>Taxo is two-fold: loops inside one domain, and a loop across domains.</h2>
+  <div class="fill"><svg class="ch" id="archB"></svg></div>
+  <aside class="notes">Taxo is two-fold. Inside one domain (zoomed in on the right): induction turns gold into rules, the pipeline runs them with an agent for what's left, and validation finds the errors gold can't show, settled by a person. Across domains (on the left): the meta loop carries the lessons from food to fragrance to cars.</aside>
+</section>
+
+<!-- 6C · Architecture: who does what -->
+<section class="slide" data-n="6" data-var="C">
+  <h2>Code does the work, agents do the judgment, a person decides what's true.</h2>
+  <div class="fill"><svg class="ch" id="archC"></svg></div>
+  <aside class="notes">Read it by column. Placing listings: code settles most of them, the cheapest agent gets the rest. Induction: a person labels gold, an agent proposes rules, code gates them on sealed gold. Validation: an agent labels fresh listings blind, a person settles every disagreement and teaches the validator. Meta: code keeps what worked, with its scope, and the next domain starts from it. No step lets a system grade itself.</aside>
+</section>
+
+<!-- 7A · Induction: one listing through the rules -->
+<section class="slide" data-n="7" data-var="A">
+  <h2>Induction turns the gold set into rules you can read.</h2>
+  <p class="ltitle"><span class="b">Lattafa</span> <span class="p">Khamrah Qahwa</span> <s>Eau De Parfum 3.4 Oz Unisex Fragrance</s> <span class="b">Lattafa</span></p>
+  <p class="note">A Walmart title, through the four free rules</p>
+  <div class="steps4">
+    <div><h3><span>1</span>Vocabulary</h3><p>Sizes, concentrations and audiences are variants, never names.</p>
+<pre class="y">concentration:
+  [eau de parfum, edp]
+size: '\d+(\.\d+)?\s?(ml|oz)'
+audience: [unisex, for men]</pre></div>
+    <div><h3><span>2</span>Registry</h3><p>An agent finds each brand's official lines once; code writes them down.</p>
+<pre class="y">brand: Lattafa
 nodes:
-  - id: F_khamrah
-    level: family
-  - id: P_khamrah_qahwa
-    level: product
-    parent: F_khamrah
-    source: official</pre>
-        </div>
-      </div>
-      <div class="card">
-        <div class="rn"><i>3</i><div><small>route</small><b>Send the rest to an agent</b></div></div>
-        <p class="d">What the rules can't settle goes to the cheapest agent that can. Agents only see the hard cases.</p>
-        <div class="vis ladr">
-          <div class="hd2"><span>the agent gets</span><span>cost</span></div>
-          <div>the title<b>$</b></div>
-          <div>+ the description<b>$$</b></div>
-          <div>+ sibling listings<b>$$$</b></div>
-          <div>+ a web search<b>$$$$</b></div>
-        </div>
-      </div>
-    </div>
-    <ol class="round">
-      <li class="lab">Each round</li>
-      <li><b>1</b>Run the rules on gold</li>
-      <li><b>2</b>An agent reads the errors</li>
-      <li><b>3</b>It proposes one rule</li>
-      <li><b>4</b>Kept only if sealed gold improves</li>
-    </ol>
+- {level: family,
+   name: Khamrah}
+- {level: product,
+   name: Khamrah Qahwa}</pre></div>
+    <div><h3><span>3</span>Lattice</h3><p>Count word runs across all the brand's listings. No word lists.</p>
+<pre class="y">khamrah        5  <i>family</i>
+khamrah qahwa  2  <i>product</i>
+khamrah dukhan 1  <i>unclear</i>
+yara           1  <i>unclear</i></pre></div>
+    <div><h3><span>4</span>Route</h3><p>Only the unclear go to the cheapest agent that can settle them.</p>
+<pre class="y">title only
++ description
++ sibling listings
++ web search</pre></div>
   </div>
-  <aside class="notes">- Inside one domain, we start from a gold set that a person labelled by hand.
-- The induction loop tries to turn it into deterministic rules, so that agents only see the hard cases. Three kinds:
-  - The lattice counts word sequences across all of a brand's listings. "Khamrah" is in five titles and "Khamrah Qahwa" in two, so Khamrah is a family and Khamrah Qahwa is a product. No word lists.
-  - A registry. An agent searches the web for each brand's official lines, and code writes them as a file the rules can read.
-  - A route. What is left goes to the cheapest agent that can settle it: the title alone, the title plus the description, or a web search.
-- Each round, an agent reads the errors and proposes one change. A gate in code keeps it only if it helps on gold that nobody tuned on.
-- The goal is two numbers: more of gold labelled right, at a lower cost.</aside>
+  <p class="result">Lattafa › Khamrah › Khamrah Qahwa<span>settled by rules, no agent call</span></p>
+  <aside class="notes">Here is what a rule looks like, on one real title. The vocabulary strips sizes, concentrations and audiences: they are variants, never names. The registry holds the brand's official lines, found once by an agent with web search and written down by code. The lattice counts word sequences across all of the brand's listings: Khamrah in five titles, Khamrah Qahwa in two, so Khamrah is a family and Khamrah Qahwa a product. Only the unclear ones go to an agent, the cheapest that can settle them. Induction learns these files: each round an agent reads the errors on gold and proposes one change, and a gate in code keeps it only if F1 on sealed gold rises.</aside>
 </section>
 
-<!-- 8 · Figure A -->
-<section class="slide" data-sec="ind">
-  <div class="hd">
-    <p class="kick"><i></i>Inside one domain · Induction loop</p>
-    <h2 class="t">Each round keeps one rule: we track F1 on gold and the cost</h2>
+<!-- 7B · Induction: the round, and a rule -->
+<section class="slide" data-n="7" data-var="B">
+  <h2>Induction turns the gold set into rules you can read.</h2>
+  <div class="fill" style="display:grid;grid-template-columns:1fr 760px;gap:100px">
+    <div class="round"><ul>
+      <li><span>1</span>Run the rules on the hand-labelled gold set.</li>
+      <li><span>2</span>An agent reads the errors.</li>
+      <li><span>3</span>It proposes one change: a rule, a registry entry, a route.</li>
+      <li><span>4</span>A gate in code tests it on sealed gold nobody tuned on.</li>
+      <li><span>5</span>Kept only if F1 rises and the cost doesn't.</li>
+    </ul></div>
+<pre class="y" style="align-self:start"><i># a kept rule is a file you can read</i>
+<i># registry/fragrance/lattafa.yaml</i>
+brand: Lattafa
+aliases: [lattafa, lattafa perfumes]
+nodes:
+  - {level: family,  name: Khamrah}
+  - {level: product, name: Khamrah Qahwa,
+     parent: Khamrah}
+basis:
+  Khamrah Qahwa: {source: official,
+                  ref: lattafa.com}
+
+<i># the lattice, over all of Lattafa's titles</i>
+khamrah        5   <em>→ family</em>
+khamrah qahwa  2   <em>→ product</em>
+khamrah dukhan 1   <em>→ unclear: registry or agent</em></pre>
   </div>
-  <div class="two" style="flex:1">
-    <div class="card fig">
-      <div class="ch"><b>F1 on sealed gold</b><span class="chip wait sm" data-fig="A">to run</span></div>
-      <div class="kpi"><span class="num"><span class="ph" data-r="A.f1.first">[x]</span> → <span class="ph cb" data-r="A.f1.last">[y]</span></span><small>higher is better</small></div>
-      <svg class="chart" data-figa="f1" role="img" aria-label="F1 on sealed gold by round."></svg>
-    </div>
-    <div class="card fig">
-      <div class="ch"><b>Cost per 1,000 listings</b><span class="chip wait sm" data-fig="A">to run</span></div>
-      <div class="kpi"><span class="num"><span class="ph" data-r="A.cost.first">[$a]</span> → <span class="ph" data-r="A.cost.last">[$b]</span></span><small>lower is better</small></div>
-      <svg class="chart" data-figa="cost" role="img" aria-label="Cost per 1,000 listings by round."></svg>
-    </div>
-  </div>
-  <p class="cite">Fragrance. Round 0 is the baseline; each later point is labelled with the rule it kept. Sealed gold is whole brands the loop never tunes on.</p>
-  <aside class="notes">- This is the induction loop on fragrance. Each round keeps one rule.
-- F1 on gold goes from [x] to [y], while the cost per thousand listings falls from [$a] to [$b].</aside>
+  <aside class="notes">Inside one domain we start from a gold set a person labelled by hand. Each round: run the rules on gold, an agent reads the errors and proposes one change, a gate in code tests it on sealed gold nobody tuned on, and it is kept only if F1 rises and cost doesn't. What it keeps is a file you can read, like this registry for Lattafa, and the lattice counts that turn titles into families and products.</aside>
 </section>
 
-<!-- 10 · What each rule saves -->
-<section class="slide" data-sec="ind">
-  <div class="hd">
-    <p class="kick"><i></i>Inside one domain · Induction loop</p>
-    <h2 class="t">How much each rule saves, against an agent alone</h2>
+<!-- 8 · What induction buys -->
+<section class="slide" data-n="8">
+  <h2>What induction buys, round by round.</h2>
+  <div class="charts2">
+    <div><h3>F1 on sealed gold</h3><p class="sub3">higher is better</p><div class="plot"><svg class="ch" id="figA1"></svg></div></div>
+    <div><h3>Cost per 1,000 listings</h3><p class="sub3">against sending every listing to an agent</p><div class="plot"><svg class="ch" id="figA2"></svg></div></div>
   </div>
-  <div class="b1">
-    <div class="card fig">
-      <div class="ch"><b>Cost per 1,000 listings, rule by rule</b><span class="chip wait sm" data-fig="A">to run</span></div>
-      <svg class="chart" id="figD" role="img" aria-label="Cost per 1,000 listings: the agent alone, then the drop from each rule kept, then Taxo."></svg>
-    </div>
-    <div class="card stack3">
-      <div><span class="num cr"><span class="ph" data-r="AO.cost4M">[$C]</span></span><span class="l">agent only, 4M listings<small>every listing to the agent</small></span></div>
-      <div><span class="num cb"><span class="ph" data-r="A.cost4M.last">[$B]</span></span><span class="l"><span data-name></span>, 4M listings<small>rules first, agents for the rest</small></span></div>
-      <div><span class="num"><span class="ph" data-r="A.share.last">[p]</span></span><span class="l">settled without an agent<small>free, and the same answer every time</small></span></div>
-    </div>
-  </div>
-  <p class="cite">Each step is one rule the gate kept. The gate refuses any rule that lowers F1 on sealed gold, so the savings never cost accuracy.</p>
-  <aside class="notes">- This is the answer to "why not just an agent". Each bar is one rule the gate kept, and how much it cut the cost.
-- At four million listings, the agent alone costs [$C]; Taxo costs [$B], and [p] of the listings never see an agent.
-- None of this costs accuracy: the gate refuses any rule that lowers F1 on sealed gold.</aside>
+  <p class="bottom">At four million listings: an agent alone <span class="ph" data-r="AO.cost4M">[$C]</span>, Taxo <span class="ph" data-r="A.cost4M.last">[$B]</span>. <span class="ph" data-r="A.share.last">[p]</span> of listings never see an agent.</p>
+  <aside class="notes">This is the induction loop on fragrance. Each round keeps one rule. F1 on sealed gold goes from [x] to [y], while the cost per thousand listings falls from [$a] to [$b]. At four million listings the agent alone costs [$C]; Taxo costs [$B], and [p] of listings never see an agent. None of it costs accuracy: the gate refuses any rule that lowers F1 on sealed gold.</aside>
 </section>
 
-<!-- 11 · Gold doesn't cover everything: the validation loop -->
-<section class="slide" data-sec="val">
-  <div class="hd">
-    <p class="kick"><i></i>Inside one domain · Validation loop</p>
-    <h2 class="t">Gold doesn't cover everything, so a second loop goes looking for errors</h2>
+<!-- 9 · Gold doesn't cover everything -->
+<section class="slide" data-n="9">
+  <h2>Gold doesn't cover everything.</h2>
+  <p class="lede">A person chose those cases. They can't contain every error a rule will make.</p>
+  <div class="vgrid">
+    <ul class="flow">
+      <li><b>Fresh listings</b>, never seen by the rules</li>
+      <li>A <b>validator agent</b> labels them blind, with more budget than the pipeline</li>
+      <li>Where it disagrees with the rules, <b>a person settles it</b></li>
+      <li>A new frozen validation set, and <b>new errors for induction</b></li>
+    </ul>
+    <div class="chart"><h3>Rule set 1, F1</h3><p class="sub3">on gold, then on two fresh validation sets</p><div class="plot"><svg class="ch" id="figB"></svg></div></div>
   </div>
-  <div class="vl">
-    <div class="pts">
-      <p><b>Gold is small, and a person chose it.</b> Even with a clean test split, it can't contain every error a rule will make.</p>
-      <p><b>An agent labels fresh listings on its own,</b> with more budget than the pipeline. Where it disagrees with the rules, a person settles it.</p>
-      <p><b>Each round leaves a frozen validation set,</b> and new errors for the induction loop.</p>
-      <p class="callout">In our earlier system, a rule matched the agent 145 times out of 145 and was marked as holding. Its truth was the agent it was meant to replace.</p>
-    </div>
-    <svg class="chart" id="ring" viewBox="0 0 1080 640" role="img" aria-label="The validation loop: fresh listings, the validator labels them blind, disagreements, a person settles them, back to fresh listings."></svg>
-  </div>
-  <aside class="notes">- But the gold set doesn't cover everything. Even with a clean test split, we can't say the rules generalise: a person chose those cases, and they can't contain every error a rule will make.
-- That is why we have the validation loop. An agent labels new listings on its own, with more budget than the pipeline, and brings up the errors the system is making. Where it disagrees, a person settles it.
-- Each round gives a new, frozen validation set.
-
-If asked: in Pedia, a learned rule matched the judge 145 of 145 times where it was mined and 22 of 24 held out, and was recorded as "holds". Its truth was the agent it was meant to replace.</aside>
+  <aside class="notes">But gold doesn't cover everything. Even with a clean test split we can't say the rules generalise: a person chose those cases. So the validation loop: an agent labels fresh listings on its own, with more budget than the pipeline, and brings up the errors the system is making. Where it disagrees, a person settles it. Each round gives a new frozen validation set. Rule set 1 scores [x] on gold, [y] on validation set 1 and [z] on validation set 2: fresh listings find errors gold never showed us.</aside>
 </section>
 
-<!-- 10 · Figure B, first half -->
-<section class="slide" data-sec="val">
-  <div class="hd">
-    <p class="kick"><i></i>Inside one domain · Validation loop</p>
-    <h2 class="t">Rule set 1 on gold, then on fresh validation sets</h2>
-  </div>
-  <div class="b1">
-    <div class="card fig">
-      <div class="ch"><b>F1 of rule set 1</b><span class="chip wait sm" data-fig="B">to run</span></div>
-      <svg class="chart" id="figB1" data-sets="1" role="img" aria-label="F1 of rule set 1 on gold, validation set 1 and validation set 2."></svg>
-    </div>
-    <div class="card stack3">
-      <div><span class="num"><span class="ph" data-r="B.R1.gold">[x]</span></span><span class="l">on gold<small>labelled by a person</small></span></div>
-      <div><span class="num"><span class="ph" data-r="B.R1.V1">[y]</span></span><span class="l">on validation set 1<small>fresh listings, round 1</small></span></div>
-      <div><span class="num"><span class="ph" data-r="B.R1.V2">[z]</span></span><span class="l">on validation set 2<small>fresh listings, round 2</small></span></div>
-    </div>
-  </div>
-  <aside class="notes">- Rule set 1 scores [x] on gold, [y] on validation set 1 and [z] on validation set 2.
-- Fresh listings find errors gold never showed us.</aside>
-</section>
-
-<!-- 11 · We iterate -->
-<section class="slide" data-sec="val">
-  <div class="hd">
-    <p class="kick"><i></i>Inside one domain · Validation loop</p>
-    <h2 class="t">We iterate: the new errors become new rules</h2>
-  </div>
-  <div class="b2">
-    <div class="card">
-      <div class="ch"><b>A rule that came from validation</b></div>
-      <div class="iter"><span class="chip sm">more brands</span><span class="chip sm">more of the process</span><span class="chip sm">the pattern underneath</span></div>
-      <div class="code">
-        <div class="fn">rules/fragrance/route-no-barcode-description.yaml</div>
-<pre class="yaml">id: route/no-barcode-description
+<!-- 10 · Iterate, and teach the validator -->
+<section class="slide" data-n="10">
+  <h2>So we iterate, and a person teaches the validator.</h2>
+  <div class="split">
+    <div>
+      <h3>The new errors become new rules</h3>
+<pre class="y"><i># rules/fragrance/route-no-barcode-description.yaml</i>
 when:
   - {fact: listing.barcode, missing: true}
   - {fact: listing.description_words, ge: 40}
   - {fact: placement.level, eq: brand}
 then: {route: agent_evidence}
-found_by: validation/V2
-status: shadow    # active only through the gate</pre>
-      </div>
-      <p class="cap"><span class="ph">[confirm from the run]</span> Small houses with no barcode name the product only in the description, and the rules stopped at the brand.</p>
+found_by: validation/V2</pre>
+      <p class="t" style="font-size:24px;color:var(--mute)">The case: <span class="ph">[confirm from the run: small houses with no barcode name the product only in the description]</span></p>
+      <p class="num" style="font-size:80px;margin-top:auto"><span class="ph" data-r="B.R1.V2">[z]</span> → <span class="ph" data-r="B.R2.V2">[w]</span></p>
+      <p class="t">F1 on validation set 2, rule set 1 → rule set 2</p>
     </div>
-    <div class="card fig">
-      <div class="ch"><b>Rule set 1 against rule set 2</b><span class="chip wait sm" data-fig="B">to run</span></div>
-      <div class="kpi"><small>on validation set 2</small><span class="num"><span class="ph" data-r="B.R1.V2">[z]</span> → <span class="ph cb" data-r="B.R2.V2">[w]</span></span></div>
-      <svg class="chart" id="figB2" data-sets="2" role="img" aria-label="F1 of rule sets 1 and 2 on gold, validation set 1 and validation set 2."></svg>
+    <div>
+      <h3>A person teaches the validator what to look for</h3>
+      <p class="t">The validator proposed searching the web for each brand's official lines. We approved it, and it found gold cases we were missing.</p>
+      <p class="t">When it's wrong, the person tells it why. Each new version re-reads what earlier ones accepted.</p>
+      <p class="num" style="font-size:80px;margin-top:auto"><span class="ph" data-r="B.gold.first">[n]</span> → <span class="ph" data-r="B.gold.last">[m]</span></p>
+      <p class="t">gold cases</p>
     </div>
   </div>
-  <aside class="notes">- So we iterate. New rules come from those errors. We join more brands, run more of the process, and look for the pattern underneath, not the single case.
-- For example, [confirm from the run: small fragrance houses with no barcode name the product only in the description, and our rules stopped at the brand]. Induction turned that into a route: no barcode and a long description → the agent that reads the description.
-- Rule set 2 recovers on validation set 2: [z] → [w].</aside>
+  <aside class="notes">So we iterate. New rules come from those errors; we join more brands and look for the pattern underneath, not the single case. For example [confirm from the run]: small fragrance houses with no barcode name the product only in the description, and our rules stopped at the brand. Induction turned that into a route to the agent that reads the description. Rule set 2 recovers on validation set 2: [z] to [w]. Human feedback improves the validator: it proposed searching the web for each brand's official products, we approved it, and it found gold cases we were missing. Gold grows from [n] to [m] cases.</aside>
 </section>
 
-<!-- 12 · A person teaches the validator -->
-<section class="slide" data-sec="val">
-  <div class="hd">
-    <p class="kick"><i></i>Inside one domain · Validation loop</p>
-    <h2 class="t">A person teaches the validator what to look for</h2>
+<!-- 11 · Meta loop -->
+<section class="slide" data-n="11">
+  <h2>Across domains, what worked carries over.</h2>
+  <p class="lede">The next domain's induction starts from the last one's lessons. Rounds saved to reach the target F1, against a cold start:</p>
+  <div class="fill">
+    <table class="mx">
+      <tr><th>from ↓ · to →</th><th>Food</th><th>Fragrance</th><th>Cars</th></tr>
+      <tr><td class="rh">Food</td><td><span class="self">—</span></td>
+          <td><span class="n"><span class="ph" data-r="C.food>fragrance">[n]</span><small>rounds</small></span><p>There was learning.</p></td>
+          <td><span class="self">—</span><p>not run</p></td></tr>
+      <tr><td class="rh">Fragrance</td>
+          <td><span class="n"><span class="ph" data-r="C.fragrance>food">[m]</span><small>rounds</small></span><p>Not much.</p></td>
+          <td><span class="self">—</span></td>
+          <td><span class="n"><span class="ph" data-r="C.fragrance>cars">[k]</span><small>rounds</small></span><p>Clear: make, model and version are published and a VIN decodes them, so the registry does the work.</p></td></tr>
+    </table>
   </div>
-  <div class="bd">
-    <div class="teach" style="flex:1">
-      <div class="card" style="--c:var(--val)">
-        <p class="who"><i></i>The validator proposes</p>
-        <p class="said">“Search the web for each brand's official product lines, and check our labels against them.”</p>
-        <p class="cap">It reads what earlier versions accepted, too.</p>
-      </div>
-      <div class="card" style="--c:var(--ink)">
-        <p class="who"><i></i>A person decides</p>
-        <p class="said">“Approved.”</p>
-        <p class="cap">When the validator is wrong, the person tells it why. Only a person changes gold.</p>
-      </div>
-      <div class="card" style="--c:var(--ind)">
-        <p class="who"><i></i>What it found</p>
-        <p class="said">Official products that gold had missed.</p>
-        <p class="cap">They became new gold cases, backed by the registry.</p>
-      </div>
-    </div>
-    <div class="g2">
-      <div class="card stat"><span class="num"><span class="ph" data-r="B.gold.first">[n]</span> → <span class="ph cb" data-r="B.gold.last">[m]</span></span><p>gold cases, after the validation rounds</p></div>
-      <div class="card stat"><span class="num"><span class="ph" data-r="B.R1.V2">[z]</span> → <span class="ph cb" data-r="B.R2.V2">[w]</span></span><p>F1 on validation set 2, rule set 1 → rule set 2</p></div>
-    </div>
-  </div>
-  <aside class="notes">- Human feedback matters here: it improves what the validator looks for.
-- For example, the validator proposed searching the web for each brand's official products. We approved it, and it found gold cases we were missing.
-- When the validator is wrong, the person tells it why. Each new version re-reads what earlier ones accepted, so errors we had marked as fine come back.
-- This grows the correct cases and the overall accuracy: gold grows from [n] to [m] cases.</aside>
+  <aside class="notes">This is the meta loop: we take which rules worked, with which validation, and apply them to the next domain, and its induction gets there faster. It doesn't transfer equally. From food to fragrance there was learning: [n] rounds saved. From fragrance to food, not much: [m]. From fragrance to cars it's clear why: cars have a much more defined catalogue. Make, model and version are published and a VIN decodes them, so the registry does the work there, not the lattice.</aside>
 </section>
 
-<!-- 13 · The meta loop -->
-<section class="slide" data-sec="meta">
-  <div class="hd">
-    <p class="kick"><i></i>Across domains · Meta loop</p>
-    <h2 class="t">What worked in one domain starts the next one, but not equally</h2>
+<!-- 12 · Close -->
+<section class="slide closing" data-n="12">
+  <h2>Systems will always say they're right. <span>Taxo doesn't take their word for it.</span></h2>
+  <div class="cols2">
+    <div><h3>The method</h3><ul>
+      <li>Turn agent judgment into rules you can read, test and run for free.</li>
+      <li>Never let a system grade itself: agents hunt errors, a person decides.</li>
+      <li>Keep what worked, with its scope, so the next problem starts ahead.</li></ul></div>
+    <div><h3>The tree is the first task. Next:</h3><ul>
+      <li>Matching the same product across shops</li>
+      <li>Cars at Kavak: make, model, version and trim decide the price</li>
+      <li>Demand and trends, once search terms roll up to a product</li>
+      <li>Any agent work that has to be trusted at scale</li></ul></div>
   </div>
-  <div class="mx">
-    <div class="card">
-      <div class="ch"><b>Rounds saved, warm start against cold</b><span class="chip wait sm" data-fig="C">to run</span></div>
-      <div class="matrix" id="figC"></div>
-    </div>
-    <div class="card">
-      <div class="tx">
-        <div class="tr"><p class="route">Food → fragrance<small><span class="chip meta sm">carries over</span></small></p><p>Food has more structure: packs, multipacks, shops posing as brands. Its lessons cover fragrance. <span class="ph" data-r="C.food>fragrance">[n]</span> rounds saved.</p></div>
-        <div class="tr"><p class="route">Fragrance → food<small><span class="chip sm">not much</span></small></p><p>Fragrance's lessons, like flankers and concentrations, are its own. <span class="ph" data-r="C.fragrance>food">[m]</span> rounds saved.</p></div>
-        <div class="tr"><p class="route">Fragrance → cars<small><span class="chip sm">little</span></small></p><p>Cars have a published catalogue: make, model and version, and a VIN decodes them. The registry does the work there, not the lattice.</p></div>
-      </div>
-      <div class="lessons"><em>lessons carried</em><span class="chip meta sm">strip sizes before counting</span><span class="chip meta sm">a shop is not a brand</span><span class="chip meta sm">no barcode → read the description</span></div>
-    </div>
-  </div>
-  <aside class="notes">- This is where the meta loop comes in: we take which rules worked, with which validation, and apply them to other domains.
-- Running the induction loop from those distilled rules, the next domain gets there faster.
-- It doesn't transfer equally. From food to fragrance there was learning: [n] rounds saved. From fragrance to food, not much: [m].
-- From fragrance to cars it is clear why: cars have a much more defined catalogue. Make, model and version are published and a VIN decodes them, so the registry does the work there, not the lattice.
-
-Confirm the directions against today's run before saying them as results.</aside>
-</section>
-
-<!-- 16 · Why it matters beyond labels -->
-<section class="slide" data-sec="why">
-  <div class="hd">
-    <p class="kick"><i></i>Why it matters</p>
-    <h2 class="t">The tree is the first task. The method is the point.</h2>
-  </div>
-  <div class="why">
-    <div class="card pat">
-      <p class="who" style="--c:var(--ink)"><i></i>The pattern underneath</p>
-      <ol>
-        <li><i>1</i><span><b>Turn agent judgment into procedures</b> you can read, test and run for free.</span></li>
-        <li><i>2</i><span><b>Never let the system grade itself.</b> Agents hunt for errors; a person decides what is true.</span></li>
-        <li><i>3</i><span><b>Keep what worked, with its scope,</b> and start the next problem ahead.</span></li>
-      </ol>
-    </div>
-    <div class="ext">
-      <div class="card"><h3>Matching across shops</h3><p>The same product in every shop: one price and one demand signal per product.</p><span class="chip sm">next on the tree</span></div>
-      <div class="card"><h3>Cars at Kavak</h3><p>Make, model, version and trim from messy listings, so every version gets a fair price.</p><span class="chip sm">same loops, a VIN registry</span></div>
-      <div class="card"><h3>Demand and trends</h3><p>Search terms and hashtags rolled up per product: what is rising, and new products as they appear as new nodes.</p><span class="chip sm">the payoff of the tree</span></div>
-      <div class="card"><h3>Any agent work at scale</h3><p>Extraction, compliance checks, triage: wherever an agent's answer has to be trusted a million times.</p><span class="chip sm">same loops, a different task</span></div>
-    </div>
-  </div>
-  <aside class="notes">- This is not a labelling system. The tree is the first task; the method is the point.
-- The pattern underneath: turn agent judgment into procedures you can read, test and run for free; never let the system grade itself, so agents hunt for errors and a person decides what is true; and keep what worked, with its scope, so the next problem starts ahead.
-- It extends to more interesting tasks: matching the same product across shops; cars at Kavak, where make, model, version and trim decide the price; demand and trends, once search terms and hashtags roll up to a product; and any agent work that has to be trusted at scale.</aside>
-</section>
-
-<!-- 17 · Close -->
-<section class="slide closing" data-sec="taxo">
-  <div class="hd">
-    <p class="kick"><i></i><span data-name></span></p>
-    <h2 class="t">Systems will always say they're right. <span data-name></span> doesn't take their word for it.</h2>
-  </div>
-  <div class="bd" style="justify-content:flex-end">
-    <div class="g3">
-      <div class="card" style="--c:var(--ind)"><p class="who"><i></i>Induction</p><span class="num"><span class="ph" data-r="A.f1.first">[x]</span> → <span class="ph" data-r="A.f1.last">[y]</span></span><p>F1 on gold it never tuned on, at <span class="ph" data-r="A.cost.first">[$a]</span> → <span class="ph" data-r="A.cost.last">[$b]</span> per 1,000 listings</p></div>
-      <div class="card" style="--c:var(--val)"><p class="who"><i></i>Validation</p><span class="num"><span class="ph" data-r="B.gold.first">[n]</span> → <span class="ph" data-r="B.gold.last">[m]</span></span><p>gold cases, found with agents and settled by a person</p></div>
-      <div class="card" style="--c:var(--meta)"><p class="who"><i></i>Meta loop</p><span class="num"><span class="ph" data-r="C.food>fragrance">[n]</span></span><p>rounds saved starting fragrance from food's lessons</p></div>
-    </div>
-    <p class="last">Agents for what's truly hard, rules for the rest, and a person decides what's true.</p>
-  </div>
-  <aside class="notes">Systems will always say they're right. Taxo doesn't take their word for it. Inside a domain it raises F1 on gold it never tuned on and lowers the cost, and it grows its own validation with agents and a person. Across domains it starts every new one ahead. Agents for what is truly hard, rules for the rest, and a person decides what is true.</aside>
-</section>
-
-<!-- ======================= backup ======================= -->
-
-<!-- B1 · Where we're coming from, version A: side by side -->
-<section class="slide" data-sec="problem">
-  <div class="hd">
-    <p class="kick"><i></i>Backup · where we're coming from · version A</p>
-    <h2 class="t">The system said it was getting better. Our labels said otherwise.</h2>
-  </div>
-  <div class="bd">
-    <div class="sf">
-      <div class="card">
-        <div class="sfh"><b>What the LLM judge said</b><small>% of listings right, by the judge the loop trained against</small></div>
-        <div class="sfn"><span class="num">78% → <span class="cb">87%</span></span><span class="chip ind">+9 points</span></div>
-        <svg class="chart" data-sf="judge" data-w="800" data-h="380" role="img" aria-label="By the judge: 78% at round 0, 82, 84, 86, 87% at round 4."></svg>
-      </div>
-      <div class="card">
-        <div class="sfh"><b>What the owner's labels found</b><small>% of the same listings right, by the person who owns the data</small></div>
-        <div class="sfn"><span class="num">81% → 84%</span><span class="chip">+3 points</span></div>
-        <svg class="chart" data-sf="owner" data-w="800" data-h="380" role="img" aria-label="By the owner: 81% at round 0, 84, 84, 83, 84% at round 4."></svg>
-      </div>
-    </div>
-    <p class="punch"><b>15 of 48</b> changes made the judge happier and our labels worse. The loop kept all 15.</p>
-  </div>
-  <p class="cite">Pedia replay pe2: 245 sealed listings, six runs, mean by round.</p>
-  <aside class="notes">Use this if asked why we don't let the system grade itself.
-- For months we have been hill-climbing classification and matching. Every time, the system says it's right and says it's getting better, and we can't trust it.
-- We let a loop improve our pipeline against an LLM judge. By the judge, it went from 78% to 87%. By the owner's labels, from 81% to 84%.
-- 15 of the 48 changes it kept made the judge happier and our own labels worse.
-
-Two versions of this slide: A (side by side) and B (stacked). Delete the one you don't want.</aside>
-</section>
-
-<!-- B2 · Where we're coming from, version B: stacked -->
-<section class="slide" data-sec="problem">
-  <div class="hd">
-    <p class="kick"><i></i>Backup · where we're coming from · version B</p>
-    <h2 class="t">The system said it was getting better. Our labels said otherwise.</h2>
-  </div>
-  <div class="sfv">
-    <div class="card">
-      <div class="sfh"><b>What the LLM judge said</b><div class="sfn"><span class="num">78% → <span class="cb">87%</span></span><span class="chip ind">+9 points</span></div><small>by the judge the loop trained against</small></div>
-      <svg class="chart" data-sf="judge" data-w="1180" data-h="280" role="img" aria-label="By the judge: 78% at round 0 to 87% at round 4."></svg>
-    </div>
-    <div class="card">
-      <div class="sfh"><b>What the owner's labels found</b><div class="sfn"><span class="num">81% → 84%</span><span class="chip">+3 points</span></div><small>by the person who owns the data</small></div>
-      <svg class="chart" data-sf="owner" data-w="1180" data-h="280" role="img" aria-label="By the owner: 81% at round 0 to 84% at round 4."></svg>
-    </div>
-    <p class="punch"><b>15 of 48</b> changes made the judge happier and our labels worse. The loop kept all 15.</p>
-  </div>
-  <p class="cite">Pedia replay pe2: 245 sealed listings, six runs, mean by round.</p>
-  <aside class="notes">Same story as version A, stacked so the two lines share one round axis. Delete the version you don't want.</aside>
-</section>
-
-<!-- B3 · Three trees -->
-<section class="slide" data-sec="problem">
-  <div class="hd">
-    <p class="kick"><i></i>Backup · the trees</p>
-    <h2 class="t">Each domain has its own levels</h2>
-  </div>
-  <div class="tree3">
-    <div class="card"><div class="ch"><b>Food</b></div>
-      <ul class="ladder">
-        <li><span>brand</span><b style="--d:0">Oreo</b></li>
-        <li><span>product</span><b style="--d:1">Double Stuf</b></li>
-        <li><span>variant</span><b class="leaf" style="--d:2">Golden</b></li>
-      </ul></div>
-    <div class="card"><div class="ch"><b>Fragrance</b></div>
-      <ul class="ladder">
-        <li><span>brand</span><b style="--d:0">Lattafa</b></li>
-        <li><span>family</span><b style="--d:1">Khamrah</b></li>
-        <li><span>product</span><b class="leaf" style="--d:2">Khamrah Qahwa</b></li>
-      </ul></div>
-    <div class="card"><div class="ch"><b>Cars</b></div>
-      <ul class="ladder">
-        <li><span>make</span><b style="--d:0">Volkswagen</b></li>
-        <li><span>model</span><b style="--d:1">Jetta</b></li>
-        <li><span>generation</span><b style="--d:2">A7</b></li>
-        <li><span>version</span><b style="--d:3">Comfortline 1.4 TSI</b></li>
-        <li><span>year</span><b class="leaf" style="--d:4">2021</b></li>
-      </ul></div>
-  </div>
-  <p class="rule-line">In every domain: size and pack count are never nodes · a correct shallower node beats a wrong deeper one · a shop is not a brand</p>
-  <aside class="notes">Conventions that hold in every domain, from Pedia's cards and owner rulings: size, pack count and multipacks are never nodes; a correct shallower node is fine, a wrong deeper one is not; a shop is not a brand; a gift set or variety pack of one maker's goods is a node of that maker.</aside>
-</section>
-
-<!-- B4 · The lattice, step by step -->
-<section class="slide" data-sec="ind">
-  <div class="hd">
-    <p class="kick"><i></i>Backup · the lattice</p>
-    <h2 class="t">Counting finds families and products without word lists</h2>
-  </div>
-  <div class="lat">
-    <div class="card">
-      <div class="toks">
-        <div class="tr h0"><span>six titles of one brand, brand and variant words struck out</span><span>joins</span></div>
-        <div class="tr"><span><s>Lattafa</s> <b>Khamrah</b> <i>Eau de Parfum 100ml Unisex</i></span><code>khamrah</code></div>
-        <div class="tr"><span><s>Lattafa</s> <b>Khamrah</b> <i>EDP Spray 3.4 oz</i></span><code>khamrah</code></div>
-        <div class="tr"><span><s>Lattafa</s> <b>Khamrah Qahwa</b> <i>Eau de Parfum 100 ml</i></span><code>khamrah qahwa</code></div>
-        <div class="tr"><span><b>Khamrah Qahwa</b> <s>by Lattafa</s> <i>EDP 3.4oz for men</i></span><code>khamrah qahwa</code></div>
-        <div class="tr"><span><s>Lattafa</s> <b>Khamrah Dukhan</b> <i>EDP 100ml</i></span><code>khamrah dukhan</code></div>
-        <div class="tr"><span><s>Lattafa</s> <b>Yara</b> <i>Eau de Parfum for Women 100ml</i></span><code>yara</code></div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="ch"><b>How often each run appears</b></div>
-      <svg class="chart" id="lat-big" viewBox="0 0 580 330" role="img" aria-label="khamrah 5, khamrah qahwa 2, khamrah dukhan 1, yara 1; the floor is 2."></svg>
-      <p class="cap">Each title joins its longest run seen at least twice, or named officially. A run shared by two products is a family. Below the floor: the registry settles it, or an agent.</p>
-    </div>
-  </div>
-  <aside class="notes">Strip the brand and the variant tokens, then count every run of words: khamrah 5, khamrah qahwa 2, khamrah dukhan 1, yara 1. Each title joins its longest supported run, which gives the products Khamrah and Khamrah Qahwa. A leading run shared by two or more products is a family, so Khamrah is a family. khamrah dukhan and yara are below the floor: unclear. Adding a word to the vocabulary changes the count on the next run.</aside>
-</section>
-
-<!-- B5 · YAML: vocabulary and registry -->
-<section class="slide" data-sec="ind">
-  <div class="hd">
-    <p class="kick"><i></i>Backup · the rules in YAML</p>
-    <h2 class="t">The vocabulary and a brand registry</h2>
-  </div>
-  <div class="pair">
-    <div class="code">
-      <div class="fn">domains/fragrance/vocab.yaml · which words are variants, not names</div>
-<pre class="yaml big">variant:
-  size: ['\d+(\.\d+)?\s?(ml|oz|fl oz)']
-  concentration: [eau de parfum, edp,
-    eau de toilette, edt, parfum, extrait]
-  audience: [for women, for men, unisex,
-    pour homme, pour femme]
-  form: [spray, travel size]
-strip: [perfume, fragrance, cologne]</pre>
-    </div>
-    <div class="code">
-      <div class="fn">registry/fragrance/lattafa.yaml · built by an agent, written by code</div>
-<pre class="yaml big">brand: Lattafa
-aliases: [lattafa, lattafa perfumes]
-nodes:
-  - {id: F_khamrah, level: family,
-     name: Khamrah}
-  - {id: P_khamrah_qahwa, level: product,
-     name: Khamrah Qahwa, parent: F_khamrah}
-basis:
-  P_khamrah_qahwa: {source: official,
-    ref: lattafa.com, found_by: agent_search@v1}</pre>
-    </div>
-  </div>
-  <aside class="notes">The vocabulary says which tokens are variants rather than names; the lattice strips them before counting. The registry holds the official structure: an agent builds it with web search and returns a proposal, and code writes the file and keeps the evidence.</aside>
-</section>
-
-<!-- B6 · YAML: a rule we won't accept, and a lesson -->
-<section class="slide" data-sec="meta">
-  <div class="hd">
-    <p class="kick"><i></i>Backup · the rules in YAML</p>
-    <h2 class="t">A rule we will not accept, and a lesson the meta loop carries</h2>
-  </div>
-  <div class="pair">
-    <div class="code">
-      <div class="fn">Pedia: brand-learned-not-a-brand.yaml (trimmed) <span class="chip bad sm">fails the gate</span></div>
-<pre class="yaml big">id: loop/brand-learned-not-a-brand
-when: [{fact: loop.evidence.first,
-  in: [ready, ona, usa, more, brand]}]
-then: {op: loop.no_brand}
-metrics:
-  mined:  {n: 145, agree: 145}  # with the judge
-  shadow: {fired: 24, agree: 22, holds: true}</pre>
-      <p class="cap">It matched the agent 145 of 145 times. Its truth was the agent it was meant to replace. Here the gate scores rules on gold only.</p>
-    </div>
-    <div class="code">
-      <div class="fn">lessons/strip-variants-before-counting.yaml</div>
-<pre class="yaml big">id: lesson/strip-variants-before-counting
-kind: rule_shape
-scope: global
-claim: "Strip size, pack and audience
-  tokens before counting names."
-record:     # filled in by the runs
-  - {domain: fragrance, delta_f1: null}
-  - {domain: food,      delta_f1: null}</pre>
-      <p class="cap">Every change that worked is stored with its scope and its record, so the next domain can start from it.</p>
-    </div>
-  </div>
-  <aside class="notes">The Pedia rule was mined from the judge's own answers: it matched the judge 145 of 145 times where it was mined and 22 of 24 held out, and was recorded as "holds". In Taxo it fails the gate, because the gate scores rules on gold only. The lesson file is the meta loop's unit: a claim, a scope (one domain or global) and a record per domain.</aside>
-</section>
-
-<!-- B7 · Guardrails -->
-<section class="slide" data-sec="taxo">
-  <div class="hd">
-    <p class="kick"><i></i>Backup · guardrails</p>
-    <h2 class="t">Each guardrail comes from something that went wrong before</h2>
-  </div>
-  <div class="card guard">
-    <div class="gr h0"><span>Guardrail</span><span>What happened in Pedia</span></div>
-    <div class="gr"><b>A rule's truth is gold, never the agent it replaces.</b><p>The learned rule matched the judge 145 of 145 times. The judge was its truth.</p></div>
-    <div class="gr"><b>Silver counts only after the validator is scored on gold.</b><p>A checker card said "When in doubt, disagree". All 25 audited parks from it were real products.</p></div>
-    <div class="gr"><b>Agreed cases are spot-checked.</b><p>Two judges agreed on 23 conflict cases, and no one checked those against the owner.</p></div>
-    <div class="gr"><b>Only a person edits gold.</b><p>Judges ruled 15 owner examples "unsatisfiable", and they left the yardstick.</p></div>
-    <div class="gr"><b>A loop is never scored by the judge it trains against.</b><p>15 of 48 changes helped the judge and hurt the owner's labels.</p></div>
-    <div class="gr"><b>Sealed gold is split by brand, and reads are counted.</b><p>The frozen holdout was read 75 times in about 37 hours.</p></div>
-    <div class="gr"><b>A sealed test must be able to fail.</b><p>"Holds" was recorded on 24 items, too few for the test to fail.</p></div>
-    <div class="gr"><b>Parks are re-read every round.</b><p>Parks were carried forward for good; 59% of food parks were real products.</p></div>
-  </div>
-  <aside class="notes">Each guardrail comes from something that went wrong in Pedia. Code also checks every agent answer: ids exist, levels fit, and no twin nodes.</aside>
+  <aside class="notes">This is not a labelling system. The tree is the first task; the method is the point: turn agent judgment into rules you can read, test and run for free; never let a system grade itself, so agents hunt for errors and a person decides what is true; keep what worked, with its scope, so the next problem starts ahead. It goes to matching across shops, cars at Kavak, demand and trends, and any agent work that has to be trusted at scale. Systems will always say they're right. Taxo doesn't take their word for it.</aside>
 </section>
 
 </div></div>
 <div class="progress"></div>
-<div class="hint">→ next · ← back · O overview · N notes · L look</div>
+<div class="hint">→ next · ← back · O overview · N notes</div>
 <div class="notes-panel"></div>
 
 <script>
@@ -1188,29 +502,26 @@ record:     # filled in by the runs
   // ===== The name: one line. =====
   const NAME = 'Taxo';
 
-  // ===== Results from today's runs. Paste them here; the figures and every [bracket] that depends on them update. =====
+  // ===== Results from today's runs. Paste them here; the charts and every [bracket] that depends on them update. =====
   // Leave an entry null until there is a number. Never put a guess here: it is drawn as a result.
   const RESULTS = {
-    // The agent-only baseline: every listing goes to the agent. F1 on sealed gold (0–1) and dollars per 1,000 listings.
-    //   The 4M-listing bill on slides 6 and 10 is cost × 4,000.   e.g. agentOnly: { f1: …, cost: … }
+    // Every listing to the agent: F1 on sealed gold (0–1) and dollars per 1,000 listings. The 4M bill is cost × 4,000.
+    //   e.g. agentOnly: { f1: …, cost: … }
     agentOnly: null,
-    // Figure A, the induction loop on fragrance: one entry per round, round 0 (the first pipeline) first.
-    //   f1: F1 on sealed gold, 0–1 · cost: dollars per 1,000 listings · kept: the rule kept that round, e.g. 'rule 1 · lattice'
-    //   share (optional): share of listings settled without an agent, 0–1
-    //   e.g. A: { preliminary: true, rounds: [{ f1: …, cost: …, kept: null, share: … }, { f1: …, cost: …, kept: 'rule 1 · lattice', share: … }] }
+    // Induction on fragrance, one entry per round, round 0 (the first pipeline) first.
+    //   f1 (0–1), cost ($ per 1,000), kept: the rule kept that round, share: listings settled without an agent (0–1)
+    //   e.g. A: { rounds: [{ f1: …, cost: …, kept: null, share: … }, { f1: …, cost: …, kept: 'lattice', share: … }] }
     A: null,
-    // Figure B: F1 of rule sets R1 and R2 on gold, V1 and V2 (0–1), and gold's size before and after the validation rounds.
-    //   e.g. B: { preliminary: true, R1: { gold: …, V1: …, V2: … }, R2: { gold: …, V1: …, V2: … }, goldCases: [before, after] }
-    //   Leave out R2 (or V2) until it exists.
+    // Rule sets on gold and fresh validation sets (0–1), and gold's size before and after the validation rounds.
+    //   e.g. B: { R1: { gold: …, V1: …, V2: … }, R2: { V2: … }, goldCases: [before, after] }
     B: null,
-    // Figure C: rounds saved to reach the target F1, warm start against cold, keyed 'source>target'.
-    //   e.g. C: { preliminary: true, saved: { 'food>fragrance': …, 'fragrance>food': … } }
+    // Rounds saved to reach the target F1, warm start against cold, keyed 'source>target'.
+    //   e.g. C: { saved: { 'food>fragrance': …, 'fragrance>food': …, 'fragrance>cars': … } }
     C: null,
   };
 
-  // Backup slides B1/B2: Pedia replay pe2 (C:\Work\RSI\hackathon\runs\pe2\ledger.jsonl), listing task.
-  // % of the 245 sealed listings that the loop's rules got right, by the LLM judge and by the owner, after rounds 0-4.
-  // One series per run: G0, Gn and VIS arms, 2 replicates each. The slides draw the mean.
+  // Pedia replay pe2 (C:\Work\RSI\hackathon\runs\pe2\ledger.jsonl), listing task: % of the 245 sealed listings right,
+  // by the LLM judge and by the owner's labels, after rounds 0-4. One series per run (6). The chart draws the mean.
   const PE2 = {
     judge: [[78.4, 81.2, 85.3, 87.8, 89.8], [78.4, 82.9, 85.7, 87.3, 89.8], [78.4, 81.2, 82.4, 82.4, 82.4],
             [78.4, 81.2, 85.7, 87.3, 87.3], [78.4, 82.4, 83.7, 86.9, 89.4], [78.4, 81.2, 82.9, 84.9, 85.7]],
@@ -1218,347 +529,244 @@ record:     # filled in by the runs
             [81.2, 84.9, 84.5, 82.9, 82.9], [81.2, 81.2, 80.0, 83.3, 85.7], [81.2, 84.9, 83.3, 85.3, 84.5]],
   };
 
-  const LOOKS = { 1: 'Paper', 2: 'Night', 3: 'Studio' };
   const W = 1920, H = 1080;
+  const C = { ink: '#0B0D12', ink2: '#3A3F4A', mute: '#6B7280', faint: '#A3A8B3', line: '#E2E5EA', grid: '#EEF0F3', wire: '#9AA1AD',
+              ind: '#0070C0', val: '#D9622B', meta: '#1E9E6E' };
   const esc = s => String(s).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
-  const body = document.body, stage = document.querySelector('.stage'), root = document.documentElement;
+  const body = document.body, stage = document.querySelector('.stage');
 
-  // the name
   document.querySelectorAll('[data-name]').forEach(e => { e.textContent = NAME; });
   document.title = NAME + ': learning to build product trees';
 
-  // photos that fail to load say so
-  document.querySelectorAll('.photo img').forEach(img => {
-    const bad = () => img.closest('.photo').classList.add('noimg');
+  document.querySelectorAll('.pic img').forEach(img => {
+    const bad = () => img.closest('.pic').classList.add('noimg');
     if (img.complete && !img.naturalWidth) bad(); else img.addEventListener('error', bad);
   });
 
   // ---------- numbers from the runs: fill the brackets ----------
   const f1 = v => v.toFixed(2), usd = v => '$' + (v < 10 ? v.toFixed(2) : v.toFixed(0));
   const usd4M = perK => '$' + Math.round(perK * 4000).toLocaleString('en-US'), pct = v => Math.round(v * 100) + '%';
-  const V = {};
-  const AO = RESULTS.agentOnly;
-  if (AO) {
-    if (AO.f1 != null) V['AO.f1'] = f1(AO.f1);
-    if (AO.cost != null) { V['AO.cost'] = usd(AO.cost); V['AO.cost4M'] = usd4M(AO.cost); }
+  const V = {}, R = RESULTS;
+  if (R.agentOnly) {
+    if (R.agentOnly.f1 != null) V['AO.f1'] = f1(R.agentOnly.f1);
+    if (R.agentOnly.cost != null) { V['AO.cost'] = usd(R.agentOnly.cost); V['AO.cost4M'] = usd4M(R.agentOnly.cost); }
   }
-  if (RESULTS.A && RESULTS.A.rounds && RESULTS.A.rounds.length) {
-    const r = RESULTS.A.rounds, a = r[0], b = r[r.length - 1];
+  const rounds = R.A && R.A.rounds && R.A.rounds.length ? R.A.rounds : null;
+  if (rounds) {
+    const a = rounds[0], b = rounds[rounds.length - 1];
     if (a.f1 != null) V['A.f1.first'] = f1(a.f1);
     if (b.f1 != null) V['A.f1.last'] = f1(b.f1);
     if (a.cost != null) V['A.cost.first'] = usd(a.cost);
     if (b.cost != null) { V['A.cost.last'] = usd(b.cost); V['A.cost4M.last'] = usd4M(b.cost); }
     if (b.share != null) V['A.share.last'] = pct(b.share);
   }
-  if (RESULTS.B) {
-    const B = RESULTS.B;
-    for (const rs of ['R1', 'R2']) for (const s of ['gold', 'V1', 'V2'])
-      if (B[rs] && B[rs][s] != null) V[`B.${rs}.${s}`] = f1(B[rs][s]);
-    if (B.goldCases) { if (B.goldCases[0] != null) V['B.gold.first'] = String(B.goldCases[0]); if (B.goldCases[1] != null) V['B.gold.last'] = String(B.goldCases[1]); }
+  if (R.B) {
+    for (const rs of ['R1', 'R2']) for (const k of ['gold', 'V1', 'V2']) if (R.B[rs] && R.B[rs][k] != null) V[`B.${rs}.${k}`] = f1(R.B[rs][k]);
+    if (R.B.goldCases) { V['B.gold.first'] = String(R.B.goldCases[0]); V['B.gold.last'] = String(R.B.goldCases[1]); }
   }
-  if (RESULTS.C && RESULTS.C.saved) for (const [k, v] of Object.entries(RESULTS.C.saved)) if (v != null) V['C.' + k] = String(v);
-  document.querySelectorAll('[data-r]').forEach(el => { const v = V[el.dataset.r]; if (v != null) { el.textContent = v; el.classList.add('got'); } });
-  document.querySelectorAll('[data-fig]').forEach(el => {
-    const d = RESULTS[el.dataset.fig];
-    if (!d) return;
-    if (d.preliminary) el.textContent = 'preliminary'; else el.remove();
-  });
+  if (R.C && R.C.saved) for (const [k, v] of Object.entries(R.C.saved)) if (v != null) V['C.' + k] = String(v);
+  document.querySelectorAll('[data-r]').forEach(e => { if (V[e.dataset.r] != null) { e.textContent = V[e.dataset.r]; e.classList.remove('ph'); } });
 
-  // ---------- YAML colouring ----------
-  function hlYaml(src) {
-    const lines = src.replace(/\s+$/, '').split('\n');
-    const ind = Math.min(...lines.filter(l => l.trim()).map(l => l.match(/^ */)[0].length));
-    return lines.map(l => l.slice(ind)).map(line => {
-      let q = null, cut = -1;
-      for (let i = 0; i < line.length; i++) {
-        const c = line[i];
-        if (q) { if (c === q) q = null; continue; }
-        if (c === '"' || c === "'") { q = c; continue; }
-        if (c === '#' && (i === 0 || line[i - 1] === ' ')) { cut = i; break; }
-      }
-      const code = cut < 0 ? line : line.slice(0, cut), com = cut < 0 ? '' : line.slice(cut);
-      const html = code.split(/('[^']*'|"[^"]*")/).map((p, i) => i % 2 ? `<span class="s">${esc(p)}</span>` :
-        esc(p).replace(/([A-Za-z_][\w./-]*)(?=:(\s|$))/g, '<span class="k">$1</span>')
-              .replace(/(^|[\s\[{,])(null|true|false|-?\d+(?:\.\d+)?)(?=[\s\]},]|$)/g, '$1<span class="n">$2</span>')).join('');
-      return html + (com ? `<span class="c">${esc(com)}</span>` : '');
-    }).join('\n');
-  }
-  document.querySelectorAll('pre.yaml').forEach(p => { p.innerHTML = hlYaml(p.textContent); });
-
-  // ---------- shared SVG bits (colours come from the look's CSS variables) ----------
-  const T = (x, y, s, o = {}) => `<text x="${x}" y="${y}"${o.a ? ` text-anchor="${o.a}"` : ''}${o.cls ? ` class="${o.cls}"` : ''}` +
-    ` style="font-size:${o.fs || 20}px;font-weight:${o.fw || 400};fill:${o.c || 'var(--mute)'}">${s}</text>`;
-  const Ln = (x1, y1, x2, y2, c = 'var(--line)', w = 1, dash) =>
-    `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" style="stroke:${c};stroke-width:${w}${dash ? ';stroke-dasharray:' + dash : ''}"/>`;
-  const pathOf = pts => pts.map((p, i) => (i ? 'L' : 'M') + p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join(' ');
-  const hatch = id => `<pattern id="${id}" width="14" height="14" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">` +
-    `<line x1="0" y1="0" x2="0" y2="14" style="stroke:var(--phLine);stroke-opacity:.2;stroke-width:5"/></pattern>`;
-  const todo = (id, x, y, w, h) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="12" style="fill:url(#${id})"/>` +
-    T(x + w / 2, y + h / 2 + 10, 'to run', { a: 'middle', fs: 28, fw: 600, c: 'var(--phC)' });
-  const rad = a => a * Math.PI / 180;
-  // a clockwise arc from angle a0 to a1 (degrees, 0 = right), with an arrowhead at a1
-  function arc(cx, cy, r, a0, a1, col, w = 4) {
-    const P = a => [cx + r * Math.cos(rad(a)), cy + r * Math.sin(rad(a))];
-    const [x0, y0] = P(a0), [x1, y1] = P(a1);
-    let s = `<path d="M${x0.toFixed(1)} ${y0.toFixed(1)} A${r} ${r} 0 ${a1 - a0 > 180 ? 1 : 0} 1 ${x1.toFixed(1)} ${y1.toFixed(1)}" style="fill:none;stroke:${col};stroke-width:${w};stroke-linecap:round"/>`;
-    const t = rad(a1 + 90), tip = [x1 + Math.cos(t) * 8, y1 + Math.sin(t) * 8], bk = [tip[0] - Math.cos(t) * 20, tip[1] - Math.sin(t) * 20], n = [-Math.sin(t), Math.cos(t)];
-    s += `<path d="M${tip[0].toFixed(1)} ${tip[1].toFixed(1)} L${(bk[0] + n[0] * 10).toFixed(1)} ${(bk[1] + n[1] * 10).toFixed(1)} L${(bk[0] - n[0] * 10).toFixed(1)} ${(bk[1] - n[1] * 10).toFixed(1)} Z" style="fill:${col}"/>`;
+  // ---------- SVG helpers ----------
+  const F = (fs, fw = 400) => `font:${fw} ${fs}px Inter,system-ui,sans-serif`;
+  const Tx = (x, y, s, o = {}) => `<text x="${x}" y="${y}" text-anchor="${o.a || 'start'}" style="${F(o.fs || 20, o.fw || 400)};fill:${o.c || C.mute}">${s}</text>`;
+  // a box with centred lines of text: the first line is the name, the rest are smaller and muted
+  function Bx(x, y, w, h, lines, o = {}) {
+    lines = [].concat(lines);
+    const fs = o.fs || 24, sfs = o.sfs || 19, gap = 8;
+    const hs = lines.map((_, i) => i ? sfs * 1.25 : fs * 1.2), tot = hs.reduce((a, b) => a + b, 0) + (lines.length > 1 ? gap : 0);
+    let ty = y + h / 2 - tot / 2, s = `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="12" fill="${o.fill || '#fff'}" stroke="${o.c || C.wire}" stroke-width="${o.sw || 2}"${o.dash ? ' stroke-dasharray="8 7"' : ''}/>`;
+    lines.forEach((t, i) => { ty += hs[i] - (i ? sfs * .25 : fs * .25) + (i === 1 ? gap : 0);
+      s += Tx(x + w / 2, ty, t, { a: 'middle', fs: i ? sfs : fs, fw: i ? 400 : 600, c: i ? C.mute : C.ink }); ty += i ? sfs * .25 : fs * .25; });
     return s;
   }
-
-  // ---------- slide 2 and 4: connectors from cards to a node ----------
-  (() => {
-    const s5 = document.getElementById('conv5');
-    if (s5) {
-      const gap = 26, cw = (1680 - 4 * gap) / 5; let h = '';
-      for (let i = 0; i < 5; i++) { const x = i * (cw + gap) + cw / 2; h += `<path d="M${x} 0 C${x} 40, 840 30, 840 70" style="fill:none;stroke:var(--ind);stroke-opacity:.55;stroke-width:2.5"/>`; }
-      s5.innerHTML = h;
-    }
-    const xs = [0, 1, 2].map(i => i * ((1172 - 48) / 3 + 24) + (1172 - 48) / 6), mid = 586;
-    const a = document.getElementById('fan3'), b = document.getElementById('fan3b');
-    if (a) a.innerHTML = xs.map(x => `<path d="M${mid} 0 V24 H${x} V64" style="fill:none;stroke:var(--ind);stroke-opacity:.55;stroke-width:2.5;stroke-linejoin:round"/>`).join('');
-    if (b) b.innerHTML = xs.map(x => `<path d="M${x} 0 V28 H${mid} V56" style="fill:none;stroke:var(--faint);stroke-width:2;stroke-linejoin:round"/>`).join('');
-  })();
-
-  // ---------- slide 3: trees ----------
-  const TREES = {
-    food: { levels: ['brand', 'product', 'variant'], root: 'Oreo', l1: ['Original', 'Double Stuf', 'Thins'], hi1: 1, l2: ['Chocolate', 'Golden', 'Mint'], hi2: 1 },
-    fragrance: { levels: ['brand', 'family', 'product'], root: 'Lattafa', l1: ['Khamrah', 'Yara'], hi1: 0, l2: ['Khamrah', 'Khamrah Qahwa', 'Khamrah Dukhan'], hi2: 1 },
-  };
-  document.querySelectorAll('svg[data-tree]').forEach(svg => {
-    const t = TREES[svg.dataset.tree], w = 760, h = 430, fs = 22, nh = 58, X0 = 112, X1 = w;
-    svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
-    const rows = [56, 214, 372], wid = s => s.length * fs * .56 + 34;
-    const spread = n => [...Array(n)].map((_, i) => X0 + (i + .5) * (X1 - X0) / n);
-    const rx = (X0 + X1) / 2, l1x = spread(t.l1.length), l2x = spread(t.l2.length);
-    let s = '';
-    t.levels.forEach((lv, i) => { s += T(0, rows[i] + 7, lv, { fs: 18, cls: 'mono', c: 'var(--mute)' }); });
-    const conn = (px, py, cx, cy, on) => `<path d="M${px} ${py + nh / 2} V${(py + cy) / 2} H${cx} V${cy - nh / 2}" style="fill:none;stroke:${on ? 'var(--ind)' : 'var(--line)'};stroke-width:${on ? 3 : 2};stroke-linejoin:round"/>`;
-    const order = n => [...Array(n).keys()];
-    order(t.l1.length).filter(i => i !== t.hi1).forEach(i => { s += conn(rx, rows[0], l1x[i], rows[1], false); });
-    order(t.l2.length).filter(i => i !== t.hi2).forEach(i => { s += conn(l1x[t.hi1], rows[1], l2x[i], rows[2], false); });
-    s += conn(rx, rows[0], l1x[t.hi1], rows[1], true) + conn(l1x[t.hi1], rows[1], l2x[t.hi2], rows[2], true);
-    const node = (x, y, label, kind) => {
-      const ww = wid(label);
-      const st = kind === 'leaf' ? 'fill:var(--ind);stroke:var(--ind)' : kind === 'path' ? 'fill:var(--indT);stroke:var(--ind)' : 'fill:var(--card);stroke:var(--line)';
-      const tc = kind === 'leaf' ? '#fff' : kind === 'path' ? 'var(--ind)' : 'var(--ink2)';
-      return `<rect x="${(x - ww / 2).toFixed(1)}" y="${y - nh / 2}" width="${ww.toFixed(1)}" height="${nh}" rx="14" style="${st};stroke-width:2"/>` +
-        T(x, y + 8, label, { a: 'middle', fs, fw: kind ? 600 : 500, c: tc });
-    };
-    s += node(rx, rows[0], t.root, 'path');
-    t.l1.forEach((n, i) => { s += node(l1x[i], rows[1], n, i === t.hi1 ? 'path' : ''); });
-    t.l2.forEach((n, i) => { s += node(l2x[i], rows[2], n, i === t.hi2 ? 'leaf' : ''); });
-    svg.innerHTML = s;
-  });
-
-  // ---------- slide 6: the two folds ----------
-  (() => {
-    const a = document.getElementById('fold1');
-    if (a) {
-      const r = 150, y = 210, xi = 220, xv = 780;
-      let s = arc(xi, y, r, -80, 80, 'var(--ind)') + arc(xi, y, r, 100, 260, 'var(--ind)');
-      s += arc(xv, y, r, -75, 80, 'var(--val)') + arc(xv, y, r, 100, 255, 'var(--val)');
-      s += T(xi, y - 6, 'Induction', { a: 'middle', fs: 32, fw: 600, c: 'var(--ind)' }) + T(xi, y + 30, 'gold → rules', { a: 'middle', fs: 21 });
-      s += T(xv, y - 6, 'Validation', { a: 'middle', fs: 32, fw: 600, c: 'var(--val)' }) + T(xv, y + 30, 'fresh listings → errors', { a: 'middle', fs: 21 });
-      // gold, between them: validation writes it, induction learns from it
-      s += `<rect x="440" y="${y - 34}" width="120" height="68" rx="34" style="fill:var(--card);stroke:var(--ink);stroke-width:2"/>`;
-      s += T(500, y + 9, 'Gold', { a: 'middle', fs: 26, fw: 600, c: 'var(--ink)' });
-      s += `<path d="M${xv - r - 2} ${y} H576" style="stroke:var(--val);stroke-width:3"/><path d="M562 ${y} L578 ${y - 9} L578 ${y + 9} Z" style="fill:var(--val)"/>`;
-      s += `<path d="M434 ${y} H${xi + r + 14}" style="stroke:var(--ind);stroke-width:3"/><path d="M${xi + r + 2} ${y} L${xi + r + 18} ${y - 9} L${xi + r + 18} ${y + 9} Z" style="fill:var(--ind)"/>`;
-      s += T(500, y - 52, 'new cases', { a: 'middle', fs: 18 }) + T(500, y + 72, 'trains on', { a: 'middle', fs: 18 });
-      // a person, on the validation loop
-      const px = xv, py = y - r;
-      s += `<circle cx="${px}" cy="${py}" r="26" style="fill:var(--card);stroke:var(--val);stroke-width:3"/>`;
-      s += `<circle cx="${px}" cy="${py - 7}" r="7" style="fill:var(--val)"/><path d="M${px - 13} ${py + 15} Q${px} ${py - 6} ${px + 13} ${py + 15} Z" style="fill:var(--val)"/>`;
-      s += T(px - 40, py + 7, 'a person settles disagreements', { a: 'end', fs: 19, fw: 500, c: 'var(--ink2)' });
-      a.innerHTML = s;
-    }
-    const b = document.getElementById('fold2');
-    if (b) {
-      const cx = 280, cy = 210, r = 150;
-      let s = arc(cx, cy, r, -78, 18, 'var(--meta)') + arc(cx, cy, r, 42, 138, 'var(--meta)') + arc(cx, cy, r, 162, 258, 'var(--meta)');
-      const dot = (a, lab, anchor, dx, dy) => { const x = cx + r * Math.cos(rad(a)), y = cy + r * Math.sin(rad(a));
-        return `<circle cx="${x}" cy="${y}" r="15" style="fill:var(--meta);stroke:var(--card);stroke-width:4"/>` + T(x + dx, y + dy, lab, { a: anchor, fs: 24, fw: 600, c: 'var(--ink)' }); };
-      s += dot(-90, 'Food', 'middle', 0, -30) + dot(30, 'Fragrance', 'start', 26, 8) + dot(150, 'Cars', 'end', -26, 8);
-      s += T(cx, cy - 4, 'Meta loop', { a: 'middle', fs: 32, fw: 600, c: 'var(--meta)' }) + T(cx, cy + 30, 'lessons → next domain', { a: 'middle', fs: 21 });
-      b.innerHTML = s;
-    }
-  })();
-
-  // ---------- slide 7 (small) and backup (big): the lattice count ----------
-  function lattice(svg, big) {
-    if (!svg) return;
-    const ROWS = [['khamrah', 5, 'family'], ['khamrah qahwa', 2, 'product'], ['khamrah dukhan', 1, 'unclear'], ['yara', 1, 'unclear']];
-    const fs = big ? 22 : 19, lab = big ? 200 : 168, unit = big ? 50 : 40, rh = big ? 70 : 54, top = big ? 26 : 20, bh = big ? 32 : 26;
-    let h = '';
-    const fx = lab + 2 * unit;
-    ROWS.forEach(([run, n, tag], i) => {
-      const y = top + i * rh, on = n >= 2;
-      h += T(0, y + bh / 2 + 7, run, { fs, cls: 'mono', c: 'var(--ink)' });
-      h += `<rect x="${lab}" y="${y}" width="${n * unit}" height="${bh}" rx="5" style="fill:${on ? 'var(--ind)' : 'var(--faint)'};fill-opacity:${on ? 1 : .5}"/>`;
-      h += T(lab + n * unit + 10, y + bh / 2 + 7, n, { fs, fw: 600, c: 'var(--ink)' });
-      h += T(lab + 5 * unit + 44, y + bh / 2 + 7, tag, { fs: fs - 1, fw: 600, c: on ? 'var(--ind)' : 'var(--mute)' });
-    });
-    const yb = top + ROWS.length * rh - (rh - bh) / 2 + 4;
-    h += Ln(fx, top - 12, fx, yb, 'var(--val)', 2, '6 5') + T(fx + 8, yb + 24, 'seen twice', { fs: 17, fw: 600, c: 'var(--val)' });
-    svg.innerHTML = h;
+  // an arrow through points [[x,y],...], arrowhead at the last point
+  function Ar(pts, c = C.wire, o = {}) {
+    const [x1, y1] = pts[pts.length - 2], [x2, y2] = pts[pts.length - 1], a = Math.atan2(y2 - y1, x2 - x1), L = 15, w = 7.5;
+    const bx = x2 - L * Math.cos(a), by = y2 - L * Math.sin(a);
+    const line = pts.slice(0, -1).concat([[bx, by]]);
+    return `<path d="M${line.map(p => p.join(' ')).join('L')}" fill="none" stroke="${c}" stroke-width="${o.w || 2.5}" stroke-linejoin="round"${o.dash ? ' stroke-dasharray="9 7"' : ''}/>` +
+      `<path d="M${x2} ${y2}L${bx + w * Math.sin(a)} ${by - w * Math.cos(a)}L${bx - w * Math.sin(a)} ${by + w * Math.cos(a)}Z" fill="${c}"/>`;
   }
-  lattice(document.getElementById('lat-small'), false);
-  lattice(document.getElementById('lat-big'), true);
+  const put = (id, vb, s) => { const el = document.getElementById(id); if (!el) return; el.setAttribute('viewBox', vb); el.setAttribute('preserveAspectRatio', 'xMidYMid meet'); el.innerHTML = s; };
 
-  // ---------- Figure A: F1 and cost by round, one chart each ----------
-  document.querySelectorAll('svg[data-figa]').forEach(svg => {
-    const k = svg.dataset.figa, w = 760, h = 470; svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
-    const d = RESULTS.A && RESULTS.A.rounds && RESULTS.A.rounds.length ? RESULTS.A.rounds : null;
-    const L = 80, R = w - 30, Tp = 40, B = h - 56, n = d ? d.length : 6, px = i => L + (n > 1 ? i / (n - 1) : .5) * (R - L);
-    let s = `<defs>${hatch('hA' + k)}</defs>`;
-    for (let i = 0; i < n; i++) s += T(px(i), B + 36, i, { a: 'middle', fs: 20 });
-    s += T(L - 16, B + 36, 'round', { a: 'end', fs: 20 });
-    if (!d) {
-      [0, 1, 2].forEach(i => { s += Ln(L, Tp + i * (B - Tp) / 3, R, Tp + i * (B - Tp) / 3, 'var(--line2)', 1.5); });
-      s += Ln(L, B, R, B, 'var(--line)', 2) + todo('hA' + k, L, Tp, R - L, B - Tp - 2);
-      svg.innerHTML = s; return;
-    }
-    const vals = d.map(r => r[k]).filter(v => v != null);
-    if (!vals.length) { svg.innerHTML = s; return; }
-    let lo = Math.min(...vals), hi = Math.max(...vals); const pad = (hi - lo) * .25 || (k === 'f1' ? .05 : Math.max(hi * .25, .5));
-    lo = Math.max(0, lo - pad); hi = k === 'f1' ? Math.min(1, hi + pad) : hi + pad;
-    const py = v => B - (v - lo) / (hi - lo) * (B - Tp), fmt = k === 'f1' ? f1 : usd, col = k === 'f1' ? 'var(--ind)' : 'var(--ink)';
-    [lo, (lo + hi) / 2, hi].forEach(v => { s += Ln(L, py(v), R, py(v), 'var(--line2)', 1.5) + T(L - 16, py(v) + 7, fmt(v), { a: 'end', fs: 18 }); });
-    s += Ln(L, B, R, B, 'var(--line)', 2);
-    const pts = d.map((r, i) => r[k] == null ? null : [px(i), py(r[k]), r, i]).filter(Boolean);
-    s += `<path d="${pathOf(pts)}" style="fill:none;stroke:${col};stroke-width:4;stroke-linejoin:round;stroke-linecap:round"/>`;
-    pts.forEach(([x, y, r, i], j) => {
-      s += `<circle cx="${x}" cy="${y}" r="9" style="fill:${col};stroke:var(--card);stroke-width:3"><title>round ${i}: ${fmt(r[k])}${r.kept ? ' · kept ' + esc(r.kept) : ''}</title></circle>`;
-      if (r.kept) s += T(x, y + (k === 'f1' ? -20 : 32), esc(r.kept), { a: 'middle', fs: 16, fw: 500, c: 'var(--ink2)' });
-      if (j === 0 || j === pts.length - 1) s += T(x, y + (k === 'f1' ? 36 : -20), fmt(r[k]), { a: 'middle', fs: 20, fw: 600, c: 'var(--ink)' });
-    });
-    svg.innerHTML = s;
-  });
-
-  // ---------- Figure D: what each rule saves (a waterfall from the agent alone down to the pipeline) ----------
+  // ---------- 6A: pipeline in the middle, the loops around it ----------
   (() => {
-    const svg = document.getElementById('figD'); if (!svg) return;
-    const w = 1060, h = 560; svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
-    const ao = RESULTS.agentOnly, r = RESULTS.A && RESULTS.A.rounds || [];
-    const L = 90, R = w - 20, Tp = 30, B = h - 70;
-    const steps = [];
-    if (ao && ao.cost != null && r.some(x => x.cost != null)) {
-      let prev = ao.cost; steps.push(['agent only', 0, ao.cost, 'total']);
-      r.forEach((x, i) => { if (x.cost == null) return; steps.push([x.kept || (i ? 'round ' + i : 'rules'), x.cost, prev, 'step']); prev = x.cost; });
-      steps.push([NAME, 0, prev, 'final']);
-    }
-    const cats = steps.length ? steps.map(s => s[0]) : ['agent only', 'rule 1', 'rule 2', 'rule 3', NAME];
-    const bw = (R - L) / cats.length, cxs = cats.map((_, i) => L + bw * (i + .5));
-    let s = `<defs>${hatch('hD')}</defs>`;
-    cats.forEach((c, i) => { s += T(cxs[i], B + 34, esc(c), { a: 'middle', fs: 19, fw: 600, c: 'var(--ink)' }); });
-    if (!steps.length) {
-      [0, 1, 2].forEach(i => { s += Ln(L, Tp + i * (B - Tp) / 3, R, Tp + i * (B - Tp) / 3, 'var(--line2)', 1.5); });
-      s += Ln(L, B, R, B, 'var(--line)', 2) + todo('hD', L, Tp, R - L, B - Tp - 2);
-      svg.innerHTML = s; return;
-    }
-    const hi = Math.max(...steps.map(x => Math.max(x[1], x[2]))) * 1.12, py = v => B - v / hi * (B - Tp);
-    [0, hi / 3, 2 * hi / 3].forEach(v => { s += Ln(L, py(v), R, py(v), v ? 'var(--line2)' : 'var(--line)', v ? 1.5 : 2) + T(L - 16, py(v) + 7, usd(v), { a: 'end', fs: 17 }); });
-    const wb = Math.min(120, bw * .6);
-    steps.forEach(([name, a, b, kind], i) => {
-      const lo = Math.min(a, b), top = Math.max(a, b), x = cxs[i] - wb / 2, up = kind === 'step' && a > b;
-      const col = kind === 'total' ? 'var(--bad)' : kind === 'final' ? 'var(--ind)' : up ? 'var(--val)' : 'var(--ind)';
-      const op = kind === 'step' ? .45 : 1;
-      s += `<rect x="${x}" y="${py(top)}" width="${wb}" height="${Math.max(2, py(lo) - py(top))}" rx="4" style="fill:${col};fill-opacity:${op}"><title>${esc(name)}: ${usd(b)} → ${usd(a)}</title></rect>`;
-      const lab = kind === 'step' ? (up ? '+' : '−') + usd(Math.abs(b - a)) : usd(top);
-      s += T(cxs[i], py(top) - 12, lab, { a: 'middle', fs: 20, fw: 600, c: 'var(--ink)' });
-      if (i < steps.length - 1) { const nb = kind === 'step' ? a : b; s += Ln(x + wb, py(nb), cxs[i + 1] - wb / 2, py(nb), 'var(--faint)', 1.5, '4 4'); }
-    });
-    svg.innerHTML = s;
-  })();
-
-  // ---------- Figure B: rule sets on gold, V1 and V2 (a slope chart) ----------
-  document.querySelectorAll('svg[data-sets]').forEach(svg => {
-    const two = svg.dataset.sets === '2', id = 'h' + svg.id, w = two ? 860 : 1000, h = two ? 470 : 560;
-    svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
-    const d = RESULTS.B;
-    const G = [['gold', 'Gold', 'labelled by a person'], ['V1', 'Validation set 1', 'fresh, round 1'], ['V2', 'Validation set 2', 'fresh, round 2']];
-    const SETS = two ? [['R1', 'Rule set 1', 'var(--ink2)'], ['R2', 'Rule set 2', 'var(--ind)']] : [['R1', 'Rule set 1', 'var(--ink2)']];
-    const L = 80, R = w - (two ? 150 : 170), Tp = two ? 56 : 30, B = h - 80, px = gi => L + 20 + gi * (R - L - 40) / 2;
-    const all = []; SETS.forEach(([k]) => G.forEach(([g]) => { if (d && d[k] && d[k][g] != null) all.push(d[k][g]); }));
-    let s = `<defs>${hatch(id)}</defs>`;
-    G.forEach(([, name, sub], gi) => {
-      s += Ln(px(gi), Tp, px(gi), B, 'var(--line2)', 1.5, '4 6');
-      s += T(px(gi), B + 34, name, { a: 'middle', fs: 22, fw: 600, c: 'var(--ink)' }) + T(px(gi), B + 60, sub, { a: 'middle', fs: 17 });
-    });
-    if (two) { let lx = L; SETS.forEach(([, name, col]) => { s += `<rect x="${lx}" y="6" width="18" height="18" rx="4" style="fill:${col}"/>` + T(lx + 28, 22, name, { fs: 19, fw: 500, c: 'var(--ink2)' }); lx += 170; }); }
-    if (!all.length) { s += Ln(L, B, R, B, 'var(--line)', 2) + todo(id, L, Tp, R - L, B - Tp - 2); svg.innerHTML = s; return; }
-    let lo = Math.max(0, Math.floor((Math.min(...all) - .05) * 10) / 10), hi = Math.min(1, Math.ceil((Math.max(...all) + .05) * 10) / 10);
-    const py = v => B - (v - lo) / (hi - lo) * (B - Tp), step = hi - lo > .5 ? .2 : .1;
-    for (let v = lo; v <= hi + 1e-9; v += step) s += Ln(L, py(v), R, py(v), 'var(--line2)', 1.5) + T(L - 14, py(v) + 7, f1(v), { a: 'end', fs: 17 });
-    SETS.forEach(([k, name, col]) => {
-      const pts = G.map(([g], gi) => d && d[k] && d[k][g] != null ? [px(gi), py(d[k][g]), d[k][g]] : null).filter(Boolean);
-      if (!pts.length) return;
-      s += `<path d="${pathOf(pts)}" style="fill:none;stroke:${col};stroke-width:4;stroke-linejoin:round;stroke-linecap:round"/>`;
-      pts.forEach(([x, y, v]) => { s += `<circle cx="${x}" cy="${y}" r="10" style="fill:${col};stroke:var(--card);stroke-width:3"><title>${name}: ${f1(v)}</title></circle>` + T(x + 16, y - 14, f1(v), { fs: 20, fw: 600, c: 'var(--ink)' }); });
-      const last = pts[pts.length - 1]; s += T(last[0] + 24, last[1] + 26, name, { fs: 18, fw: 500, c: col });
-    });
-    svg.innerHTML = s;
-  });
-
-  // ---------- slide 9: the validation ring ----------
-  (() => {
-    const svg = document.getElementById('ring'); if (!svg) return;
-    const cx = 540, cy = 320, r = 180;
-    const N4 = [[-90, 'Fresh listings', 'where gold is thin: new shops, brands'], [0, 'Validator labels them', 'blind, with more budget'],
-                [90, 'Disagreements', 'the validator against the rules'], [180, 'A person settles them', '→ new gold, new errors']];
     let s = '';
-    N4.forEach(([a], i) => { s += arc(cx, cy, r, a + 13, a + 90 - 13, 'var(--val)'); });
-    N4.forEach(([a, t, sub], i) => {
-      const x = cx + r * Math.cos(rad(a)), y = cy + r * Math.sin(rad(a));
-      s += `<circle cx="${x}" cy="${y}" r="30" style="fill:var(--val);stroke:var(--card);stroke-width:5"/>` + T(x, y + 9, i + 1, { a: 'middle', fs: 26, fw: 700, c: '#fff' });
-      const [tx, ty, an] = a === -90 ? [x, y - 72, 'middle'] : a === 90 ? [x, y + 64, 'middle'] : a === 0 ? [x + 46, y - 4, 'start'] : [x - 46, y - 4, 'end'];
-      s += T(tx, ty, t, { a: an, fs: 24, fw: 600, c: 'var(--ink)' }) + T(tx, ty + 29, sub, { a: an, fs: 19 });
-    });
-    s += T(cx, cy - 6, 'Validation set', { a: 'middle', fs: 30, fw: 600, c: 'var(--val)' }) + T(cx, cy + 28, 'V1, V2, … frozen each round', { a: 'middle', fs: 20 });
-    svg.innerHTML = s;
+    s += Tx(80, 24, 'Induction loop', { fs: 22, fw: 600, c: C.ind });
+    s += Tx(80, 254, 'Pipeline, per listing', { fs: 22, fw: 600, c: C.ink });
+    s += Tx(370, 504, 'Validation loop', { fs: 22, fw: 600, c: C.val });
+    s += Tx(1500, 24, 'Meta loop', { fs: 22, fw: 600, c: C.meta });
+    // induction row
+    s += Bx(80, 40, 250, 90, ['Gold set', 'labelled by hand'], { c: C.ink });
+    s += Bx(420, 40, 230, 90, ['Errors on gold'], { c: C.ind });
+    s += Bx(740, 40, 270, 90, ['Agent', 'proposes one rule'], { c: C.ind });
+    s += Bx(1100, 40, 320, 90, ['Gate, in code', 'keeps it if sealed F1 rises'], { c: C.ind });
+    s += Ar([[330, 85], [420, 85]], C.ind) + Ar([[650, 85], [740, 85]], C.ind) + Ar([[1010, 85], [1100, 85]], C.ind);
+    s += Ar([[1260, 130], [1260, 200], [700, 200], [700, 268]], C.ind) + Tx(1272, 178, 'new rule', { fs: 19, c: C.ind });
+    s += Ar([[535, 268], [535, 132]], C.ind) + Tx(547, 178, 'run on gold', { fs: 19, c: C.ind });
+    // pipeline row
+    s += Bx(80, 270, 200, 100, ['Listings', 'from every shop']);
+    s += Bx(370, 270, 480, 100, ['Rules · free', 'parse · brand · registry · lattice'], { c: C.ind, sw: 3, fill: '#F3F8FC' });
+    s += Bx(940, 270, 360, 100, ['Agent · paid per call', "only what rules can't settle"]);
+    s += Bx(1390, 270, 170, 100, ['Product', 'tree'], { c: C.ink, sw: 3 });
+    s += Ar([[280, 320], [370, 320]]) + Ar([[850, 320], [940, 320]]) + Ar([[1300, 320], [1390, 320]]);
+    s += Ar([[610, 370], [610, 420], [1475, 420], [1475, 372]]) + Tx(1040, 410, 'settled by rules', { fs: 19, a: 'middle' });
+    // validation row
+    s += Bx(370, 520, 360, 90, ['Validator agent', 'labels fresh listings blind'], { c: C.val });
+    s += Bx(820, 520, 300, 90, ['Disagrees', 'with the pipeline?'], { c: C.val });
+    s += Bx(1210, 520, 250, 90, ['A person', 'settles it'], { c: C.ink });
+    s += Ar([[180, 370], [180, 565], [370, 565]], C.val) + Ar([[730, 565], [820, 565]], C.val) + Ar([[1120, 565], [1210, 565]], C.val);
+    s += Ar([[1335, 610], [1335, 680], [30, 680], [30, 85], [78, 85]], C.val) + Tx(700, 672, 'new gold cases, and new errors for induction', { fs: 19, a: 'middle', c: C.val });
+    s += Ar([[1260, 610], [1260, 640], [550, 640], [550, 612]], C.val, { dash: true }) + Tx(905, 632, 'teaches it what to look for', { fs: 19, a: 'middle', c: C.val });
+    // meta
+    s += Bx(1500, 40, 164, 90, ['Lessons', 'next domain'], { c: C.meta, sw: 3 });
+    s += Ar([[1420, 85], [1500, 85]], C.meta);
+    put('archA', '0 0 1664 700', s);
   })();
 
-  // ---------- Figure C: the transfer matrix ----------
+  // ---------- 6B: two folds, zoomed into one domain ----------
   (() => {
-    const el = document.getElementById('figC'); if (!el) return;
-    const D = ['food', 'fragrance', 'cars'], PH = { 'food>fragrance': '[n]', 'fragrance>food': '[m]' };
-    const saved = RESULTS.C && RESULTS.C.saved || {}, max = Math.max(1, ...Object.values(saved).filter(v => v != null));
-    let h = `<div class="mh">from ↓ to →</div>` + D.map(t => `<div class="mh cell${t === 'cars' ? ' dim' : ''}">${t}</div>`).join('');
-    D.forEach(s => {
-      h += `<div class="rh${s === 'cars' ? ' dim' : ''}">${s}</div>`;
-      D.forEach(t => {
-        const k = s + '>' + t, v = saved[k], dim = s === 'cars' || t === 'cars' ? ' dim' : '';
-        if (s === t) h += `<div class="cell diag${dim}"><b>—</b></div>`;
-        else if (v != null) h += `<div class="cell" style="background:color-mix(in srgb, var(--meta) ${Math.round(10 + 30 * v / max)}%, transparent)"><b>${v}</b><small>rounds saved</small></div>`;
-        else h += `<div class="cell${dim}"><b class="ph">${PH[k] || '[ ]'}</b><small>${dim ? 'if there is data' : 'rounds saved'}</small></div>`;
+    let s = '';
+    s += Tx(0, 24, 'Across domains', { fs: 22, fw: 600, c: C.meta });
+    s += Bx(0, 60, 250, 110, ['Food'], { c: C.meta, fs: 28 });
+    s += Bx(0, 300, 250, 110, ['Fragrance'], { c: C.ink, sw: 3, fs: 28 });
+    s += Bx(0, 540, 250, 110, ['Cars'], { c: C.meta, fs: 28 });
+    s += Ar([[125, 170], [125, 298]], C.meta) + Tx(140, 242, 'lessons', { fs: 19, c: C.meta });
+    s += Ar([[125, 410], [125, 538]], C.meta) + Tx(140, 482, 'lessons', { fs: 19, c: C.meta });
+    // zoom wedge
+    s += `<path d="M250 300L380 0M250 410L380 700" stroke="${C.line}" stroke-width="2" fill="none"/>`;
+    s += `<rect x="380" y="0" width="1284" height="700" rx="18" fill="none" stroke="${C.line}" stroke-width="2"/>`;
+    s += Tx(420, 52, 'Inside one domain', { fs: 22, fw: 600, c: C.ink });
+    // induction
+    s += Tx(690, 112, 'Induction', { fs: 20, fw: 600, c: C.ind });
+    s += Bx(440, 130, 200, 90, ['Gold set', 'by hand'], { c: C.ink });
+    s += Bx(720, 130, 290, 90, ['Agent', 'proposes one rule'], { c: C.ind });
+    s += Bx(1090, 130, 280, 90, ['Gate, in code', 'sealed gold'], { c: C.ind });
+    s += Ar([[640, 175], [720, 175]], C.ind) + Ar([[1010, 175], [1090, 175]], C.ind);
+    s += Ar([[1230, 220], [1230, 270], [860, 270], [860, 318]], C.ind) + Tx(1242, 256, 'keep', { fs: 19, c: C.ind });
+    s += Ar([[790, 318], [790, 222]], C.ind) + Tx(700, 276, 'errors', { fs: 19, c: C.ind });
+    // pipeline
+    s += Bx(440, 320, 200, 100, ['Listings']);
+    s += Bx(720, 320, 290, 100, ['Rules', 'free'], { c: C.ind, sw: 3, fill: '#F3F8FC' });
+    s += Bx(1090, 320, 280, 100, ['Agent', 'paid, only the rest']);
+    s += Bx(1450, 320, 170, 100, ['Tree'], { c: C.ink, sw: 3 });
+    s += Ar([[640, 370], [720, 370]]) + Ar([[1010, 370], [1090, 370]]) + Ar([[1370, 370], [1450, 370]]);
+    // validation
+    s += Tx(720, 512, 'Validation', { fs: 20, fw: 600, c: C.val });
+    s += Bx(720, 530, 290, 90, ['Validator agent', 'labels fresh listings'], { c: C.val });
+    s += Bx(1090, 530, 280, 90, ['A person', 'settles disagreements'], { c: C.ink });
+    s += Ar([[540, 420], [540, 575], [720, 575]], C.val) + Ar([[1010, 575], [1090, 575]], C.val);
+    s += Ar([[1230, 620], [1230, 665], [410, 665], [410, 175], [438, 175]], C.val) + Tx(820, 657, 'new gold', { fs: 19, a: 'middle', c: C.val });
+    put('archB', '0 0 1664 700', s);
+  })();
+
+  // ---------- 6C: who does what ----------
+  (() => {
+    const cols = [['Place listings', C.ink], ['Induction', C.ind], ['Validation', C.val], ['Meta loop', C.meta]];
+    const X0 = 250, CW = 353, rows = [['Code', 'free, testable'], ['Agents', 'paid per call'], ['A person', 'decides what is true']];
+    const RY = [80, 290, 500], RH = 200;
+    const cells = [
+      [['Parse, brand, registry', 'and lattice settle', 'most listings'], ['Gate keeps a rule only', 'if F1 on sealed gold', 'rises'], ['Freezes each round as', 'a validation set'], ['Keeps what worked,', 'with its scope']],
+      [['The cheapest agent', "settles what's left"], ['Reads the errors on', 'gold, proposes', 'one rule'], ['Labels fresh listings', 'blind, flags', 'disagreements'], ["Starts the next domain's", 'induction from', 'the lessons']],
+      [[], ['Labels the gold set', 'by hand'], ['Settles each', 'disagreement, teaches', 'the validator'], []],
+    ];
+    let s = '';
+    cols.forEach(([t, c], j) => { const x = X0 + j * CW; s += `<rect x="${x + 12}" y="0" width="${CW - 24}" height="4" fill="${c}"/>` + Tx(x + 12, 46, t, { fs: 26, fw: 600, c: C.ink }); });
+    rows.forEach(([t, sub], i) => {
+      s += `<line x1="0" x2="1664" y1="${RY[i]}" y2="${RY[i]}" stroke="${C.line}" stroke-width="2"/>`;
+      s += Tx(0, RY[i] + 52, t, { fs: 28, fw: 600, c: C.ink }) + Tx(0, RY[i] + 84, sub, { fs: 20 });
+      cells[i].forEach((lines, j) => { lines.forEach((l, k) => { s += Tx(X0 + j * CW + 12, RY[i] + 52 + k * 33, l, { fs: 24, c: C.ink2 }); }); });
+    });
+    // the flow: a person labels gold -> an agent proposes -> code gates -> rules place listings
+    const ix = X0 + CW + CW - 40;
+    s += Ar([[ix, 620], [ix, 492]], C.ind) + Ar([[ix, 410], [ix, 284]], C.ind);
+    s += Ar([[X0 + CW + 4, 140], [X0 + CW - 20, 140]], C.ind);
+    // validation: agent flags -> person settles -> new gold
+    const vx = X0 + 3 * CW - 40;
+    s += Ar([[vx, 410], [vx, 494]], C.val);
+    s += Ar([[X0 + 2 * CW + 4, 640], [X0 + 2 * CW - 20, 640]], C.val) + Tx(X0 + 2 * CW - 30, 676, 'new gold', { fs: 18, a: 'end', c: C.val });
+    put('archC', '0 0 1664 700', s);
+  })();
+
+  // ---------- line charts ----------
+  // o: { w, h, xs: labels, ymin, ymax, ticks, fmt, series: [{ v, c, label, w, op }], ph: 'text' when there is no data }
+  function chart(id, o) {
+    const w = o.w || 900, h = o.h || 520, L = o.l || 80, Rr = o.r || 200, T = 20, Bm = 60;
+    const n = o.xs.length, x = i => L + (w - L - Rr) * (n === 1 ? .5 : i / (n - 1));
+    const y = v => T + (h - T - Bm) * (1 - (v - o.ymin) / (o.ymax - o.ymin));
+    let s = '';
+    if (o.ph) {
+      s += `<rect x="${L}" y="${T}" width="${w - L - Rr}" height="${h - T - Bm}" rx="10" fill="none" stroke="${C.line}" stroke-width="2" stroke-dasharray="10 9"/>`;
+      s += Tx(L + (w - L - Rr) / 2, T + (h - T - Bm) / 2 + 8, o.ph, { a: 'middle', fs: 24, c: C.faint });
+    } else {
+      (o.ticks || []).forEach(t => { s += `<line x1="${L}" x2="${w - Rr}" y1="${y(t)}" y2="${y(t)}" stroke="${C.grid}" stroke-width="2"/>` + Tx(L - 14, y(t) + 7, o.fmt(t), { a: 'end', fs: 20, c: C.faint }); });
+      o.series.forEach(sr => {
+        const pts = sr.v.map((v, i) => v == null ? null : [x(i), y(v)]);
+        let d = '', pen = false;
+        pts.forEach(p => { if (!p) { pen = false; return; } d += (pen ? 'L' : 'M') + p[0].toFixed(1) + ' ' + p[1].toFixed(1); pen = true; });
+        s += `<path d="${d}" fill="none" stroke="${sr.c}" stroke-width="${sr.w || 4}" stroke-linejoin="round" stroke-linecap="round" opacity="${sr.op || 1}"${sr.dash ? ' stroke-dasharray="10 8"' : ''}/>`;
+        if (!sr.thin) pts.forEach(p => { if (p) s += `<circle cx="${p[0]}" cy="${p[1]}" r="7" fill="${sr.c}" stroke="#fff" stroke-width="2"/>`; });
+        if (sr.label) { const li = pts.map((p, i) => p ? i : -1).filter(i => i >= 0).pop(); const p = pts[li];
+          s += Tx(p[0] + 18, p[1] + 8 + (sr.dy || 0), sr.label, { fs: 24, fw: 600, c: C.ink }); }
+        if (sr.notes) sr.notes.forEach((t, i) => { if (t && pts[i]) s += Tx(pts[i][0], pts[i][1] - 18, esc(t), { a: 'middle', fs: 17, c: C.mute }); });
       });
+    }
+    o.xs.forEach((t, i) => { s += Tx(x(i), h - Bm + 40, t, { a: 'middle', fs: 20, c: C.mute }); });
+    put(id, `0 0 ${w} ${h}`, s);
+  }
+  const mean = rows => rows[0].map((_, i) => rows.reduce((a, r) => a + r[i], 0) / rows.length);
+
+  // 2 · pe2: the judge against the owner's labels
+  chart('pe2', { w: 1100, h: 560, r: 260, xs: ['start', 'round 1', 'round 2', 'round 3', 'round 4'], ymin: 76, ymax: 92, ticks: [80, 85, 90], fmt: t => t + '%',
+    series: [
+      ...PE2.judge.map(v => ({ v, c: C.val, w: 2, op: .18, thin: true })),
+      ...PE2.owner.map(v => ({ v, c: C.ink, w: 2, op: .12, thin: true })),
+      { v: mean(PE2.judge), c: C.val, label: 'LLM judge ' + Math.round(mean(PE2.judge)[4]) + '%' },
+      { v: mean(PE2.owner), c: C.ink, label: "Owner's labels " + Math.round(mean(PE2.owner)[4]) + '%' },
+    ] });
+
+  // 8 · Figure A
+  if (rounds) {
+    const xs = rounds.map((_, i) => i ? 'round ' + i : 'start'), kept = rounds.map(r => r.kept || null);
+    const fv = rounds.map(r => r.f1), cv = rounds.map(r => r.cost);
+    const fmin = Math.max(0, Math.floor(Math.min(...fv.filter(v => v != null)) * 10) / 10 - .1);
+    chart('figA1', { w: 820, h: 520, r: 120, xs, ymin: fmin, ymax: 1, ticks: [fmin, (fmin + 1) / 2, 1].map(v => +v.toFixed(2)), fmt: v => v.toFixed(2),
+      series: [{ v: fv, c: C.ind, label: V['A.f1.last'], notes: kept }] });
+    const ao = R.agentOnly && R.agentOnly.cost, cmax = Math.max(ao || 0, ...cv.filter(v => v != null)) * 1.1;
+    chart('figA2', { w: 820, h: 520, r: 160, xs, ymin: 0, ymax: cmax, ticks: [0, cmax / 2, cmax].map(v => +v.toFixed(2)), fmt: usd,
+      series: [...(ao ? [{ v: xs.map(() => ao), c: C.faint, w: 2, thin: true, dash: true, label: 'agent alone' }] : []), { v: cv, c: C.ind, label: V['A.cost.last'] }] });
+  } else {
+    chart('figA1', { w: 820, h: 520, r: 40, xs: ['start', 'round 1', 'round 2', 'round 3', '…'], ph: "waiting for today's run" });
+    chart('figA2', { w: 820, h: 520, r: 40, xs: ['start', 'round 1', 'round 2', 'round 3', '…'], ph: "waiting for today's run" });
+  }
+
+  // 9 · Figure B
+  const sets = ['gold', 'validation set 1', 'validation set 2'];
+  if (R.B && R.B.R1) {
+    const r1 = ['gold', 'V1', 'V2'].map(k => R.B.R1[k] ?? null), r2 = R.B.R2 ? ['gold', 'V1', 'V2'].map(k => R.B.R2[k] ?? null) : null;
+    const all = [...r1, ...(r2 || [])].filter(v => v != null), lo = Math.max(0, Math.floor(Math.min(...all) * 10) / 10 - .1);
+    chart('figB', { w: 900, h: 520, r: 200, xs: sets, ymin: lo, ymax: 1, ticks: [lo, (lo + 1) / 2, 1].map(v => +v.toFixed(2)), fmt: v => v.toFixed(2),
+      series: [{ v: r1, c: C.ink, label: 'rule set 1' }, ...(r2 ? [{ v: r2, c: C.ind, label: 'rule set 2' }] : [])] });
+  } else chart('figB', { w: 900, h: 520, r: 40, xs: sets, ph: "waiting for today's run" });
+
+  // ---------- trees: connect each [data-p] to its parent ----------
+  function linkTrees() {
+    document.querySelectorAll('.tree').forEach(box => {
+      const svg = box.querySelector('svg.links'); let d = '';
+      box.querySelectorAll('[data-p]').forEach(c => {
+        const p = box.querySelector('#' + c.dataset.p); if (!p) return;
+        const px = p.offsetLeft + p.offsetWidth / 2, py = p.offsetTop + p.offsetHeight + 12;
+        const cx = c.offsetLeft + c.offsetWidth / 2, cy = c.offsetTop - 12, my = Math.round((py + cy) / 2);
+        d += `M${px} ${py}V${my}H${cx}V${cy}`;
+      });
+      svg.innerHTML = `<path d="${d}" fill="none" stroke="${C.wire}" stroke-width="2" stroke-linejoin="round"/>`;
     });
-    el.innerHTML = h;
-  })();
+  }
 
-  // ---------- backup: what the system says vs what a person finds ----------
-  document.querySelectorAll('svg[data-sf]').forEach(svg => {
-    const key = svg.dataset.sf, w = +svg.dataset.w, h = +svg.dataset.h, col = key === 'judge' ? 'var(--ind)' : 'var(--ink)';
-    svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
-    const L = 72, R = w - 80, Tp = 14, B = h - 46, lo = 76, hi = 92, n = 5;
-    const px = i => L + 10 + i / (n - 1) * (R - L - 20), py = v => B - (v - lo) / (hi - lo) * (B - Tp);
-    const runs = PE2[key], mean = [...Array(n)].map((_, i) => runs.reduce((a, r) => a + r[i], 0) / runs.length);
-    let s = '';
-    [80, 84, 88, 92].forEach(v => { s += Ln(L, py(v), R, py(v), 'var(--line2)', 1.5) + T(L - 14, py(v) + 7, v + '%', { a: 'end', fs: 19 }); });
-    s += Ln(L, B, R, B, 'var(--line)', 2);
-    for (let i = 0; i < n; i++) s += T(px(i), B + 34, i, { a: 'middle', fs: 19 });
-    s += T(L - 14, B + 34, 'round', { a: 'end', fs: 19 });
-    s += `<path d="${pathOf(mean.map((v, i) => [px(i), py(v)]))}" style="fill:none;stroke:${col};stroke-width:5;stroke-linejoin:round;stroke-linecap:round"/>`;
-    mean.forEach((v, i) => { s += `<circle cx="${px(i)}" cy="${py(v)}" r="9" style="fill:${col};stroke:var(--card);stroke-width:3"><title>round ${i}: ${v.toFixed(1)}%</title></circle>`; });
-    s += T(px(n - 1) + 18, py(mean[n - 1]) + 8, Math.round(mean[n - 1]) + '%', { fs: 24, fw: 600, c: 'var(--ink)' });
-    svg.innerHTML = s;
-  });
-
-  // ---------- wrap each slide in a frame; page numbers ----------
+  // ---------- frames, page numbers, variant tags ----------
   const slides = [...stage.querySelectorAll(':scope > section.slide')];
-  const N = slides.length, TALK = 17;
-  const SECTIONS = [['problem', 'Problem'], ['taxo', NAME], ['ind', 'Induction'], ['val', 'Validation'], ['meta', 'Meta loop'], ['why', 'Why it matters']];
+  const N = slides.length, TALK = Math.max(...slides.map(s => +s.dataset.n || 0));
   const params = new URLSearchParams(location.search);
   if (params.has('all')) body.classList.add('static');
   const frames = slides.map((s, i) => {
@@ -1566,73 +774,21 @@ record:     # filled in by the runs
     f.className = 'frame';
     s.before(f); f.appendChild(s);
     f.addEventListener('click', () => { if (body.classList.contains('overview')) { overview(false); go(i); } });
-    if (i) { const p = document.createElement('p'); p.className = 'pgn'; p.textContent = i < TALK ? `${i + 1} / ${TALK}` : `backup ${i - TALK + 1}`; s.appendChild(p); }
-    const si = SECTIONS.findIndex(([k]) => k === s.dataset.sec);
-    if (i > 0 && i < TALK - 1 && si >= 0) {
-      const t = document.createElement('div'); t.className = 'trk';
-      t.innerHTML = SECTIONS.map(([, lab], j) => `<span class="${j === si ? 'on' : j < si ? 'done' : ''}">${esc(lab)}</span>`).join('');
-      s.appendChild(t);
+    if (i) { const p = document.createElement('p'); p.className = 'pgn'; p.textContent = `${s.dataset.n} / ${TALK}`; s.appendChild(p); }
+    if (s.dataset.var) {
+      const n = slides.filter(x => x.dataset.n === s.dataset.n).length, t = document.createElement('p');
+      t.className = 'vtag'; t.textContent = `Variant ${s.dataset.var} of ${n}: pick one`; s.appendChild(t);
     }
     return f;
   });
+  linkTrees();
+  if (document.fonts) document.fonts.ready.then(linkTrees);
 
-  // ---------- the cover's point cloud: Gaussian clusters of small squares, kept clear of anything marked .clear ----------
-  const PAL = { pink: ['#E0457B', '#EA6F96', '#C7336A'], teal: ['#12A07F', '#2DBE98', '#0A7C63'],
-                gold: ['#F0A71B', '#E9B84E', '#D58F0A'], blue: ['#3C7FE6', '#5E9CF1', '#2462C8'] };
-  const LAYOUT = { scatter: [1300, 0, 0, 1920, 1080], clusters: [
-    ['pink', 820, 30, 150, 95, 4200], ['teal', 1850, 420, 190, 300, 7200], ['gold', 280, 880, 330, 220, 1900, .32], ['blue', 960, 1075, 120, 75, 2800]] };
-  function rng(a) { return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a);
-    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
-  function cloud(svg) {
-    const slide = svg.closest('.slide'), R = rng(+svg.dataset.seed || 1);
-    const g = () => { let u = 0, v = 0; while (!u) u = R(); while (!v) v = R(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); };
-    const keep = [...slide.querySelectorAll('.clear')].map(el => {
-      let x = 0, y = 0, e = el;
-      while (e && e !== slide) { x += e.offsetLeft; y += e.offsetTop; e = e.offsetParent; }
-      return [x, y, x + el.offsetWidth, y + el.offsetHeight];
-    });
-    const buckets = new Map(), alphas = [.45, .7, .95];
-    const add = (x, y, sz, col, a) => {
-      if (x < -12 || y < -12 || x > W + 12 || y > H + 12) return;
-      for (const [x0, y0, x1, y1] of keep) {
-        const dd = Math.hypot(Math.max(x0 - x, 0, x - x1), Math.max(y0 - y, 0, y - y1));
-        if (dd < 26 || (dd < 96 && R() > (dd - 26) / 70)) return;
-      }
-      const key = col + '|' + a;
-      if (!buckets.has(key)) buckets.set(key, []);
-      buckets.get(key).push(`M${x.toFixed(1)} ${y.toFixed(1)}h${sz}v${sz}h-${sz}z`);
-    };
-    for (const [name, cx, cy, sx, sy, n, big = .03] of LAYOUT.clusters) {
-      const shades = PAL[name];
-      for (let i = 0; i < n; i++) {
-        const wide = R() < .14 ? 2.3 : 1, sz = (R() < big ? 6 + R() * 6 : 2.4 + R() * 2.2).toFixed(1);
-        add(cx + g() * sx * wide, cy + g() * sy * wide, sz, shades[(R() * 3) | 0], alphas[(R() * 3) | 0]);
-      }
-    }
-    const [n, x0, y0, x1, y1] = LAYOUT.scatter, allc = Object.values(PAL).flat();
-    for (let i = 0; i < n; i++) add(x0 + R() * (x1 - x0), y0 + R() * (y1 - y0), (2.4 + R() * 3).toFixed(1), allc[(R() * allc.length) | 0], alphas[(R() * 3) | 0]);
-    svg.innerHTML = [...buckets].map(([k, arr]) => { const [c, a] = k.split('|'); return `<path fill="${c}" fill-opacity="${a}" d="${arr.join('')}"/>`; }).join('');
-  }
-  const drawClouds = () => document.querySelectorAll('svg.cloud').forEach(cloud);
-  drawClouds();
-  if (document.fonts) document.fonts.ready.then(drawClouds);
-
-  // ---------- fit the canvas to the window ----------
   const fit = () => stage.style.setProperty('--s', Math.min(innerWidth / W, innerHeight / H));
   addEventListener('resize', fit); fit();
 
-  // ---------- looks ----------
-  const hint = document.querySelector('.hint');
-  const showLook = () => { hint.textContent = `→ next · ← back · O overview · N notes · L look: ${root.dataset.look} ${LOOKS[root.dataset.look]}`; };
-  function nextLook() {
-    const l = String(root.dataset.look % 3 + 1); root.dataset.look = l;
-    params.set('look', l); history.replaceState(null, '', location.pathname + '?' + params.toString() + location.hash);
-    showLook(); hint.classList.remove('gone'); clearTimeout(nextLook.t); nextLook.t = setTimeout(() => hint.classList.add('gone'), 2500);
-  }
-  showLook();
-
   // ---------- navigation ----------
-  const bar = document.querySelector('.progress'), notesEl = document.querySelector('.notes-panel');
+  const bar = document.querySelector('.progress'), notesEl = document.querySelector('.notes-panel'), hint = document.querySelector('.hint');
   let cur = 0;
   function go(i) {
     i = Math.max(0, Math.min(N - 1, i));
@@ -1641,19 +797,17 @@ record:     # filled in by the runs
     frames[cur].classList.add('active');
     history.replaceState(null, '', location.pathname + location.search + '#' + (cur + 1));
     bar.style.width = ((cur + 1) / N * 100) + '%';
-    const a = slides[cur].querySelector('aside.notes');
-    notesEl.innerHTML = `<b>NOTES · ${cur + 1} / ${N}</b>` + (a ? esc(a.textContent.trim()) : '');
+    const a = slides[cur].querySelector('aside.notes'), v = slides[cur].dataset.var;
+    notesEl.innerHTML = `<b>NOTES · SLIDE ${slides[cur].dataset.n}${v ? ' · VARIANT ' + v : ''}</b>` + (a ? esc(a.textContent.trim()) : '');
   }
   const next = () => { if (cur < N - 1) go(cur + 1); }, prev = () => { if (cur > 0) go(cur - 1); };
   function overview(on) {
     body.classList.toggle('overview', on);
     if (on) frames[cur].scrollIntoView({ block: 'center' });
   }
-
   addEventListener('keydown', e => {
     if (e.metaKey || e.ctrlKey || e.altKey) return;
     const k = e.key;
-    if (k === 'l' || k === 'L') { nextLook(); return; }
     if (body.classList.contains('overview')) {
       if (k === 'Escape' || k === 'o' || k === 'O' || k === 'Enter') { overview(false); e.preventDefault(); }
       return;
@@ -1677,7 +831,6 @@ record:     # filled in by the runs
     const dx = e.changedTouches[0].clientX - tx; tx = null;
     if (Math.abs(dx) > 40) (dx < 0 ? next : prev)();
   });
-
   const fromHash = () => { const n = parseInt(location.hash.slice(1), 10); return Number.isFinite(n) ? n - 1 : 0; };
   addEventListener('hashchange', () => { if (fromHash() !== cur) go(fromHash()); });
   go(fromHash());
