@@ -53,6 +53,7 @@ def execute(root, run_name, validator_path=None, *, executable=False):
         from domains.food.executable_changes import contract
         owner = yaml.safe_load((DOMAINS_DIR/'food/pack.yaml').read_text(encoding='utf-8'))['conventions']
         history = []
+        validator_history = []
         retained_system = None
         if (root/'system-state/current.json').exists():
             from domains.food.system_state import load
@@ -66,6 +67,22 @@ def execute(root, run_name, validator_path=None, *, executable=False):
             history.append({'trial': previous.parent.name, 'status': report['status'],
                 'before_feedback': report.get('before', {}).get('partitions', {}).get('feedback'),
                 'after_feedback': report.get('after', {}).get('partitions', {}).get('feedback')})
+        for previous in sorted(root.glob('loop-*/loop-report.json')):
+            old = read(previous)
+            if old.get('status') != 'completed_integrated_development_cycle':
+                continue
+            old_roles = root/(previous.parent.name+'-feedback-feedback-roles')
+            if (old_roles/'proposer-output.json').exists():
+                history.append({'trial':previous.parent.name, 'proposal':read(old_roles/'proposer-output.json'),
+                    'retained_system_version':old['version_after'],
+                    'outcome':'retained' if old['version_after'] > old['version_before'] else 'rejected'})
+            vp = root/(previous.parent.name+'-validator-candidate/metrics.json')
+            vc = root/(previous.parent.name+'-validator-current/metrics.json')
+            if vp.exists() and vc.exists() and (old_roles/'improver-output.json').exists():
+                validator_history.append({'change':read(old_roles/'improver-output.json'),
+                    'before_feedback':read(vc)['partitions']['feedback'],
+                    'after_feedback':read(vp)['partitions']['feedback'],
+                    'retained':old['validator_comparison']['keep_for_development']})
         payload = json.dumps({'constraints': constraint, 'owner_conventions': owner, 'cases': cases,
                               'current_setup': setup,
                               'retained_full_system': retained_system,
@@ -85,6 +102,9 @@ def execute(root, run_name, validator_path=None, *, executable=False):
                                  'owner_conventions': owner if executable else None,
                                  'available_tools': ['similar_brands'] + [read(Path(path))['tool_name']
                                      for path in setup.get('tool_reports', [])],
+                                 'tool_limitations': 'similar_brands searches only original explicit source-brand fields; '
+                                     'it is sparse and incomplete, not a canonical registry. No match is never evidence of no brand.',
+                                 'prior_validator_trials_feedback_only': validator_history if executable else [],
                                  'validator_mistakes': [{k: v for k, v in c.items() if k != 'pipeline'}
                                                        for c in mistakes]}, ensure_ascii=False)
         result = run_sync(factory('food', executable=executable), scoped, output=folder / role, max_turns=1)

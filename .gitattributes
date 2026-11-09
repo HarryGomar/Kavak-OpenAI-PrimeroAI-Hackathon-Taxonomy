@@ -1,0 +1,2 @@
+# Keep byte-pinned upstream Food-port evidence stable across Windows/Linux checkouts.
+domains/food/ported/*.py text eol=lf

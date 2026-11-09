@@ -1,4 +1,4 @@
-# Food development continuation through the installed CLI
+# Integrated Food improvement through the installed CLI
 
 The owner-selected Pedia-inspired baseline is the reference. The full Food adapter
 executes fresh blind validation, gold-backed feedback comparison, the existing proposer
@@ -7,9 +7,25 @@ canonical curator rejection/admission checks, and native distillation records.
 Every model role uses the pinned Codex command-line interface (CLI) transport.
 The earlier `continue_loop` command is a preliminary card trial, not the full harness.
 
+Use the single `executable_loop` entry point below for integrated rounds. It loads
+immutable `system-state` versions containing extraction/lattice/vocabulary, executable
+configuration and routing, placer card/tools, validator setup/tools, and the actual
+retained full-pipeline output. Current CLI concurrency is capped at **20** in the shared
+transport. It executes fresh independent validation, the broad proposer and improver,
+component comparisons, and the integrated candidate before retaining a version.
+
+Changed placer instructions and executable routing receive actual placer calls on
+their routed observations. Free deterministic paths pass the same source grounding.
+Code/config-only, placer-only and combined arms are compared when applicable; identical
+arms share the same actual measurement. Cached agent-fallback replay is confined to
+`executable_changes.evaluate` isolation diagnostics and is never the final integrated
+measurement. Unsupported checks remain implementation proposals until code, declared
+positive/negative cases and actual evaluation exist. Candidate Python tools are tested
+in an isolated worker and made available only to the candidate arm.
+
 ```powershell
 python -m domains.food.place_paths --root <frozen-root> --name warm-baseline
-python -m domains.food.full_loop --root <frozen-root> --baseline <frozen-root>/warm-baseline --name full-cycle-01 --setup domains/food/validator.yaml
+python -m domains.food.executable_loop --root <frozen-root> --fallback <frozen-root>/warm-baseline --name loop-001 --setup domains/food/validator.yaml
 python -m domains.food.prepare_sample --reference <frozen-root> --output <fresh-500-root> --labeled <same-subset-gold-folder> --size 500
 python -m domains.food.place_paths --root <fresh-500-root> --name reference --card <selected-run>/hypothesis.json
 ```
@@ -21,7 +37,8 @@ does not admit learned production rules: the existing 50 observations have alrea
 been inspected, and Food has no sealed-gold gate here. Model variability also affects
 differences. No scope accuracy, served tier, dollar cost, or population claim is inferred.
 
-The staged execution plan is 50, then 500, then 5,000 source observations. A completed
+Remain at 50 observations until about 45/50 exact identity matches and regression
+checks support expansion; then evaluate 500 and 5,000 source observations. A completed
 run alone does not authorize advancement. The canonical gate's exact, touched-row,
 and Wilson-bound checks are reported on development evidence separately from the
 unavailable untouched Food sealed gate. Production admission stays blocked. At each

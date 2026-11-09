@@ -32,7 +32,7 @@ def run(root, fallback, name, setup):
     """One retained full system, component trials, and an actual integrated pipeline."""
     import shutil
     from domains.food import system_state
-    from domains.food.place_paths import execute as place
+    from domains.food.place_paths import execute as place, normalize_plan
     from domains.food.tool_trials import load_tool
     completed = root/name/'loop-report.json'
     if completed.exists() and read(completed)['status'] == 'completed_integrated_development_cycle':
@@ -117,6 +117,18 @@ def run(root, fallback, name, setup):
         manifest = read(folder/'manifest.json')
         if manifest['status'] != 'completed' or read(folder/'hypothesis.json')['instruction'] != read(card)['instruction']:
             raise RuntimeError('Actual pipeline measurement incomplete or uses a different candidate card')
+        if manifest['source']['sha256'] != state['source']['sha256']:
+            raise ValueError('Pipeline measurement source differs from retained system')
+        fixed, routed = normalize_plan(rows(root/'source-snapshot.jsonl'), plan['free_placements'], plan['routed_ids'])
+        receipt = read(folder/'routing-config.json')
+        if receipt['fixed_placements'] != list(fixed.values()) or receipt['routed_ids'] != [r['id'] for r in routed]:
+            raise ValueError('Pipeline receipt differs from requested executable routing plan')
+        if fingerprint(folder/'routing-config.json')['sha256'] != manifest['routing_config']['sha256']:
+            raise ValueError('Pipeline routing receipt drift')
+        actual_tools = receipt.get('tools') or []
+        loaded = [load_tool(p) for p in reports]
+        if [t['name'] for t in actual_tools] != [t.__name__ for t in loaded]:
+            raise ValueError('Pipeline receipt differs from requested placer tools')
         paired = compare_paired(scored(fallback), scored(folder))
         b, a = read(fallback/'metrics.json'), read(folder/'metrics.json')
         keep = paired['keep_for_development'] and all(a[k] >= b[k] for k in ('brand_correct', 'strict_full_path_exact'))
@@ -143,7 +155,8 @@ def run(root, fallback, name, setup):
             return {'status': 'proposal_rejected', 'reason': improved['reason'], 'keep_for_development': False}
         if not (validator_folder/'role-manifest.json').exists():
             validate_paths.execute(root, Path(improved['candidate_setup']), validator_folder.name)
-        if read(validator_folder/'role-manifest.json')['status'] != 'executed':
+        vm = read(validator_folder/'role-manifest.json')
+        if vm['status'] != 'executed' or vm['setup']['sha256'] != fingerprint(Path(improved['candidate_setup']))['sha256']:
             raise RuntimeError('Candidate independent validator incomplete')
         all_rows = compare_paired(scored(current), scored(validator_folder))
         held = compare_paired(scored(current,'withheld_feedback'), scored(validator_folder,'withheld_feedback'))
@@ -163,6 +176,8 @@ def run(root, fallback, name, setup):
             placer={'card': chosen['card'], 'tool_reports': chosen['tool_reports']})
     if validator['keep_for_development']:
         changes['validator'] = {'setup': validator['setup']}
+    if changes:
+        changes.setdefault('baseline_output', state['baseline_output']['path'])
     gate = {'keep_for_development': bool(changes), 'production_admission': False,
             'paired': chosen['paired'] if chosen else validator.get('paired_all'),
             'comparisons': outcomes, 'validator': validator}
