@@ -168,8 +168,12 @@ def clusters(sets: dict[str, list], limit: int = 6, examples: int = 4) -> list[d
 def ask_proposer(domain: str, cl: list[dict], doc: dict, log: Path, history: list[dict] | None = None) -> dict | None:
     from taxo.core.codex import Runner
     from taxo.roles.proposer import make_proposer
+    closed_f = DOMAINS_DIR / domain / "memory" / "closed_questions.yaml"
+    closed = yaml.safe_load(closed_f.read_text(encoding="utf-8")) if closed_f.exists() else []
     text = (PAYLOAD_HELP + "\n\nCurrent vocabulary (variant axes and strip words):\n"
             + json.dumps({"variant": doc.get("variant"), "strip": doc.get("strip")}, ensure_ascii=False)
+            + ("\n\nClosed questions: decided already. Never propose them again, nor a vocab or rule change that only "
+               "restates them:\n" + json.dumps(closed, ensure_ascii=False) if closed else "")
             + ("\n\nYour earlier proposals this phase and what happened to them. Do not repeat one. A kind that is "
                "not testable this round changes nothing now, so prefer a vocab edit or a code_rule:\n"
                + json.dumps(history, ensure_ascii=False) if history else "")

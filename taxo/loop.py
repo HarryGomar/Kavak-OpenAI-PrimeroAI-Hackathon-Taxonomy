@@ -1,7 +1,7 @@
 """Both loops, end to end, no one in between (SPEC §5): many cheap rule rounds on silver, then one human round that
 checks the rules and improves the validator, then again.
 
-    uv run python -m taxo.loop fragrance --cycles 2 --rule-rounds 6
+    uv run python -m taxo.loop fragrance --cycles 3          per cycle: 3 rule rounds on silver, then 1 validator change
 
 One cycle:
   1. rules     taxo.climb phase on the current silver set: hill-climb vocab edits and rule on/off, gated on silver
@@ -26,6 +26,9 @@ from taxo.core.codex import Runner
 from taxo.core.config import DOMAINS_DIR, ROOT, RUNS_DIR
 from taxo.lattice.vocab import tokens
 from taxo.roles.improver import make_improver
+
+RULE_ROUNDS, VB_MISSES, VB_AB = 3, 60, 120   # per cycle: 3 rule rounds, then 1 validator change
+
 
 def _say(msg: str) -> None:
     print(msg, flush=True)
@@ -169,8 +172,9 @@ def cycle(domain: str, cyc: int, silver: str, rounds: int, skip_rules: bool = Fa
     _say(f"cycle {cyc}: 2. human checkpoint")
     out["checkpoint"] = climb.checkpoint(domain, cyc)
     _say(f"  checkpoint: {out['checkpoint']}")
-    _say(f"cycle {cyc}: 3-4. human round and validator improvement")
-    out["validator"] = improve_validator(domain, cyc)
+    _say(f"cycle {cyc}: 3-4. one validator change: human round, improver, A/B on fresh dev human rows")
+    from taxo import improve   # one iteration per cycle: 3 rule rounds, then 1 validator change
+    out["validator"] = improve.iteration(domain, cyc, VB_MISSES, VB_AB)
     if (out["validator"] or {}).get("kept"):
         nxt = _next_s(domain)
         _say(f"cycle {cyc}: 5. the validator changed: fresh silver set {nxt} with it")
@@ -207,6 +211,22 @@ def report(domain: str, cyc: int) -> str:
                  f"{k['worse']}, exact {k['exact'][0]} -> {k['exact'][1]})")
     v = c.get("validator") or {}
     L += ["", "## Validator (human round, improver, A/B)"]
+    if "ab" in v or "outcome" in v:   # a taxo.improve iteration
+        ch = v.get("change") or {}
+        L += [f"- human round {v.get('human_round')}: {v.get('misses')} misses of {v.get('of')} (validator "
+              f"v{v.get('card_before')}); improver: {ch.get('kind')} `{ch.get('question_id') or ch.get('tool_name')}`: "
+              f"{ch.get('text')}"]
+        if v.get("tool_test"):
+            L.append(f"- tool test: {v['tool_test']}")
+        if "ab" in v:
+            for m in ("exact", "harm", "abstain"):
+                x = v["ab"][m]
+                L.append(f"- {m}: {x['current']} {x['current_ci']} -> {x['candidate']} {x['candidate_ci']}, "
+                         f"delta {x['delta']} {x['delta_ci']} (n={v['ab']['n']}, {x['changed']} changed)")
+            L.append(f"- {'KEPT: validator v' + str(v['card_before']) + ' -> v' + str(v['card_after']) + ' ' + str(v.get('commit', '')) if v['kept'] else 'dropped: validator stays v' + str(v['card_before'])}")
+        else:
+            L.append(f"- {v.get('outcome')}")
+        v = {}
     h = v.get("human") or {}
     if v.get("current"):
         L += [f"- improver change: {(v.get('steps') or [{}])[0].get('kind')} "
@@ -231,7 +251,7 @@ def main() -> None:
     ap = argparse.ArgumentParser(prog="taxo.loop")
     ap.add_argument("domain")
     ap.add_argument("--cycles", type=int, default=2)
-    ap.add_argument("--rule-rounds", type=int, default=6)
+    ap.add_argument("--rule-rounds", type=int, default=RULE_ROUNDS)
     ap.add_argument("--start", type=int, default=1, help="number of the first cycle")
     ap.add_argument("--silver", default="S1", help="silver set for the first cycle's rule phase")
     ap.add_argument("--skip-first-rules", action="store_true", help="the first cycle's rule phase already ran")

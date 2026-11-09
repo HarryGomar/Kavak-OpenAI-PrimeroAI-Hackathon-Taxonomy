@@ -1,6 +1,6 @@
 """Loop B, iterated: improve the validator several times in a row (SPEC §5.2), each change tested on human rows.
 
-    uv run python -m taxo.improve fragrance --iterations 4 --misses 60 --ab 120 [--first owner-convention]
+    uv run python -m taxo.improve fragrance --iterations 4 --misses 60 --ab 120
 
 One iteration:
   1. human round   a fresh dev sample with human labels (Pedia stands in for the person); the validator labels it blind;
@@ -30,14 +30,6 @@ from taxo.core.config import DOMAINS_DIR, ROOT, RUNS_DIR
 from taxo.lattice.vocab import tokens
 
 HARM = {"deeper", "wrong", "wrong_brand"}
-OWNER_CONVENTION = {  # the owner's answer to the proposer's question, as a validator question (tested like any other)
-    "kind": "question", "question_id": "form_words_in_name", "after": "product_name", "tools": ["brand_products"],
-    "ask": "Does the title use a form or packaging word (body mist, hair mist, body spray, travel spray, gift set) as "
-           "part of the product's own name, rather than only to describe the form or the packaging?",
-    "then": "If it is part of the name, keep the word in the product name; if it only describes the form or the "
-            "packaging, leave it out (owner convention preserve_product_name_tokens).",
-    "text": "Owner convention preserve_product_name_tokens as a validator question",
-    "rationale": "owner answer 2026-11-09 to the proposer's convention question"}
 
 
 def _say(m: str) -> None:
@@ -215,12 +207,10 @@ def main() -> None:
     ap.add_argument("--iterations", type=int, default=4)
     ap.add_argument("--misses", type=int, default=60, help="human-round sample per iteration")
     ap.add_argument("--ab", type=int, default=120, help="A/B sample per iteration")
-    ap.add_argument("--first", choices=["owner-convention"], help="the first iteration tests this change")
     a = ap.parse_args()
     log = []
     for k in range(1, a.iterations + 1):
-        first = OWNER_CONVENTION if (k == 1 and a.first == "owner-convention") else None
-        log.append(iteration(a.domain, k, a.misses, a.ab, first))
+        log.append(iteration(a.domain, k, a.misses, a.ab))
         (RUNS_DIR / a.domain / "loopb" / "improve-log.json").write_text(json.dumps(log, indent=1, ensure_ascii=False),
                                                                          encoding="utf-8")
 
