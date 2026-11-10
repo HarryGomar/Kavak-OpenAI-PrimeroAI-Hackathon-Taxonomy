@@ -174,14 +174,19 @@
   body.overview .pop { display: none; }
   @media print { .pop { display: none !important; } }
 
-  /* ---------- 2 · three numbers ---------- */
-  .s2 { display: flex; flex-direction: column; gap: 34px; }
-  .s2-r { display: flex; flex-direction: column; gap: 4px; }
-  .s2-r b { font: 600 96px/1 var(--disp); color: var(--ink); letter-spacing: -.02em; }
-  .s2-r b small { font-size: 44px; color: var(--mute); letter-spacing: 0; }
-  .s2-r span { font: 400 27px var(--sans); color: var(--mute); }
-  .s2-k { margin: 18px 0 0; padding-top: 30px; border-top: 2px solid var(--line); font: 500 34px/1.3 var(--sans); color: var(--ink2); }
-  .s2-k b { color: var(--ink); font-weight: 600; }
+  /* ---------- 2 · the evaluation takeaway ---------- */
+  .s2 { display: flex; flex-direction: column; gap: 38px; }
+  .s2-context { margin: 0; max-width: 520px; font: 400 32px/1.45 var(--sans); color: var(--ink2); }
+  .s2-k { margin: 0; padding-top: 38px; border-top: 2px solid var(--line); font: 600 52px/1.18 var(--disp); color: var(--ink); }
+  .s2-k b { color: var(--val); font-weight: 600; }
+
+  .s2 { position: relative; align-self: stretch; justify-content: center; }
+  .s2-first { display: flex; flex-direction: column; gap: 32px; }
+  .s2-step { margin: 0; font: 600 25px/1.3 var(--sans); color: var(--val); }
+  .s2-reveal.pop { padding: 0; gap: 32px; justify-content: center; }
+  .s2-reveal .s2-step { color: var(--ink); }
+  [data-n="2"] .s2-human { opacity: 0; visibility: hidden; }
+  [data-n="2"]:has(.s2-reveal.on) .s2-human { opacity: 1; visibility: visible; }
 
   /* ---------- 6 · loop 1: memory, operators, tools; example, change, effect ---------- */
   .l1g { display: grid; grid-template-columns: 150px repeat(3, minmax(0, 1fr)); column-gap: 44px; row-gap: 18px; align-items: start; padding-top: 4px; }
@@ -285,14 +290,20 @@
   <div class="fill" style="display:grid;grid-template-columns:1fr 600px;gap:90px;align-items:center">
     <div class="chart" style="height:100%"><div class="plot"><svg class="ch" id="evals"></svg></div></div>
     <div class="s2">
-      <div class="s2-r"><b style="color:var(--val)">+9</b><span>points on its own eval</span></div>
-      <div class="s2-r"><b>+3</b><span>points when a person checked</span></div>
-      <div class="s2-r"><b>15<small> of 48</small></b><span>kept changes made it worse</span></div>
-      <p class="s2-k">No ground truth?<br><b>Improve the eval too.</b></p>
+      <div class="s2-first">
+        <p class="s2-step">1. During self-improvement</p>
+        <p class="s2-context">The loop keeps changes that improve its test score.</p>
+        <p class="s2-k">The test reports<br><b>steady progress.</b></p>
+      </div>
+      <div class="pop s2-reveal">
+        <p class="s2-step">2. Then a human checks</p>
+        <p class="s2-context">The human check confirms much less improvement.</p>
+        <p class="s2-k">Improve the evaluation<br><b>with the system.</b></p>
+      </div>
     </div>
   </div>
-  <p class="src">Pedia, our last project · 245 held-out listings · mean of 6 runs</p>
-  <aside class="notes">Hill-climbing is hard, and continual learning is not a solved problem. Evals are what drive performance. In our last project a loop improved its own rules and climbed its own eval, an LLM judge, from 78% to 87%. When we checked by hand afterwards, it had gone from 81% to 84%: a third of the gain. 15 of the 48 changes it kept made our labels worse. Where a task checks itself, a loss or a test suite, that's enough: Karpathy's autoresearch hill-climbs on its own. Most useful tasks have no such check. So the eval itself needs a method to improve: what counts as right, and how we check it. That's what this talk is about.</aside>
+  <p class="src">Pedia replay · 245 held-out listings · mean of 6 runs · scores rounded to whole percentages</p>
+  <aside class="notes">First show only the orange test-evaluation line. In Pedia, our earlier project, a loop proposed rule changes and used a large language model (LLM) judge to decide which ones to keep. Across six replay runs on the same 245 held-out listings, its score rose from about 78% to 87%. Press Right once to reveal the human-reference line and the second explanation. Against our human-labelled reference answers, accuracy rose from about 81% to 84%, a much smaller gain. There was some improvement; the human result was not flat. The evaluation only partly captured the decisions we wanted the system to make. That is why Taxo improves both the system and its evaluation, using human feedback to align what counts as success with the intended goal. Press Right again to continue to slide 3. If asked about regressions: the earlier loop accepted 48 rule changes; 15 reduced accuracy against the human labels. This counts changes, not listings. It is evidence from the Pedia replay, not a measured failure rate for Taxo.</aside>
 </section>
 
 <!-- 3 · The task: messy listings from many shops, built into product trees -->
@@ -612,10 +623,12 @@
     s += Tx(x(2), h - 4, 'rounds of self-improvement', { a: 'middle', fs: 22, c: C.faint });
     s += `<path d="M${j.map((v, i) => x(i) + ' ' + y(v)).join('L')}" fill="none" stroke="${C.val}" stroke-width="5" stroke-linejoin="round"/>`;
     j.forEach((v, i) => { s += `<circle cx="${x(i)}" cy="${y(v)}" r="8" fill="${C.val}" stroke="#fff" stroke-width="2"/>`; });
+    s += Tx(x(4) + 24, y(j[4]) - 4, 'Its own eval', { fs: 26, fw: 600, c: C.val }) + Tx(x(4) + 24, y(j[4]) + 28, Math.round(j[0]) + '% → ' + Math.round(j[4]) + '%, +' + Math.round(j[4] - j[0]), { fs: 24, c: C.ink2 });
+    s += '<g class="s2-human">';
     s += `<path d="M${x(0)} ${y(o[0])}L${x(4)} ${y(o[4])}" fill="none" stroke="${C.ink}" stroke-width="4" stroke-dasharray="10 9"/>`;
     s += `<circle cx="${x(0)}" cy="${y(o[0])}" r="10" fill="#fff" stroke="${C.ink}" stroke-width="4"/><circle cx="${x(4)}" cy="${y(o[4])}" r="11" fill="${C.ink}"/>`;
-    s += Tx(x(4) + 24, y(j[4]) - 4, 'Its own eval', { fs: 26, fw: 600, c: C.val }) + Tx(x(4) + 24, y(j[4]) + 28, Math.round(j[0]) + '% → ' + Math.round(j[4]) + '%, +' + Math.round(j[4] - j[0]), { fs: 24, c: C.ink2 });
     s += Tx(x(4) + 24, y(o[4]) + 10, 'Human check, after', { fs: 26, fw: 600, c: C.ink }) + Tx(x(4) + 24, y(o[4]) + 42, Math.round(o[0]) + '% → ' + Math.round(o[4]) + '%, +' + Math.round(o[4] - o[0]), { fs: 24, c: C.ink2 });
+    s += '</g>';
     put('evals', `0 0 ${w} ${h}`, s);
   })();
 
