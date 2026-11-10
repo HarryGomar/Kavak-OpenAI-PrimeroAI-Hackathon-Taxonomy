@@ -69,7 +69,22 @@ each.
 - It looks trivial for a person and is hard for an agent. A size or a 12-pack is never a new product, but a flanker
   like Khamrah Qahwa is.
 
-## 4. What we want to improve: accuracy, cost and speed (60 s)
+## 4. Gold: a person's labels, used to score everything (30 s)
+
+**Show:**
+- **Gold: a person's labels, used to score everything.** Four listings, each with gold as a small stacked tree beside
+  what Taxo placed, and the score: exact, right but stops higher, or wrong product (harm). Underneath, what the three
+  scores mean, and sealed fragrance, rules then an agent: 75% exact, 85% right or shallower, 15% harm.
+
+  *The example rows are illustrations of the format, not rows from the runs.*
+
+**Say:**
+- Before anything improves, we need a way to score it. Gold is a person's labels: for each listing, the node
+  it belongs on.
+- Exact: the same node as gold. Right or shallower: the right path, maybe stopped higher. Harm: a wrong node.
+- On sealed fragrance, rules then an agent get 75% exact, 85% right or shallower, 15% harm.
+
+## 5. What we want to improve: accuracy, cost and speed (60 s)
 
 **Show:** three columns, each with an icon. An agent on every listing gets:
 - **Accuracy:** 85% placed exactly right. Rules plus an agent get 75%, at a ninth of the cost. A small picture of a
@@ -101,14 +116,7 @@ On fragrance, rules then the agent also has right-or-shallower 85.3% and harm 14
 11.3%. Food's rules mostly stop high in the tree rather than place wrong (right or shallower 73.5% vs 77.2%), and most
 food titles never name the brand. Each figure is about ±2 points. The results slide was cut, so this table lives here.
 
-**One pop-up, gold.** After the three columns, press → to show it, → again for the next slide:
-- **Gold: a person's labels, used to score everything.** Four listings, each with gold as a small stacked tree beside
-  what Taxo placed, and the score: exact, right but stops higher, or wrong product (harm). Underneath, what the three
-  scores mean, and sealed fragrance, rules then an agent: 75% exact, 85% right or shallower, 15% harm.
-
-  *The example rows are illustrations of the format, not rows from the runs.*
-
-## 5. Loop 1 changes the rules: memory, operators and tools (40 s)
+## 6. Loop 1 changes the rules: memory, operators and tools (40 s)
 
 **Show:** a grid. Three columns, Memory (what words mean), Operators (steps, in code) and Tools (checks that block a
 wrong placement), and three rows:
@@ -140,7 +148,7 @@ Last row, **How:** errors on gold → a proposer agent → one change to one par
   keeps it only if sealed gold rises. Together, 52% to 69%.
 
 *Careful with the "How" row:* it shows how the loop is built. The kept fragrance rounds were written by hand
-from the same evidence; the Codex proposer has kept nothing yet (see slide 6's note).
+from the same evidence; the Codex proposer has kept nothing yet (see slide 7's note).
 
 *The YAML is trimmed from the real files on `origin/claude/fragrance-run-d587d6` (`domains/fragrance/vocab.yaml`,
 `rules/global/25-settle-single-name.yaml`, `rules/global/veto-set-conflict.yaml`,
@@ -151,7 +159,7 @@ round records: operators' +15.1 is rounds 3, 5 and 6 together (+11.3, +0.9, +2.9
 The 501 is food (the peer session's run: the set veto turned off on food). Round 7, turning the concentration check
 off, was also dropped, so that check stays on.*
 
-## 6. Loop 1: each rule kept, more right and cheaper (40 s)
+## 7. Loop 1: each rule kept, more right and cheaper (40 s)
 
 **Show:** two charts side by side.
 - **Left, exact match on sealed gold:** one blue line, 52.4% → 68.9%. Each kept round is labelled with its change and
@@ -189,7 +197,7 @@ finds changes that help the brands it learns from; the gate shows they don't car
 kept. Round 7 reached 69.1% and was still dropped (8 better, 5 worse), which
 is why the slide says "clearly helps" and not "rises".
 
-## 7. The architecture: two loops, rules ↔ silver, validator ↔ gold (50 s)
+## 8. The architecture: two loops, rules ↔ silver, validator ↔ gold (50 s)
 
 **Show:** two rings joined by one arrow.
 - **Loop 1** (blue, clockwise): Listings (2 million) come in at the top → Rules, then placer (place every listing) →
@@ -214,7 +222,7 @@ is why the slide says "clearly helps" and not "rises".
 *The slide comes from branch `slides/two-loops` (954fdf8), where it was a new slide 6; here it replaces the old
 architecture panel and sits after loop 1's results, right before silver. Loop 3 is not on it.*
 
-## 8. Silver and gold: the validator learns to look like gold (40 s)
+## 9. Silver and gold: the validator learns to look like gold (40 s)
 
 **Show:** "Gold is the truth. The validator learns to look like it." Three panels, left to right:
 - **Validator v1 labels 500.** A grid of 500 small grey dots (silver only). A random 50 of them, drawn below in a box,
@@ -235,10 +243,10 @@ the validator's 500 are silver; a person's random 50 are gold; when they match, 
 
 *v1 and v2 are real: fragrance improver round 1, the same 50 held-out labels. vN is the goal, not a result. In the
 notes: these labels covered three brands, and on 60 other brands v2 did worse, so it was dropped; that's why the 50
-must be random. This v2 is a different run from the card v1 → v2 on slide 9 (kept, flags right 79% → 96%): say "an
+must be random. This v2 is a different run from the card v1 → v2 on slide 10 (kept, flags right 79% → 96%): say "an
 improver round" here, not "v2", if asked to compare.*
 
-## 9. Loop 2, validation: improve the eval itself (55 s)
+## 10. Loop 2, validation: improve the eval itself (55 s)
 
 **Show:** left, the loop as a circle, as it runs: a validator labels 40 fresh listings (silver) → a person labels the
 same 40 (gold) → compare: how often silver = gold → improve the validator from the differences → again, on a new
@@ -248,7 +256,7 @@ and were dropped.
 
 Right, **each new eval: loop 1 adds rules and climbs again.** Three full loop 1 climbs, side by side, with a blue
 square under each rule loop 1 keeps (5 rules, then 8, then 10):
-- **Eval 1, gold only:** 52% → 69%, the climb from slide 6. 2,233 gold, no silver, no validator.
+- **Eval 1, gold only:** 52% → 69%, the climb from slide 7. 2,233 gold, no silver, no validator.
 - **Eval 2, + silver** (est.): loop 2 adds the validator's silver and the flags a person settled as new gold (+23).
   On the new eval the solver drops, and lowest on silver; loop 1 climbs again. Validator v1, 80 silver.
 - **Eval 3, more of both** (est.): +43 gold, 160 silver, labelled by validator v2. The drop is smaller, and silver
@@ -271,7 +279,7 @@ Under it: errors it found, like short names seen once, became rule 6 in loop 1.
   be trusted to label the rest.
 - And what it finds goes back to loop 1: short names seen only once became rule 6.
 
-*Measured: eval 1's climb (sealed gold, slide 6). The validator bars: card v2 against Pedia's labels standing in for
+*Measured: eval 1's climb (sealed gold, slide 7). The validator bars: card v2 against Pedia's labels standing in for
 the person, 40 fresh fragrance listings a round, Codex CLI run (`loopb` V1 30/40, V2 33/40, V3 34/40, V4 23/40; V2 and
 V4 were A/B rounds where a candidate card tied and was dropped). Card v1 → v2, flags right 78.9% → 95.5%: the
 Claude-session rounds. Each round is a new sample, so the bars are not one validator getting steadily better; round 4's
@@ -280,7 +288,7 @@ round. An earlier draft said "v1 → v2, 82.5% → 85%": that was wrong, both ar
 are estimates**, marked "est." on the slide: no solver score was recorded on each new silver set, and the rule counts
 after eval 1 (8, 10) are illustrative.*
 
-## 10. Loop 3: operators carry; memory has to earn it (40 s)
+## 11. Loop 3: operators carry; memory has to earn it (40 s)
 
 **Show:**
 - **Top row:** each domain on its own branch → distil turns each kept change into a lesson → tried on the other
@@ -313,7 +321,7 @@ lessons carry unevenly:
 - whole_name cut food's harmful placements by 789 but cost fragrance 41 exact placements;
 - turning fragrance's set veto off on food adds 501 harmful placements, so that lesson carries.
 
-## 11. Taxo improves the system and its eval together (20 s)
+## 12. Taxo improves the system and its eval together (20 s)
 
 **Show:** "Taxo improves the system and its eval together." In grey: "With no ground truth, a system gets only as
 good as the eval it is measured on." Then one row per loop; only the loop name is in the loop's colour:
@@ -336,7 +344,7 @@ Last line, small: Next: customer-feedback models, and other tasks with no ground
   shared set check alone keeps 501 wrong placements out of food.
 - We think this carries to other tasks with no ground truth, like customer-feedback models.
 
-*Agent calls down 63% is the share of fragrance listings sent to an agent, 30.1% → 11.1% (slide 6).*
+*Agent calls down 63% is the share of fragrance listings sent to an agent, 30.1% → 11.1% (slide 7).*
 
 ---
 
