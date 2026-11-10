@@ -28,7 +28,7 @@ def scored(folder, partition=None):
     return result
 
 
-def run(root, fallback, name, setup, *, source_urls_candidate=False):
+def run(root, fallback, name, setup, *, source_urls_candidate=False, selected_image_alt_candidate=False):
     """One retained full system, component trials, and an actual integrated pipeline."""
     import shutil
     from domains.food import system_state
@@ -75,14 +75,20 @@ def run(root, fallback, name, setup, *, source_urls_candidate=False):
     improved = read(roles/'improver-decision.json')
     candidate_config, candidate_card, candidate_tools = config, card_path, list(tool_reports)
     config_changed = card_changed = False
-    source_changed = source_urls_candidate and not read(card_path).get('source_profile', {}).get('include_listing_url', False)
+    retained_profile = read(card_path).get('source_profile', {})
+    candidate_profile = dict(retained_profile)
+    if source_urls_candidate:
+        candidate_profile['include_listing_url'] = True
+    if selected_image_alt_candidate:
+        candidate_profile['include_selected_image_alt'] = True
+    source_changed = candidate_profile != retained_profile
     source_only_card = card_path
     if source_changed:
         source_only_card = out/'source-profile-only-card.json'
-        write(source_only_card, read(card_path) | {'source_profile':{'include_listing_url':True}})
+        write(source_only_card, read(card_path) | {'source_profile':candidate_profile})
         write(out/'source-extraction-proposal.json', {'author':'code_diagnosis',
-            'function':'place_paths.evidence', 'before':'original listing_url omitted',
-            'after':'provide original listing_url as corroborating source evidence',
+            'function':'place_paths.evidence', 'before':retained_profile,
+            'after':candidate_profile,
             'unchanged':'source bytes, instructions, model, scorer and gold',
             'guard':'No URL-to-brand automatic assignment or target-name lookup'})
     diagnostics = {'status': 'unchanged', 'fresh_model_calls': 0}
@@ -119,7 +125,7 @@ def run(root, fallback, name, setup, *, source_urls_candidate=False):
     integrated_card = candidate_card
     if source_changed:
         integrated_card = out/'integrated-placer-card.json'
-        write(integrated_card, read(candidate_card) | {'source_profile':{'include_listing_url':True}})
+        write(integrated_card, read(candidate_card) | {'source_profile':candidate_profile})
     write(out/'stage-status.json', {'status': 'running', 'stage': 'actual_full_pipeline_and_validator_comparisons'})
     outcomes, measurements = {}, {}
     def evaluate_pipeline(label, cfg, card, reports):
@@ -198,7 +204,7 @@ def run(root, fallback, name, setup, *, source_urls_candidate=False):
         changes.update(baseline_output=chosen['output'], active_executable_config=chosen['config'],
             routing_mode='rules_then_agent' if chosen['config'] else 'agent_all',
             placer={'card': chosen['card'], 'tool_reports': chosen['tool_reports']})
-        if read(Path(chosen['card'])).get('source_profile',{}).get('include_listing_url'):
+        if read(Path(chosen['card'])).get('source_profile'):
             from domains.food import place_paths
             changes['extraction'] = Path(place_paths.__file__)
     if validator['keep_for_development']:
@@ -253,5 +259,7 @@ if __name__ == '__main__':
     ap.add_argument('--name', required=True)
     ap.add_argument('--setup', type=Path, required=True)
     ap.add_argument('--source-urls-candidate', action='store_true', help='isolate original listing-URL exposure as a code candidate')
+    ap.add_argument('--selected-image-alt-candidate', action='store_true', help='isolate source-provenance-matched selected image ALT evidence')
     a = ap.parse_args()
-    run(a.root, a.fallback, a.name, a.setup, source_urls_candidate=a.source_urls_candidate)
+    run(a.root, a.fallback, a.name, a.setup, source_urls_candidate=a.source_urls_candidate,
+        selected_image_alt_candidate=a.selected_image_alt_candidate)

@@ -72,9 +72,46 @@ def dump_rows(path, values):
     path.write_text("".join(json.dumps(v, ensure_ascii=False) + "\n" for v in values), encoding="utf-8")
 
 
-def evidence(row, include_source_urls=False):
-    if type(include_source_urls) is not bool:
-        raise ValueError('include_source_urls must be a boolean')
+def selected_image_alt_evidence(row):
+    """Only a copied ALT attached to this exact audited Shopify variant may enter evidence."""
+    raw, selected, rejected = row['fields']['raw_source'], [], Counter()
+    variant, source = raw.get('source_variant_id'), row.get('source')
+    if not isinstance(variant, str) or not variant.startswith('gid://shopify/ProductVariant/') or not source:
+        return {'selected': [], 'rejected_counts': {'missing_or_unaudited_source_variant_id': 1}}
+    images = raw.get('images_json')
+    try:
+        images = json.loads(images) if isinstance(images, str) else images
+    except json.JSONDecodeError:
+        return {'selected': [], 'rejected_counts': {'invalid_images_json': 1}}
+    if not isinstance(images, list):
+        return {'selected': [], 'rejected_counts': {'missing_or_invalid_images_list': 1}}
+    for index, image in enumerate(images):
+        if not isinstance(image, dict) or not isinstance(image.get('alt_text'), str) or not image['alt_text'].strip():
+            rejected['missing_alt_text'] += 1
+            continue
+        parent = image.get('evidence') or {}
+        subfields = parent.get('subfields') if isinstance(parent, dict) else None
+        provenance = subfields.get('alt_text') if isinstance(subfields, dict) else None
+        if not isinstance(provenance, dict) or provenance.get('field') != 'image_alt_text':
+            rejected['missing_selected_alt_subfield_provenance'] += 1
+            continue
+        grain = provenance.get('input_grain') or {}
+        if not isinstance(grain, dict) or grain.get('id') != variant:
+            rejected['different_or_parent_source_grain'] += 1
+            continue
+        scope = provenance.get('input_scope')
+        if (provenance.get('input_table') != f'{source}.{source}_variants' or
+            not isinstance(scope, str) or not scope.startswith(f'{source}:') or
+            provenance.get('transform') != 'copy_source_field'):
+            rejected['missing_or_mismatched_source_scope'] += 1
+            continue
+        selected.append({'image_index': index, 'text': image['alt_text'], 'provenance': provenance})
+    return {'selected': selected, 'rejected_counts': dict(rejected)}
+
+
+def evidence(row, include_source_urls=False, include_selected_image_alt=False):
+    if type(include_source_urls) is not bool or type(include_selected_image_alt) is not bool:
+        raise ValueError('Source evidence options must be booleans')
     raw = row["fields"]["raw_source"]
     result = {"listing_id": row["id"], "source": row["source"], "title": row["title"],
             "source_reported_brand": row.get("brand"),
@@ -86,26 +123,32 @@ def evidence(row, include_source_urls=False):
                       if isinstance(raw.get(key), str) and raw[key].strip()), None)
         if value is not None:
             result['source_listing_url'] = value
+    if include_selected_image_alt:
+        selected = selected_image_alt_evidence(row)['selected']
+        if selected:
+            result['source_selected_variant_image_alt'] = '\n'.join(dict.fromkeys(e['text'] for e in selected))
     return result
 
 
 def source_profile(card):
     """Validate the explicitly selected source projection; old cards expose no URLs."""
     profile = card.get('source_profile', {})
-    if not isinstance(profile, dict) or set(profile)-{'include_listing_url'}:
-        raise ValueError('source_profile accepts only include_listing_url')
-    value = profile.get('include_listing_url', False)
-    if type(value) is not bool:
-        raise ValueError('source_profile.include_listing_url must be a boolean')
-    return {'include_listing_url': value}
+    keys = ('include_listing_url', 'include_selected_image_alt')
+    if not isinstance(profile, dict) or set(profile)-set(keys):
+        raise ValueError('source_profile accepts only include_listing_url/include_selected_image_alt')
+    values = {key: profile.get(key, False) for key in keys}
+    if any(type(value) is not bool for value in values.values()):
+        raise ValueError('source_profile values must be booleans')
+    return values
 
 
 def tokens(value):
     return set(re.findall(r"[^\W_]+", value.casefold()))
 
 
-def materialize(answer, source, rules, include_source_urls=False):
-    permitted = evidence(source, include_source_urls=include_source_urls)
+def materialize(answer, source, rules, include_source_urls=False, include_selected_image_alt=False):
+    permitted = evidence(source, include_source_urls=include_source_urls,
+                         include_selected_image_alt=include_selected_image_alt)
     path, events, nodes = [], [], []
     expected = ["brand", "model", "variant"]
     if answer.action == "park" and answer.nodes:
@@ -114,15 +157,20 @@ def materialize(answer, source, rules, include_source_urls=False):
         reason = None
         if i >= 3 or part.level != expected[i] or not part.name.strip():
             reason = "invalid_hierarchy"
-        supported = set()
+        supported, original_naming_supported = set(), set()
         for quote in part.evidence:
             value = permitted.get(quote.field)
             if not isinstance(value, str) or not quote.quote or quote.quote.casefold() not in value.casefold():
                 reason = "unsupported_quote"
             else:
                 supported |= tokens(quote.quote)
+                if quote.field in ('title', 'variant_name', 'variant_options_json'):
+                    original_naming_supported |= tokens(quote.quote)
         if not tokens(part.name) or not tokens(part.name) <= supported:
             reason = "ungrounded_name_tokens"
+        if part.level == 'variant' and any(q.field == 'source_selected_variant_image_alt' for q in part.evidence):
+            if not tokens(part.name) <= original_naming_supported:
+                reason = 'image_only_variant_identity'
         if re.search(r"\b\d+(?:\.\d+)?\s*(?:oz|ounce|ounces|grams|kg|ml|lb|count|pack|ct)\b", part.name, re.I):
             reason = "size_or_count_identity"
         if reason:
@@ -231,10 +279,11 @@ def normalize_plan(listings, fixed_placements=None, routed_ids=None):
     return fixed, [r for r in listings if r['id'] in set(routed)]
 
 
-def materialize_fixed(value, source, rules, include_source_urls=False):
+def materialize_fixed(value, source, rules, include_source_urls=False, include_selected_image_alt=False):
     """Re-ground deterministic free paths through the same node/rule checks as CLI proposals."""
     parts = []
-    permitted = evidence(source, include_source_urls=include_source_urls)
+    permitted = evidence(source, include_source_urls=include_source_urls,
+                         include_selected_image_alt=include_selected_image_alt)
     if len(value['path']) > 3:
         raise ValueError('Free placement exceeds Food brand/model/variant hierarchy')
     for level, name in zip(('brand', 'model', 'variant'), value['path']):
@@ -244,7 +293,8 @@ def materialize_fixed(value, source, rules, include_source_urls=False):
     answer = Proposal(listing_id=source['id'], action='new_variant' if len(parts) == 3 else 'new_product' if len(parts) == 2 else 'place',
                       nodes=parts, confidence=value.get('confidence') or 0,
                       reason=value.get('reason') or 'Source-only deterministic placement')
-    path, nodes, findings = materialize(answer, source, rules, include_source_urls=include_source_urls)
+    path, nodes, findings = materialize(answer, source, rules, include_source_urls=include_source_urls,
+                                      include_selected_image_alt=include_selected_image_alt)
     if path != [s.strip() for s in value['path']]:
         raise ValueError(f"Deterministic free placement failed source grounding/rules for {source['id']}")
     return answer, path, nodes, findings
@@ -276,9 +326,15 @@ def execute(root, name, card=None, previous=None, *, fixed_placements=None, rout
     hypothesis = read(card)
     profile = source_profile(hypothesis)
     include_source_urls = profile['include_listing_url']
+    include_selected_image_alt = profile['include_selected_image_alt']
+    evidence_options = {'include_source_urls': include_source_urls, 'include_selected_image_alt': include_selected_image_alt}
     rules = rules_for("food", ("consumer_packaged",))
-    fixed_results = {r['id']: materialize_fixed(fixed[r['id']], r, rules, include_source_urls=include_source_urls)
+    fixed_results = {r['id']: materialize_fixed(fixed[r['id']], r, rules, **evidence_options)
                      for r in listings if r['id'] in fixed}
+    image_audits = [selected_image_alt_evidence(r) for r in listings] if include_selected_image_alt else []
+    image_rejections = Counter()
+    for audit in image_audits:
+        image_rejections.update(audit['rejected_counts'])
     routing_config = {'fixed_placements': list(fixed.values()), 'routed_ids': [r['id'] for r in routed],
                       'tools': [{'name': t.__name__, 'signature': str(inspect.signature(t)),
                                  'description': inspect.getdoc(t)} for t in placer_tools or []]}
@@ -292,6 +348,9 @@ def execute(root, name, card=None, previous=None, *, fixed_placements=None, rout
                     routed_rows=len(routed), free_rows=len(fixed), routing_config=fingerprint(folder/'routing-config.json'),
                     tools_enabled=bool(placer_tools), tool_turn_limit=4 if placer_tools else 1,
                     source_profile=profile,
+                    selected_image_alt_provenance={'rows_with_selected_alt': sum(bool(a['selected']) for a in image_audits),
+                        'selected_images': sum(len(a['selected']) for a in image_audits),
+                        'rejected_counts': dict(image_rejections)},
                     rules=[r.model_dump(mode='json') for r in rules])
     write(folder / "manifest.json", manifest)
     schema = strict_schema(Batch.model_json_schema())
@@ -316,12 +375,14 @@ CARD:
     pack = yaml.safe_load(Path(__file__).with_name("pack.yaml").read_text(encoding="utf-8"))
     prompt += ("\nCURRENT OWNER-SELECTED FOOD CONVENTIONS (govern naming evidence when a historical "
                "card contains conflicting title-only language):\n" + pack["conventions"])
-    dump_rows(folder / "source-evidence.jsonl", [evidence(r, include_source_urls=include_source_urls) for r in listings])
+    dump_rows(folder / "source-evidence.jsonl", [evidence(r, **evidence_options) for r in listings])
+    if include_selected_image_alt:
+        write(folder/'selected-image-alt-provenance.json', [dict(id=r['id'], **audit) for r,audit in zip(listings,image_audits)])
     try:
         def call(offset):
             batch = routed[offset:offset + batch_size]
             if placer_tools:
-                row, ev = batch[0], evidence(batch[0], include_source_urls=include_source_urls)
+                row, ev = batch[0], evidence(batch[0], **evidence_options)
                 safe_raw = {k: v for k, v in ev.items() if k not in ('listing_id', 'source', 'title', 'source_reported_brand')}
                 if 'source_listing_url' in ev:
                     safe_raw['listing_url'] = ev['source_listing_url']
@@ -337,7 +398,7 @@ CARD:
                                   output=folder/f'batch-{offset//batch_size:03d}', max_turns=4).final_output.model_dump(mode='json')
             else:
                 answer = invoke(prompt + "\nSOURCE OBSERVATIONS:\n" + json.dumps([
-                                    evidence(r, include_source_urls=include_source_urls) for r in batch], ensure_ascii=False),
+                                    evidence(r, **evidence_options) for r in batch], ensure_ascii=False),
                                 schema, folder / f"batch-{offset//batch_size:03d}", web=False)
             parsed = Batch.model_validate(answer).proposals
             if len(parsed) != len(batch) or {p.listing_id for p in parsed} != {r["id"] for r in batch}:
@@ -367,7 +428,7 @@ CARD:
                 answer, path, proposed, findings = fixed_results[lid]
             else:
                 path, proposed, findings = materialize(answer, source_row, rules,
-                    include_source_urls=include_source_urls) if answer else ([], [], [{"rejected": "failed_batch"}])
+                    **evidence_options) if answer else ([], [], [{"rejected": "failed_batch"}])
             nodes.update({n["id"]: n for n in proposed})
             route = fixed[lid].get('route', 'deterministic') if lid in fixed else 'agent_evidence'
             placements.append({"id": lid, "path": path, "route": route,
