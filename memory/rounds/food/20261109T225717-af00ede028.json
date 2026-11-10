@@ -1,0 +1,108 @@
+{
+ "id": "af00ede028",
+ "domain": "food",
+ "ts": "2026-11-09T22:57:17",
+ "loop": "A",
+ "round": 6,
+ "change": "loop-019 integrated",
+ "label": "loop-019 integrated",
+ "keep": null,
+ "decided_on": null,
+ "lesson": "food-integrated-system",
+ "kind": "rule_shape",
+ "branch": "harness/food-loop-observability",
+ "author": "unknown",
+ "gate": null,
+ "kpi": {
+  "ts": "2026-11-09T22:57:17",
+  "loop": "A",
+  "round": 6,
+  "label": "loop-019 integrated",
+  "code": "4533f781efeaeef7b6bd54a692acd10afe43efe1001a7a5256eb26a01851b61d",
+  "data": "e171137cd82d5b8683c3d72edbc82e747c4fb2a2a30f1e01b4eaab1580673a47",
+  "gold_dev": null,
+  "gold_sealed": null,
+  "shares": {},
+  "agent_calls": 102,
+  "metadata": {
+   "component_outcomes": {},
+   "validator_paired": {
+    "n": 50,
+    "exact": {
+     "current": 0.12,
+     "candidate": 0.18,
+     "delta": 0.06,
+     "current_ci": [
+      0.05617523710624646,
+      0.23805078886623582
+     ],
+     "candidate_ci": [
+      0.0977008273245379,
+      0.3079631945470261
+     ],
+     "delta_ci": [
+      -0.006496315687412338,
+      0.12649631568741232
+     ],
+     "gains": 3,
+     "regressions": 0
+    },
+    "harm": {
+     "current": 0.86,
+     "candidate": 0.8,
+     "delta": -0.06,
+     "current_ci": [
+      0.738135428014719,
+      0.9304925473797714
+     ],
+     "candidate_ci": [
+      0.6696262789551477,
+      0.8875637005402612
+     ],
+     "delta_ci": [
+      -0.12649631568741232,
+      0.006496315687412338
+     ],
+     "gains": 0,
+     "regressions": 3
+    },
+    "abstain": {
+     "current": 0.0,
+     "candidate": 0.0,
+     "delta": 0.0,
+     "current_ci": [
+      0.0,
+      0.07135003417431873
+     ],
+     "candidate_ci": [
+      0.0,
+      0.07135003417431873
+     ],
+     "delta_ci": [
+      0.0,
+      0.0
+     ],
+     "gains": 0,
+     "regressions": 0
+    },
+    "keep_for_development": true,
+    "production_admission": false
+   },
+   "calls": {
+    "validator_current": 50,
+    "proposer": 1,
+    "improver": 1,
+    "validator_candidate": 50,
+    "source_image_reader": 0,
+    "actual_placer": 0
+   },
+   "version": 6,
+   "production_admission": false,
+   "artifact_index": {
+    "path": "C:\\Users\\eduar\\Desktop\\HACKATON\\tasks\\food-random-50-20261109\\sample-01\\loop-019\\artifact-index.json",
+    "sha256": "f0c1b8331ab829c2b1db53b0a1a231750a828dc0594c0931ae9fd432368999d7",
+    "bytes": 968
+   }
+  }
+ }
+}
