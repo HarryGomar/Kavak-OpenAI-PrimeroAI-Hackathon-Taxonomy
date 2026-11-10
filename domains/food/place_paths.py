@@ -7,7 +7,9 @@ import hashlib
 import importlib.util
 import json
 import inspect
+import os
 import re
+import shutil
 import subprocess
 import time
 from collections import Counter
@@ -20,12 +22,114 @@ from types import SimpleNamespace
 import pyarrow.parquet as pq
 import yaml
 from pydantic import BaseModel, Field
+from jsonschema import Draft202012Validator
 
 from taxo.codex_cli import invoke, fingerprint, write, load_pin
 from taxo.core.schemas import Listing, Node
 from taxo.core.rules import run_rules
 from taxo.memory import rules_for
 from taxo.roles.runtime import strict_schema, CliAgent, run_sync
+
+
+class ExactPlacerReuse:
+    """Memoize a verified single-row, source-only CLI request, never a placement or route."""
+
+    def __init__(self, baseline, source_sha256):
+        from taxo import codex_cli
+        self.baseline = Path(baseline).resolve()
+        parent = read(self.baseline/'manifest.json')
+        if parent.get('status') != 'completed' or parent.get('source', {}).get('sha256') != source_sha256:
+            raise ValueError('Exact-request reuse requires a completed baseline on this exact source')
+        if parent.get('tools_enabled') or parent.get('batch_size') != 1:
+            raise ValueError('Exact-request origin must use no tools and one observation per request')
+        self.pin = load_pin()
+        self.lock = fingerprint(codex_cli.LOCK)
+        self.transport = fingerprint(Path(codex_cli.__file__))
+        executable = shutil.which('codex')
+        if not executable:
+            raise RuntimeError('Installed CLI missing; exact-request reuse cannot bypass the CLI pin')
+        self.executable = fingerprint(Path(executable))
+        self.version = subprocess.check_output([executable, '--version'], text=True).strip()
+        if self.version != self.pin['cli_version']:
+            raise ValueError('Installed CLI version differs from the shared pin')
+        self.origins = {}
+        for folder in sorted(self.baseline.glob('batch-*')):
+            if not folder.is_dir():
+                continue
+            if (folder/'reuse-receipt.json').exists():
+                receipt = read(folder/'reuse-receipt.json')
+                origin = Path(receipt['origin_folder'])
+                if fingerprint(origin/'manifest.json')['sha256'] != receipt['origin_manifest']['sha256']:
+                    raise ValueError('Reused origin manifest drift')
+            else:
+                origin = folder
+            text = (origin/'prompt.txt').read_text(encoding='utf-8')
+            try:
+                observations = json.loads(text.split('SOURCE OBSERVATIONS:\n', 1)[1])
+            except (IndexError, json.JSONDecodeError) as error:
+                raise ValueError('Origin is not an explicit source-only placer request') from error
+            if len(observations) != 1 or not isinstance(observations[0].get('listing_id'), str):
+                raise ValueError('Origin must contain one original listing ID')
+            lid = observations[0]['listing_id']
+            if lid in self.origins:
+                raise ValueError('Duplicate origin requests; do not select an answer by its score')
+            self.origins[lid] = origin
+
+    @staticmethod
+    def _bytes(text):
+        # Match Path.write_text's native newline handling used by the actual transport.
+        return text.replace('\n', os.linesep).encode('utf-8')
+
+    def answer(self, prompt, schema, listing_id, output):
+        origin = self.origins.get(listing_id)
+        if origin is None:
+            return None
+        manifest = read(origin/'manifest.json')
+        if (manifest.get('pin') != self.pin or manifest.get('web') is not False or
+            manifest.get('cli_version') != self.version or
+            manifest.get('lock', {}).get('sha256') != self.lock['sha256'] or
+            manifest.get('transport', {}).get('sha256') != self.transport['sha256'] or
+            manifest.get('executable', {}).get('sha256') != self.executable['sha256']):
+            return None
+        prompt_bytes = self._bytes(prompt)
+        schema_bytes = self._bytes(json.dumps(schema, ensure_ascii=False, indent=2, default=str)+'\n')
+        if (origin/'prompt.txt').read_bytes() != prompt_bytes or (origin/'schema.json').read_bytes() != schema_bytes:
+            return None
+        records = {Path(r['path']).name: r for r in manifest.get('artifacts', [])}
+        origins = {}
+        for name in ('prompt.txt', 'schema.json', 'final.json', 'events.json', 'command.json'):
+            actual = fingerprint(origin/name)
+            expected = records.get(name)
+            if not expected or any(actual[k] != expected[k] for k in ('sha256', 'bytes')):
+                raise ValueError(f'Exact-request origin artifact corrupt: {origin/name}')
+            origins[name] = actual
+        terminal = [e['type'] for e in read(origin/'events.json') if e.get('type') in ('turn.completed', 'turn.failed')]
+        if (manifest.get('status') != 'completed' or manifest.get('returncode') != 0 or
+            manifest.get('forbidden_tool_types') or not terminal or terminal[-1] != 'turn.completed'):
+            raise ValueError('Exact-request origin lacks a verified successful terminal CLI answer')
+        command = read(origin/'command.json')
+        if '--json' not in command or '--ephemeral' not in command or '--ignore-user-config' not in command:
+            raise ValueError('Exact-request origin CLI configuration is unverifiable')
+        answer = read(origin/'final.json')
+        Draft202012Validator(schema).validate(answer)
+        parsed = Batch.model_validate(answer)
+        if len(parsed.proposals) != 1 or parsed.proposals[0].listing_id != listing_id:
+            raise ValueError('Exact-request origin answer does not preserve the source observation ID')
+        output = Path(output)
+        output.mkdir(parents=True, exist_ok=False)
+        (output/'prompt.txt').write_text(prompt, encoding='utf-8')
+        write(output/'schema.json', schema)
+        write(output/'raw-proposal.json', answer)
+        write(output/'reuse-receipt.json', {'stage': 'placer_raw_cli_request',
+            'execution_kind': 'exact_request_reuse_not_new_inference', 'listing_id': listing_id,
+            'origin_folder': str(origin), 'origin_manifest': fingerprint(origin/'manifest.json'),
+            'origin_artifacts': origins, 'request_prompt_sha256': hashlib.sha256(prompt_bytes).hexdigest(),
+            'request_schema_sha256': hashlib.sha256(schema_bytes).hexdigest(), 'pin': self.pin,
+            'lock': self.lock, 'executable': self.executable, 'web': False, 'tools': [], 'context': None,
+            'fresh_cli_calls': 0, 'reused_source_observations': 1,
+            'requires': 'Current ID checks, materialization, grounding, rules and scoring execute again',
+            'independent_replicate': False, 'offline_cached_fallback_answers': 0})
+        return answer
 
 
 class Citation(BaseModel):
@@ -142,8 +246,30 @@ def option_role_facts(row):
     return result
 
 
-def evidence(row, include_source_urls=False, include_selected_image_alt=False, include_option_role_facts=False):
-    if any(type(value) is not bool for value in (include_source_urls, include_selected_image_alt, include_option_role_facts)):
+def selected_form_product_candidate(row):
+    """A source-only coffee/form composition hint, never a canonical name or naming citation."""
+    forms = [fact for fact in option_role_facts(row) if fact['role'] == 'form']
+    if len(forms) != 1:
+        return None
+    selected = forms[0]['value'].strip()
+    if selected.casefold() not in ('ground', 'whole bean'):
+        return None
+    title = row.get('title')
+    if not isinstance(title, str):
+        return None
+    base = re.sub(r'\s+\|\s*\d+(?:[.,]\d+)?\s*(?:oz|ounces?|g|grams?|kg|lbs?|ml|l|fl\s*oz)\s*$', '', title, flags=re.I).strip()
+    heads = list(re.finditer(r'\bcoffee\b', base, re.I))
+    if len(heads) != 1 or heads[0].end() != len(base) or not base[:heads[0].start()].strip():
+        return None
+    if re.search(r'\b(?:ground|instant|soluble|pods?|capsules?)\b|\bwhole[\s-]+beans?\b', base, re.I):
+        return None
+    return base[:heads[0].start()].rstrip() + ' ' + selected + ' ' + base[heads[0].start():]
+
+
+def evidence(row, include_source_urls=False, include_selected_image_alt=False, include_option_role_facts=False,
+             include_selected_coffee_form=False):
+    if any(type(value) is not bool for value in (include_source_urls, include_selected_image_alt,
+                                                include_option_role_facts, include_selected_coffee_form)):
         raise ValueError('Source evidence options must be booleans')
     raw = row["fields"]["raw_source"]
     result = {"listing_id": row["id"], "source": row["source"], "title": row["title"],
@@ -164,15 +290,19 @@ def evidence(row, include_source_urls=False, include_selected_image_alt=False, i
         facts = option_role_facts(row)
         if facts:
             result['source_option_role_facts'] = json.dumps(facts, ensure_ascii=False)
+    if include_selected_coffee_form:
+        candidate = selected_form_product_candidate(row)
+        if candidate is not None:
+            result['source_selected_form_product_candidate'] = candidate
     return result
 
 
 def source_profile(card):
     """Validate the explicitly selected source projection; old cards expose no URLs."""
     profile = card.get('source_profile', {})
-    keys = ('include_listing_url', 'include_selected_image_alt', 'include_option_role_facts')
+    keys = ('include_listing_url', 'include_selected_image_alt', 'include_option_role_facts', 'include_selected_coffee_form')
     if not isinstance(profile, dict) or set(profile)-set(keys):
-        raise ValueError('source_profile accepts only include_listing_url/include_selected_image_alt/include_option_role_facts')
+        raise ValueError('source_profile has an unknown source projection option')
     values = {key: profile.get(key, False) for key in keys}
     if any(type(value) is not bool for value in values.values()):
         raise ValueError('source_profile values must be booleans')
@@ -183,9 +313,11 @@ def tokens(value):
     return set(re.findall(r"[^\W_]+", value.casefold()))
 
 
-def materialize(answer, source, rules, include_source_urls=False, include_selected_image_alt=False, include_option_role_facts=False):
+def materialize(answer, source, rules, include_source_urls=False, include_selected_image_alt=False, include_option_role_facts=False,
+                include_selected_coffee_form=False):
     permitted = evidence(source, include_source_urls=include_source_urls,
-                         include_selected_image_alt=include_selected_image_alt, include_option_role_facts=include_option_role_facts)
+                         include_selected_image_alt=include_selected_image_alt, include_option_role_facts=include_option_role_facts,
+                         include_selected_coffee_form=include_selected_coffee_form)
     path, events, nodes = [], [], []
     expected = ["brand", "model", "variant"]
     if answer.action == "park" and answer.nodes:
@@ -199,6 +331,9 @@ def materialize(answer, source, rules, include_source_urls=False, include_select
             if quote.field == 'source_option_role_facts':
                 reason = 'derived_option_role_facts_not_naming_evidence'
                 continue
+            if quote.field == 'source_selected_form_product_candidate':
+                reason = 'derived_form_product_candidate_not_naming_evidence'
+                continue
             value = permitted.get(quote.field)
             if not isinstance(value, str) or not quote.quote or quote.quote.casefold() not in value.casefold():
                 reason = "unsupported_quote"
@@ -206,7 +341,8 @@ def materialize(answer, source, rules, include_source_urls=False, include_select
                 supported |= tokens(quote.quote)
                 if quote.field in ('title', 'variant_name', 'variant_options_json'):
                     original_naming_supported |= tokens(quote.quote)
-        if (not tokens(part.name) or not tokens(part.name) <= supported) and reason != 'derived_option_role_facts_not_naming_evidence':
+        if (not tokens(part.name) or not tokens(part.name) <= supported) and reason not in (
+            'derived_option_role_facts_not_naming_evidence', 'derived_form_product_candidate_not_naming_evidence'):
             reason = "ungrounded_name_tokens"
         if part.level == 'variant' and any(q.field == 'source_selected_variant_image_alt' for q in part.evidence):
             if not tokens(part.name) <= original_naming_supported:
@@ -319,28 +455,33 @@ def normalize_plan(listings, fixed_placements=None, routed_ids=None):
     return fixed, [r for r in listings if r['id'] in set(routed)]
 
 
-def materialize_fixed(value, source, rules, include_source_urls=False, include_selected_image_alt=False, include_option_role_facts=False):
+def materialize_fixed(value, source, rules, include_source_urls=False, include_selected_image_alt=False, include_option_role_facts=False,
+                      include_selected_coffee_form=False):
     """Re-ground deterministic free paths through the same node/rule checks as CLI proposals."""
     parts = []
     permitted = evidence(source, include_source_urls=include_source_urls,
-                         include_selected_image_alt=include_selected_image_alt, include_option_role_facts=include_option_role_facts)
+                         include_selected_image_alt=include_selected_image_alt, include_option_role_facts=include_option_role_facts,
+                         include_selected_coffee_form=include_selected_coffee_form)
     if len(value['path']) > 3:
         raise ValueError('Free placement exceeds Food brand/model/variant hierarchy')
     for level, name in zip(('brand', 'model', 'variant'), value['path']):
         citations = [Citation(field=key, quote=text) for key, text in permitted.items()
-                     if isinstance(text, str) and key not in ('listing_id', 'source_option_role_facts') and tokens(name) & tokens(text)]
+                     if isinstance(text, str) and key not in ('listing_id', 'source_option_role_facts',
+                         'source_selected_form_product_candidate') and tokens(name) & tokens(text)]
         parts.append(Part(level=level, name=name, evidence=citations))
     answer = Proposal(listing_id=source['id'], action='new_variant' if len(parts) == 3 else 'new_product' if len(parts) == 2 else 'place',
                       nodes=parts, confidence=value.get('confidence') or 0,
                       reason=value.get('reason') or 'Source-only deterministic placement')
     path, nodes, findings = materialize(answer, source, rules, include_source_urls=include_source_urls,
-                                      include_selected_image_alt=include_selected_image_alt, include_option_role_facts=include_option_role_facts)
+                                      include_selected_image_alt=include_selected_image_alt, include_option_role_facts=include_option_role_facts,
+                                      include_selected_coffee_form=include_selected_coffee_form)
     if path != [s.strip() for s in value['path']]:
         raise ValueError(f"Deterministic free placement failed source grounding/rules for {source['id']}")
     return answer, path, nodes, findings
 
 
-def execute(root, name, card=None, previous=None, *, fixed_placements=None, routed_ids=None, placer_tools=None):
+def execute(root, name, card=None, previous=None, *, fixed_placements=None, routed_ids=None, placer_tools=None,
+            reuse_from=None):
     card = resolve_card(card)
     folder = root / name
     folder.mkdir(exist_ok=False)
@@ -368,8 +509,10 @@ def execute(root, name, card=None, previous=None, *, fixed_placements=None, rout
     include_source_urls = profile['include_listing_url']
     include_selected_image_alt = profile['include_selected_image_alt']
     include_option_role_facts = profile['include_option_role_facts']
+    include_selected_coffee_form = profile['include_selected_coffee_form']
     evidence_options = {'include_source_urls': include_source_urls, 'include_selected_image_alt': include_selected_image_alt,
-                        'include_option_role_facts': include_option_role_facts}
+                        'include_option_role_facts': include_option_role_facts,
+                        'include_selected_coffee_form': include_selected_coffee_form}
     rules = rules_for("food", ("consumer_packaged",))
     fixed_results = {r['id']: materialize_fixed(fixed[r['id']], r, rules, **evidence_options)
                      for r in listings if r['id'] in fixed}
@@ -421,6 +564,10 @@ CARD:
     if include_selected_image_alt:
         write(folder/'selected-image-alt-provenance.json', [dict(id=r['id'], **audit) for r,audit in zip(listings,image_audits)])
     try:
+        reuse = ExactPlacerReuse(reuse_from, manifest['source']['sha256']) if (
+            reuse_from is not None and not placer_tools and batch_size == 1) else None
+        manifest['exact_request_reuse_enabled'] = reuse is not None
+        manifest['exact_request_reuse_from'] = str(reuse.baseline) if reuse else None
         def call(offset):
             batch = routed[offset:offset + batch_size]
             if placer_tools:
@@ -439,9 +586,12 @@ CARD:
                 answer = run_sync(agent, json.dumps([ev], ensure_ascii=False), context=context,
                                   output=folder/f'batch-{offset//batch_size:03d}', max_turns=4).final_output.model_dump(mode='json')
             else:
-                answer = invoke(prompt + "\nSOURCE OBSERVATIONS:\n" + json.dumps([
-                                    evidence(r, **evidence_options) for r in batch], ensure_ascii=False),
-                                schema, folder / f"batch-{offset//batch_size:03d}", web=False)
+                request = prompt + '\nSOURCE OBSERVATIONS:\n' + json.dumps([
+                    evidence(r, **evidence_options) for r in batch], ensure_ascii=False)
+                batch_output = folder/f'batch-{offset//batch_size:03d}'
+                answer = reuse.answer(request, schema, batch[0]['id'], batch_output) if reuse else None
+                if answer is None:
+                    answer = invoke(request, schema, batch_output, web=False)
             parsed = Batch.model_validate(answer).proposals
             if len(parsed) != len(batch) or {p.listing_id for p in parsed} != {r["id"] for r in batch}:
                 raise ValueError("Missing/duplicate/foreign placement IDs")
@@ -500,6 +650,7 @@ CARD:
         manifest.update(status="completed_with_batch_errors" if errors else "completed", metrics=metrics,
                         elapsed_seconds=round(time.monotonic() - started, 3), usage=dict(usage), cost=None,
                         actual_served_tier=None, model_calls=len(transports), scorer_model_calls=0,
+                        exact_request_reused_rows=len(list(folder.glob('batch-*/reuse-receipt.json'))),
                         metric_model_calls_scope="Transport attempts including failures; scorer model_calls=0 means scoring only")
         with (root / "score-history.jsonl").open("a", encoding="utf-8") as stream:
             stream.write(json.dumps({"run": name, **manifest}) + "\n")
@@ -512,6 +663,8 @@ CARD:
         raise
     finally:
         manifest['model_calls'] = sum('transport' in read(p) for p in folder.rglob('manifest.json'))
+        manifest['exact_request_reused_rows'] = len(list(folder.glob('batch-*/reuse-receipt.json')))
+        manifest['offline_cached_fallback_answers'] = 0
         write(folder / "manifest.json", manifest)
         write(folder / 'artifact-index.json', [fingerprint(p) for p in sorted(folder.rglob('*'))
                                                if p.is_file() and p.name != 'artifact-index.json'])

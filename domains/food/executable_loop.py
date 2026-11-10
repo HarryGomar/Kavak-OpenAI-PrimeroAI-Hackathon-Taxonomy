@@ -29,7 +29,7 @@ def scored(folder, partition=None):
 
 
 def run(root, fallback, name, setup, *, source_urls_candidate=False, selected_image_alt_candidate=False,
-        option_role_facts_candidate=False):
+        option_role_facts_candidate=False, selected_coffee_form_candidate=False):
     """One retained full system, component trials, and an actual integrated pipeline."""
     import shutil
     from domains.food import system_state
@@ -86,6 +86,8 @@ def run(root, fallback, name, setup, *, source_urls_candidate=False, selected_im
         candidate_profile['include_selected_image_alt'] = True
     if option_role_facts_candidate:
         candidate_profile['include_option_role_facts'] = True
+    if selected_coffee_form_candidate:
+        candidate_profile['include_selected_coffee_form'] = True
     source_changed = candidate_profile != retained_profile
     source_only_card = card_path
     if source_changed:
@@ -144,7 +146,7 @@ def run(root, fallback, name, setup, *, source_urls_candidate=False, selected_im
             root, fallback, cfg, plan_folder)
         if not (folder/'manifest.json').exists():
             place(root, folder.name, card, fallback, fixed_placements=plan['free_placements'],
-                  routed_ids=plan['routed_ids'], placer_tools=[load_tool(p) for p in reports])
+                  routed_ids=plan['routed_ids'], placer_tools=[load_tool(p) for p in reports], reuse_from=fallback)
         manifest = read(folder/'manifest.json')
         if manifest['status'] != 'completed' or read(folder/'hypothesis.json')['instruction'] != read(card)['instruction']:
             raise RuntimeError('Actual pipeline measurement incomplete or uses a different candidate card')
@@ -169,7 +171,8 @@ def run(root, fallback, name, setup, *, source_urls_candidate=False, selected_im
             'keep_for_development': keep, 'config': str(cfg) if cfg else None,
             'card': str(card), 'tool_reports': list(map(str,reports)),
             'actual_placer_calls': manifest['model_calls'], 'routed': len(plan['routed_ids']),
-            'free': len(plan['free_placements']), 'cached_fallback_answers': 0}
+            'free': len(plan['free_placements']), 'cached_fallback_answers': 0,
+            'exact_request_reused_rows': manifest.get('exact_request_reused_rows', 0)}
         measurements[signature] = result
         return result
     def pipeline_comparisons():
@@ -236,9 +239,14 @@ def run(root, fallback, name, setup, *, source_urls_candidate=False, selected_im
         'configuration_isolation_diagnostic':diagnostics,'component_and_integrated_comparisons':outcomes,
         'validator_comparison':validator,'retained_output':state['baseline_output']['path'],
         'retained_exact':read(Path(state['baseline_output']['path'])/'metrics.json')['identity_path_exact'],
-        'cached_answers_in_final_evaluations':0,'production_admission':False,
+        'cached_answers_in_final_evaluations':sum(x['exact_request_reused_rows'] for x in measurements.values()),
+        'exact_request_reused_rows':sum(x['exact_request_reused_rows'] for x in measurements.values()),
+        'offline_cached_fallback_answers_in_final_evaluations':0,
+        'cache_semantics':'Only identical completed CLI requests may be reused; raw proposals are grounded and scored again',
+        'production_admission':False,
         'limitations':['Internal20/30 split; no untouched brand-sealed admission',
             'Unchanged retained reference is a previous actual full run; stochastic variation remains',
+            'Byte-identical request reuse is shared evidence, not an independent model replicate',
             'Missing canonical evidence is not repaired by copying gold']}
     write(out/'loop-report.json',report)
     write(out/'artifact-index.json',[fingerprint(p) for p in out.rglob('*') if p.is_file() and p.name!='artifact-index.json'])
@@ -268,6 +276,8 @@ if __name__ == '__main__':
     ap.add_argument('--source-urls-candidate', action='store_true', help='isolate original listing-URL exposure as a code candidate')
     ap.add_argument('--selected-image-alt-candidate', action='store_true', help='isolate source-provenance-matched selected image ALT evidence')
     ap.add_argument('--option-role-facts-candidate', action='store_true', help='isolate conservative source option label/value role facts; original citations required')
+    ap.add_argument('--selected-coffee-form-candidate', action='store_true', help='test explicit source coffee-head/processing-form composition; original citations required')
     a = ap.parse_args()
     run(a.root, a.fallback, a.name, a.setup, source_urls_candidate=a.source_urls_candidate,
-        selected_image_alt_candidate=a.selected_image_alt_candidate, option_role_facts_candidate=a.option_role_facts_candidate)
+        selected_image_alt_candidate=a.selected_image_alt_candidate, option_role_facts_candidate=a.option_role_facts_candidate,
+        selected_coffee_form_candidate=a.selected_coffee_form_candidate)

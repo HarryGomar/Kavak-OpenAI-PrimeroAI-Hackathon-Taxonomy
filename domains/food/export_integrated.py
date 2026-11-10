@@ -41,7 +41,7 @@ def numeric_tree(value):
 
 def profile(card):
     value = read(card).get('source_profile') or {}
-    return {k: bool(value.get(k, False)) for k in ('include_listing_url', 'include_selected_image_alt', 'include_option_role_facts')}
+    return {k: bool(value.get(k, False)) for k in ('include_listing_url', 'include_selected_image_alt', 'include_option_role_facts', 'include_selected_coffee_form')}
 
 
 def transport_stats(folder):
@@ -69,6 +69,7 @@ def export_loop(root, folder):
             'paired': numeric_tree(value['paired']), 'keep_for_development': value['keep_for_development'],
             'actual_placer_calls': value['actual_placer_calls'], 'routed': value['routed'],
             'free': value['free'], 'cached_fallback_answers': value['cached_fallback_answers'],
+            'exact_request_reused_rows': value.get('exact_request_reused_rows', 0),
             'source_profile': profile(measured/'hypothesis.json'),
             'elapsed_seconds': manifest.get('elapsed_seconds'),
             'artifact': fingerprint(measured/'manifest.json')}
@@ -118,6 +119,8 @@ def export_loop(root, folder):
         'retained_before': {'version': state_before.get('version'), 'routing_mode': state_before.get('routing_mode')},
         'retained_output_manifest': fingerprint(retained/'manifest.json'),
         'durations': durations, 'cached_answers_in_final_evaluations': report['cached_answers_in_final_evaluations'],
+        'exact_request_reused_rows':report.get('exact_request_reused_rows',0),
+        'offline_cached_fallback_answers_in_final_evaluations':report.get('offline_cached_fallback_answers_in_final_evaluations',0),
         'production_admission': False, 'artifact': fingerprint(report_path)}
     if (folder/'artifact-index.json').exists():
         entry['artifact_index'] = fingerprint(folder/'artifact-index.json')

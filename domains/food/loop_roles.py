@@ -17,7 +17,7 @@ from taxo.tools.checks import CHECKS
 from domains.food.place_paths import read, rows, evidence
 
 
-def proposal_decision(raw, executable, feedback_ids):
+def proposal_decision(raw, executable, feedback_ids, *, check_catalog=None):
     """Validate one proposal independently; no implicit conversion between change kinds."""
     kind = raw.get('kind', 'code_rule')
     proposed = raw
@@ -33,17 +33,18 @@ def proposal_decision(raw, executable, feedback_ids):
                     'check': raw.get('check') or '', 'decision': raw.get('decision') or 'info',
                     'params_json': json.dumps(decoded.get('params') or {}), 'rationale': raw['rationale']}
     valid, reason = True, 'Existing check with signature-valid general parameters; evaluate in shadow only.'
+    catalog = CHECKS if check_catalog is None else check_catalog
     try:
         if executable and (kind != 'code_rule' or payload_error):
             raise ValueError(payload_error or f'{kind} is not a legacy check; use its executable candidate handler')
         if executable and set(decoded)-{'params'}:
             raise ValueError('code_rule payload only accepts params; undeclared conditions cannot be silently ignored')
         params = json.loads(proposed['params_json'])
-        if proposed['check'] not in CHECKS or proposed['decision'] not in {'veto', 'abstain', 'info'}:
+        if proposed['check'] not in catalog or proposed['decision'] not in {'veto', 'abstain', 'info'}:
             raise ValueError('Unsupported check/decision')
         if not isinstance(params, dict) or any(isinstance(v, (list, dict)) for v in params.values()):
             raise ValueError('Check parameters must be a plain parameter mapping, not mined lists or nested lookups')
-        inspect.signature(CHECKS[proposed['check']][0]).bind(None, None, None, **params)
+        inspect.signature(catalog[proposed['check']][0]).bind(None, None, None, **params)
     except Exception as error:
         valid, reason = False, str(error)
     candidate = valid or (executable and kind in {'agentic_rule', 'vocab', 'route'} and payload_error is None)
@@ -98,9 +99,11 @@ def execute(root, run_name, validator_path=None, *, executable=False, resume=Fal
     if validator_path and (validator_path.parent / "role-manifest.json").exists():
         setup = yaml.safe_load(Path(read(validator_path.parent / 'role-manifest.json')['setup']['path']).read_text(encoding='utf-8'))
     payload = json.dumps({"constraints": constraint, "cases": cases, "current_setup": setup}, ensure_ascii=False)
+    catalog = CHECKS
     if executable:
         from taxo.core.config import DOMAINS_DIR
-        from domains.food.executable_changes import contract
+        from domains.food.executable_changes import contract, check_catalog
+        catalog = check_catalog()
         owner = yaml.safe_load((DOMAINS_DIR/'food/pack.yaml').read_text(encoding='utf-8'))['conventions']
         history = []
         validator_history = []
@@ -143,6 +146,10 @@ def execute(root, run_name, validator_path=None, *, executable=False, resume=Fal
                               'prior_executable_trials_feedback_only': history,
                               'runtime_capabilities': {'executable': ['code_rule', 'agentic_rule', 'vocab', 'route'],
                                   'record_only': ['new_check', 'registry', 'convention_question'],
+                                  'registered_checks': sorted(catalog),
+                                  'code_rule_decisions': ['veto', 'abstain'],
+                                  'new_check_policy': 'Only missing unregistered capabilities are record-only; implemented registered checks use code_rule',
+                                  'external_web_or_sibling_retrieval': False,
                                   'source_only': True}}, ensure_ascii=False)
     def call(role, factory):
         if resume:
@@ -167,6 +174,7 @@ def execute(root, run_name, validator_path=None, *, executable=False, resume=Fal
         options = {'executable': executable}
         if role == 'proposer' and executable:
             options['joint'] = True
+            options['check_catalog'] = catalog
         result = run_sync(factory('food', **options), scoped, output=folder / role, max_turns=1)
         return result.final_output.model_dump(mode="json")
     with ThreadPoolExecutor(max_workers=2) as pool:
@@ -183,8 +191,8 @@ def execute(root, run_name, validator_path=None, *, executable=False, resume=Fal
     write(folder / "proposer-output.json", proposed)
     write(folder / "improver-output.json", improved)
     feedback_ids = [c['listing_id'] for c in cases]
-    decisions = [proposal_decision(p, executable, feedback_ids) for p in proposal_list]
-    primary = dict(decisions[0]) if decisions else proposal_decision(proposed, executable, feedback_ids)
+    decisions = [proposal_decision(p, executable, feedback_ids, check_catalog=catalog) for p in proposal_list]
+    primary = dict(decisions[0]) if decisions else proposal_decision(proposed, executable, feedback_ids, check_catalog=catalog)
     primary.update(proposal_count=len(proposal_list), joint=executable,
                    individual_decisions=decisions, any_executable_candidate=any(d['executable_candidate'] for d in decisions))
     if executable:

@@ -77,10 +77,11 @@ Prefer abstain over reject when the evidence is an omission. Never propose a rul
 system's own output (an echo check)."""
 
 
-def make_proposer(domain: str, *, executable: bool = False, joint: bool = False) -> CliAgent:
+def make_proposer(domain: str, *, executable: bool = False, joint: bool = False, check_catalog=None) -> CliAgent:
     executable = executable or joint
     contracts = []
-    for name, (fn, default_decision) in sorted(CHECKS.items()):
+    catalog = CHECKS if check_catalog is None else check_catalog
+    for name, (fn, default_decision) in sorted(catalog.items()):
         signature = inspect.signature(fn)
         contracts.append({'check': name, 'signature': str(signature),
                           'permitted_params': [p for p in signature.parameters

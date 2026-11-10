@@ -2821,6 +2821,1043 @@
           "bytes": 985
         }
       }
+    },
+    {
+      "run": "loop-008",
+      "status": "completed_integrated_development_cycle",
+      "sample": 50,
+      "feedback": 20,
+      "withheld_feedback": 30,
+      "calls": {
+        "validator_current": 50,
+        "proposer": 1,
+        "improver": 1,
+        "validator_candidate": 60,
+        "actual_placer": 150
+      },
+      "observed_transport_calls": {
+        "validator_current": {
+          "actual_cli_calls": 50,
+          "status_counts": {
+            "completed": 50
+          },
+          "transport_elapsed_seconds_sum": 738.511
+        },
+        "validator_candidate": {
+          "actual_cli_calls": 60,
+          "status_counts": {
+            "completed": 60
+          },
+          "transport_elapsed_seconds_sum": 1082.179
+        },
+        "proposer": {
+          "actual_cli_calls": 1,
+          "status_counts": {
+            "completed": 1
+          },
+          "transport_elapsed_seconds_sum": 65.274
+        },
+        "improver": {
+          "actual_cli_calls": 1,
+          "status_counts": {
+            "completed": 1
+          },
+          "transport_elapsed_seconds_sum": 41.177
+        },
+        "actual_placer": {
+          "actual_cli_calls": 150,
+          "unique_actual_measurements": 3,
+          "transport_elapsed_seconds_sum": 2587.33
+        }
+      },
+      "call_counts_match_saved_report": true,
+      "version_before": 2,
+      "version_after": 3,
+      "proposal_kinds": [
+        "agentic_rule"
+      ],
+      "comparisons": {
+        "source_extraction_only": {
+          "before": {
+            "rates_denominator": 50,
+            "identity_path_exact": 6,
+            "strict_full_path_exact": 3,
+            "brand_correct": 29,
+            "abstentions_all_frozen": 13,
+            "classes": {
+              "wrong_brand": 8,
+              "wrong_label_path": 20,
+              "exact": 6,
+              "abstain": 13,
+              "valid_shallower": 3
+            }
+          },
+          "after": {
+            "rates_denominator": 50,
+            "identity_path_exact": 4,
+            "strict_full_path_exact": 2,
+            "brand_correct": 28,
+            "abstentions_all_frozen": 13,
+            "classes": {
+              "wrong_brand": 9,
+              "wrong_label_path": 21,
+              "exact": 4,
+              "abstain": 13,
+              "valid_shallower": 3
+            }
+          },
+          "paired": {
+            "n": 50,
+            "exact": {
+              "current": 0.12,
+              "candidate": 0.08,
+              "delta": -0.04,
+              "current_ci": [
+                0.05617523710624646,
+                0.23805078886623582
+              ],
+              "candidate_ci": [
+                0.031549003255790686,
+                0.18838502545063704
+              ],
+              "delta_ci": [
+                -0.09486857023834319,
+                0.014868570238343183
+              ],
+              "gains": 0,
+              "regressions": 2
+            },
+            "harm": {
+              "current": 0.56,
+              "candidate": 0.6,
+              "delta": 0.04,
+              "current_ci": [
+                0.4230578680014353,
+                0.6883801278976466
+              ],
+              "candidate_ci": [
+                0.4618118910275937,
+                0.7239181021375425
+              ],
+              "delta_ci": [
+                -0.014868570238343183,
+                0.09486857023834319
+              ],
+              "gains": 2,
+              "regressions": 0
+            },
+            "abstain": {
+              "current": 0.26,
+              "candidate": 0.26,
+              "delta": 0.0,
+              "current_ci": [
+                0.15871379651367384,
+                0.3955342198899992
+              ],
+              "candidate_ci": [
+                0.15871379651367384,
+                0.3955342198899992
+              ],
+              "delta_ci": [
+                0.0,
+                0.0
+              ],
+              "gains": 0,
+              "regressions": 0
+            },
+            "keep_for_development": false,
+            "production_admission": false
+          },
+          "keep_for_development": false,
+          "actual_placer_calls": 50,
+          "routed": 50,
+          "free": 0,
+          "cached_fallback_answers": 0,
+          "source_profile": {
+            "include_listing_url": false,
+            "include_selected_image_alt": false,
+            "include_option_role_facts": true
+          },
+          "elapsed_seconds": 91.121,
+          "artifact": {
+            "path": "C:\\Users\\eduar\\Desktop\\HACKATON\\tasks\\food-random-50-20261109\\sample-01\\loop-008-source-pipeline\\manifest.json",
+            "sha256": "cbe9082b7efa50f375439614b584d5e7f4081fd8098818440cae545adac0c069",
+            "bytes": 7885
+          }
+        },
+        "placer_only": {
+          "before": {
+            "rates_denominator": 50,
+            "identity_path_exact": 6,
+            "strict_full_path_exact": 3,
+            "brand_correct": 29,
+            "abstentions_all_frozen": 13,
+            "classes": {
+              "wrong_brand": 8,
+              "wrong_label_path": 20,
+              "exact": 6,
+              "abstain": 13,
+              "valid_shallower": 3
+            }
+          },
+          "after": {
+            "rates_denominator": 50,
+            "identity_path_exact": 7,
+            "strict_full_path_exact": 3,
+            "brand_correct": 30,
+            "abstentions_all_frozen": 12,
+            "classes": {
+              "wrong_brand": 8,
+              "wrong_label_path": 20,
+              "exact": 7,
+              "abstain": 12,
+              "valid_shallower": 3
+            }
+          },
+          "paired": {
+            "n": 50,
+            "exact": {
+              "current": 0.12,
+              "candidate": 0.14,
+              "delta": 0.02,
+              "current_ci": [
+                0.05617523710624646,
+                0.23805078886623582
+              ],
+              "candidate_ci": [
+                0.06950745262022862,
+                0.2618645719852809
+              ],
+              "delta_ci": [
+                -0.0192,
+                0.0592
+              ],
+              "gains": 1,
+              "regressions": 0
+            },
+            "harm": {
+              "current": 0.56,
+              "candidate": 0.56,
+              "delta": 0.0,
+              "current_ci": [
+                0.4230578680014353,
+                0.6883801278976466
+              ],
+              "candidate_ci": [
+                0.4230578680014353,
+                0.6883801278976466
+              ],
+              "delta_ci": [
+                -0.055999999999999994,
+                0.055999999999999994
+              ],
+              "gains": 1,
+              "regressions": 1
+            },
+            "abstain": {
+              "current": 0.26,
+              "candidate": 0.24,
+              "delta": -0.02,
+              "current_ci": [
+                0.15871379651367384,
+                0.3955342198899992
+              ],
+              "candidate_ci": [
+                0.14297252401872207,
+                0.3741294937519236
+              ],
+              "delta_ci": [
+                -0.0592,
+                0.0192
+              ],
+              "gains": 0,
+              "regressions": 1
+            },
+            "keep_for_development": true,
+            "production_admission": false
+          },
+          "keep_for_development": true,
+          "actual_placer_calls": 50,
+          "routed": 50,
+          "free": 0,
+          "cached_fallback_answers": 0,
+          "source_profile": {
+            "include_listing_url": false,
+            "include_selected_image_alt": false,
+            "include_option_role_facts": false
+          },
+          "elapsed_seconds": 63.354,
+          "artifact": {
+            "path": "C:\\Users\\eduar\\Desktop\\HACKATON\\tasks\\food-random-50-20261109\\sample-01\\loop-008-placer-pipeline\\manifest.json",
+            "sha256": "48c4cc2249194f12bb7bb64ea5318ccc94978f150ca83cd180f87e9e1fc32e1f",
+            "bytes": 7879
+          }
+        },
+        "integrated": {
+          "before": {
+            "rates_denominator": 50,
+            "identity_path_exact": 6,
+            "strict_full_path_exact": 3,
+            "brand_correct": 29,
+            "abstentions_all_frozen": 13,
+            "classes": {
+              "wrong_brand": 8,
+              "wrong_label_path": 20,
+              "exact": 6,
+              "abstain": 13,
+              "valid_shallower": 3
+            }
+          },
+          "after": {
+            "rates_denominator": 50,
+            "identity_path_exact": 7,
+            "strict_full_path_exact": 3,
+            "brand_correct": 29,
+            "abstentions_all_frozen": 14,
+            "classes": {
+              "wrong_brand": 7,
+              "wrong_label_path": 20,
+              "exact": 7,
+              "abstain": 14,
+              "valid_shallower": 2
+            }
+          },
+          "paired": {
+            "n": 50,
+            "exact": {
+              "current": 0.12,
+              "candidate": 0.14,
+              "delta": 0.02,
+              "current_ci": [
+                0.05617523710624646,
+                0.23805078886623582
+              ],
+              "candidate_ci": [
+                0.06950745262022862,
+                0.2618645719852809
+              ],
+              "delta_ci": [
+                -0.0192,
+                0.0592
+              ],
+              "gains": 1,
+              "regressions": 0
+            },
+            "harm": {
+              "current": 0.56,
+              "candidate": 0.54,
+              "delta": -0.02,
+              "current_ci": [
+                0.4230578680014353,
+                0.6883801278976466
+              ],
+              "candidate_ci": [
+                0.40398634328388083,
+                0.6703056539821737
+              ],
+              "delta_ci": [
+                -0.08835671144810874,
+                0.04835671144810873
+              ],
+              "gains": 1,
+              "regressions": 2
+            },
+            "abstain": {
+              "current": 0.26,
+              "candidate": 0.28,
+              "delta": 0.02,
+              "current_ci": [
+                0.15871379651367384,
+                0.3955342198899992
+              ],
+              "candidate_ci": [
+                0.17474014357680362,
+                0.4166538714598967
+              ],
+              "delta_ci": [
+                -0.0192,
+                0.0592
+              ],
+              "gains": 1,
+              "regressions": 0
+            },
+            "keep_for_development": true,
+            "production_admission": false
+          },
+          "keep_for_development": true,
+          "actual_placer_calls": 50,
+          "routed": 50,
+          "free": 0,
+          "cached_fallback_answers": 0,
+          "source_profile": {
+            "include_listing_url": false,
+            "include_selected_image_alt": false,
+            "include_option_role_facts": true
+          },
+          "elapsed_seconds": 56.207,
+          "artifact": {
+            "path": "C:\\Users\\eduar\\Desktop\\HACKATON\\tasks\\food-random-50-20261109\\sample-01\\loop-008-integrated-pipeline\\manifest.json",
+            "sha256": "11c647b225c6706dfc6c854bd978dd7a6ddca3cf0d536585663a5ac361e108bd",
+            "bytes": 7855
+          }
+        }
+      },
+      "validator": {
+        "paired_all": {
+          "n": 50,
+          "exact": {
+            "current": 0.12,
+            "candidate": 0.1,
+            "delta": -0.02,
+            "current_ci": [
+              0.05617523710624646,
+              0.23805078886623582
+            ],
+            "candidate_ci": [
+              0.04347512399157111,
+              0.2136049033478839
+            ],
+            "delta_ci": [
+              -0.08835671144810874,
+              0.04835671144810873
+            ],
+            "gains": 1,
+            "regressions": 2
+          },
+          "harm": {
+            "current": 0.82,
+            "candidate": 0.76,
+            "delta": -0.06,
+            "current_ci": [
+              0.6920368054529739,
+              0.902299172675462
+            ],
+            "candidate_ci": [
+              0.6258705062480763,
+              0.8570274759812779
+            ],
+            "delta_ci": [
+              -0.12649631568741232,
+              0.006496315687412338
+            ],
+            "gains": 0,
+            "regressions": 3
+          },
+          "abstain": {
+            "current": 0.04,
+            "candidate": 0.1,
+            "delta": 0.06,
+            "current_ci": [
+              0.011038652660826577,
+              0.13460337877954667
+            ],
+            "candidate_ci": [
+              0.04347512399157111,
+              0.2136049033478839
+            ],
+            "delta_ci": [
+              -0.006496315687412338,
+              0.12649631568741232
+            ],
+            "gains": 3,
+            "regressions": 0
+          },
+          "keep_for_development": false,
+          "production_admission": false
+        },
+        "withheld_development": {
+          "n": 30,
+          "exact": {
+            "current": 0.13333333333333333,
+            "candidate": 0.1,
+            "delta": -0.03333333333333333,
+            "current_ci": [
+              0.05309569424218104,
+              0.2968168394441695
+            ],
+            "candidate_ci": [
+              0.03459925995971615,
+              0.25621441315266624
+            ],
+            "delta_ci": [
+              -0.09866666666666665,
+              0.031999999999999994
+            ],
+            "gains": 0,
+            "regressions": 1
+          },
+          "harm": {
+            "current": 0.8333333333333334,
+            "candidate": 0.8333333333333334,
+            "delta": 0.0,
+            "current_ci": [
+              0.6643529481431982,
+              0.9266356575964831
+            ],
+            "candidate_ci": [
+              0.6643529481431982,
+              0.9266356575964831
+            ],
+            "delta_ci": [
+              0.0,
+              0.0
+            ],
+            "gains": 0,
+            "regressions": 0
+          },
+          "abstain": {
+            "current": 0.0,
+            "candidate": 0.03333333333333333,
+            "delta": 0.03333333333333333,
+            "current_ci": [
+              -1.3877787807814457e-17,
+              0.113517091390478
+            ],
+            "candidate_ci": [
+              0.0059084379948573795,
+              0.16670751396958874
+            ],
+            "delta_ci": [
+              -0.031999999999999994,
+              0.09866666666666665
+            ],
+            "gains": 1,
+            "regressions": 0
+          },
+          "keep_for_development": false,
+          "production_admission": false
+        },
+        "status": "actual_paired_ab_executed",
+        "keep_for_development": false,
+        "validator_current": {
+          "rates_denominator": 50,
+          "identity_path_exact": 6,
+          "strict_full_path_exact": 3,
+          "brand_correct": 39,
+          "abstentions_all_frozen": 2,
+          "classes": {
+            "wrong_brand": 9,
+            "wrong_label_path": 32,
+            "exact": 6,
+            "abstain": 2,
+            "valid_shallower": 1
+          }
+        },
+        "validator_candidate": {
+          "rates_denominator": 50,
+          "identity_path_exact": 5,
+          "strict_full_path_exact": 4,
+          "brand_correct": 38,
+          "abstentions_all_frozen": 5,
+          "classes": {
+            "wrong_brand": 7,
+            "valid_shallower": 2,
+            "wrong_label_path": 31,
+            "abstain": 5,
+            "exact": 5
+          }
+        },
+        "candidate_setup": {
+          "path": "C:\\Users\\eduar\\Desktop\\HACKATON\\tasks\\food-random-50-20261109\\sample-01\\loop-008-feedback-feedback-roles\\validator-setup-v2.json",
+          "sha256": "8c941b33b9f247f559fb977d6578ef0d0e56faf601e2af2790efd7b5477fcf60",
+          "bytes": 2321
+        },
+        "change_kind": "question"
+      },
+      "retained_exact": 7,
+      "retained_metrics": {
+        "rates_denominator": 50,
+        "identity_path_exact": 7,
+        "strict_full_path_exact": 3,
+        "brand_correct": 30,
+        "abstentions_all_frozen": 12,
+        "classes": {
+          "wrong_brand": 8,
+          "wrong_label_path": 20,
+          "exact": 7,
+          "abstain": 12,
+          "valid_shallower": 3
+        }
+      },
+      "retained_source_profile": {
+        "include_listing_url": false,
+        "include_selected_image_alt": false,
+        "include_option_role_facts": false
+      },
+      "retained_before": {
+        "version": 2,
+        "routing_mode": "agent_all",
+        "artifact": {
+          "path": "C:\\Users\\eduar\\Desktop\\HACKATON\\tasks\\food-random-50-20261109\\sample-01\\loop-008\\retained-state-before.json",
+          "sha256": "7565b2fdb9d637b402998b68257a2a2357034c3dfc9fa9abca78b54648ddf19f",
+          "bytes": 4859
+        }
+      },
+      "retained_output_manifest": {
+        "path": "C:\\Users\\eduar\\Desktop\\HACKATON\\tasks\\food-random-50-20261109\\sample-01\\loop-008-placer-pipeline\\manifest.json",
+        "sha256": "48c4cc2249194f12bb7bb64ea5318ccc94978f150ca83cd180f87e9e1fc32e1f",
+        "bytes": 7879
+      },
+      "durations": {
+        "validator_current": {
+          "role_elapsed_seconds": 48.37529979995452,
+          "transport_elapsed_seconds_sum": 738.511
+        },
+        "validator_candidate": {
+          "role_elapsed_seconds": 128.15781290014274,
+          "transport_elapsed_seconds_sum": 1082.179
+        },
+        "proposer": {
+          "role_elapsed_seconds": null,
+          "transport_elapsed_seconds_sum": 65.274
+        },
+        "improver": {
+          "role_elapsed_seconds": null,
+          "transport_elapsed_seconds_sum": 41.177
+        },
+        "pipeline_measurement_wall_seconds": {
+          "loop-008-integrated-pipeline": 56.207,
+          "loop-008-placer-pipeline": 63.354,
+          "loop-008-source-pipeline": 91.121
+        },
+        "loop_wall_seconds": null,
+        "qualification": "Role/pipeline times come from actual manifests; concurrent call-time sums are not loop wall time, which was not recorded."
+      },
+      "cached_answers_in_final_evaluations": 0,
+      "production_admission": false,
+      "artifact": {
+        "path": "C:\\Users\\eduar\\Desktop\\HACKATON\\tasks\\food-random-50-20261109\\sample-01\\loop-008\\loop-report.json",
+        "sha256": "bd6d120e096de8e98050eb81d320bad54a24564128673155a06181b12ff6947f",
+        "bytes": 44190
+      },
+      "artifact_index": {
+        "path": "C:\\Users\\eduar\\Desktop\\HACKATON\\tasks\\food-random-50-20261109\\sample-01\\loop-008\\artifact-index.json",
+        "sha256": "a9f6478ff5ebb73c585665cc114fffbef1c55c7b4d81239fd0670d313e16d898",
+        "bytes": 4289
+      },
+      "postmeasurement": {
+        "artifact": {
+          "path": "C:\\Users\\eduar\\Desktop\\HACKATON\\tasks\\food-random-50-20261109\\sample-01\\loop-008\\postmeasurement.json",
+          "sha256": "4b63aa311e3a503e8f6148f6496332c2e148157705399a6daad7d9a57234e415",
+          "bytes": 3043
+        },
+        "status": "canonical_development_postmeasurement_completed",
+        "pipeline_gates": {
+          "source_extraction_only": {
+            "development_only": true,
+            "sealed_read_executed": false,
+            "checks_pass": false,
+            "reasons": [
+              "FAIL exact 6 -> 4 does not fall",
+              "FAIL exact rises or agent share falls (1.000 -> 1.000)",
+              "FAIL touches 7 sealed rows (>= 10)",
+              "FAIL better 0 of 2 changed: Wilson lower bound 0.00 >= 0.5"
+            ],
+            "before": {
+              "exact": 6
+            },
+            "after": {
+              "exact": 4
+            },
+            "touched": 7,
+            "better": 0,
+            "worse": 2,
+            "agent_before": 1.0,
+            "agent_after": 1.0,
+            "advance_eligible": false,
+            "canonical_function": "taxo.gate.decide"
+          },
+          "placer_only": {
+            "development_only": true,
+            "sealed_read_executed": false,
+            "checks_pass": false,
+            "reasons": [
+              "PASS exact 6 -> 7 does not fall",
+              "PASS exact rises or agent share falls (1.000 -> 1.000)",
+              "FAIL touches 7 sealed rows (>= 10)",
+              "FAIL better 1 of 1 changed: Wilson lower bound 0.21 >= 0.5"
+            ],
+            "before": {
+              "exact": 6
+            },
+            "after": {
+              "exact": 7
+            },
+            "touched": 7,
+            "better": 1,
+            "worse": 0,
+            "agent_before": 1.0,
+            "agent_after": 1.0,
+            "advance_eligible": false,
+            "canonical_function": "taxo.gate.decide"
+          },
+          "integrated": {
+            "development_only": true,
+            "sealed_read_executed": false,
+            "checks_pass": false,
+            "reasons": [
+              "PASS exact 6 -> 7 does not fall",
+              "PASS exact rises or agent share falls (1.000 -> 1.000)",
+              "FAIL touches 6 sealed rows (>= 10)",
+              "FAIL better 1 of 1 changed: Wilson lower bound 0.21 >= 0.5"
+            ],
+            "before": {
+              "exact": 6
+            },
+            "after": {
+              "exact": 7
+            },
+            "touched": 6,
+            "better": 1,
+            "worse": 0,
+            "agent_before": 1.0,
+            "agent_after": 1.0,
+            "advance_eligible": false,
+            "canonical_function": "taxo.gate.decide"
+          }
+        },
+        "advance_eligible": false,
+        "new_model_calls": 0,
+        "separate_analyst_calls": 0,
+        "rule_curation": {
+          "proposals": 1,
+          "canonical_curator_executed": 0,
+          "not_applicable_to_deterministic_curator": 1
+        },
+        "distillation": {
+          "function": "taxo.distill.lessons",
+          "native_record": {
+            "path": "C:\\Users\\eduar\\Desktop\\HACKATON\\worktrees\\food-loop-observability\\memory\\rounds\\food\\20261109T193628-30fa2a7e03.json",
+            "sha256": "e5f28d21207d80cff2fb1025a782c9908bb9d81660290a08c6cd222fa90056a2",
+            "bytes": 33425
+          },
+          "lessons": 0,
+          "active_lessons": 0
+        },
+        "production_admission": false,
+        "index": {
+          "path": "C:\\Users\\eduar\\Desktop\\HACKATON\\tasks\\food-random-50-20261109\\sample-01\\loop-008\\postmeasurement-index.json",
+          "sha256": "0a2bf9d08272fe09f451067ea6a8f7325787247ad66fdf7dfd51879595136f08",
+          "bytes": 985
+        }
+      }
+    },
+    {
+      "run": "loop-009",
+      "status": "completed_integrated_development_cycle",
+      "sample": 50,
+      "feedback": 20,
+      "withheld_feedback": 30,
+      "calls": {
+        "validator_current": 50,
+        "proposer": 1,
+        "improver": 1,
+        "validator_candidate": 50,
+        "actual_placer": 0
+      },
+      "observed_transport_calls": {
+        "validator_current": {
+          "actual_cli_calls": 50,
+          "status_counts": {
+            "completed": 50
+          },
+          "transport_elapsed_seconds_sum": 714.189
+        },
+        "validator_candidate": {
+          "actual_cli_calls": 50,
+          "status_counts": {
+            "completed": 50
+          },
+          "transport_elapsed_seconds_sum": 767.548
+        },
+        "proposer": {
+          "actual_cli_calls": 1,
+          "status_counts": {
+            "completed": 1
+          },
+          "transport_elapsed_seconds_sum": 74.295
+        },
+        "improver": {
+          "actual_cli_calls": 1,
+          "status_counts": {
+            "completed": 1
+          },
+          "transport_elapsed_seconds_sum": 72.446
+        },
+        "actual_placer": {
+          "actual_cli_calls": 0,
+          "unique_actual_measurements": 0,
+          "transport_elapsed_seconds_sum": 0
+        }
+      },
+      "call_counts_match_saved_report": true,
+      "version_before": 3,
+      "version_after": 3,
+      "proposal_kinds": [
+        "convention_question"
+      ],
+      "comparisons": {},
+      "validator": {
+        "paired_all": {
+          "n": 50,
+          "exact": {
+            "current": 0.14,
+            "candidate": 0.12,
+            "delta": -0.02,
+            "current_ci": [
+              0.06950745262022862,
+              0.2618645719852809
+            ],
+            "candidate_ci": [
+              0.05617523710624646,
+              0.23805078886623582
+            ],
+            "delta_ci": [
+              -0.1083665094931332,
+              0.06836650949313319
+            ],
+            "gains": 2,
+            "regressions": 3
+          },
+          "harm": {
+            "current": 0.8,
+            "candidate": 0.86,
+            "delta": 0.06,
+            "current_ci": [
+              0.6696262789551477,
+              0.8875637005402612
+            ],
+            "candidate_ci": [
+              0.738135428014719,
+              0.9304925473797714
+            ],
+            "delta_ci": [
+              -0.026935378299056123,
+              0.14693537829905612
+            ],
+            "gains": 4,
+            "regressions": 1
+          },
+          "abstain": {
+            "current": 0.04,
+            "candidate": 0.0,
+            "delta": -0.04,
+            "current_ci": [
+              0.011038652660826577,
+              0.13460337877954667
+            ],
+            "candidate_ci": [
+              0.0,
+              0.07135003417431873
+            ],
+            "delta_ci": [
+              -0.09486857023834319,
+              0.014868570238343183
+            ],
+            "gains": 0,
+            "regressions": 2
+          },
+          "keep_for_development": false,
+          "production_admission": false
+        },
+        "withheld_development": {
+          "n": 30,
+          "exact": {
+            "current": 0.13333333333333333,
+            "candidate": 0.1,
+            "delta": -0.03333333333333333,
+            "current_ci": [
+              0.05309569424218104,
+              0.2968168394441695
+            ],
+            "candidate_ci": [
+              0.03459925995971615,
+              0.25621441315266624
+            ],
+            "delta_ci": [
+              -0.09866666666666665,
+              0.031999999999999994
+            ],
+            "gains": 0,
+            "regressions": 1
+          },
+          "harm": {
+            "current": 0.8333333333333334,
+            "candidate": 0.8666666666666667,
+            "delta": 0.03333333333333333,
+            "current_ci": [
+              0.6643529481431982,
+              0.9266356575964831
+            ],
+            "candidate_ci": [
+              0.7031831605558306,
+              0.9469043057578189
+            ],
+            "delta_ci": [
+              -0.031999999999999994,
+              0.09866666666666665
+            ],
+            "gains": 1,
+            "regressions": 0
+          },
+          "abstain": {
+            "current": 0.0,
+            "candidate": 0.0,
+            "delta": 0.0,
+            "current_ci": [
+              -1.3877787807814457e-17,
+              0.113517091390478
+            ],
+            "candidate_ci": [
+              -1.3877787807814457e-17,
+              0.113517091390478
+            ],
+            "delta_ci": [
+              0.0,
+              0.0
+            ],
+            "gains": 0,
+            "regressions": 0
+          },
+          "keep_for_development": false,
+          "production_admission": false
+        },
+        "status": "actual_paired_ab_executed",
+        "keep_for_development": false,
+        "validator_current": {
+          "rates_denominator": 50,
+          "identity_path_exact": 7,
+          "strict_full_path_exact": 3,
+          "brand_correct": 38,
+          "abstentions_all_frozen": 2,
+          "classes": {
+            "wrong_brand": 10,
+            "wrong_label_path": 30,
+            "exact": 7,
+            "abstain": 2,
+            "valid_shallower": 1
+          }
+        },
+        "validator_candidate": {
+          "rates_denominator": 50,
+          "identity_path_exact": 6,
+          "strict_full_path_exact": 5,
+          "brand_correct": 39,
+          "abstentions_all_frozen": 0,
+          "classes": {
+            "wrong_brand": 11,
+            "wrong_label_path": 32,
+            "exact": 6,
+            "valid_shallower": 1
+          }
+        },
+        "candidate_setup": {
+          "path": "C:\\Users\\eduar\\Desktop\\HACKATON\\tasks\\food-random-50-20261109\\sample-01\\loop-009-feedback-feedback-roles\\validator-setup-v2.json",
+          "sha256": "4b4e30478ace7460cc2af40503e9d382d3fad558806df3fe46e3362ff3945197",
+          "bytes": 2255
+        },
+        "change_kind": "question"
+      },
+      "retained_exact": 7,
+      "retained_metrics": {
+        "rates_denominator": 50,
+        "identity_path_exact": 7,
+        "strict_full_path_exact": 3,
+        "brand_correct": 30,
+        "abstentions_all_frozen": 12,
+        "classes": {
+          "wrong_brand": 8,
+          "wrong_label_path": 20,
+          "exact": 7,
+          "abstain": 12,
+          "valid_shallower": 3
+        }
+      },
+      "retained_source_profile": {
+        "include_listing_url": false,
+        "include_selected_image_alt": false,
+        "include_option_role_facts": false
+      },
+      "retained_before": {
+        "version": 3,
+        "routing_mode": "agent_all",
+        "artifact": {
+          "path": "C:\\Users\\eduar\\Desktop\\HACKATON\\tasks\\food-random-50-20261109\\sample-01\\loop-009\\retained-state-before.json",
+          "sha256": "aa5c8f42189bc915e571b91108bd59be99271958b0e4e3d1ab54faecc04a16a8",
+          "bytes": 4839
+        }
+      },
+      "retained_output_manifest": {
+        "path": "C:\\Users\\eduar\\Desktop\\HACKATON\\tasks\\food-random-50-20261109\\sample-01\\loop-008-placer-pipeline\\manifest.json",
+        "sha256": "48c4cc2249194f12bb7bb64ea5318ccc94978f150ca83cd180f87e9e1fc32e1f",
+        "bytes": 7879
+      },
+      "durations": {
+        "validator_current": {
+          "role_elapsed_seconds": 46.28675650013611,
+          "transport_elapsed_seconds_sum": 714.189
+        },
+        "validator_candidate": {
+          "role_elapsed_seconds": 50.175566900055856,
+          "transport_elapsed_seconds_sum": 767.548
+        },
+        "proposer": {
+          "role_elapsed_seconds": null,
+          "transport_elapsed_seconds_sum": 74.295
+        },
+        "improver": {
+          "role_elapsed_seconds": null,
+          "transport_elapsed_seconds_sum": 72.446
+        },
+        "pipeline_measurement_wall_seconds": {},
+        "loop_wall_seconds": null,
+        "qualification": "Role/pipeline times come from actual manifests; concurrent call-time sums are not loop wall time, which was not recorded."
+      },
+      "cached_answers_in_final_evaluations": 0,
+      "production_admission": false,
+      "artifact": {
+        "path": "C:\\Users\\eduar\\Desktop\\HACKATON\\tasks\\food-random-50-20261109\\sample-01\\loop-009\\loop-report.json",
+        "sha256": "0183c187736498dbb58fdb157570007b37c311e62853a94d72fcf4bcd2db94c2",
+        "bytes": 9056
+      },
+      "artifact_index": {
+        "path": "C:\\Users\\eduar\\Desktop\\HACKATON\\tasks\\food-random-50-20261109\\sample-01\\loop-009\\artifact-index.json",
+        "sha256": "4b940a9f5a581ac223f47e390645122e8beaf10bd4bfdcfc701f716d6279c842",
+        "bytes": 967
+      },
+      "postmeasurement": {
+        "artifact": {
+          "path": "C:\\Users\\eduar\\Desktop\\HACKATON\\tasks\\food-random-50-20261109\\sample-01\\loop-009\\postmeasurement.json",
+          "sha256": "9d9b10c6b437910d3a58f5926bfc87330656c33b8820fe571da2225f2d047e47",
+          "bytes": 992
+        },
+        "status": "canonical_development_postmeasurement_completed",
+        "pipeline_gates": {},
+        "advance_eligible": false,
+        "new_model_calls": 0,
+        "separate_analyst_calls": 0,
+        "rule_curation": {
+          "proposals": 1,
+          "canonical_curator_executed": 0,
+          "not_applicable_to_deterministic_curator": 1
+        },
+        "distillation": {
+          "function": "taxo.distill.lessons",
+          "native_record": {
+            "path": "C:\\Users\\eduar\\Desktop\\HACKATON\\worktrees\\food-loop-observability\\memory\\rounds\\food\\20261109T193951-a607d0cedb.json",
+            "sha256": "54ccad708dabb052d0dec15fc6806a03a855ba8e2c7f7f8bc1f7d04d8957a2cc",
+            "bytes": 2507
+          },
+          "lessons": 0,
+          "active_lessons": 0
+        },
+        "production_admission": false,
+        "index": {
+          "path": "C:\\Users\\eduar\\Desktop\\HACKATON\\tasks\\food-random-50-20261109\\sample-01\\loop-009\\postmeasurement-index.json",
+          "sha256": "58615141661e846b7154c8825e568b84150f47c94fd0c5e74c029a43a0ce17ec",
+          "bytes": 982
+        }
+      }
     }
   ],
   "active_cli_concurrency": 20,
@@ -2861,12 +3898,12 @@
   "coverage_qualification": "Optimistic accepted-name form coverage including substring citations; not achieved accuracy or a guarantee90percent is attainable",
   "production_admission": false,
   "retained_system": {
-    "version": 2,
+    "version": 3,
     "routing_mode": "agent_all",
     "artifact": {
-      "path": "C:\\Users\\eduar\\Desktop\\HACKATON\\tasks\\food-random-50-20261109\\sample-01\\system-state\\v000002.json",
-      "sha256": "0ddbacf33fe48c6e29b34ac2ca4a879579d29e06d7f6784d3fa8440a4a83d728",
-      "bytes": 4773
+      "path": "C:\\Users\\eduar\\Desktop\\HACKATON\\tasks\\food-random-50-20261109\\sample-01\\system-state\\v000003.json",
+      "sha256": "d4641bdecd79d4d185ddee8f94299ba6e62445716b93ac0aa783443b2b25dbf1",
+      "bytes": 4753
     },
     "source": {
       "bytes": 1409906,

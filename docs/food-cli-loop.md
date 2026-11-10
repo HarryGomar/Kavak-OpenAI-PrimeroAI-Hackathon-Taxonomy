@@ -23,6 +23,14 @@ measurement. Unsupported checks remain implementation proposals until code, decl
 positive/negative cases and actual evaluation exist. Candidate Python tools are tested
 in an isolated worker and made available only to the candidate arm.
 
+For no-tool, single-row placer calls, an unchanged CLI request may reuse its prior raw
+structured answer only after exact prompt/schema/pin/executable and completion checks.
+Receipts identify the prior inference; the current grounding, rules and scorer run
+again. Changed or unverifiable requests execute normally. These reused observations
+are counted separately from fresh calls and are not independent replicates. Blind
+validators still execute anew each cycle. This is distinct from diagnostic fallback
+placement replay, which remains excluded from final integrated evaluation.
+
 ```powershell
 python -m domains.food.place_paths --root <frozen-root> --name warm-baseline
 python -m domains.food.executable_loop --root <frozen-root> --fallback <frozen-root>/warm-baseline --name loop-001 --setup domains/food/validator.yaml

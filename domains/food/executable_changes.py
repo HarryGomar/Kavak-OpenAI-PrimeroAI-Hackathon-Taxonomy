@@ -26,7 +26,6 @@ from taxo.lattice import vocab
 from taxo.memory import rules_for
 from taxo.tools import checks as shared_checks
 from domains.food import checks as food_checks
-from domains.food import option_checks
 
 
 # Resolve the port's imports privately, preserving every vendored file byte.
@@ -46,7 +45,7 @@ propose.OPS = set(evaluator._OPS) | {'missing', 'present'}
 
 
 def _run_check(name, listing, node, tax, decision=None, **params):
-    local = food_checks.CHECKS | option_checks.CHECKS
+    local = food_checks.CHECKS
     if name not in local:
         return shared_checks.run(name, listing, node, tax, decision, **params)
     fn, default = local[name]
@@ -55,14 +54,31 @@ def _run_check(name, listing, node, tax, decision=None, **params):
 
 
 # Only the private port validator/evaluator sees local Food capabilities.
-_check_proxy = SimpleNamespace(CHECKS=shared_checks.CHECKS | food_checks.CHECKS | option_checks.CHECKS, run=_run_check)
+_check_proxy = SimpleNamespace(CHECKS=shared_checks.CHECKS | food_checks.CHECKS, run=_run_check)
 propose.checks = evaluator.checks = _check_proxy
 
 
 def contract():
     """The executable proposal schema/language for the caller's pinned CLI role."""
-    return {'schema': copy.deepcopy(propose.SCHEMA), 'language': propose.LANGUAGE,
+    stale = ('Listings routed to an agent are NOT placed by it in this run: they keep the brand node, so they count as shallower (or\n'
+             'no_brand) and they cost an agent call.')
+    actual = ('INTEGRATED FOOD EXECUTION: Routed rows are sent to the actual source-only installed CLI placer. '
+              'Its code-checked placements or explicit parks become final outputs alongside deterministic free placements. '
+              'Candidate final measurements use actual routed calls, never cached placement answers. '
+              'The labels agent_title, agent_evidence, agent_siblings and agent_search currently dispatch the same supplied-source CLI placer; '
+              'external sibling retrieval and live web search are NOT implemented by these route labels. '
+              'The unchanged retained reference may be a prior completed actual run. '
+              'SEPARATE CONFIGURATION-ISOLATION DIAGNOSTICS may replay the same cached source-only fallback in both arms; '
+              'those replays are labeled diagnostics, are not final integrated measurements, and prove no realized call or dollar savings.')
+    if stale not in propose.LANGUAGE:
+        raise ValueError('Pinned port language changed; review the Food execution-contract adaptation')
+    return {'schema': copy.deepcopy(propose.SCHEMA), 'language': propose.LANGUAGE.replace(stale, actual),
             'source': json.loads(Path(__file__).with_name('ported').joinpath('provenance.json').read_text(encoding='utf-8'))}
+
+
+def check_catalog():
+    """A fresh view of checks actually registered in this private Food executor."""
+    return dict(_check_proxy.CHECKS)
 
 
 def _normalise(proposal):
@@ -328,7 +344,7 @@ def evaluate(proposal: dict, root: Path, baseline: Path, output: Path, *, base_c
     bench = SimpleNamespace(d='food', spread=lambda phrase: sum(any(' '+phrase+' ' in title for title in ts)
                                                                for ts in titles.values()))
     runtime_proposal = proposal
-    if proposal.get('kind') == 'new_check' and proposal.get('check') in (food_checks.CHECKS | option_checks.CHECKS):
+    if proposal.get('kind') == 'new_check' and proposal.get('check') in food_checks.CHECKS:
         runtime_proposal = proposal | {'kind': 'code_rule', 'payload_json': '{"params":{}}'}
     if proposal.get('kind') == 'new_check' and runtime_proposal is proposal:
         refusal = 'Missing check requires implementation with documented positive/negative cases, then an actual controlled evaluation'
