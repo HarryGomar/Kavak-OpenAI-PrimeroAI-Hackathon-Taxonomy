@@ -30,16 +30,16 @@ leaf hang two real listings from different shops (Amazon, Walmart, dior.com, Sep
 its title; the product name is bold inside the noise. Under the trees, four short points:
 - **Labels add up demand:** prices, reviews and sales from every shop add up to the right product.
 - **Agents alone: unreliable.** 44.5% exact on food listings.
-- **People: too expensive.** Meta put $14.3B into Scale AI, a labeling company.
-- **No labels: no machine learning.** Nothing to train a model on.
+- **Manual labeling: too expensive.** Meta put $14.3B into Scale AI, a labeling company.
+- **ML: impossible with no labels.** Nothing to train a model on.
 
 **Say:**
 - Taxo is a recursively improving method to scale data labeling.
 - Our labels are product trees. To understand a market, the demand signals from different shops, prices, reviews,
   sales, have to add up to the right product. Every shop writes the same product differently: under the noise, these
   six listings are three products.
-- We can't get those labels. An agent alone is too unreliable: 44.5% exact on food. People are too expensive: Meta put
-  $14.3 billion into Scale AI, a labeling company. And with no labels, there's no machine learning.
+- We can't get those labels. An agent alone is too unreliable: 44.5% exact on food. Manual labeling is too expensive: Meta
+  put $14.3 billion into Scale AI, a labeling company. And with no labels, machine learning is impossible.
 
 *44.5% is the agent alone on 400 random sealed food listings (the table under slide 10). The Scale AI figure is Meta's
 reported investment for 49% of the company, June 2025.*
