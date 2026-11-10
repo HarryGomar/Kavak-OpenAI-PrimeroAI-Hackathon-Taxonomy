@@ -49,7 +49,8 @@ class ExactPlacerReuse:
         if not executable:
             raise RuntimeError('Installed CLI missing; exact-request reuse cannot bypass the CLI pin')
         self.executable = fingerprint(Path(executable))
-        self.version = subprocess.check_output([executable, '--version'], text=True).strip()
+        with codex_cli.CLI_SLOTS:
+            self.version = subprocess.check_output([executable, '--version'], text=True).strip()
         if self.version != self.pin['cli_version']:
             raise ValueError('Installed CLI version differs from the shared pin')
         self.origins = {}
@@ -564,10 +565,11 @@ CARD:
     if include_selected_image_alt:
         write(folder/'selected-image-alt-provenance.json', [dict(id=r['id'], **audit) for r,audit in zip(listings,image_audits)])
     try:
-        reuse = ExactPlacerReuse(reuse_from, manifest['source']['sha256']) if (
-            reuse_from is not None and not placer_tools and batch_size == 1) else None
-        manifest['exact_request_reuse_enabled'] = reuse is not None
-        manifest['exact_request_reuse_from'] = str(reuse.baseline) if reuse else None
+        origins = reuse_from if isinstance(reuse_from, (list, tuple)) else [reuse_from]
+        reuse = [ExactPlacerReuse(origin, manifest['source']['sha256']) for origin in dict.fromkeys(origins)] if (
+            reuse_from is not None and not placer_tools and batch_size == 1) else []
+        manifest['exact_request_reuse_enabled'] = bool(reuse)
+        manifest['exact_request_reuse_from'] = [str(cache.baseline) for cache in reuse]
         def call(offset):
             batch = routed[offset:offset + batch_size]
             if placer_tools:
@@ -589,7 +591,11 @@ CARD:
                 request = prompt + '\nSOURCE OBSERVATIONS:\n' + json.dumps([
                     evidence(r, **evidence_options) for r in batch], ensure_ascii=False)
                 batch_output = folder/f'batch-{offset//batch_size:03d}'
-                answer = reuse.answer(request, schema, batch[0]['id'], batch_output) if reuse else None
+                answer = None
+                for cache in reuse:
+                    answer = cache.answer(request, schema, batch[0]['id'], batch_output)
+                    if answer is not None:
+                        break
                 if answer is None:
                     answer = invoke(request, schema, batch_output, web=False)
             parsed = Batch.model_validate(answer).proposals

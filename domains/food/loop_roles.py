@@ -14,7 +14,53 @@ from taxo.roles.improver import make_improver
 from taxo.roles.runtime import run_sync
 from taxo.tools.checks import CHECKS
 
-from domains.food.place_paths import read, rows, evidence
+from domains.food.place_paths import read, rows, evidence, source_profile
+
+
+def build_feedback_cases(root, current, validator_path=None, *, pipeline_card=None):
+    """Project each role's actual source evidence on authorized feedback only."""
+    permitted = set(read(root/'protocol.json')['partition']['feedback_ids'])
+    if any(r['observation_id'] not in permitted for r in current):
+        raise ValueError('Feedback cases may not contain withheld observations')
+    source = {r['id']: r for r in rows(root/'source-snapshot.jsonl')}
+    validator = {r['listing_id']: r for r in read(validator_path)} if validator_path else None
+    options = None
+    if pipeline_card is not None:
+        options = {('include_source_urls' if k == 'include_listing_url' else k): v
+                   for k,v in source_profile(pipeline_card).items()}
+    cases = []
+    for ruling in current:
+        lid = ruling['observation_id']
+        ev = evidence(source[lid])
+        if ev.get('description_text'):
+            ev['description_text'] = ev['description_text'][:3000]
+        case = {'listing_id': lid, 'source_evidence': ev,
+                'human_gold': ruling['gold_original'][0]['pedia_full_path'],
+                'pipeline': ruling['systems']['candidate'],
+                'independent_validator': validator[lid] if validator else ruling['frozen_independent_validator']}
+        if options is not None:
+            case['pipeline_source_evidence'] = evidence(source[lid], **options)
+        cases.append(case)
+    return cases
+
+
+def improver_cases(cases):
+    """The validator improver never sees pipeline outputs or its extra projection."""
+    return [{k:v for k,v in case.items() if k not in ('pipeline', 'pipeline_source_evidence')}
+            for case in cases if case['independent_validator']['path'] !=
+            [s['label'] for s in case['human_gold'] if s['level'] in ('brand', 'product', 'model', 'variant')]]
+
+
+def component_feedback_history(report):
+    """Keep each measured arm and projection distinct without withheld outcomes."""
+    result = {}
+    for name, arm in report.get('component_and_integrated_comparisons', {}).items():
+        card = Path(arm['output'])/'hypothesis.json'
+        result[name] = {'before_feedback': arm['before'].get('partitions', {}).get('feedback'),
+                        'after_feedback': arm['after'].get('partitions', {}).get('feedback'),
+                        'source_profile': source_profile(read(card)),
+                        'keep_for_development': arm['keep_for_development']}
+    return result
 
 
 def proposal_decision(raw, executable, feedback_ids, *, check_catalog=None):
@@ -73,17 +119,12 @@ def execute(root, run_name, validator_path=None, *, executable=False, resume=Fal
         raise ValueError('Feedback roles may not read the withheld partition')
     if executable and validator_path is None:
         raise ValueError('Executable Food feedback requires actual current-cycle independent judgments')
-    source = {r["id"]: r for r in rows(root / "source-snapshot.jsonl")}
-    validator = {r["listing_id"]: r for r in read(validator_path)} if validator_path else None
-    cases = []
-    for r in current:
-        lid = r["observation_id"]
-        ev = evidence(source[lid])
-        if ev.get("description_text"):
-            ev["description_text"] = ev["description_text"][:3000]
-        cases.append({"listing_id": lid, "source_evidence": ev, "human_gold": r["gold_original"][0]["pedia_full_path"],
-                      "pipeline": r["systems"]["candidate"],
-                      "independent_validator": validator[lid] if validator else r["frozen_independent_validator"]})
+    state, retained_card = None, None
+    if executable and (root/'system-state/current.json').exists():
+        from domains.food.system_state import load
+        state = load(root)
+        retained_card = read(Path(state['placer']['card']['path']))
+    cases = build_feedback_cases(root, current, validator_path, pipeline_card=retained_card)
     write(folder / "feedback-cases.json", cases)
     constraint = ("These are previously inspected, owner-confirmed Food human gold feedback cases, not a fresh external holdout. "
                   "Exact-label mismatches may be synonyms; do not presume semantic errors. "
@@ -108,9 +149,7 @@ def execute(root, run_name, validator_path=None, *, executable=False, resume=Fal
         history = []
         validator_history = []
         retained_system = None
-        if (root/'system-state/current.json').exists():
-            from domains.food.system_state import load
-            state = load(root)
+        if state is not None:
             retained_system = {'version': state['version'], 'routing_mode': state['routing_mode'],
                 'placer_card': read(Path(state['placer']['card']['path'])),
                 'active_config': yaml.safe_load(Path(state['active_executable_config']['path']).read_text(encoding='utf-8'))
@@ -130,7 +169,8 @@ def execute(root, run_name, validator_path=None, *, executable=False, resume=Fal
                     'joint_proposals':read(old_roles/'pipeline-proposals.json')
                         if (old_roles/'pipeline-proposals.json').exists() else None,
                     'retained_system_version':old['version_after'],
-                    'outcome':'retained' if old['version_after'] > old['version_before'] else 'rejected'})
+                    'outcome':'system_version_advanced' if old['version_after'] > old['version_before'] else 'system_unchanged',
+                    'component_trials_feedback_only':component_feedback_history(old)})
             vp = root/(previous.parent.name+'-validator-candidate/metrics.json')
             vc = root/(previous.parent.name+'-validator-current/metrics.json')
             if vp.exists() and vc.exists() and (old_roles/'improver-output.json').exists():
@@ -160,8 +200,6 @@ def execute(root, run_name, validator_path=None, *, executable=False, resume=Fal
         scoped = payload
         if role == 'improver':
             # This role learns from validator errors, not from the pipeline's card mistakes.
-            mistakes = [c for c in cases if c['independent_validator']['path'] !=
-                        [s['label'] for s in c['human_gold'] if s['level'] in ('brand', 'product', 'model', 'variant')]]
             scoped = json.dumps({'constraints': constraint, 'current_setup': setup,
                                  'owner_conventions': owner if executable else None,
                                  'available_tools': ['similar_brands'] + [read(Path(path))['tool_name']
@@ -169,8 +207,7 @@ def execute(root, run_name, validator_path=None, *, executable=False, resume=Fal
                                  'tool_limitations': 'similar_brands searches only original explicit source-brand fields; '
                                      'it is sparse and incomplete, not a canonical registry. No match is never evidence of no brand.',
                                  'prior_validator_trials_feedback_only': validator_history if executable else [],
-                                 'validator_mistakes': [{k: v for k, v in c.items() if k != 'pipeline'}
-                                                       for c in mistakes]}, ensure_ascii=False)
+                                 'validator_mistakes': improver_cases(cases)}, ensure_ascii=False)
         options = {'executable': executable}
         if role == 'proposer' and executable:
             options['joint'] = True

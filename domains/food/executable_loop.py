@@ -146,7 +146,8 @@ def run(root, fallback, name, setup, *, source_urls_candidate=False, selected_im
             root, fallback, cfg, plan_folder)
         if not (folder/'manifest.json').exists():
             place(root, folder.name, card, fallback, fixed_placements=plan['free_placements'],
-                  routed_ids=plan['routed_ids'], placer_tools=[load_tool(p) for p in reports], reuse_from=fallback)
+                  routed_ids=plan['routed_ids'], placer_tools=[load_tool(p) for p in reports],
+                  reuse_from=[fallback]+[Path(x['output']) for x in measurements.values()])
         manifest = read(folder/'manifest.json')
         if manifest['status'] != 'completed' or read(folder/'hypothesis.json')['instruction'] != read(card)['instruction']:
             raise RuntimeError('Actual pipeline measurement incomplete or uses a different candidate card')
