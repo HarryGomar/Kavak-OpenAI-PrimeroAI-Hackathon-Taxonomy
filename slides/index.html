@@ -342,17 +342,17 @@
   <aside class="notes">These are the three things we want to improve. Accuracy: an agent on every listing places 85% of fragrance listings exactly right, but it can't check its own work, as we just saw. Rules plus the agent get 75% today, at a ninth of the cost: closing that gap is what loops 1 and 2 are for. Loop 1 learns rules from a few labels, and loop 2 makes the check stricter. On food, a new domain, the agent gets 45% and rules plus the agent 20%: that's where loop 3 has to help. Cost: the agent uses about 630 tokens a listing. For two million listings that's about 1.3 billion tokens, around $3,800 a pass, and we pay it again on every refresh and in every domain. Rules place 89% of fragrance listings for free, so the bill falls to about $400. Speed: at a second a listing, one call at a time, that's about 570 hours. Rules take a millisecond a listing, and loop 3 lets each new domain start from the last one's lessons.</aside>
 </section>
 
-<!-- 5 · Architecture: fragrance on a panel (solver row, loop 1 above, loop 2 below), loop 3 on the right; rules drawn as memory, tools, operators -->
+<!-- 5 · Architecture: the two loops as two rings, rules against silver, the validator against gold -->
 <section class="slide" data-n="5">
-  <h2>Taxo: a solver, and three loops that improve it.</h2>
-  <div class="fill"><svg class="ch" id="arch"></svg></div>
+  <h2>Two loops: rules ↔ <span style="color:#7C8390">silver</span>, validator ↔ <span style="color:#B07F0C">gold</span>.</h2>
+  <div class="fill"><svg class="ch" id="arch2"></svg></div>
   <div class="pop">
     <h2><span style="color:#B07F0C">Gold:</span> a person's labels, used to score everything.</h2>
     <table class="evt"><tr><th>Listing</th><th>Gold, from a person</th><th>Taxo placed it</th><th>Score</th></tr><tr><td class="li">Lattafa Khamrah Qahwa Eau De Parfum 3.4 Oz Unisex<small>Walmart</small></td><td><div class="mt g"><div style="--k:0">Lattafa</div><div style="--k:1">Khamrah</div><div style="--k:2"><i class="sq"></i><b>Khamrah Qahwa</b></div></div></td><td><div class="mt t"><div style="--k:0">Lattafa</div><div style="--k:1">Khamrah</div><div style="--k:2"><i class="sq"></i><b>Khamrah Qahwa</b></div></div></td><td class="vd"><div><i data-ic="check" data-s="26" data-c="#1E9E6E"></i><span>Exact</span></div></td></tr><tr><td class="li">Dior Sauvage Elixir Parfum Spray for Men, 2 oz<small>Amazon</small></td><td><div class="mt g"><div style="--k:0">Dior</div><div style="--k:1">Sauvage</div><div style="--k:2"><i class="sq"></i><b>Sauvage Elixir</b></div></div></td><td><div class="mt t"><div style="--k:0">Dior</div><div style="--k:1"><i class="sq"></i><b>Sauvage</b></div></div></td><td class="vd"><div><i data-ic="check" data-s="26" data-c="#A3A8B3"></i><span>Right, but stops higher</span></div></td></tr><tr><td class="li">Armaf Club De Nuit Intense Man Edt 105 Ml Original<small>Mercado Libre</small></td><td><div class="mt g"><div style="--k:0">Armaf</div><div style="--k:1">Club de Nuit</div><div style="--k:2"><i class="sq"></i><b>Intense Man</b></div></div></td><td><div class="mt t"><div style="--k:0">Armaf</div><div style="--k:1">Club de Nuit</div><div style="--k:2"><i class="sq"></i><b>Club de Nuit Woman</b></div></div></td><td class="vd"><div><i data-ic="cross" data-s="26" data-c="#D9622B"></i><span>Wrong product: harm</span></div></td></tr><tr><td class="li">Yara by LATTAFA 100ml EDP for her<small>TikTok Shop</small></td><td><div class="mt g"><div style="--k:0">Lattafa</div><div style="--k:1"><i class="sq"></i><b>Yara</b></div></div></td><td><div class="mt t"><div style="--k:0">Lattafa</div><div style="--k:1"><i class="sq"></i><b>Yara</b></div></div></td><td class="vd"><div><i data-ic="check" data-s="26" data-c="#1E9E6E"></i><span>Exact</span></div></td></tr></table>
     <p class="evk"><b>Exact</b>: the same node as gold. <b>Right or shallower</b>: the right path, maybe stopped higher. <b>Harm</b>: a wrong node.<br>
       Sealed fragrance, rules then an agent: <b>75%</b> exact, <b>85%</b> right or shallower, <b>15%</b> harm.</p>
   </div>
-  <aside class="notes">This is one domain, fragrance. Listings go through the rules first, for free, and the placer agent gets the 11% they can't place. The rules have three parts: memory, the files of words and brands; tools, checks in code; and operators, the code steps that strip, count and place. Loop 1: the proposer agent reads the errors on silver and gold and proposes one change, and a gate in code keeps it only if gold rises. That changes memory and operators. Loop 2: the validator agent labels fresh listings, a person settles only its flags, and the improver agent makes a better validator, round after round until silver matches gold. That grows silver and gold, and the errors it finds go to loop 1. Loop 3: distil turns kept changes into lessons, and a lesson kept in two domains goes into every domain's memory, tools and operators.</aside>
+  <aside class="notes">Two loops, joined by one arrow. Blue, loop 1: the rules, then the placer agent, place every listing, and we check them against silver. Where the rules are wrong, the proposer changes the rules' memory, operators and tools, the parts the next slide opens up, and round we go, until the rules agree with silver. Silver comes from the validator: that is the arrow in the middle. Orange, loop 2: the validator labels listings and is scored on gold, the few listings a person labelled. Where it labels unlike us, the improver agent edits its prompt and its questions, and the new validator replaces the old one. A better validator writes better silver, so loop 1 runs again against a better check. Round again, until silver agrees with gold.</aside>
 </section>
 
 <!-- 6 · Loop 1: what it changes. Memory, operators, tools: an example of each, what loop 1 changed, the effect -->
@@ -573,6 +573,9 @@
     db: '<ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5V19A9 3 0 0 0 21 19V5"/><path d="M3 12A9 3 0 0 0 21 12"/>',
     code: '<path d="m16 18 6-6-6-6"/><path d="m8 6-6 6 6 6"/>',
     next: '<path d="m9 18 6-6-6-6"/>',
+    loop: '<path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/>',
+    ask: '<circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/>',
+    msg: '<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>',
     agent: '<path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/>',
     person: '<circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/>',
     gate: '<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/>',
@@ -697,6 +700,63 @@
     s += nm(X3, YL2 + NM, 'Every domain') + sb(X3, YL2 + NM + 32, 'memory, tools, operators', C.meta);
     s += Tx(X3, YL2 + NM + 68, 'Fragrance · Food · Clothing', { a: 'middle', fs: 20, c: C.mute }) + Tx(X3, YL2 + NM + 94, 'Footwear · Toys', { a: 'middle', fs: 20, c: C.mute });
     put('arch', '0 0 1664 749', s);
+  })();
+
+  // the slide-5 picture: the two loops as two rings. Loop 1 (blue, clockwise): rules -> silver -> rules wrong? ->
+  // proposer -> rules; the proposer points at the three parts of the rules it edits (memory, operators, tools).
+  // Loop 2 (orange, counter-clockwise): validator -> scored on gold -> improver -> new validator -> validator; the
+  // improver points at the two parts of the validator it edits (prompt, questions). The validator writes silver.
+  (() => {
+    let s = '';
+    const T = 170, B = 630, M = (T + B) / 2, R = 70;
+    const A0 = 236, A1 = 676, B0 = 976, B1 = 1416;            // blue ring x from-to, orange ring x from-to
+    const ring = (x1, x2, c) => `<rect x="${x1}" y="${T}" width="${x2 - x1}" height="${B - T}" rx="${R}" fill="none" stroke="${c}" stroke-width="4"/>`;
+    const tip = (x, y, deg, c) => head(x, y, deg * Math.PI / 180, c, 22, 11);
+    const dot = (x, y, ic, c) => `<circle cx="${x}" cy="${y}" r="31" fill="#fff" stroke="${c}" stroke-width="4"/>` + Ic(ic, x - 15, y - 15, 30, c, 2);
+    const lbl = (x, y, name, line, a = 'middle', nc = C.ink) => Tx(x, y, name, { a, fs: 26, fw: 600, c: nc }) + Tx(x, y + 28, line, { a, fs: 20, c: C.mute });
+    const box = (x, c, name, line, nc) => `<rect x="${x - 88}" y="${M - 50}" width="176" height="100" rx="18" fill="#fff" stroke="${c}" stroke-width="4"/>`
+      + lbl(x, M - 6, name, line, 'middle', nc);
+    const big = (x, y, title, l1, l2, c) => Ic('loop', x - 22, y - 76, 44, c, 2.4)
+      + Tx(x, y, title, { a: 'middle', fs: 34, fw: 600, c }) + Tx(x, y + 32, l1, { a: 'middle', fs: 21, fw: 500, c }) + Tx(x, y + 58, l2, { a: 'middle', fs: 21, fw: 500, c });
+    // a part the agent edits: an arrow from the agent's dot to an icon and a word, outside the ring
+    const part = (x0, y, side, ic, word, c) => {
+      const ex = x0 + side * 68;                              // arrow end, just before the icon
+      return Ar([[x0 + side * 34, M + (y - M) * 0.3], [ex, y]], c, { w: 2.5 })
+        + Ic(ic, side > 0 ? ex + 6 : ex - 32, y - 13, 26, c, 2)
+        + Tx(side > 0 ? ex + 42 : ex - 42, y + 8, word, { a: side > 0 ? 'start' : 'end', fs: 22, fw: 600, c });
+    };
+    const L = (A0 + A1) / 2, Rc = (B0 + B1) / 2;
+
+    s += ring(A0, A1, C.ind) + ring(B0, B1, C.val);
+    [[L - 120, T, 0], [L + 120, T, 0], [A1, T + 105, 90], [A1, B - 105, 90], [L + 120, B, 180], [L - 120, B, 180], [A0, B - 105, 270], [A0, T + 105, 270]]
+      .forEach(([x, y, d]) => { s += tip(x, y, d, C.ind); });
+    [[B0, T + 105, 90], [B0, B - 105, 90], [Rc - 120, B, 0], [Rc + 120, B, 0], [B1, B - 105, 270], [B1, T + 105, 270], [Rc + 120, T, 180], [Rc - 120, T, 180]]
+      .forEach(([x, y, d]) => { s += tip(x, y, d, C.val); });
+
+    // loop 1
+    s += Tx(L, 44, 'Listings', { a: 'middle', fs: 24, fw: 600, c: C.ink2 }) + Tx(L, 70, '2 million', { a: 'middle', fs: 20, c: C.mute });
+    s += Ar([[L, 84], [L, T - 36]], C.wire);
+    s += dot(L, T, 'rules', C.ind) + lbl(L, T + 72, 'Rules, then placer', 'place every listing');
+    s += box(A1, C.ind, 'Silver', 'checks the rules', AG.silv);
+    s += dot(L, B, 'flag', C.ind) + lbl(L, B - 74, 'Rules wrong?', 'back to the proposer');
+    s += part(A0, M - 84, -1, 'db', 'Memory', C.ind) + part(A0, M, -1, 'code', 'Operators', C.ind) + part(A0, M + 84, -1, 'wrench', 'Tools', C.ind);
+    s += dot(A0, M, 'agent', C.ind) + lbl(A0 - 30, M - 148, 'Proposer', 'edits the rules\u2019', 'end');
+    s += big(L, M + 8, 'Loop 1', 'until the rules', `agree with ${silver('silver')}`, C.ind);
+
+    // the validator writes silver
+    s += Ar([[B0 - 88, M], [A1 + 90, M]], C.val, { w: 4 });
+    s += Tx((A1 + B0) / 2, M - 14, 'writes', { a: 'middle', fs: 20, fw: 500, c: C.val });
+
+    // loop 2
+    s += box(B0, C.val, 'Validator', 'labels listings', C.ink);
+    s += dot(Rc, B, 'eval', C.val) + lbl(Rc, B - 74, 'Scored on gold', 'where it labels unlike us');
+    s += Ar([[Rc, 744], [Rc, B + 36]], AG.gold);
+    s += Tx(Rc + 22, 716, 'Gold', { fs: 24, fw: 600, c: AG.gold }) + Tx(Rc + 84, 716, 'a person labels a few', { fs: 20, c: C.mute });
+    s += part(B1, M - 40, 1, 'msg', 'Prompt', C.val) + part(B1, M + 50, 1, 'ask', 'Questions', C.val);
+    s += dot(B1, M, 'agent', C.val) + lbl(B1 + 30, M - 114, 'Improver', 'edits the validator\u2019s', 'start');
+    s += dot(Rc, T, 'agent', C.val) + lbl(Rc, T + 72, 'New validator', 'replaces the old one');
+    s += big(Rc, M + 8, 'Loop 2', `until ${silver('silver')}`, `agrees with ${gold('gold')}`, C.val);
+    put('arch2', '0 0 1664 749', s);
   })();
 
   // ---------- 4 · one small picture per axis, drawn like the cloud ----------

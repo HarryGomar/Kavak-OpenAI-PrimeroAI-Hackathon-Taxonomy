@@ -89,18 +89,16 @@ On fragrance, rules then the agent also has right-or-shallower 85.3% and harm 14
 11.3%. Food's rules mostly stop high in the tree rather than place wrong (right or shallower 73.5% vs 77.2%), and most
 food titles never name the brand. Each figure is about ±2 points. The results slide was cut, so this table lives here.
 
-## 5. The architecture: a solver, and three loops (50 s)
+## 5. The architecture: two loops, rules ↔ silver, validator ↔ gold (50 s)
 
-**Show:** one panel, "Fragrance, one domain". Each node is an icon, a name and one line; agents carry the agent icon.
-- **The solver**, left to right: Listings (2 million) → Rules (place 89%, free), drawn as its three parts, Memory,
-  Tools and Operators → Placer agent (places the other 11%) → Silver + gold (scores the trees).
-- **Loop 1, rule induction** (blue): errors go up to the Proposer agent (proposes one change), then the Gate in code
-  (keeps it only if gold rises), which writes back into memory and operators.
-- **Loop 2, validation** (orange), numbered: 1 the Validator agent labels fresh listings; 2 a person settles only its
-  flags, and silver + gold grow; 3 the Improver agent makes a better validator. The return leg reads "round again,
-  until silver matches gold".
-- **Loop 3, lessons** (green), on the right, outside the panel: Distil in code (kept changes → lessons) → A lesson
-  (kept in two domains) → Every domain's memory, tools and operators: Fragrance, Food, Clothing, Footwear, Toys.
+**Show:** two rings joined by one arrow.
+- **Loop 1** (blue, clockwise): Listings (2 million) come in at the top → Rules, then placer (place every listing) →
+  Silver (checks the rules) → Rules wrong? (back to the proposer) → the Proposer, which edits the rules' Memory,
+  Operators and Tools → round again, "until the rules agree with silver".
+- **The middle arrow:** the Validator writes silver.
+- **Loop 2** (orange): Validator (labels listings) → Scored on gold (where it labels unlike us), with Gold coming in
+  from below (a person labels a few) → the Improver, which edits the validator's Prompt and Questions → New validator
+  (replaces the old one) → round again, "until silver agrees with gold".
 
 **One pop-up.** Press → to show it, → again for the next slide:
 - **Gold: a person's labels, used to score everything.** Four listings, each with gold as a small stacked tree beside
@@ -112,15 +110,18 @@ food titles never name the brand. Each figure is about ±2 points. The results s
 Silver comes later, on its own slide (8), right before loop 2.
 
 **Say:**
-- This is Taxo, and it's what runs today. In one domain, on its own branch: listings go through the rules first, for
-  free, and the placer agent gets only the 11% they can't place.
-- The taxonomy is scored on gold: listings a person labelled. [Show the pop-up.] Loop 1 works against gold first.
-- The rules are three things: memory, tools and operators. The next slide shows each.
-- Loop 1: the proposer agent reads the errors and proposes one change; a gate in code keeps it only if sealed gold rises.
-- Loop 2: the validator checks fresh listings the rules have never seen and flags likely errors; a person labels them;
-  the improver makes the validator better. It goes round until silver agrees with gold.
-- Loop 3: every domain runs the same loops on its own branch. Distil turns kept changes into lessons, and a lesson kept
-  in two domains goes into every domain's memory, tools and operators.
+- This is Taxo: two loops, joined by one arrow.
+- Blue, loop 1: the rules, then the placer agent, place every listing, and we check them against silver. Where the
+  rules are wrong, the proposer changes the rules' memory, operators and tools, and round we go until the rules agree
+  with silver. The next slide opens those three parts up.
+- Silver comes from the validator: that's the arrow in the middle.
+- Orange, loop 2: the validator labels listings and is scored on gold, the few listings a person labelled. [Show the
+  gold pop-up.] Where it labels unlike us, the improver edits its prompt and its questions, and the new validator
+  replaces the old one. A better validator writes better silver, so loop 1 runs again against a better check.
+- We start with gold and loop 1, then silver and loop 2. Loop 3, across domains, comes after.
+
+*The slide comes from branch `slides/two-loops` (954fdf8), where it was a new slide 6; here it replaces the old
+architecture panel and keeps the gold pop-up. Loop 3 is not on it.*
 
 ## 6. Loop 1 changes the rules: memory, operators and tools (40 s)
 
