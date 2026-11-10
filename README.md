@@ -12,7 +12,7 @@ commerce domain. It is a two-fold system:
 |---|---|
 | [SPEC.md](SPEC.md) | The system: why trees, the pipeline and its YAML rules, the induction, validation and meta loops, data, metrics, guardrails, and what to port from Pedia |
 | [PRESENTATION.md](PRESENTATION.md) | The talk script, slide by slide, with the figures still to produce and questions to expect |
-| [slides/index.html](slides/index.html) | The deck: open it in a browser. 11 slides; on slide 2, → shows the human check. N shows the notes, O the overview. Run results go in `RESULTS` at the top of its script |
+| [slides/index.html](slides/index.html) | The deck: open it in a browser. 12 slides: 1–6 are the 3-minute run, 7–12 backup for questions; on slide 8, → shows the human check. N shows the notes, O the overview. Run results go in `RESULTS` at the top of its script |
 
 Built on what worked in Pedia ([Mantis4Real/pedia-harness](https://github.com/Mantis4Real/pedia-harness), local at
 `C:\Work\Pedia-Harness\repo`). The original notes are in `C:\Work\Kavak-OpenAI-Primero-Hackathon\Taxo.md`.
