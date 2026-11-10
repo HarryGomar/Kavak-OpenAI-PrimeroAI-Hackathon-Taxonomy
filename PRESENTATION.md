@@ -29,23 +29,26 @@ partly agent-built system. Against Harry's own labels the rules moved less: 47% 
 
 ## 2. A system improves only as far as its eval (60 s)
 
-**Show:** the original line graph on the left: the system's own judge across four rounds, from about 78% to 87%,
-and the starting and ending scores against human-labelled answers, from about 81% to 84%. On the right: the score
-rose faster than the improvement confirmed by human labels. Takeaway: improve the evaluation with the system.
+**Show, first click-through state:** only the orange test-evaluation line on the left, rising from about 78% to
+87% over four rounds. On the right: "1. During self-improvement" and "The test reports steady progress."
 
 **Say:**
-- An evaluation translates a human goal into a score. When that translation is incomplete, the system can improve its
-  score while making less progress toward what the person actually wants.
 - In Pedia, our earlier project, a loop proposed rule changes and used a large language model (LLM) judge to decide
-  which ones to keep.
-- Across six replay runs on the same 245 held-out listings, its own score rose from about 78% to 87%.
-  Against our human-labelled reference answers, accuracy rose from about 81% to 84%.
-- The orange line shows the loop's own judge after each round. The dashed line connects the starting and ending
-  scores against the human-labelled answers. The two scores began at different levels, so compare their gains.
-- Human labels express the decisions we wanted the system to make; the gap shows that the evaluation only partly
-  captured that goal.
+  which ones to keep. The loop kept improving the score that its evaluation rewarded.
+- Across six replay runs on the same 245 held-out listings, that score rose from about 78% to 87%.
+
+**Press Right once:** the human-reference line appears on the same graph. The right side changes to "2. Then a
+human checks" and "The human check confirms much less improvement."
+
+**Say:**
+- Then we compare the result with our human-labelled reference answers. Accuracy rose from about 81% to 84%:
+  a much smaller gain. There was some improvement; the human result was not flat.
+- The evaluation only partly captured the decisions we wanted the system to make. A higher score did not guarantee
+  equally useful progress toward the human goal.
 - That is why Taxo improves both the system and its evaluation. Human feedback helps us adjust what counts as
   success and how we check it, so the evaluation better reflects the intended goal.
+
+**Press Right again:** continue to slide 3.
 
 **Backup, if asked about regressions:** the earlier loop accepted 48 rule changes; 15 reduced accuracy against the
 human labels. This counts changes, not listings. It is evidence from the Pedia replay, not a measured failure rate

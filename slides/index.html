@@ -257,6 +257,14 @@
     * { animation: none !important; transition: none !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     .progress, .hint, .notes-panel { display: none !important; }
   }
+
+  .s2 { position: relative; align-self: stretch; justify-content: center; }
+  .s2-first { display: flex; flex-direction: column; gap: 32px; }
+  .s2-step { margin: 0; font: 600 25px/1.3 var(--sans); color: var(--val); }
+  .s2-reveal.pop { padding: 0; gap: 32px; justify-content: center; }
+  .s2-reveal .s2-step { color: var(--ink); }
+  [data-n="2"] .s2-human { opacity: 0; visibility: hidden; }
+  [data-n="2"]:has(.s2-reveal.on) .s2-human { opacity: 1; visibility: visible; }
 </style>
 </head>
 <body>
@@ -282,12 +290,20 @@
   <div class="fill" style="display:grid;grid-template-columns:1fr 600px;gap:90px;align-items:center">
     <div class="chart" style="height:100%"><div class="plot"><svg class="ch" id="evals"></svg></div></div>
     <div class="s2">
-      <p class="s2-context">The score rose faster than the improvement confirmed by human labels.</p>
-      <p class="s2-k">Improve the evaluation<br><b>with the system.</b></p>
+      <div class="s2-first">
+        <p class="s2-step">1. During self-improvement</p>
+        <p class="s2-context">The loop keeps changes that improve its test score.</p>
+        <p class="s2-k">The test reports<br><b>steady progress.</b></p>
+      </div>
+      <div class="pop s2-reveal">
+        <p class="s2-step">2. Then a human checks</p>
+        <p class="s2-context">The human check confirms much less improvement.</p>
+        <p class="s2-k">Improve the evaluation<br><b>with the system.</b></p>
+      </div>
     </div>
   </div>
   <p class="src">Pedia replay · 245 held-out listings · mean of 6 runs · scores rounded to whole percentages</p>
-  <aside class="notes">An evaluation translates a human goal into a score. When that translation is incomplete, the system can improve its score while making less progress toward what the person actually wants. In Pedia, our earlier project, a loop proposed rule changes and used a large language model (LLM) judge to decide which ones to keep. Across six replay runs on the same 245 held-out listings, its own score rose from about 78% to 87%. Against our human-labelled reference answers, accuracy rose from about 81% to 84%. The orange line shows the loop's own judge after each round. The dashed line connects the starting and ending scores against the human-labelled answers. Human labels express the decisions we wanted the system to make; the gap shows that the evaluation only partly captured that goal. That is why Taxo improves both the system and its evaluation. Human feedback helps us adjust what counts as success and how we check it, so the evaluation better reflects the intended goal. If asked about regressions: the earlier loop accepted 48 rule changes; 15 reduced accuracy against the human labels. This counts changes, not listings. It is evidence from the Pedia replay, not a measured failure rate for Taxo.</aside>
+  <aside class="notes">First show only the orange test-evaluation line. In Pedia, our earlier project, a loop proposed rule changes and used a large language model (LLM) judge to decide which ones to keep. Across six replay runs on the same 245 held-out listings, its score rose from about 78% to 87%. Press Right once to reveal the human-reference line and the second explanation. Against our human-labelled reference answers, accuracy rose from about 81% to 84%, a much smaller gain. There was some improvement; the human result was not flat. The evaluation only partly captured the decisions we wanted the system to make. That is why Taxo improves both the system and its evaluation, using human feedback to align what counts as success with the intended goal. Press Right again to continue to slide 3. If asked about regressions: the earlier loop accepted 48 rule changes; 15 reduced accuracy against the human labels. This counts changes, not listings. It is evidence from the Pedia replay, not a measured failure rate for Taxo.</aside>
 </section>
 
 <!-- 3 · The task: messy listings from many shops, built into product trees -->
@@ -604,10 +620,12 @@
     s += Tx(x(2), h - 4, 'rounds of self-improvement', { a: 'middle', fs: 22, c: C.faint });
     s += `<path d="M${j.map((v, i) => x(i) + ' ' + y(v)).join('L')}" fill="none" stroke="${C.val}" stroke-width="5" stroke-linejoin="round"/>`;
     j.forEach((v, i) => { s += `<circle cx="${x(i)}" cy="${y(v)}" r="8" fill="${C.val}" stroke="#fff" stroke-width="2"/>`; });
+    s += Tx(x(4) + 24, y(j[4]) - 4, 'Its own eval', { fs: 26, fw: 600, c: C.val }) + Tx(x(4) + 24, y(j[4]) + 28, Math.round(j[0]) + '% → ' + Math.round(j[4]) + '%, +' + Math.round(j[4] - j[0]), { fs: 24, c: C.ink2 });
+    s += '<g class="s2-human">';
     s += `<path d="M${x(0)} ${y(o[0])}L${x(4)} ${y(o[4])}" fill="none" stroke="${C.ink}" stroke-width="4" stroke-dasharray="10 9"/>`;
     s += `<circle cx="${x(0)}" cy="${y(o[0])}" r="10" fill="#fff" stroke="${C.ink}" stroke-width="4"/><circle cx="${x(4)}" cy="${y(o[4])}" r="11" fill="${C.ink}"/>`;
-    s += Tx(x(4) + 24, y(j[4]) - 4, 'Its own eval', { fs: 26, fw: 600, c: C.val }) + Tx(x(4) + 24, y(j[4]) + 28, Math.round(j[0]) + '% → ' + Math.round(j[4]) + '%, +' + Math.round(j[4] - j[0]), { fs: 24, c: C.ink2 });
     s += Tx(x(4) + 24, y(o[4]) + 10, 'Human check, after', { fs: 26, fw: 600, c: C.ink }) + Tx(x(4) + 24, y(o[4]) + 42, Math.round(o[0]) + '% → ' + Math.round(o[4]) + '%, +' + Math.round(o[4] - o[0]), { fs: 24, c: C.ink2 });
+    s += '</g>';
     put('evals', `0 0 ${w} ${h}`, s);
   })();
 
