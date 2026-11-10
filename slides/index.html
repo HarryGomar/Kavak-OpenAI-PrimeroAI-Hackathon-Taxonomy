@@ -361,24 +361,17 @@
       <p class="a">Rules take a millisecond a listing, and <span style="color:var(--meta)">lessons</span> carry to the next domain</p><p class="l" style="color:var(--meta)">Loop 3</p></div>
   </div>
   <p class="src">Agent: gpt-6.1-sol on 400 sealed fragrance listings, against Pedia's labels. 632 tokens and 1.03 s a listing. Dollars at $3 per million tokens.</p>
-  <aside class="notes">These are the three things we want to improve. Accuracy: an agent on every listing places 85% of fragrance listings exactly right, but it can't check its own work, as we just saw. Rules plus the agent get 75% today, at a ninth of the cost: closing that gap is what loops 1 and 2 are for. Loop 1 learns rules from a few labels, and loop 2 makes the check stricter. On food, a new domain, the agent gets 45% and rules plus the agent 20%: that's where loop 3 has to help. Cost: the agent uses about 630 tokens a listing. For two million listings that's about 1.3 billion tokens, around $3,800 a pass, and we pay it again on every refresh and in every domain. Rules place 89% of fragrance listings for free, so the bill falls to about $400. Speed: at a second a listing, one call at a time, that's about 570 hours. Rules take a millisecond a listing, and loop 3 lets each new domain start from the last one's lessons.</aside>
-</section>
-
-<!-- 5 · Architecture: the two loops as two rings, rules against silver, the validator against gold -->
-<section class="slide" data-n="5">
-  <h2>Two loops: rules ↔ <span style="color:#7C8390">silver</span>, validator ↔ <span style="color:#B07F0C">gold</span>.</h2>
-  <div class="fill"><svg class="ch" id="arch2"></svg></div>
   <div class="pop">
     <h2><span style="color:#B07F0C">Gold:</span> a person's labels, used to score everything.</h2>
     <table class="evt"><tr><th>Listing</th><th>Gold, from a person</th><th>Taxo placed it</th><th>Score</th></tr><tr><td class="li">Lattafa Khamrah Qahwa Eau De Parfum 3.4 Oz Unisex<small>Walmart</small></td><td><div class="mt g"><div style="--k:0">Lattafa</div><div style="--k:1">Khamrah</div><div style="--k:2"><i class="sq"></i><b>Khamrah Qahwa</b></div></div></td><td><div class="mt t"><div style="--k:0">Lattafa</div><div style="--k:1">Khamrah</div><div style="--k:2"><i class="sq"></i><b>Khamrah Qahwa</b></div></div></td><td class="vd"><div><i data-ic="check" data-s="26" data-c="#1E9E6E"></i><span>Exact</span></div></td></tr><tr><td class="li">Dior Sauvage Elixir Parfum Spray for Men, 2 oz<small>Amazon</small></td><td><div class="mt g"><div style="--k:0">Dior</div><div style="--k:1">Sauvage</div><div style="--k:2"><i class="sq"></i><b>Sauvage Elixir</b></div></div></td><td><div class="mt t"><div style="--k:0">Dior</div><div style="--k:1"><i class="sq"></i><b>Sauvage</b></div></div></td><td class="vd"><div><i data-ic="check" data-s="26" data-c="#A3A8B3"></i><span>Right, but stops higher</span></div></td></tr><tr><td class="li">Armaf Club De Nuit Intense Man Edt 105 Ml Original<small>Mercado Libre</small></td><td><div class="mt g"><div style="--k:0">Armaf</div><div style="--k:1">Club de Nuit</div><div style="--k:2"><i class="sq"></i><b>Intense Man</b></div></div></td><td><div class="mt t"><div style="--k:0">Armaf</div><div style="--k:1">Club de Nuit</div><div style="--k:2"><i class="sq"></i><b>Club de Nuit Woman</b></div></div></td><td class="vd"><div><i data-ic="cross" data-s="26" data-c="#D9622B"></i><span>Wrong product: harm</span></div></td></tr><tr><td class="li">Yara by LATTAFA 100ml EDP for her<small>TikTok Shop</small></td><td><div class="mt g"><div style="--k:0">Lattafa</div><div style="--k:1"><i class="sq"></i><b>Yara</b></div></div></td><td><div class="mt t"><div style="--k:0">Lattafa</div><div style="--k:1"><i class="sq"></i><b>Yara</b></div></div></td><td class="vd"><div><i data-ic="check" data-s="26" data-c="#1E9E6E"></i><span>Exact</span></div></td></tr></table>
     <p class="evk"><b>Exact</b>: the same node as gold. <b>Right or shallower</b>: the right path, maybe stopped higher. <b>Harm</b>: a wrong node.<br>
       Sealed fragrance, rules then an agent: <b>75%</b> exact, <b>85%</b> right or shallower, <b>15%</b> harm.</p>
   </div>
-  <aside class="notes">Two loops, joined by one arrow. Blue, loop 1: the rules, then the placer agent, place every listing, and we check them against silver. Where the rules are wrong, the proposer changes the rules' memory, operators and tools, the parts the next slide opens up, and round we go, until the rules agree with silver. Silver comes from the validator: that is the arrow in the middle. Orange, loop 2: the validator labels listings and is scored on gold, the few listings a person labelled. Where it labels unlike us, the improver agent edits its prompt and its questions, and the new validator replaces the old one. A better validator writes better silver, so loop 1 runs again against a better check. Round again, until silver agrees with gold.</aside>
+  <aside class="notes">These are the three things we want to improve. Accuracy: an agent on every listing places 85% of fragrance listings exactly right, but it can't check its own work, as we just saw. Rules plus the agent get 75% today, at a ninth of the cost: closing that gap is what loops 1 and 2 are for. Loop 1 learns rules from a few labels, and loop 2 makes the check stricter. On food, a new domain, the agent gets 45% and rules plus the agent 20%: that's where loop 3 has to help. Cost: the agent uses about 630 tokens a listing. For two million listings that's about 1.3 billion tokens, around $3,800 a pass, and we pay it again on every refresh and in every domain. Rules place 89% of fragrance listings for free, so the bill falls to about $400. Speed: at a second a listing, one call at a time, that's about 570 hours. Rules take a millisecond a listing, and loop 3 lets each new domain start from the last one's lessons.</aside>
 </section>
 
 <!-- 6 · Loop 1: what it changes. Memory, operators, tools: an example of each, what loop 1 changed, the effect -->
-<section class="slide" data-n="6">
+<section class="slide" data-n="5">
   <h2><span style="color:var(--ind)">Loop 1</span> changes the rules: memory, operators and tools.</h2>
   <div class="l1g">
     <span></span><div class="l1-h"><p class="l1-n"><i data-ic="db" data-s="42" data-c="#0070C0"></i>Memory</p><p class="l1-w">what words mean</p></div><div class="l1-h"><p class="l1-n"><i data-ic="code" data-s="42" data-c="#0070C0"></i>Operators</p><p class="l1-w">steps, in code</p></div><div class="l1-h"><p class="l1-n"><i data-ic="wrench" data-s="42" data-c="#0070C0"></i>Tools</p><p class="l1-w">checks that block a wrong placement</p></div>
@@ -410,12 +403,19 @@
 </section>
 
 <!-- 8 · Loop 1: exact match by round (line), and the agent bill by round beside it -->
-<section class="slide" data-n="7">
+<section class="slide" data-n="6">
   <h2><span style="color:var(--ind)">Loop 1:</span> each rule kept, more right and cheaper.</h2>
   <div class="fill"><svg class="ch" id="figA"></svg></div>
   <p class="bottom" style="font-size:28px;color:var(--ink2)">A gate in code keeps a change only if it clearly helps on sealed gold. It dropped 3 of 8.</p>
   <p class="src">Fragrance: 2,233 sealed listings with Pedia's labels, read only by the gate. Bill: 632 tokens a listing at an assumed $3 per million tokens.</p>
   <aside class="notes">This is loop 1 on fragrance, round by round. The blue line is exact match on sealed gold, and it climbs from 52% to 69%. Rounds 1 and 2 changed memory: which words are variants, and which are part of the name. Rounds 3, 5 and 6 changed operators: the brand's own store and the shop's URL now name the brand, and a one-word name becomes its own product. That last one came from loop 2. On the right is the agent bill for 2 million listings: fewer listings go to an agent, 30% down to 11%, so it falls from about $1,100 to about $400. A gate in code keeps a change only if it clearly helps on sealed gold, and it dropped 3 of 8.</aside>
+</section>
+
+<!-- 5 · Architecture: the two loops as two rings, rules against silver, the validator against gold -->
+<section class="slide" data-n="7">
+  <h2>Two loops: rules ↔ <span style="color:#7C8390">silver</span>, validator ↔ <span style="color:#B07F0C">gold</span>.</h2>
+  <div class="fill"><svg class="ch" id="arch2"></svg></div>
+  <aside class="notes">Two loops, joined by one arrow. Blue, loop 1: the rules, then the placer agent, place every listing, and we check them against silver. Where the rules are wrong, the proposer changes the rules' memory, operators and tools, the parts we just opened up, and round we go, until the rules agree with silver. Silver comes from the validator: that is the arrow in the middle. Orange, loop 2: the validator labels listings and is scored on gold, the few listings a person labelled. Where it labels unlike us, the improver agent edits its prompt and its questions, and the new validator replaces the old one. A better validator writes better silver, so loop 1 runs again against a better check. Round again, until silver agrees with gold.</aside>
 </section>
 
 <!-- 8 · Gold is the truth; the validator is fitted to random samples of it -->

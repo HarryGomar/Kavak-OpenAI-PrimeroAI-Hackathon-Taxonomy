@@ -101,41 +101,14 @@ On fragrance, rules then the agent also has right-or-shallower 85.3% and harm 14
 11.3%. Food's rules mostly stop high in the tree rather than place wrong (right or shallower 73.5% vs 77.2%), and most
 food titles never name the brand. Each figure is about ±2 points. The results slide was cut, so this table lives here.
 
-## 5. The architecture: two loops, rules ↔ silver, validator ↔ gold (50 s)
-
-**Show:** two rings joined by one arrow.
-- **Loop 1** (blue, clockwise): Listings (2 million) come in at the top → Rules, then placer (place every listing) →
-  Silver (checks the rules) → Rules wrong? (back to the proposer) → the Proposer, which edits the rules' Memory,
-  Operators and Tools → round again, "until the rules agree with silver".
-- **The middle arrow:** the Validator writes silver.
-- **Loop 2** (orange): Validator (labels listings) → Scored on gold (where it labels unlike us), with Gold coming in
-  from below (a person labels a few) → the Improver, which edits the validator's Prompt and Questions → New validator
-  (replaces the old one) → round again, "until silver agrees with gold".
-
-**One pop-up.** Press → to show it, → again for the next slide:
+**One pop-up, gold.** After the three columns, press → to show it, → again for the next slide:
 - **Gold: a person's labels, used to score everything.** Four listings, each with gold as a small stacked tree beside
   what Taxo placed, and the score: exact, right but stops higher, or wrong product (harm). Underneath, what the three
   scores mean, and sealed fragrance, rules then an agent: 75% exact, 85% right or shallower, 15% harm.
 
   *The example rows are illustrations of the format, not rows from the runs.*
 
-Silver comes later, on its own slide (8), right before loop 2.
-
-**Say:**
-- This is Taxo: two loops, joined by one arrow.
-- Blue, loop 1: the rules, then the placer agent, place every listing, and we check them against silver. Where the
-  rules are wrong, the proposer changes the rules' memory, operators and tools, and round we go until the rules agree
-  with silver. The next slide opens those three parts up.
-- Silver comes from the validator: that's the arrow in the middle.
-- Orange, loop 2: the validator labels listings and is scored on gold, the few listings a person labelled. [Show the
-  gold pop-up.] Where it labels unlike us, the improver edits its prompt and its questions, and the new validator
-  replaces the old one. A better validator writes better silver, so loop 1 runs again against a better check.
-- We start with gold and loop 1, then silver and loop 2. Loop 3, across domains, comes after.
-
-*The slide comes from branch `slides/two-loops` (954fdf8), where it was a new slide 6; here it replaces the old
-architecture panel and keeps the gold pop-up. Loop 3 is not on it.*
-
-## 6. Loop 1 changes the rules: memory, operators and tools (40 s)
+## 5. Loop 1 changes the rules: memory, operators and tools (40 s)
 
 **Show:** a grid. Three columns, Memory (what words mean), Operators (steps, in code) and Tools (checks that block a
 wrong placement), and three rows:
@@ -167,7 +140,7 @@ Last row, **How:** errors on gold → a proposer agent → one change to one par
   keeps it only if sealed gold rises. Together, 52% to 69%.
 
 *Careful with the "How" row:* it shows how the loop is built. The kept fragrance rounds were written by hand
-from the same evidence; the Codex proposer has kept nothing yet (see slide 7's note).
+from the same evidence; the Codex proposer has kept nothing yet (see slide 6's note).
 
 *The YAML is trimmed from the real files on `origin/claude/fragrance-run-d587d6` (`domains/fragrance/vocab.yaml`,
 `rules/global/25-settle-single-name.yaml`, `rules/global/veto-set-conflict.yaml`,
@@ -178,7 +151,7 @@ round records: operators' +15.1 is rounds 3, 5 and 6 together (+11.3, +0.9, +2.9
 The 501 is food (the peer session's run: the set veto turned off on food). Round 7, turning the concentration check
 off, was also dropped, so that check stays on.*
 
-## 7. Loop 1: each rule kept, more right and cheaper (40 s)
+## 6. Loop 1: each rule kept, more right and cheaper (40 s)
 
 **Show:** two charts side by side.
 - **Left, exact match on sealed gold:** one blue line, 52.4% → 68.9%. Each kept round is labelled with its change and
@@ -216,6 +189,31 @@ finds changes that help the brands it learns from; the gate shows they don't car
 kept. Round 7 reached 69.1% and was still dropped (8 better, 5 worse), which
 is why the slide says "clearly helps" and not "rises".
 
+## 7. The architecture: two loops, rules ↔ silver, validator ↔ gold (50 s)
+
+**Show:** two rings joined by one arrow.
+- **Loop 1** (blue, clockwise): Listings (2 million) come in at the top → Rules, then placer (place every listing) →
+  Silver (checks the rules) → Rules wrong? (back to the proposer) → the Proposer, which edits the rules' Memory,
+  Operators and Tools → round again, "until the rules agree with silver".
+- **The middle arrow:** the Validator writes silver.
+- **Loop 2** (orange): Validator (labels listings) → Scored on gold (where it labels unlike us), with Gold coming in
+  from below (a person labels a few) → the Improver, which edits the validator's Prompt and Questions → New validator
+  (replaces the old one) → round again, "until silver agrees with gold".
+
+**Say:**
+- This is Taxo: two loops, joined by one arrow.
+- Blue, loop 1: the rules, then the placer agent, place every listing, and we check them against silver. Where the
+  rules are wrong, the proposer changes the rules' memory, operators and tools, and round we go until the rules agree
+  with silver. Those are the three parts we just opened up.
+- Silver comes from the validator: that's the arrow in the middle.
+- Orange, loop 2: the validator labels listings and is scored on gold, the few listings a person labelled. Where it
+  labels unlike us, the improver edits its prompt and its questions, and the new validator
+  replaces the old one. A better validator writes better silver, so loop 1 runs again against a better check.
+- Gold and loop 1 came first. Now silver: the next slide shows how the validator learns to match gold.
+
+*The slide comes from branch `slides/two-loops` (954fdf8), where it was a new slide 6; here it replaces the old
+architecture panel and sits after loop 1's results, right before silver. Loop 3 is not on it.*
+
 ## 8. Silver and gold: the validator learns to look like gold (40 s)
 
 **Show:** "Gold is the truth. The validator learns to look like it." Three panels, left to right:
@@ -250,7 +248,7 @@ and were dropped.
 
 Right, **each new eval: loop 1 adds rules and climbs again.** Three full loop 1 climbs, side by side, with a blue
 square under each rule loop 1 keeps (5 rules, then 8, then 10):
-- **Eval 1, gold only:** 52% → 69%, the climb from slide 7. 2,233 gold, no silver, no validator.
+- **Eval 1, gold only:** 52% → 69%, the climb from slide 6. 2,233 gold, no silver, no validator.
 - **Eval 2, + silver** (est.): loop 2 adds the validator's silver and the flags a person settled as new gold (+23).
   On the new eval the solver drops, and lowest on silver; loop 1 climbs again. Validator v1, 80 silver.
 - **Eval 3, more of both** (est.): +43 gold, 160 silver, labelled by validator v2. The drop is smaller, and silver
@@ -273,7 +271,7 @@ Under it: errors it found, like short names seen once, became rule 6 in loop 1.
   be trusted to label the rest.
 - And what it finds goes back to loop 1: short names seen only once became rule 6.
 
-*Measured: eval 1's climb (sealed gold, slide 7). The validator bars: card v2 against Pedia's labels standing in for
+*Measured: eval 1's climb (sealed gold, slide 6). The validator bars: card v2 against Pedia's labels standing in for
 the person, 40 fresh fragrance listings a round, Codex CLI run (`loopb` V1 30/40, V2 33/40, V3 34/40, V4 23/40; V2 and
 V4 were A/B rounds where a candidate card tied and was dropped). Card v1 → v2, flags right 78.9% → 95.5%: the
 Claude-session rounds. Each round is a new sample, so the bars are not one validator getting steadily better; round 4's
@@ -338,7 +336,7 @@ Last line, small: Next: customer-feedback models, and other tasks with no ground
   shared set check alone keeps 501 wrong placements out of food.
 - We think this carries to other tasks with no ground truth, like customer-feedback models.
 
-*Agent calls down 63% is the share of fragrance listings sent to an agent, 30.1% → 11.1% (slide 7).*
+*Agent calls down 63% is the share of fragrance listings sent to an agent, 30.1% → 11.1% (slide 6).*
 
 ---
 
