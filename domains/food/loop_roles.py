@@ -63,9 +63,9 @@ def proposal_decision(raw, executable, feedback_ids):
             'raw_proposal': raw, 'production_admission': False, 'rule': proposed, 'feedback_ids': feedback_ids}
 
 
-def execute(root, run_name, validator_path=None, *, executable=False):
+def execute(root, run_name, validator_path=None, *, executable=False, resume=False):
     folder = root / (run_name + "-feedback-roles")
-    folder.mkdir(exist_ok=False)
+    folder.mkdir(exist_ok=resume)
     current = read(root / run_name / "feedback-diagnosis.json")
     permitted = set(read(root/'protocol.json')['partition']['feedback_ids'])
     if any(r['observation_id'] not in permitted for r in current):
@@ -145,6 +145,11 @@ def execute(root, run_name, validator_path=None, *, executable=False):
                                   'record_only': ['new_check', 'registry', 'convention_question'],
                                   'source_only': True}}, ensure_ascii=False)
     def call(role, factory):
+        if resume:
+            recorded = folder/role
+            if (recorded/'manifest.json').exists() and read(recorded/'manifest.json')['status'] == 'completed':
+                return read(recorded/'result.json')
+            raise RuntimeError(f'Cannot resume incomplete {role}; preserve evidence without duplicate calls')
         scoped = payload
         if role == 'improver':
             # This role learns from validator errors, not from the pipeline's card mistakes.
@@ -179,7 +184,7 @@ def execute(root, run_name, validator_path=None, *, executable=False):
     write(folder / "improver-output.json", improved)
     feedback_ids = [c['listing_id'] for c in cases]
     decisions = [proposal_decision(p, executable, feedback_ids) for p in proposal_list]
-    primary = decisions[0] if decisions else proposal_decision(proposed, executable, feedback_ids)
+    primary = dict(decisions[0]) if decisions else proposal_decision(proposed, executable, feedback_ids)
     primary.update(proposal_count=len(proposal_list), joint=executable,
                    individual_decisions=decisions, any_executable_candidate=any(d['executable_candidate'] for d in decisions))
     if executable:

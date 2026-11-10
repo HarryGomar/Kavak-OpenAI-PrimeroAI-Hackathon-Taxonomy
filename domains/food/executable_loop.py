@@ -28,7 +28,7 @@ def scored(folder, partition=None):
     return result
 
 
-def run(root, fallback, name, setup):
+def run(root, fallback, name, setup, *, source_urls_candidate=False):
     """One retained full system, component trials, and an actual integrated pipeline."""
     import shutil
     from domains.food import system_state
@@ -63,16 +63,28 @@ def run(root, fallback, name, setup):
     role_name, roles = name+'-feedback', root/(name+'-feedback-feedback-roles')
     if not (roles/'manifest.json').exists():
         if roles.exists():
-            raise RuntimeError('Feedback stage already started; preserve incomplete evidence')
-        (root/role_name).mkdir(exist_ok=True)
-        write(root/role_name/'feedback-diagnosis.json', read(fallback/'feedback-diagnosis.json'))
-        loop_roles.execute(root, role_name, current/'judgments.json', executable=True)
+            loop_roles.execute(root, role_name, current/'judgments.json', executable=True, resume=True)
+            write(out/'feedback-resume.json', {'reason':'Recovered metadata from completed actual role outputs', 'new_model_calls':0})
+        else:
+            (root/role_name).mkdir(exist_ok=True)
+            write(root/role_name/'feedback-diagnosis.json', read(fallback/'feedback-diagnosis.json'))
+            loop_roles.execute(root, role_name, current/'judgments.json', executable=True)
     proposal = read(roles/'proposer-output.json')
     proposals = read(roles/'pipeline-proposals.json') if (roles/'pipeline-proposals.json').exists() else [proposal]
     primary_proposal = proposal
     improved = read(roles/'improver-decision.json')
     candidate_config, candidate_card, candidate_tools = config, card_path, list(tool_reports)
     config_changed = card_changed = False
+    source_changed = source_urls_candidate and not read(card_path).get('source_profile', {}).get('include_listing_url', False)
+    source_only_card = card_path
+    if source_changed:
+        source_only_card = out/'source-profile-only-card.json'
+        write(source_only_card, read(card_path) | {'source_profile':{'include_listing_url':True}})
+        write(out/'source-extraction-proposal.json', {'author':'code_diagnosis',
+            'function':'place_paths.evidence', 'before':'original listing_url omitted',
+            'after':'provide original listing_url as corroborating source evidence',
+            'unchanged':'source bytes, instructions, model, scorer and gold',
+            'guard':'No URL-to-brand automatic assignment or target-name lookup'})
     diagnostics = {'status': 'unchanged', 'fresh_model_calls': 0}
     for proposal in proposals:
         if proposal['kind'] in ('vocab', 'route', 'code_rule', 'new_check'):
@@ -104,11 +116,15 @@ def run(root, fallback, name, setup):
             diagnostics = {'status': 'implementation_or_evidence_needed', 'proposal': proposal,
                            'reason': 'No invented registry, check, or policy capability', 'fresh_model_calls': 0}
     proposal = primary_proposal
+    integrated_card = candidate_card
+    if source_changed:
+        integrated_card = out/'integrated-placer-card.json'
+        write(integrated_card, read(candidate_card) | {'source_profile':{'include_listing_url':True}})
     write(out/'stage-status.json', {'status': 'running', 'stage': 'actual_full_pipeline_and_validator_comparisons'})
     outcomes, measurements = {}, {}
     def evaluate_pipeline(label, cfg, card, reports):
         signature = json.dumps([fingerprint(cfg)['sha256'] if cfg else None,
-            read(card)['instruction'], [fingerprint(p)['sha256'] for p in reports]])
+            read(card)['instruction'], read(card).get('source_profile',{}), [fingerprint(p)['sha256'] for p in reports]])
         if signature in measurements:
             return measurements[signature]
         folder = root/(name+'-'+label+'-pipeline')
@@ -121,6 +137,8 @@ def run(root, fallback, name, setup):
         manifest = read(folder/'manifest.json')
         if manifest['status'] != 'completed' or read(folder/'hypothesis.json')['instruction'] != read(card)['instruction']:
             raise RuntimeError('Actual pipeline measurement incomplete or uses a different candidate card')
+        if read(folder/'hypothesis.json').get('source_profile',{}) != read(card).get('source_profile',{}):
+            raise ValueError('Measured source projection differs from candidate profile')
         if manifest['source']['sha256'] != state['source']['sha256']:
             raise ValueError('Pipeline measurement source differs from retained system')
         fixed, routed = normalize_plan(rows(root/'source-snapshot.jsonl'), plan['free_placements'], plan['routed_ids'])
@@ -144,14 +162,16 @@ def run(root, fallback, name, setup):
         measurements[signature] = result
         return result
     def pipeline_comparisons():
+        if source_changed:
+            outcomes['source_extraction_only'] = evaluate_pipeline('source', config, source_only_card, tool_reports)
         if config_changed:
             outcomes['configuration_only'] = evaluate_pipeline('configuration', candidate_config, card_path, tool_reports)
         if card_changed:
             # If this is the only pipeline change, this actual measurement IS the integrated arm.
-            label = 'integrated' if not config_changed else 'placer'
+            label = 'integrated' if not config_changed and not source_changed else 'placer'
             outcomes['placer_only'] = evaluate_pipeline(label, config, candidate_card, candidate_tools)
-        if config_changed or card_changed:
-            outcomes['integrated'] = evaluate_pipeline('integrated', candidate_config, candidate_card, candidate_tools)
+        if config_changed or card_changed or source_changed:
+            outcomes['integrated'] = evaluate_pipeline('integrated', candidate_config, integrated_card, candidate_tools)
         return outcomes
     validator_folder = root/(name+'-validator-candidate')
     def validator_comparison():
@@ -178,6 +198,9 @@ def run(root, fallback, name, setup):
         changes.update(baseline_output=chosen['output'], active_executable_config=chosen['config'],
             routing_mode='rules_then_agent' if chosen['config'] else 'agent_all',
             placer={'card': chosen['card'], 'tool_reports': chosen['tool_reports']})
+        if read(Path(chosen['card'])).get('source_profile',{}).get('include_listing_url'):
+            from domains.food import place_paths
+            changes['extraction'] = Path(place_paths.__file__)
     if validator['keep_for_development']:
         import yaml
         retained_validator = yaml.safe_load(Path(validator['setup']).read_text(encoding='utf-8'))
@@ -229,5 +252,6 @@ if __name__ == '__main__':
     ap.add_argument('--fallback', type=Path, required=True)
     ap.add_argument('--name', required=True)
     ap.add_argument('--setup', type=Path, required=True)
+    ap.add_argument('--source-urls-candidate', action='store_true', help='isolate original listing-URL exposure as a code candidate')
     a = ap.parse_args()
-    run(a.root, a.fallback, a.name, a.setup)
+    run(a.root, a.fallback, a.name, a.setup, source_urls_candidate=a.source_urls_candidate)

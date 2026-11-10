@@ -72,21 +72,40 @@ def dump_rows(path, values):
     path.write_text("".join(json.dumps(v, ensure_ascii=False) + "\n" for v in values), encoding="utf-8")
 
 
-def evidence(row):
+def evidence(row, include_source_urls=False):
+    if type(include_source_urls) is not bool:
+        raise ValueError('include_source_urls must be a boolean')
     raw = row["fields"]["raw_source"]
-    return {"listing_id": row["id"], "source": row["source"], "title": row["title"],
+    result = {"listing_id": row["id"], "source": row["source"], "title": row["title"],
             "source_reported_brand": row.get("brand"),
             **{k: raw.get(k) for k in ("description_text", "flavor_text", "food_form_text", "ingredients_text",
                                        "dietary_claims_json", "package_text", "category_path_json", "seller_name",
                                        "organizations_json", "variant_options_json", "variant_name")}}
+    if include_source_urls:
+        value = next((raw.get(key) for key in ('listing_url', 'url')
+                      if isinstance(raw.get(key), str) and raw[key].strip()), None)
+        if value is not None:
+            result['source_listing_url'] = value
+    return result
+
+
+def source_profile(card):
+    """Validate the explicitly selected source projection; old cards expose no URLs."""
+    profile = card.get('source_profile', {})
+    if not isinstance(profile, dict) or set(profile)-{'include_listing_url'}:
+        raise ValueError('source_profile accepts only include_listing_url')
+    value = profile.get('include_listing_url', False)
+    if type(value) is not bool:
+        raise ValueError('source_profile.include_listing_url must be a boolean')
+    return {'include_listing_url': value}
 
 
 def tokens(value):
     return set(re.findall(r"[^\W_]+", value.casefold()))
 
 
-def materialize(answer, source, rules):
-    permitted = evidence(source)
+def materialize(answer, source, rules, include_source_urls=False):
+    permitted = evidence(source, include_source_urls=include_source_urls)
     path, events, nodes = [], [], []
     expected = ["brand", "model", "variant"]
     if answer.action == "park" and answer.nodes:
@@ -212,10 +231,10 @@ def normalize_plan(listings, fixed_placements=None, routed_ids=None):
     return fixed, [r for r in listings if r['id'] in set(routed)]
 
 
-def materialize_fixed(value, source, rules):
+def materialize_fixed(value, source, rules, include_source_urls=False):
     """Re-ground deterministic free paths through the same node/rule checks as CLI proposals."""
     parts = []
-    permitted = evidence(source)
+    permitted = evidence(source, include_source_urls=include_source_urls)
     if len(value['path']) > 3:
         raise ValueError('Free placement exceeds Food brand/model/variant hierarchy')
     for level, name in zip(('brand', 'model', 'variant'), value['path']):
@@ -225,7 +244,7 @@ def materialize_fixed(value, source, rules):
     answer = Proposal(listing_id=source['id'], action='new_variant' if len(parts) == 3 else 'new_product' if len(parts) == 2 else 'place',
                       nodes=parts, confidence=value.get('confidence') or 0,
                       reason=value.get('reason') or 'Source-only deterministic placement')
-    path, nodes, findings = materialize(answer, source, rules)
+    path, nodes, findings = materialize(answer, source, rules, include_source_urls=include_source_urls)
     if path != [s.strip() for s in value['path']]:
         raise ValueError(f"Deterministic free placement failed source grounding/rules for {source['id']}")
     return answer, path, nodes, findings
@@ -255,8 +274,11 @@ def execute(root, name, card=None, previous=None, *, fixed_placements=None, rout
         raise ValueError('Tool-enabled placer requires protocol batch_size=1 for per-row source context')
     write(folder / "hypothesis.json", read(card))
     hypothesis = read(card)
+    profile = source_profile(hypothesis)
+    include_source_urls = profile['include_listing_url']
     rules = rules_for("food", ("consumer_packaged",))
-    fixed_results = {r['id']: materialize_fixed(fixed[r['id']], r, rules) for r in listings if r['id'] in fixed}
+    fixed_results = {r['id']: materialize_fixed(fixed[r['id']], r, rules, include_source_urls=include_source_urls)
+                     for r in listings if r['id'] in fixed}
     routing_config = {'fixed_placements': list(fixed.values()), 'routed_ids': [r['id'] for r in routed],
                       'tools': [{'name': t.__name__, 'signature': str(inspect.signature(t)),
                                  'description': inspect.getdoc(t)} for t in placer_tools or []]}
@@ -269,6 +291,7 @@ def execute(root, name, card=None, previous=None, *, fixed_placements=None, rout
                     planned_calls=(len(routed)+batch_size-1)//batch_size,
                     routed_rows=len(routed), free_rows=len(fixed), routing_config=fingerprint(folder/'routing-config.json'),
                     tools_enabled=bool(placer_tools), tool_turn_limit=4 if placer_tools else 1,
+                    source_profile=profile,
                     rules=[r.model_dump(mode='json') for r in rules])
     write(folder / "manifest.json", manifest)
     schema = strict_schema(Batch.model_json_schema())
@@ -293,13 +316,15 @@ CARD:
     pack = yaml.safe_load(Path(__file__).with_name("pack.yaml").read_text(encoding="utf-8"))
     prompt += ("\nCURRENT OWNER-SELECTED FOOD CONVENTIONS (govern naming evidence when a historical "
                "card contains conflicting title-only language):\n" + pack["conventions"])
-    dump_rows(folder / "source-evidence.jsonl", [evidence(r) for r in listings])
+    dump_rows(folder / "source-evidence.jsonl", [evidence(r, include_source_urls=include_source_urls) for r in listings])
     try:
         def call(offset):
             batch = routed[offset:offset + batch_size]
             if placer_tools:
-                row, ev = batch[0], evidence(batch[0])
+                row, ev = batch[0], evidence(batch[0], include_source_urls=include_source_urls)
                 safe_raw = {k: v for k, v in ev.items() if k not in ('listing_id', 'source', 'title', 'source_reported_brand')}
+                if 'source_listing_url' in ev:
+                    safe_raw['listing_url'] = ev['source_listing_url']
                 safe_listing = Listing(id=row['id'], domain='food', title=row['title'], source=row.get('source'),
                                        brand=row.get('brand'), fields={'raw_source': safe_raw})
                 context = SimpleNamespace(domain='food', listing_id=row['id'], listing=safe_listing,
@@ -311,7 +336,8 @@ CARD:
                 answer = run_sync(agent, json.dumps([ev], ensure_ascii=False), context=context,
                                   output=folder/f'batch-{offset//batch_size:03d}', max_turns=4).final_output.model_dump(mode='json')
             else:
-                answer = invoke(prompt + "\nSOURCE OBSERVATIONS:\n" + json.dumps([evidence(r) for r in batch], ensure_ascii=False),
+                answer = invoke(prompt + "\nSOURCE OBSERVATIONS:\n" + json.dumps([
+                                    evidence(r, include_source_urls=include_source_urls) for r in batch], ensure_ascii=False),
                                 schema, folder / f"batch-{offset//batch_size:03d}", web=False)
             parsed = Batch.model_validate(answer).proposals
             if len(parsed) != len(batch) or {p.listing_id for p in parsed} != {r["id"] for r in batch}:
@@ -340,7 +366,8 @@ CARD:
             if lid in fixed_results:
                 answer, path, proposed, findings = fixed_results[lid]
             else:
-                path, proposed, findings = materialize(answer, source_row, rules) if answer else ([], [], [{"rejected": "failed_batch"}])
+                path, proposed, findings = materialize(answer, source_row, rules,
+                    include_source_urls=include_source_urls) if answer else ([], [], [{"rejected": "failed_batch"}])
             nodes.update({n["id"]: n for n in proposed})
             route = fixed[lid].get('route', 'deterministic') if lid in fixed else 'agent_evidence'
             placements.append({"id": lid, "path": path, "route": route,
