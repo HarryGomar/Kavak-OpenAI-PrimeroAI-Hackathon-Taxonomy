@@ -139,7 +139,8 @@ def export_loop(root, folder):
         preparation = read(reader['manifest']['path'])
         entry['source_image_reader'] = reader | {'preparation_counts': {
             key:preparation[key] for key in ('eligible','source_rows','completed_ocr','errors',
-                'qualified_texts','uncertain_completed','blank_completed') if key in preparation}}
+                'qualified_texts','uncertain_completed','blank_completed','base_reused_cli_calls',
+                'base_retained_texts','new_qualified_texts') if key in preparation}}
     control_path = folder/'matched-control-report.json'
     if control_path.exists():
         control = read(control_path)

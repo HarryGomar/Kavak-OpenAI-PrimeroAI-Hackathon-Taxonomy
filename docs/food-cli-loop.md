@@ -52,6 +52,17 @@ calls count once in that intended loop; subsequent retained reuse counts zero fr
 reader calls. Run preparation before the integrated runner: the shared 20-call
 semaphore applies within a process, not across independent Python processes.
 
+`image_text_spans` tests a different source extraction contract on preserved images
+whose earlier transcription was uncertain. It requests literal spans with separate
+uncertainty flags, drops uncertain spans, and preserves the retained reader's already
+qualified text. The original extractor stays pinned. Its new sidecar binds the old
+sidecar and the new actual calls; the placer accepts only these two explicit formats.
+Use `python -m domains.food.image_text_spans --root <frozen-root> --name
+source-image-spans-020 --intended-loop loop-020 --base-sidecar <retained-ocr-sidecar>`,
+then evaluate the new sidecar through the same integrated entry point. This reader
+uses at most 18 CLI slots, allowing only the two feedback calls to overlap while the
+combined maximum stays 20. Evidence coverage is reported separately from gold gains.
+
 For no-tool, single-row placer calls, an unchanged CLI request may reuse its prior raw
 structured answer only after exact prompt/schema/pin/executable and completion checks.
 Receipts identify the prior inference; the current grounding, rules and scorer run

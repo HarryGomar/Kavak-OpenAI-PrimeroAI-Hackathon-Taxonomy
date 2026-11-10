@@ -622,8 +622,15 @@ def evidence(row, include_source_urls=False, include_selected_image_alt=False, i
             result['source_identifier_peer_reported_brand'] = peer['source_reported_brand']
             result['source_identifier_peer_provenance'] = json.dumps(peer, ensure_ascii=False)
     if selected_image_text is not None:
-        from domains.food.image_evidence import text_for
-        text = text_for(row, _selected_image_text_profile(selected_image_text))
+        record = _selected_image_text_profile(selected_image_text)
+        sidecar_format = read(Path(record['path'])).get('format')
+        if sidecar_format == 'food_selected_image_ocr/v1':
+            from domains.food.image_evidence import text_for
+        elif sidecar_format == 'food_selected_image_spans/v1':
+            from domains.food.image_text_spans import text_for
+        else:
+            raise ValueError('Unknown selected image text sidecar format')
+        text = text_for(row, record)
         if isinstance(text, str) and text.strip():
             result['source_selected_image_text'] = text
     return result

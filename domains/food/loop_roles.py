@@ -71,6 +71,19 @@ def component_feedback_history(report, feedback_ids):
             else:
                 before = {p['id']: p for p in rows(before_path) if p['id'] in allowed}
                 after = {p['id']: p for p in rows(output/'placements.jsonl') if p['id'] in allowed}
+                saved_evidence = {}
+                evidence_artifacts = {}
+                for label, directory in (('before', before_path.parent), ('after', output)):
+                    evidence_path = directory/'source-evidence.jsonl'
+                    manifest_path = directory/'manifest.json'
+                    if (not evidence_path.exists() or not manifest_path.exists() or
+                            read(manifest_path).get('status') != 'completed'):
+                        missing.append(f'{label}: completed saved source-evidence.jsonl unavailable')
+                        continue
+                    saved_evidence[label] = {e['listing_id']: e for e in rows(evidence_path)
+                                             if e['listing_id'] in allowed}
+                    evidence_artifacts[label] = {'evidence': fingerprint(evidence_path),
+                                                  'manifest': fingerprint(manifest_path)}
                 for delta in read(output/'paired-deltas.json'):
                     lid = delta.get('id')
                     if lid not in allowed:
@@ -85,10 +98,23 @@ def component_feedback_history(report, feedback_ids):
                         missing.append(f'paired gain/regression flags for feedback ID {lid}')
                     if (before[lid]['path'] != after[lid]['path'] or b['class'] != a['class'] or
                         flags['exact_gain'] or flags['exact_regression']):
+                        unsafe = a['class'] in ('wrong_brand', 'wrong_label_path')
+                        flags.update(new_wrong_brand=a['class']=='wrong_brand' and b['class']!='wrong_brand',
+                            new_wrong_label_path=a['class']=='wrong_label_path' and b['class']!='wrong_label_path',
+                            new_harm_from_abstain_or_valid_shallower=unsafe and b['class'] in ('abstain','valid_shallower'))
                         examples.append({'listing_id': lid, 'before_path': before[lid]['path'],
                             'after_path': after[lid]['path'], 'before_class': b['class'], 'after_class': a['class'], **flags})
-                examples.sort(key=lambda e: (0 if e['exact_regression'] else 1 if e['exact_gain'] else
-                    2 if e['before_class'] != e['after_class'] else 3, e['listing_id']))
+                examples.sort(key=lambda e: (0 if e['new_harm_from_abstain_or_valid_shallower'] else
+                    1 if e['exact_regression'] else 2 if e['new_wrong_brand'] or e['new_wrong_label_path'] else
+                    3 if e['exact_gain'] else 4 if e['before_class'] != e['after_class'] else 5, e['listing_id']))
+                for example in examples[:5]:
+                    for label in ('before','after'):
+                        actual = saved_evidence.get(label,{}).get(example['listing_id'])
+                        if actual is None:
+                            missing.append(f'{label}: saved source evidence for feedback ID {example["listing_id"]}')
+                        else:
+                            example[label+'_source_evidence'] = actual
+                            example[label+'_source_evidence_artifacts'] = evidence_artifacts[label]
         result[name] = {'before_feedback': arm['before'].get('partitions', {}).get('feedback'),
                         'after_feedback': arm['after'].get('partitions', {}).get('feedback'),
                         'source_profile': source_profile(read(card)) if card.exists() else None,

@@ -32,7 +32,7 @@ def run(root, fallback, name, setup, *, source_urls_candidate=False, selected_im
         option_role_facts_candidate=False, selected_coffee_form_candidate=False, brand_prose_designation_candidate=False,
         source_brand_corroboration_candidate=False, original_source_cohorts_candidate=False,
         identifier_peer_evidence_candidate=False, selected_image_text_candidate=None,
-        candidate_config_override=None):
+        candidate_config_override=None, exact_request_origins=None):
     """One retained full system, component trials, and an actual integrated pipeline."""
     import shutil
     from domains.food import system_state
@@ -49,6 +49,19 @@ def run(root, fallback, name, setup, *, source_urls_candidate=False, selected_im
         root, baseline_output=fallback, placer_card=fallback/'hypothesis.json', validator_setup=setup)
     before_version = state['version']
     fallback = Path(state['baseline_output']['path'])
+    supplied_origins = list(dict.fromkeys(Path(p).resolve() for p in (exact_request_origins or [])))
+    def origin_records(origins):
+        records = []
+        for directory in origins:
+            manifest_path = directory/'manifest.json'
+            manifest = read(manifest_path)
+            if (manifest.get('status')!='completed' or manifest.get('source',{}).get('sha256')!=state['source']['sha256']
+                    or manifest.get('tools_enabled') or manifest.get('batch_size')!=1):
+                raise ValueError('Exact request origin must be a completed tool-free single-row placer on this source')
+            records.append({'output':str(directory),'manifest':fingerprint(manifest_path),
+                            'source':manifest['source']})
+        return records
+    supplied_origin_records = origin_records(supplied_origins)
     setup = Path(state['validator']['setup']['path'])
     card_path = Path(state['placer']['card']['path'])
     config = Path(state['active_executable_config']['path']) if state.get('active_executable_config') else None
@@ -198,10 +211,13 @@ def run(root, fallback, name, setup, *, source_urls_candidate=False, selected_im
         plan_folder = out/(label+'-source-plan')
         plan = read(plan_folder/'plan.json') if (plan_folder/'plan.json').exists() else executable_changes.build_plan(
             root, fallback, cfg, plan_folder)
+        reuse_origins = list(dict.fromkeys([fallback]+supplied_origins+
+            [Path(x['output']) for x in measurements.values()]))
+        reuse_origin_records = origin_records(reuse_origins)
         if not (folder/'manifest.json').exists():
             place(root, folder.name, card, fallback, fixed_placements=plan['free_placements'],
                   routed_ids=plan['routed_ids'], placer_tools=[load_tool(p) for p in reports],
-                  reuse_from=[fallback]+[Path(x['output']) for x in measurements.values()])
+                  reuse_from=reuse_origins)
         manifest = read(folder/'manifest.json')
         if manifest['status'] != 'completed' or read(folder/'hypothesis.json')['instruction'] != read(card)['instruction']:
             raise RuntimeError('Actual pipeline measurement incomplete or uses a different candidate card')
@@ -227,6 +243,7 @@ def run(root, fallback, name, setup, *, source_urls_candidate=False, selected_im
             'card': str(card), 'tool_reports': list(map(str,reports)),
             'actual_placer_calls': manifest['model_calls'], 'routed': len(plan['routed_ids']),
             'free': len(plan['free_placements']), 'cached_fallback_answers': 0,
+            'exact_request_origin_order': reuse_origin_records,
             'exact_request_reused_rows': manifest.get('exact_request_reused_rows', 0)}
         measurements[signature] = result
         return result
@@ -296,6 +313,7 @@ def run(root, fallback, name, setup, *, source_urls_candidate=False, selected_im
         'version_after':state['version'],'roles_actual_calls':calls,'pipeline_proposal':proposal, 'pipeline_proposals':proposals,
         'configuration_isolation_diagnostic':diagnostics,'component_and_integrated_comparisons':outcomes,
         'source_image_reader':source_image_reader,
+        'exact_request_supplied_origins':supplied_origin_records,
         'validator_comparison':validator,'retained_output':state['baseline_output']['path'],
         'retained_exact':read(Path(state['baseline_output']['path'])/'metrics.json')['identity_path_exact'],
         'cached_answers_in_final_evaluations':sum(x['exact_request_reused_rows'] for x in measurements.values()),
@@ -342,6 +360,8 @@ if __name__ == '__main__':
     ap.add_argument('--selected-image-text-candidate', type=Path, help='test immutable selected-source-image literal text sidecar')
     ap.add_argument('--original-source-cohorts-candidate', action='store_true', help='train executable lattice on original source corpus; score the same frozen sample')
     ap.add_argument('--candidate-config', type=Path, help='evaluate one explicitly qualified executable config without overwriting model-proposed config')
+    ap.add_argument('--exact-request-origin', type=Path, action='append', default=[],
+                    help='completed placer request origin; repeat in fixed preference order after retained fallback')
     a = ap.parse_args()
     run(a.root, a.fallback, a.name, a.setup, source_urls_candidate=a.source_urls_candidate,
         selected_image_alt_candidate=a.selected_image_alt_candidate, option_role_facts_candidate=a.option_role_facts_candidate,
@@ -351,4 +371,4 @@ if __name__ == '__main__':
         original_source_cohorts_candidate=a.original_source_cohorts_candidate,
         identifier_peer_evidence_candidate=a.identifier_peer_evidence_candidate,
         selected_image_text_candidate=a.selected_image_text_candidate,
-        candidate_config_override=a.candidate_config)
+        candidate_config_override=a.candidate_config, exact_request_origins=a.exact_request_origin)
