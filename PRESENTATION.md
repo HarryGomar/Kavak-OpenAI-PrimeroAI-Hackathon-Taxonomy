@@ -29,18 +29,27 @@ partly agent-built system. Against Harry's own labels the rules moved less: 47% 
 
 ## 2. A system improves only as far as its eval (60 s)
 
-**Show:** left, the system's own eval climbing round by round, 78% → 87%, and the human check done afterwards, 81% →
-84%. Right, three numbers: +9 points on its own eval; +3 when a person checked; 15 of 48 kept changes made it worse.
-Then: No ground truth? Improve the eval too.
+**Show:** the original line graph on the left: the system's own judge across four rounds, from about 78% to 87%,
+and the starting and ending scores against human-labelled answers, from about 81% to 84%. On the right: the score
+rose faster than the improvement confirmed by human labels. Takeaway: improve the evaluation with the system.
 
 **Say:**
-- Evals are what drive performance. In our last project a loop improved its own rules and climbed its own eval, an LLM
-  judge, from 78% to 87%. When we checked by hand afterwards, it had gone from 81% to 84%: a third of the gain. 15 of
-  the 48 changes it kept made our labels worse.
-- Where a task checks itself, like a loss or a test suite, that's enough. Karpathy's autoresearch can hill-climb on its
-  own.
-- Most useful tasks have no such check. So the eval itself needs a method to improve: what counts as right, and how we
-  check it. That's what this talk is about.
+- An evaluation translates a human goal into a score. When that translation is incomplete, the system can improve its
+  score while making less progress toward what the person actually wants.
+- In Pedia, our earlier project, a loop proposed rule changes and used a large language model (LLM) judge to decide
+  which ones to keep.
+- Across six replay runs on the same 245 held-out listings, its own score rose from about 78% to 87%.
+  Against our human-labelled reference answers, accuracy rose from about 81% to 84%.
+- The orange line shows the loop's own judge after each round. The dashed line connects the starting and ending
+  scores against the human-labelled answers. The two scores began at different levels, so compare their gains.
+- Human labels express the decisions we wanted the system to make; the gap shows that the evaluation only partly
+  captured that goal.
+- That is why Taxo improves both the system and its evaluation. Human feedback helps us adjust what counts as
+  success and how we check it, so the evaluation better reflects the intended goal.
+
+**Backup, if asked about regressions:** the earlier loop accepted 48 rule changes; 15 reduced accuracy against the
+human labels. This counts changes, not listings. It is evidence from the Pedia replay, not a measured failure rate
+for Taxo.
 
 ## 3. Seemingly easy, deceptively hard: build product trees from messy listings (35 s)
 
