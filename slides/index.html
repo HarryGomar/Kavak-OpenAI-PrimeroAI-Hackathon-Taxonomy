@@ -189,7 +189,7 @@
   [data-n="2"]:has(.s2-reveal.on) .s2-human { opacity: 1; visibility: visible; }
 
   /* ---------- 6 · loop 1: memory, operators, tools; example, change, effect ---------- */
-  .l1g { display: grid; grid-template-columns: 150px repeat(3, minmax(0, 1fr)); column-gap: 44px; row-gap: 18px; align-items: start; padding-top: 4px; }
+  .l1g { display: grid; grid-template-columns: 150px repeat(3, minmax(0, 1fr)); column-gap: 44px; row-gap: 14px; align-items: start; padding-top: 0; }
   .l1-r { margin: 0; padding-top: 14px; font: 600 19px var(--sans); color: var(--mute); letter-spacing: .06em; text-transform: uppercase; line-height: 1.3; }
   .l1-h { margin-bottom: 4px; }
   .l1-n { margin: 0; display: flex; align-items: center; gap: 14px; font: 600 38px var(--disp); color: var(--ink); letter-spacing: -.01em; }
@@ -203,7 +203,18 @@
   .l1-y .x span { color: var(--faint); } .l1-y .x i { color: var(--val); }
   .l1-pt { margin: 0; font: 400 24px/1.3 var(--sans); color: var(--mute); display: flex; align-items: baseline; gap: 14px; }
   .l1-pt b { flex: none; font: 600 64px/1 var(--disp); color: var(--ind); letter-spacing: -.02em; }
-  .ind { margin-top: 40px; padding-top: 26px; border-top: 2px solid var(--line); display: grid; grid-template-columns: 150px auto auto auto auto auto auto auto; column-gap: 22px; justify-content: start; align-items: center; }
+  .l1-lat { margin-top: 18px; padding-top: 18px; border-top: 2px solid var(--line); display: grid; grid-template-columns: 150px 1fr; column-gap: 44px; align-items: start; }
+  .l1-lat .l1-r { padding-top: 2px; } .l1-lat .l1-r small { display: block; margin-top: 6px; font: 400 18px var(--sans); color: var(--faint); letter-spacing: 0; text-transform: none; }
+  .lat { display: flex; align-items: center; gap: 30px; }
+  .lat > div > span { display: block; margin-bottom: 2px; font: 500 18px var(--sans); color: var(--faint); }
+  .lat p { margin: 0; white-space: nowrap; }
+  .lat-t p { font: 400 20px/1.45 var(--sans); color: var(--faint); } .lat-t b { color: var(--ink); font-weight: 600; }
+  .lat-c p { display: grid; grid-template-columns: 196px 130px auto; align-items: baseline; font: 400 20px/1.6 var(--sans); }
+  .lat-c b { font-weight: 600; color: var(--ink); } .lat-c i { font-style: normal; color: var(--mute); } .lat-c em { font-style: normal; font-weight: 600; color: var(--ind); }
+  .lat-tr p { position: relative; padding-left: calc(var(--k) * 28px); font: 500 20px/1.45 var(--sans); color: var(--ink2); }
+  .lat-tr p + p::before { content: ''; position: absolute; left: calc(var(--k) * 28px - 19px); top: -3px; width: 11px; height: 19px; border-left: 2px solid var(--line); border-bottom: 2px solid var(--line); border-bottom-left-radius: 4px; }
+  .lat-tr b { color: var(--ind); font-weight: 600; }
+  .ind { margin-top: 18px; padding-top: 16px; border-top: 2px solid var(--line); display: grid; grid-template-columns: 150px auto auto auto auto auto auto auto; column-gap: 22px; justify-content: start; align-items: center; }
   .ind .l1-r { padding-top: 0; }
   .ind p:not(.l1-r) { margin: 0; display: flex; align-items: center; gap: 12px; font: 500 23px var(--sans); color: var(--ink2); white-space: nowrap; }
 
@@ -374,6 +385,16 @@
     <p class="l1-r">Example</p><div class="l1-y"><div class="y c"><i> </i><span># vocab.yaml</span></div><div class="y "><i> </i><span>strip: perfume, cologne, …</span></div><div class="y "><i> </i><span>concentration: edp, edt, …</span></div></div><div class="l1-y"><div class="y c"><i> </i><span># the lattice: count a name</span></div><div class="y "><i> </i><span>Khamrah Qahwa  ×2  → product</span></div><div class="y "><i> </i><span>Khamrah        ×3  → family</span></div></div><div class="l1-y"><div class="y c"><i> </i><span># veto-set-conflict.yaml</span></div><div class="y "><i> </i><span>check: set_conflict</span></div><div class="y c"><i> </i><span># a gift set is never one product</span></div></div>
     <p class="l1-r">Loop 1 changed</p><div class="l1-y"><div class="y a"><i>+</i><span>strip: hair, travel, mist</span></div><div class="y d"><i>−</i><span>concentration: elixir</span></div></div><div class="l1-y"><div class="y a"><i>+</i><span>rung: the brand's own store</span></div><div class="y a"><i>+</i><span>rung: the shop's URL</span></div><div class="y a"><i>+</i><span>settle: name in ≤ 3 listings</span></div></div><div class="l1-y"><div class="y k"><i>✓</i><span>set_conflict   kept on</span></div><div class="y x"><i>×</i><span>form_conflict  dropped</span></div></div>
     <p class="l1-r">Effect</p><p class="l1-pt"><b>+1.4</b>points</p><p class="l1-pt"><b>+15.1</b>points</p><p class="l1-pt"><b>−501</b>wrong placements</p>
+  </div>
+  <div class="l1-lat">
+    <p class="l1-r">The lattice<small>an operator</small></p>
+    <div class="lat">
+      <div class="lat-t"><span>a brand's titles</span><p>Lattafa <b>Khamrah Qahwa</b> EDP 100ml</p><p><b>Khamrah Qahwa</b> by Lattafa 3.4 oz</p><p>Lattafa <b>Khamrah</b> Eau de Parfum</p></div>
+      <i data-ic="next" data-s="30" data-c="#B8BEC7"></i>
+      <div class="lat-c"><span>count each name</span><p><b>Khamrah Qahwa</b><i>in 2 titles</i><em>product</em></p><p><b>Khamrah</b><i>in 3, shared</i><em>family</em></p></div>
+      <i data-ic="next" data-s="30" data-c="#B8BEC7"></i>
+      <div class="lat-tr"><span>the tree, no agent call</span><p style="--k:0">Lattafa</p><p style="--k:1">Khamrah</p><p style="--k:2"><b>Khamrah Qahwa</b></p></div>
+    </div>
   </div>
   <div class="ind">
     <p class="l1-r">How</p>

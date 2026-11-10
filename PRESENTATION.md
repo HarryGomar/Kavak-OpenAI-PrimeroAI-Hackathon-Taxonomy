@@ -147,7 +147,11 @@ wrong placement), and three rows:
   × form_conflict dropped.
 - **Effect:** **+1.4** points, **+15.1** points, **−501** wrong placements.
 
-Under the grid, **How:** errors on gold → a proposer agent → one change to one part → kept only if sealed gold rises.
+Under the grid, **the lattice, an operator**, drawn out: a brand's titles (Lattafa **Khamrah Qahwa** EDP 100ml;
+**Khamrah Qahwa** by Lattafa 3.4 oz; Lattafa **Khamrah** Eau de Parfum) → count each name (Khamrah Qahwa, in 2
+titles, a product; Khamrah, in 3 and shared, a family) → the tree Lattafa › Khamrah › Khamrah Qahwa, with no agent call.
+
+Last row, **How:** errors on gold → a proposer agent → one change to one part → kept only if sealed gold rises.
 
 **Say:**
 - Loop 1 doesn't touch the agent. It changes the rules, and the rules are three parts, each a file you can read.
