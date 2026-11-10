@@ -71,7 +71,8 @@ def filtered_events(lines, *, web=False):
 
 
 @bounded_cli
-def invoke(prompt: str, schema: dict, output: Path, *, web: bool = False) -> dict:
+def invoke(prompt: str, schema: dict, output: Path, *, web: bool = False,
+           image_paths: list[Path] | None = None) -> dict:
     """One CLI call, refusing invalid output. Reasoning content is never persisted."""
     output = output.resolve()
     output.mkdir(parents=True, exist_ok=False)
@@ -82,6 +83,22 @@ def invoke(prompt: str, schema: dict, output: Path, *, web: bool = False) -> dic
                     ["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip(),
                 "web": web, "cost": None, "actual_served_tier": None, "usage": [], "retries": 0}
     try:
+        images = [Path(path).resolve(strict=True) for path in image_paths or []]
+        if len(images) > 4:
+            raise ValueError('At most four explicit local images per CLI call')
+        image_records = []
+        for path in images:
+            if not path.is_file() or not 0 < path.stat().st_size <= 10*1024*1024:
+                raise ValueError('Image attachment must be a nonempty file of at most 10 MiB')
+            with path.open('rb') as stream:
+                header = stream.read(16)
+            if not (header.startswith(b'\x89PNG\r\n\x1a\n') or header.startswith(b'\xff\xd8\xff') or
+                    header.startswith((b'GIF87a', b'GIF89a')) or
+                    header.startswith(b'RIFF') and header[8:12] == b'WEBP'):
+                raise ValueError('Unsupported image attachment magic bytes')
+            image_records.append(fingerprint(path))
+        if images:
+            manifest['image_attachments'] = image_records
         executable = shutil.which("codex")
         if not executable:
             raise RuntimeError("Installed Codex CLI missing; no SDK/API fallback")
@@ -99,9 +116,13 @@ def invoke(prompt: str, schema: dict, output: Path, *, web: bool = False) -> dic
                        "-c", f'web_search="{"live" if web else "disabled"}"', "--json", "--color", "never",
                        "--output-schema", str(output / "schema.json"),
                        "--output-last-message", str(output / "final.json"), "-"]
+            if images:
+                command[-1:-1] = [arg for path in images for arg in ('--image', str(path))]
             write(output / "command.json", command)
             result = subprocess.run(command, input=prompt, text=True, encoding="utf-8", errors="replace",
                                     capture_output=True, timeout=pin["timeout_seconds"])
+        if any(fingerprint(path) != record for path, record in zip(images, image_records)):
+            raise ValueError('Image attachment changed during CLI execution')
         events, forbidden, diagnostics = filtered_events(result.stdout.splitlines(), web=web)
         for event in events:
             if event['type'] == 'turn.completed':

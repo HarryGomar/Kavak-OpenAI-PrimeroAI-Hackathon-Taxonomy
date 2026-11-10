@@ -41,7 +41,10 @@ def numeric_tree(value):
 
 def profile(card):
     value = read(card).get('source_profile') or {}
-    return {k: bool(value.get(k, False)) for k in ('include_listing_url', 'include_selected_image_alt', 'include_option_role_facts', 'include_selected_coffee_form', 'include_brand_prose_designation', 'include_source_brand_corroboration', 'include_identifier_peer_evidence')}
+    result = {k: bool(value.get(k, False)) for k in ('include_listing_url', 'include_selected_image_alt', 'include_option_role_facts', 'include_selected_coffee_form', 'include_brand_prose_designation', 'include_source_brand_corroboration', 'include_identifier_peer_evidence')}
+    if value.get('selected_image_text'):
+        result['selected_image_text'] = {k:value['selected_image_text'][k] for k in ('path','sha256','bytes')}
+    return result
 
 
 def transport_stats(folder):
@@ -93,6 +96,10 @@ def export_loop(root, folder):
     observed['actual_placer'] = {'actual_cli_calls': sum(p['actual_cli_calls'] for p in pipeline_stats),
         'unique_actual_measurements': len(pipeline_folders),
         'transport_elapsed_seconds_sum': round(sum(p['transport_elapsed_seconds_sum'] for p in pipeline_stats), 3)}
+    reader = report.get('source_image_reader')
+    if 'source_image_reader' in calls:
+        observed['source_image_reader'] = (transport_stats(Path(reader['manifest']['path']).parent)
+            if reader and reader['fresh_calls_this_loop'] else {'actual_cli_calls':0})
     durations['pipeline_measurement_wall_seconds'] = {p.name: read(p/'manifest.json').get('elapsed_seconds')
                                                      for p in sorted(pipeline_folders)}
     durations['loop_wall_seconds'] = None
@@ -128,6 +135,21 @@ def export_loop(root, folder):
         'exact_request_reused_rows':report.get('exact_request_reused_rows',0),
         'offline_cached_fallback_answers_in_final_evaluations':report.get('offline_cached_fallback_answers_in_final_evaluations',0),
         'production_admission': False, 'artifact': fingerprint(report_path)}
+    if reader:
+        preparation = read(reader['manifest']['path'])
+        entry['source_image_reader'] = reader | {'preparation_counts': {
+            key:preparation[key] for key in ('eligible','source_rows','completed_ocr','errors',
+                'qualified_texts','uncertain_completed','blank_completed') if key in preparation}}
+    control_path = folder/'matched-control-report.json'
+    if control_path.exists():
+        control = read(control_path)
+        entry['matched_source_control'] = {key:control[key] for key in
+            ('status','sample','changed_input_rows','keep_for_development','additional_actual_placer_calls',
+             'exact_request_reused_rows','primary_actual_calls','total_cycle_actual_calls_with_control',
+             'offline_cached_fallback_answers','production_admission','fresh_holdout')}
+        entry['matched_source_control'].update(before=metrics(control['reference_metrics']),
+            after=metrics(control['candidate_metrics']),paired=numeric_tree(control['paired']),
+            artifact=fingerprint(control_path),distillation_record=control['distillation_record'])
     tool_counts = Counter()
     for path in role_folders['validator_candidate'].glob('batch-*/tool-transcript.json'):
         for call in read(path):

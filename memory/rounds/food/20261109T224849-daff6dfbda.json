@@ -1,0 +1,807 @@
+{
+ "id": "daff6dfbda",
+ "domain": "food",
+ "ts": "2026-11-09T22:48:49",
+ "loop": "A",
+ "round": 6,
+ "change": "loop-018 integrated",
+ "label": "loop-018 integrated",
+ "keep": null,
+ "decided_on": null,
+ "lesson": "food-integrated-system",
+ "kind": "rule_shape",
+ "branch": "harness/food-loop-observability",
+ "author": "unknown",
+ "gate": null,
+ "kpi": {
+  "ts": "2026-11-09T22:48:49",
+  "loop": "A",
+  "round": 6,
+  "label": "loop-018 integrated",
+  "code": "4533f781efeaeef7b6bd54a692acd10afe43efe1001a7a5256eb26a01851b61d",
+  "data": "e171137cd82d5b8683c3d72edbc82e747c4fb2a2a30f1e01b4eaab1580673a47",
+  "gold_dev": null,
+  "gold_sealed": null,
+  "shares": {},
+  "agent_calls": 237,
+  "metadata": {
+   "component_outcomes": {
+    "source_extraction_only": {
+     "before": {
+      "frozen_n": 50,
+      "matched_gold_n": 50,
+      "unlabeled_or_join_unscorable": 0,
+      "resolved_prediction_n": 50,
+      "ambiguous_prediction_n": 0,
+      "classes": {
+       "wrong_brand": 6,
+       "wrong_label_path": 20,
+       "exact": 9,
+       "abstain": 13,
+       "valid_shallower": 2
+      },
+      "identity_path_exact": 9,
+      "strict_full_path_exact": 3,
+      "brand_correct": 31,
+      "rates_denominator": 50,
+      "identity_path_exact_rate": 0.18,
+      "strict_full_path_exact_rate": 0.06,
+      "brand_correct_rate": 0.62,
+      "primary_policy": "All verified-gold observations, including abstentions and ambiguous predictions; unresolved is not demonstrated correct, not necessarily semantically wrong.",
+      "secondary_resolved_only": {
+       "denominator": 50,
+       "identity_path_exact_rate": 0.18,
+       "brand_correct_rate": 0.62
+      },
+      "abstentions_all_frozen": 13,
+      "levels": {
+       "brand": {
+        "correct_prefix": 31,
+        "n": 50
+       },
+       "model": {
+        "correct_prefix": 12,
+        "n": 50
+       },
+       "variant": {
+        "correct_prefix": 7,
+        "n": 41
+       }
+      },
+      "scope_accuracy": null,
+      "model_calls": 0,
+      "partitions": {
+       "feedback": {
+        "frozen_n": 20,
+        "matched_gold_n": 20,
+        "unlabeled_or_join_unscorable": 0,
+        "resolved_prediction_n": 20,
+        "ambiguous_prediction_n": 0,
+        "classes": {
+         "wrong_brand": 2,
+         "wrong_label_path": 4,
+         "exact": 8,
+         "abstain": 6
+        },
+        "identity_path_exact": 8,
+        "strict_full_path_exact": 3,
+        "brand_correct": 12,
+        "rates_denominator": 20,
+        "identity_path_exact_rate": 0.4,
+        "strict_full_path_exact_rate": 0.15,
+        "brand_correct_rate": 0.6,
+        "primary_policy": "All verified-gold observations, including abstentions and ambiguous predictions; unresolved is not demonstrated correct, not necessarily semantically wrong.",
+        "secondary_resolved_only": {
+         "denominator": 20,
+         "identity_path_exact_rate": 0.4,
+         "brand_correct_rate": 0.6
+        },
+        "abstentions_all_frozen": 6,
+        "levels": {
+         "brand": {
+          "correct_prefix": 12,
+          "n": 20
+         },
+         "model": {
+          "correct_prefix": 8,
+          "n": 20
+         },
+         "variant": {
+          "correct_prefix": 6,
+          "n": 15
+         }
+        },
+        "scope_accuracy": null,
+        "model_calls": 0
+       },
+       "withheld_feedback": {
+        "frozen_n": 30,
+        "matched_gold_n": 30,
+        "unlabeled_or_join_unscorable": 0,
+        "resolved_prediction_n": 30,
+        "ambiguous_prediction_n": 0,
+        "classes": {
+         "exact": 1,
+         "abstain": 7,
+         "valid_shallower": 2,
+         "wrong_label_path": 16,
+         "wrong_brand": 4
+        },
+        "identity_path_exact": 1,
+        "strict_full_path_exact": 0,
+        "brand_correct": 19,
+        "rates_denominator": 30,
+        "identity_path_exact_rate": 0.03333333333333333,
+        "strict_full_path_exact_rate": 0.0,
+        "brand_correct_rate": 0.6333333333333333,
+        "primary_policy": "All verified-gold observations, including abstentions and ambiguous predictions; unresolved is not demonstrated correct, not necessarily semantically wrong.",
+        "secondary_resolved_only": {
+         "denominator": 30,
+         "identity_path_exact_rate": 0.03333333333333333,
+         "brand_correct_rate": 0.6333333333333333
+        },
+        "abstentions_all_frozen": 7,
+        "levels": {
+         "brand": {
+          "correct_prefix": 19,
+          "n": 30
+         },
+         "model": {
+          "correct_prefix": 4,
+          "n": 30
+         },
+         "variant": {
+          "correct_prefix": 1,
+          "n": 26
+         }
+        },
+        "scope_accuracy": null,
+        "model_calls": 0
+       }
+      },
+      "paired": {
+       "exact_gain": 1,
+       "exact_regression": 0,
+       "brand_gain": 2,
+       "brand_regression": 1
+      },
+      "frozen_silver_agreement": 0,
+      "silver_observations": 0,
+      "paired_comparator": "C:\\Users\\eduar\\Desktop\\HACKATON\\tasks\\food-random-50-20261109\\sample-01\\loop-010-source-pipeline"
+     },
+     "after": {
+      "frozen_n": 50,
+      "matched_gold_n": 50,
+      "unlabeled_or_join_unscorable": 0,
+      "resolved_prediction_n": 50,
+      "ambiguous_prediction_n": 0,
+      "classes": {
+       "wrong_brand": 8,
+       "exact": 11,
+       "abstain": 11,
+       "wrong_label_path": 18,
+       "valid_shallower": 2
+      },
+      "identity_path_exact": 11,
+      "strict_full_path_exact": 5,
+      "brand_correct": 31,
+      "rates_denominator": 50,
+      "identity_path_exact_rate": 0.22,
+      "strict_full_path_exact_rate": 0.1,
+      "brand_correct_rate": 0.62,
+      "primary_policy": "All verified-gold observations, including abstentions and ambiguous predictions; unresolved is not demonstrated correct, not necessarily semantically wrong.",
+      "secondary_resolved_only": {
+       "denominator": 50,
+       "identity_path_exact_rate": 0.22,
+       "brand_correct_rate": 0.62
+      },
+      "abstentions_all_frozen": 11,
+      "levels": {
+       "brand": {
+        "correct_prefix": 31,
+        "n": 50
+       },
+       "model": {
+        "correct_prefix": 14,
+        "n": 50
+       },
+       "variant": {
+        "correct_prefix": 8,
+        "n": 41
+       }
+      },
+      "scope_accuracy": null,
+      "model_calls": 0,
+      "partitions": {
+       "feedback": {
+        "frozen_n": 20,
+        "matched_gold_n": 20,
+        "unlabeled_or_join_unscorable": 0,
+        "resolved_prediction_n": 20,
+        "ambiguous_prediction_n": 0,
+        "classes": {
+         "wrong_brand": 4,
+         "exact": 8,
+         "abstain": 5,
+         "wrong_label_path": 3
+        },
+        "identity_path_exact": 8,
+        "strict_full_path_exact": 3,
+        "brand_correct": 11,
+        "rates_denominator": 20,
+        "identity_path_exact_rate": 0.4,
+        "strict_full_path_exact_rate": 0.15,
+        "brand_correct_rate": 0.55,
+        "primary_policy": "All verified-gold observations, including abstentions and ambiguous predictions; unresolved is not demonstrated correct, not necessarily semantically wrong.",
+        "secondary_resolved_only": {
+         "denominator": 20,
+         "identity_path_exact_rate": 0.4,
+         "brand_correct_rate": 0.55
+        },
+        "abstentions_all_frozen": 5,
+        "levels": {
+         "brand": {
+          "correct_prefix": 11,
+          "n": 20
+         },
+         "model": {
+          "correct_prefix": 8,
+          "n": 20
+         },
+         "variant": {
+          "correct_prefix": 6,
+          "n": 15
+         }
+        },
+        "scope_accuracy": null,
+        "model_calls": 0
+       },
+       "withheld_feedback": {
+        "frozen_n": 30,
+        "matched_gold_n": 30,
+        "unlabeled_or_join_unscorable": 0,
+        "resolved_prediction_n": 30,
+        "ambiguous_prediction_n": 0,
+        "classes": {
+         "exact": 3,
+         "abstain": 6,
+         "valid_shallower": 2,
+         "wrong_label_path": 15,
+         "wrong_brand": 4
+        },
+        "identity_path_exact": 3,
+        "strict_full_path_exact": 2,
+        "brand_correct": 20,
+        "rates_denominator": 30,
+        "identity_path_exact_rate": 0.1,
+        "strict_full_path_exact_rate": 0.06666666666666667,
+        "brand_correct_rate": 0.6666666666666666,
+        "primary_policy": "All verified-gold observations, including abstentions and ambiguous predictions; unresolved is not demonstrated correct, not necessarily semantically wrong.",
+        "secondary_resolved_only": {
+         "denominator": 30,
+         "identity_path_exact_rate": 0.1,
+         "brand_correct_rate": 0.6666666666666666
+        },
+        "abstentions_all_frozen": 6,
+        "levels": {
+         "brand": {
+          "correct_prefix": 20,
+          "n": 30
+         },
+         "model": {
+          "correct_prefix": 6,
+          "n": 30
+         },
+         "variant": {
+          "correct_prefix": 2,
+          "n": 26
+         }
+        },
+        "scope_accuracy": null,
+        "model_calls": 0
+       }
+      },
+      "paired": {
+       "exact_gain": 2,
+       "exact_regression": 0,
+       "brand_gain": 2,
+       "brand_regression": 2
+      },
+      "frozen_silver_agreement": 0,
+      "silver_observations": 0,
+      "paired_comparator": "C:\\Users\\eduar\\Desktop\\HACKATON\\tasks\\food-random-50-20261109\\sample-01\\loop-013-source-pipeline"
+     },
+     "paired": {
+      "n": 50,
+      "exact": {
+       "current": 0.18,
+       "candidate": 0.22,
+       "delta": 0.04,
+       "current_ci": [
+        0.0977008273245379,
+        0.3079631945470261
+       ],
+       "candidate_ci": [
+        0.12753786224302288,
+        0.35241815689459555
+       ],
+       "delta_ci": [
+        -0.014868570238343183,
+        0.09486857023834319
+       ],
+       "gains": 2,
+       "regressions": 0
+      },
+      "harm": {
+       "current": 0.52,
+       "candidate": 0.52,
+       "delta": 0.0,
+       "current_ci": [
+        0.3851151225880844,
+        0.6520308760449429
+       ],
+       "candidate_ci": [
+        0.3851151225880844,
+        0.6520308760449429
+       ],
+       "delta_ci": [
+        -0.055999999999999994,
+        0.055999999999999994
+       ],
+       "gains": 1,
+       "regressions": 1
+      },
+      "abstain": {
+       "current": 0.26,
+       "candidate": 0.22,
+       "delta": -0.04,
+       "current_ci": [
+        0.15871379651367384,
+        0.3955342198899992
+       ],
+       "candidate_ci": [
+        0.12753786224302288,
+        0.35241815689459555
+       ],
+       "delta_ci": [
+        -0.09486857023834319,
+        0.014868570238343183
+       ],
+       "gains": 0,
+       "regressions": 2
+      },
+      "keep_for_development": true,
+      "production_admission": false
+     },
+     "keep_for_development": true
+    },
+    "integrated": {
+     "before": {
+      "frozen_n": 50,
+      "matched_gold_n": 50,
+      "unlabeled_or_join_unscorable": 0,
+      "resolved_prediction_n": 50,
+      "ambiguous_prediction_n": 0,
+      "classes": {
+       "wrong_brand": 6,
+       "wrong_label_path": 20,
+       "exact": 9,
+       "abstain": 13,
+       "valid_shallower": 2
+      },
+      "identity_path_exact": 9,
+      "strict_full_path_exact": 3,
+      "brand_correct": 31,
+      "rates_denominator": 50,
+      "identity_path_exact_rate": 0.18,
+      "strict_full_path_exact_rate": 0.06,
+      "brand_correct_rate": 0.62,
+      "primary_policy": "All verified-gold observations, including abstentions and ambiguous predictions; unresolved is not demonstrated correct, not necessarily semantically wrong.",
+      "secondary_resolved_only": {
+       "denominator": 50,
+       "identity_path_exact_rate": 0.18,
+       "brand_correct_rate": 0.62
+      },
+      "abstentions_all_frozen": 13,
+      "levels": {
+       "brand": {
+        "correct_prefix": 31,
+        "n": 50
+       },
+       "model": {
+        "correct_prefix": 12,
+        "n": 50
+       },
+       "variant": {
+        "correct_prefix": 7,
+        "n": 41
+       }
+      },
+      "scope_accuracy": null,
+      "model_calls": 0,
+      "partitions": {
+       "feedback": {
+        "frozen_n": 20,
+        "matched_gold_n": 20,
+        "unlabeled_or_join_unscorable": 0,
+        "resolved_prediction_n": 20,
+        "ambiguous_prediction_n": 0,
+        "classes": {
+         "wrong_brand": 2,
+         "wrong_label_path": 4,
+         "exact": 8,
+         "abstain": 6
+        },
+        "identity_path_exact": 8,
+        "strict_full_path_exact": 3,
+        "brand_correct": 12,
+        "rates_denominator": 20,
+        "identity_path_exact_rate": 0.4,
+        "strict_full_path_exact_rate": 0.15,
+        "brand_correct_rate": 0.6,
+        "primary_policy": "All verified-gold observations, including abstentions and ambiguous predictions; unresolved is not demonstrated correct, not necessarily semantically wrong.",
+        "secondary_resolved_only": {
+         "denominator": 20,
+         "identity_path_exact_rate": 0.4,
+         "brand_correct_rate": 0.6
+        },
+        "abstentions_all_frozen": 6,
+        "levels": {
+         "brand": {
+          "correct_prefix": 12,
+          "n": 20
+         },
+         "model": {
+          "correct_prefix": 8,
+          "n": 20
+         },
+         "variant": {
+          "correct_prefix": 6,
+          "n": 15
+         }
+        },
+        "scope_accuracy": null,
+        "model_calls": 0
+       },
+       "withheld_feedback": {
+        "frozen_n": 30,
+        "matched_gold_n": 30,
+        "unlabeled_or_join_unscorable": 0,
+        "resolved_prediction_n": 30,
+        "ambiguous_prediction_n": 0,
+        "classes": {
+         "exact": 1,
+         "abstain": 7,
+         "valid_shallower": 2,
+         "wrong_label_path": 16,
+         "wrong_brand": 4
+        },
+        "identity_path_exact": 1,
+        "strict_full_path_exact": 0,
+        "brand_correct": 19,
+        "rates_denominator": 30,
+        "identity_path_exact_rate": 0.03333333333333333,
+        "strict_full_path_exact_rate": 0.0,
+        "brand_correct_rate": 0.6333333333333333,
+        "primary_policy": "All verified-gold observations, including abstentions and ambiguous predictions; unresolved is not demonstrated correct, not necessarily semantically wrong.",
+        "secondary_resolved_only": {
+         "denominator": 30,
+         "identity_path_exact_rate": 0.03333333333333333,
+         "brand_correct_rate": 0.6333333333333333
+        },
+        "abstentions_all_frozen": 7,
+        "levels": {
+         "brand": {
+          "correct_prefix": 19,
+          "n": 30
+         },
+         "model": {
+          "correct_prefix": 4,
+          "n": 30
+         },
+         "variant": {
+          "correct_prefix": 1,
+          "n": 26
+         }
+        },
+        "scope_accuracy": null,
+        "model_calls": 0
+       }
+      },
+      "paired": {
+       "exact_gain": 1,
+       "exact_regression": 0,
+       "brand_gain": 2,
+       "brand_regression": 1
+      },
+      "frozen_silver_agreement": 0,
+      "silver_observations": 0,
+      "paired_comparator": "C:\\Users\\eduar\\Desktop\\HACKATON\\tasks\\food-random-50-20261109\\sample-01\\loop-010-source-pipeline"
+     },
+     "after": {
+      "frozen_n": 50,
+      "matched_gold_n": 50,
+      "unlabeled_or_join_unscorable": 0,
+      "resolved_prediction_n": 50,
+      "ambiguous_prediction_n": 0,
+      "classes": {
+       "wrong_brand": 8,
+       "exact": 11,
+       "abstain": 11,
+       "wrong_label_path": 18,
+       "valid_shallower": 2
+      },
+      "identity_path_exact": 11,
+      "strict_full_path_exact": 5,
+      "brand_correct": 31,
+      "rates_denominator": 50,
+      "identity_path_exact_rate": 0.22,
+      "strict_full_path_exact_rate": 0.1,
+      "brand_correct_rate": 0.62,
+      "primary_policy": "All verified-gold observations, including abstentions and ambiguous predictions; unresolved is not demonstrated correct, not necessarily semantically wrong.",
+      "secondary_resolved_only": {
+       "denominator": 50,
+       "identity_path_exact_rate": 0.22,
+       "brand_correct_rate": 0.62
+      },
+      "abstentions_all_frozen": 11,
+      "levels": {
+       "brand": {
+        "correct_prefix": 31,
+        "n": 50
+       },
+       "model": {
+        "correct_prefix": 14,
+        "n": 50
+       },
+       "variant": {
+        "correct_prefix": 8,
+        "n": 41
+       }
+      },
+      "scope_accuracy": null,
+      "model_calls": 0,
+      "partitions": {
+       "feedback": {
+        "frozen_n": 20,
+        "matched_gold_n": 20,
+        "unlabeled_or_join_unscorable": 0,
+        "resolved_prediction_n": 20,
+        "ambiguous_prediction_n": 0,
+        "classes": {
+         "wrong_brand": 4,
+         "exact": 8,
+         "abstain": 5,
+         "wrong_label_path": 3
+        },
+        "identity_path_exact": 8,
+        "strict_full_path_exact": 3,
+        "brand_correct": 11,
+        "rates_denominator": 20,
+        "identity_path_exact_rate": 0.4,
+        "strict_full_path_exact_rate": 0.15,
+        "brand_correct_rate": 0.55,
+        "primary_policy": "All verified-gold observations, including abstentions and ambiguous predictions; unresolved is not demonstrated correct, not necessarily semantically wrong.",
+        "secondary_resolved_only": {
+         "denominator": 20,
+         "identity_path_exact_rate": 0.4,
+         "brand_correct_rate": 0.55
+        },
+        "abstentions_all_frozen": 5,
+        "levels": {
+         "brand": {
+          "correct_prefix": 11,
+          "n": 20
+         },
+         "model": {
+          "correct_prefix": 8,
+          "n": 20
+         },
+         "variant": {
+          "correct_prefix": 6,
+          "n": 15
+         }
+        },
+        "scope_accuracy": null,
+        "model_calls": 0
+       },
+       "withheld_feedback": {
+        "frozen_n": 30,
+        "matched_gold_n": 30,
+        "unlabeled_or_join_unscorable": 0,
+        "resolved_prediction_n": 30,
+        "ambiguous_prediction_n": 0,
+        "classes": {
+         "exact": 3,
+         "abstain": 6,
+         "valid_shallower": 2,
+         "wrong_label_path": 15,
+         "wrong_brand": 4
+        },
+        "identity_path_exact": 3,
+        "strict_full_path_exact": 2,
+        "brand_correct": 20,
+        "rates_denominator": 30,
+        "identity_path_exact_rate": 0.1,
+        "strict_full_path_exact_rate": 0.06666666666666667,
+        "brand_correct_rate": 0.6666666666666666,
+        "primary_policy": "All verified-gold observations, including abstentions and ambiguous predictions; unresolved is not demonstrated correct, not necessarily semantically wrong.",
+        "secondary_resolved_only": {
+         "denominator": 30,
+         "identity_path_exact_rate": 0.1,
+         "brand_correct_rate": 0.6666666666666666
+        },
+        "abstentions_all_frozen": 6,
+        "levels": {
+         "brand": {
+          "correct_prefix": 20,
+          "n": 30
+         },
+         "model": {
+          "correct_prefix": 6,
+          "n": 30
+         },
+         "variant": {
+          "correct_prefix": 2,
+          "n": 26
+         }
+        },
+        "scope_accuracy": null,
+        "model_calls": 0
+       }
+      },
+      "paired": {
+       "exact_gain": 2,
+       "exact_regression": 0,
+       "brand_gain": 2,
+       "brand_regression": 2
+      },
+      "frozen_silver_agreement": 0,
+      "silver_observations": 0,
+      "paired_comparator": "C:\\Users\\eduar\\Desktop\\HACKATON\\tasks\\food-random-50-20261109\\sample-01\\loop-013-source-pipeline"
+     },
+     "paired": {
+      "n": 50,
+      "exact": {
+       "current": 0.18,
+       "candidate": 0.22,
+       "delta": 0.04,
+       "current_ci": [
+        0.0977008273245379,
+        0.3079631945470261
+       ],
+       "candidate_ci": [
+        0.12753786224302288,
+        0.35241815689459555
+       ],
+       "delta_ci": [
+        -0.014868570238343183,
+        0.09486857023834319
+       ],
+       "gains": 2,
+       "regressions": 0
+      },
+      "harm": {
+       "current": 0.52,
+       "candidate": 0.52,
+       "delta": 0.0,
+       "current_ci": [
+        0.3851151225880844,
+        0.6520308760449429
+       ],
+       "candidate_ci": [
+        0.3851151225880844,
+        0.6520308760449429
+       ],
+       "delta_ci": [
+        -0.055999999999999994,
+        0.055999999999999994
+       ],
+       "gains": 1,
+       "regressions": 1
+      },
+      "abstain": {
+       "current": 0.26,
+       "candidate": 0.22,
+       "delta": -0.04,
+       "current_ci": [
+        0.15871379651367384,
+        0.3955342198899992
+       ],
+       "candidate_ci": [
+        0.12753786224302288,
+        0.35241815689459555
+       ],
+       "delta_ci": [
+        -0.09486857023834319,
+        0.014868570238343183
+       ],
+       "gains": 0,
+       "regressions": 2
+      },
+      "keep_for_development": true,
+      "production_admission": false
+     },
+     "keep_for_development": true
+    }
+   },
+   "validator_paired": {
+    "n": 50,
+    "exact": {
+     "current": 0.1,
+     "candidate": 0.16,
+     "delta": 0.06,
+     "current_ci": [
+      0.04347512399157111,
+      0.2136049033478839
+     ],
+     "candidate_ci": [
+      0.08337321362087696,
+      0.2851448096176598
+     ],
+     "delta_ci": [
+      -0.006496315687412338,
+      0.12649631568741232
+     ],
+     "gains": 3,
+     "regressions": 0
+    },
+    "harm": {
+     "current": 0.82,
+     "candidate": 0.82,
+     "delta": 0.0,
+     "current_ci": [
+      0.6920368054529739,
+      0.902299172675462
+     ],
+     "candidate_ci": [
+      0.6920368054529739,
+      0.902299172675462
+     ],
+     "delta_ci": [
+      -0.0791959594928933,
+      0.0791959594928933
+     ],
+     "gains": 2,
+     "regressions": 2
+    },
+    "abstain": {
+     "current": 0.02,
+     "candidate": 0.0,
+     "delta": -0.02,
+     "current_ci": [
+      0.0035391680889764604,
+      0.10495686471836953
+     ],
+     "candidate_ci": [
+      0.0,
+      0.07135003417431873
+     ],
+     "delta_ci": [
+      -0.0592,
+      0.0192
+     ],
+     "gains": 0,
+     "regressions": 1
+    },
+    "keep_for_development": true,
+    "production_admission": false
+   },
+   "calls": {
+    "validator_current": 50,
+    "proposer": 1,
+    "improver": 1,
+    "validator_candidate": 100,
+    "source_image_reader": 35,
+    "actual_placer": 50
+   },
+   "version": 6,
+   "production_admission": false,
+   "artifact_index": {
+    "path": "C:\\Users\\eduar\\Desktop\\HACKATON\\tasks\\food-random-50-20261109\\sample-01\\loop-018\\artifact-index.json",
+    "sha256": "293c26228d92753babd281471cfbf1de37a23a2fce937a04006e965b9424ae0d",
+    "bytes": 2487
+   }
+  }
+ }
+}

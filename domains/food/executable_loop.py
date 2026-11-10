@@ -31,7 +31,7 @@ def scored(folder, partition=None):
 def run(root, fallback, name, setup, *, source_urls_candidate=False, selected_image_alt_candidate=False,
         option_role_facts_candidate=False, selected_coffee_form_candidate=False, brand_prose_designation_candidate=False,
         source_brand_corroboration_candidate=False, original_source_cohorts_candidate=False,
-        identifier_peer_evidence_candidate=False,
+        identifier_peer_evidence_candidate=False, selected_image_text_candidate=None,
         candidate_config_override=None):
     """One retained full system, component trials, and an actual integrated pipeline."""
     import shutil
@@ -97,6 +97,24 @@ def run(root, fallback, name, setup, *, source_urls_candidate=False, selected_im
         candidate_profile['include_source_brand_corroboration'] = True
     if identifier_peer_evidence_candidate:
         candidate_profile['include_identifier_peer_evidence'] = True
+    if selected_image_text_candidate is not None:
+        from domains.food.place_paths import _selected_image_text_profile
+        candidate_profile['selected_image_text'] = _selected_image_text_profile(fingerprint(Path(selected_image_text_candidate).resolve()))
+    source_image_reader = None
+    if candidate_profile.get('selected_image_text'):
+        image_record = candidate_profile['selected_image_text']
+        image_manifest = Path(image_record['path']).parent/'manifest.json'
+        image_role = read(image_manifest)
+        if (image_role.get('role') != 'source_image_reader'
+                or image_role.get('sidecar') != image_record
+                or type(image_role.get('actual_cli_calls')) is not int or image_role['actual_cli_calls'] < 0):
+            raise ValueError('Selected image text requires actual source_image_reader call evidence')
+        source_image_reader = {'sidecar': image_record, 'manifest': fingerprint(image_manifest),
+            'actual_calls_in_preparation': image_role['actual_cli_calls'],
+            'intended_loop': image_role.get('intended_loop'),
+            'fresh_calls_this_loop': image_role['actual_cli_calls'] if (
+                selected_image_text_candidate is not None and image_role.get('intended_loop') == name) else 0,
+            'counting': 'Shared source preparation counted once, never per measurement arm; retained preparation is reused'}
     source_changed = candidate_profile != retained_profile
     source_only_card = card_path
     if source_changed:
@@ -271,11 +289,13 @@ def run(root, fallback, name, setup, *, source_urls_candidate=False, selected_im
     for label, folder in [('validator_current',current),('proposer',roles/'proposer'),
                           ('improver',roles/'improver'),('validator_candidate',validator_folder)]:
         calls[label] = sum('transport' in read(p) for p in folder.rglob('manifest.json')) if folder.exists() else 0
+    calls['source_image_reader'] = source_image_reader['fresh_calls_this_loop'] if source_image_reader else 0
     calls['actual_placer'] = sum(x['actual_placer_calls'] for x in measurements.values())
     report = {'status':'completed_integrated_development_cycle','sample':len(rows(root/'source-snapshot.jsonl')),
         'feedback':len(read(root/'protocol.json')['partition']['feedback_ids']), 'version_before':before_version,
         'version_after':state['version'],'roles_actual_calls':calls,'pipeline_proposal':proposal, 'pipeline_proposals':proposals,
         'configuration_isolation_diagnostic':diagnostics,'component_and_integrated_comparisons':outcomes,
+        'source_image_reader':source_image_reader,
         'validator_comparison':validator,'retained_output':state['baseline_output']['path'],
         'retained_exact':read(Path(state['baseline_output']['path'])/'metrics.json')['identity_path_exact'],
         'cached_answers_in_final_evaluations':sum(x['exact_request_reused_rows'] for x in measurements.values()),
@@ -319,6 +339,7 @@ if __name__ == '__main__':
     ap.add_argument('--brand-prose-designation-candidate', action='store_true', help='test initial original-brand copular product designation; original description citations required')
     ap.add_argument('--source-brand-corroboration-candidate', action='store_true', help='test bounded other-source original reported-brand claims; no identity assignments')
     ap.add_argument('--identifier-peer-evidence-candidate', action='store_true', help='test unverified exact-grain identifier peer source quotes; no variant transfer')
+    ap.add_argument('--selected-image-text-candidate', type=Path, help='test immutable selected-source-image literal text sidecar')
     ap.add_argument('--original-source-cohorts-candidate', action='store_true', help='train executable lattice on original source corpus; score the same frozen sample')
     ap.add_argument('--candidate-config', type=Path, help='evaluate one explicitly qualified executable config without overwriting model-proposed config')
     a = ap.parse_args()
@@ -329,4 +350,5 @@ if __name__ == '__main__':
         source_brand_corroboration_candidate=a.source_brand_corroboration_candidate,
         original_source_cohorts_candidate=a.original_source_cohorts_candidate,
         identifier_peer_evidence_candidate=a.identifier_peer_evidence_candidate,
+        selected_image_text_candidate=a.selected_image_text_candidate,
         candidate_config_override=a.candidate_config)

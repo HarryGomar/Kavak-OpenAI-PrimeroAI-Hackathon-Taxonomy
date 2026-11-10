@@ -581,7 +581,7 @@ def identifier_peer_evidence(row):
 
 
 def evidence(row, include_source_urls=False, include_selected_image_alt=False, include_option_role_facts=False,
-             include_selected_coffee_form=False, include_brand_prose_designation=False, include_source_brand_corroboration=False, include_identifier_peer_evidence=False):
+             include_selected_coffee_form=False, include_brand_prose_designation=False, include_source_brand_corroboration=False, include_identifier_peer_evidence=False, selected_image_text=None):
     if any(type(value) is not bool for value in (include_source_urls, include_selected_image_alt,
                                                 include_option_role_facts, include_selected_coffee_form, include_brand_prose_designation,
                                                 include_source_brand_corroboration, include_identifier_peer_evidence)):
@@ -621,7 +621,24 @@ def evidence(row, include_source_urls=False, include_selected_image_alt=False, i
             result['source_identifier_peer_title'] = peer['source_listing_name']
             result['source_identifier_peer_reported_brand'] = peer['source_reported_brand']
             result['source_identifier_peer_provenance'] = json.dumps(peer, ensure_ascii=False)
+    if selected_image_text is not None:
+        from domains.food.image_evidence import text_for
+        text = text_for(row, _selected_image_text_profile(selected_image_text))
+        if isinstance(text, str) and text.strip():
+            result['source_selected_image_text'] = text
     return result
+
+
+def _selected_image_text_profile(record):
+    if (not isinstance(record, dict) or set(record) != {'path', 'sha256', 'bytes'}
+            or not isinstance(record['path'], str) or not record['path']
+            or not isinstance(record['sha256'], str) or not re.fullmatch(r'[a-f0-9]{64}', record['sha256'])
+            or type(record['bytes']) is not int or record['bytes'] < 1):
+        raise ValueError('selected_image_text requires exactly path/sha256/positive bytes')
+    current = fingerprint(Path(record['path']).resolve())
+    if any(current[key] != record[key] for key in ('sha256', 'bytes')):
+        raise ValueError('Selected-image text sidecar checksum/size changed')
+    return current
 
 
 def source_profile(card):
@@ -629,11 +646,13 @@ def source_profile(card):
     profile = card.get('source_profile', {})
     keys = ('include_listing_url', 'include_selected_image_alt', 'include_option_role_facts', 'include_selected_coffee_form',
             'include_brand_prose_designation', 'include_source_brand_corroboration', 'include_identifier_peer_evidence')
-    if not isinstance(profile, dict) or set(profile)-set(keys):
+    if not isinstance(profile, dict) or set(profile)-set(keys)-{'selected_image_text'}:
         raise ValueError('source_profile has an unknown source projection option')
     values = {key: profile.get(key, False) for key in keys}
     if any(type(value) is not bool for value in values.values()):
-        raise ValueError('source_profile values must be booleans')
+        raise ValueError('source_profile boolean options must be booleans')
+    if 'selected_image_text' in profile:
+        values['selected_image_text'] = _selected_image_text_profile(profile['selected_image_text'])
     return values
 
 
@@ -642,12 +661,12 @@ def tokens(value):
 
 
 def materialize(answer, source, rules, include_source_urls=False, include_selected_image_alt=False, include_option_role_facts=False,
-                include_selected_coffee_form=False, include_brand_prose_designation=False, include_source_brand_corroboration=False, include_identifier_peer_evidence=False):
+                include_selected_coffee_form=False, include_brand_prose_designation=False, include_source_brand_corroboration=False, include_identifier_peer_evidence=False, selected_image_text=None):
     permitted = evidence(source, include_source_urls=include_source_urls,
                          include_selected_image_alt=include_selected_image_alt, include_option_role_facts=include_option_role_facts,
                          include_selected_coffee_form=include_selected_coffee_form, include_brand_prose_designation=include_brand_prose_designation,
                          include_source_brand_corroboration=include_source_brand_corroboration,
-                         include_identifier_peer_evidence=include_identifier_peer_evidence)
+                         include_identifier_peer_evidence=include_identifier_peer_evidence, selected_image_text=selected_image_text)
     path, events, nodes = [], [], []
     expected = ["brand", "model", "variant"]
     if answer.action == "park" and answer.nodes:
@@ -691,7 +710,7 @@ def materialize(answer, source, rules, include_source_urls=False, include_select
         if part.level == 'model' and designation and part.name.casefold() == designation.casefold():
             if not tokens(designation) <= description_supported:
                 reason = 'prose_designation_requires_original_description_citation'
-        if part.level == 'variant' and any(q.field == 'source_selected_variant_image_alt' for q in part.evidence):
+        if part.level == 'variant' and any(q.field in ('source_selected_variant_image_alt', 'source_selected_image_text') for q in part.evidence):
             if not tokens(part.name) <= original_naming_supported:
                 reason = 'image_only_variant_identity'
         if part.level == 'variant' and any(q.field.startswith('source_identifier_peer_') for q in part.evidence):
@@ -806,14 +825,14 @@ def normalize_plan(listings, fixed_placements=None, routed_ids=None):
 
 
 def materialize_fixed(value, source, rules, include_source_urls=False, include_selected_image_alt=False, include_option_role_facts=False,
-                      include_selected_coffee_form=False, include_brand_prose_designation=False, include_source_brand_corroboration=False, include_identifier_peer_evidence=False):
+                      include_selected_coffee_form=False, include_brand_prose_designation=False, include_source_brand_corroboration=False, include_identifier_peer_evidence=False, selected_image_text=None):
     """Re-ground deterministic free paths through the same node/rule checks as CLI proposals."""
     parts = []
     permitted = evidence(source, include_source_urls=include_source_urls,
                          include_selected_image_alt=include_selected_image_alt, include_option_role_facts=include_option_role_facts,
                          include_selected_coffee_form=include_selected_coffee_form, include_brand_prose_designation=include_brand_prose_designation,
                          include_source_brand_corroboration=include_source_brand_corroboration,
-                         include_identifier_peer_evidence=include_identifier_peer_evidence)
+                         include_identifier_peer_evidence=include_identifier_peer_evidence, selected_image_text=selected_image_text)
     if len(value['path']) > 3:
         raise ValueError('Free placement exceeds Food brand/model/variant hierarchy')
     for level, name in zip(('brand', 'model', 'variant'), value['path']):
@@ -831,7 +850,7 @@ def materialize_fixed(value, source, rules, include_source_urls=False, include_s
                                       include_selected_image_alt=include_selected_image_alt, include_option_role_facts=include_option_role_facts,
                                       include_selected_coffee_form=include_selected_coffee_form, include_brand_prose_designation=include_brand_prose_designation,
                                       include_source_brand_corroboration=include_source_brand_corroboration,
-                         include_identifier_peer_evidence=include_identifier_peer_evidence)
+                         include_identifier_peer_evidence=include_identifier_peer_evidence, selected_image_text=selected_image_text)
     if path != [s.strip() for s in value['path']]:
         raise ValueError(f"Deterministic free placement failed source grounding/rules for {source['id']}")
     return answer, path, nodes, findings
@@ -870,12 +889,14 @@ def execute(root, name, card=None, previous=None, *, fixed_placements=None, rout
     include_brand_prose_designation = profile['include_brand_prose_designation']
     include_source_brand_corroboration = profile['include_source_brand_corroboration']
     include_identifier_peer_evidence = profile['include_identifier_peer_evidence']
+    selected_image_text = profile.get('selected_image_text')
     evidence_options = {'include_source_urls': include_source_urls, 'include_selected_image_alt': include_selected_image_alt,
                         'include_option_role_facts': include_option_role_facts,
                         'include_selected_coffee_form': include_selected_coffee_form,
                         'include_brand_prose_designation': include_brand_prose_designation,
                         'include_source_brand_corroboration': include_source_brand_corroboration,
-                        'include_identifier_peer_evidence': include_identifier_peer_evidence}
+                        'include_identifier_peer_evidence': include_identifier_peer_evidence,
+                        'selected_image_text': selected_image_text}
     rules = rules_for("food", ("consumer_packaged",))
     fixed_results = {r['id']: materialize_fixed(fixed[r['id']], r, rules, **evidence_options)
                      for r in listings if r['id'] in fixed}

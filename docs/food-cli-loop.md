@@ -36,6 +36,22 @@ barcodes and differing package quantities remain explicit limitations. Peer prov
 cannot name nodes, and peer-only words cannot name the target variant. This optional
 context requires its own measured comparison; qualification alone is not improvement.
 
+An optional image candidate uses `image_evidence` to download a bounded set of original
+URLs whose provenance identifies the exact selected variant. It preserves current
+retrieval time, original bytes and hashes, then executes literal transcription with
+the pinned CLI's image attachment support. Download failures and uncertain text remain
+explicit; only qualified text is supplied to the candidate placer. The sidecar binds
+the source, helper, actual prompt/schema/pin, attachment and completed-call artifacts.
+It does not establish what image bytes existed on the original collection date.
+Image-only variant naming remains refused. The final pipeline still needs paired
+evaluation; attachment support or successful transcription is not an accuracy gain.
+Prepare with `python -m domains.food.image_evidence --root <frozen-root> --name
+source-image-ocr-018 --intended-loop loop-018`, then pass the resulting immutable
+sidecar to `executable_loop --selected-image-text-candidate <sidecar>`. Preparation
+calls count once in that intended loop; subsequent retained reuse counts zero fresh
+reader calls. Run preparation before the integrated runner: the shared 20-call
+semaphore applies within a process, not across independent Python processes.
+
 For no-tool, single-row placer calls, an unchanged CLI request may reuse its prior raw
 structured answer only after exact prompt/schema/pin/executable and completion checks.
 Receipts identify the prior inference; the current grounding, rules and scorer run
