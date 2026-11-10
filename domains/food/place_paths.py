@@ -18,6 +18,7 @@ from dataclasses import asdict
 from datetime import datetime, timezone
 from pathlib import Path
 from types import SimpleNamespace
+from threading import Lock
 
 import pyarrow.parquet as pq
 import yaml
@@ -267,10 +268,323 @@ def selected_form_product_candidate(row):
     return base[:heads[0].start()].rstrip() + ' ' + selected + ' ' + base[heads[0].start():]
 
 
+def brand_prose_designation(row):
+    """Literal initial copular designation, corroborated by the original title; no brand inference."""
+    raw = row['fields']['raw_source']
+    brand, original = row.get('brand'), raw.get('brand_name')
+    description, title = raw.get('description_text'), row.get('title')
+    if not all(isinstance(v, str) and v.strip() for v in (brand, original, description, title)):
+        return None
+    apostrophes = "'’‘ʼ＇"
+    def clean(value):
+        return ''.join("'" if c in apostrophes else c for c in value if c not in '®™').strip().casefold()
+    if not tokens(brand) or clean(brand) != clean(original) or clean(brand) in {'generic', 'unbranded', 'unknown', 'n/a', 'none'}:
+        return None
+    pieces = []
+    for chunk in re.split(r'(\s+)', brand.strip()):
+        if chunk.isspace():
+            pieces.append(r'\s+')
+        else:
+            pieces.append(''.join('['+apostrophes+']' if c in apostrophes else re.escape(c)
+                                  for c in chunk if c not in '®™'))
+    match = re.match(r'^\s*'+''.join(pieces)+r'[®™]?\s+([^\n.!?;:<>]{1,80}?)\s+(?:is|are)\b', description, re.I)
+    if not match:
+        return None
+    designation = match.group(1).strip()
+    words = re.findall(r'[^\W_]+', designation.casefold())
+    blocked = {'our','your','their','my','his','her','it','its','this','that','these','those','we','you','they',
+               'the','a','an','delicious','irresistible','amazing','perfect','premium','best','ultimate',
+               'favorite','favourite','finest','quality','tasty','great','exciting'}
+    if (not 1 <= len(words) <= 8 or any(c.isdigit() for c in designation) or
+        set(words) & blocked or not set(words) <= tokens(title) or
+        not re.fullmatch(r"[^\W\d_][\w\s'’‘ʼ&-]*", designation)):
+        return None
+    return designation
+
+
+SOURCE_BRAND_COLUMNS = ('observation_key', 'source_id', 'brand_name', 'listing_name')
+_SOURCE_BRAND_CACHE = {}
+_SOURCE_BRAND_LOCK = Lock()
+
+
+def _source_brand_key(name):
+    return ' '.join(name.casefold().split())
+
+
+def _positive_source_brand(name):
+    return isinstance(name, str) and bool(name.strip()) and _source_brand_key(name) not in {
+        'generic', 'generic brand', 'unbranded', 'unknown', 'unknown brand', 'n/a', 'na', 'none', 'null'}
+
+
+def _source_brand_index(row, columns=SOURCE_BRAND_COLUMNS):
+    """Hash-verified original source projection only; no selection, labels or predictions are opened."""
+    if tuple(columns) != ('observation_key', 'source_id', 'brand_name', 'listing_name'):
+        raise ValueError('Source brand corroboration permits exactly four original source columns')
+    fields = row['fields']
+    manifest = fields.get('source_manifest') or {}
+    path = Path(fields['source_path']).resolve()
+    if path != Path(manifest['paths']['listings']).resolve():
+        raise ValueError('Original source path differs from frozen source manifest')
+    expected = manifest['sha256']['listings']
+    if not isinstance(expected, str) or not re.fullmatch(r'[a-fA-F0-9]{64}', expected):
+        raise ValueError('Original source checksum missing or malformed')
+    stat = path.stat()
+    key = (str(path), expected, stat.st_size, stat.st_mtime_ns)
+    with _SOURCE_BRAND_LOCK:
+        if key in _SOURCE_BRAND_CACHE:
+            return _SOURCE_BRAND_CACHE[key]
+        corpus = fingerprint(path)
+        if corpus['sha256'] != expected:
+            raise ValueError('Original source corpus checksum mismatch')
+        parquet = pq.ParquetFile(path)
+        if parquet.metadata.num_rows != manifest['rows'] or not 1 <= parquet.metadata.num_rows <= 5000:
+            raise ValueError('Original source corpus row count/scope mismatch')
+        projected = parquet.read(columns=list(columns)).to_pylist()
+        if (path.stat().st_size, path.stat().st_mtime_ns) != (stat.st_size, stat.st_mtime_ns):
+            raise ValueError('Original source corpus changed while projected')
+        by_id, brands, literal_names = {}, {}, set()
+        reported = positive = 0
+        for value in projected:
+            lid = str(value['observation_key'])
+            if lid in by_id:
+                raise ValueError('Duplicate original source observation ID')
+            by_id[lid] = value
+            brand = value['brand_name']
+            if isinstance(brand, str) and brand.strip():
+                reported += 1
+                literal_names.add(brand)
+            if not _positive_source_brand(brand) or not value['source_id']:
+                continue
+            positive += 1
+            claim = {'observation_id': lid, 'source_id': value['source_id'],
+                     'source_reported_brand': brand, 'source_listing_name': value['listing_name']}
+            brands.setdefault(_source_brand_key(brand), []).append(claim)
+        for claims in brands.values():
+            claims.sort(key=lambda c: (c['source_id'], c['observation_id']))
+        result = {'by_id': by_id, 'brands': brands, 'provenance': {'corpus': corpus,
+            'source_rows': len(projected), 'projected_columns': list(columns),
+            'reported_brand_rows': reported, 'distinct_literal_reported_brands': len(literal_names),
+            'positive_claim_rows': positive, 'placeholder_claims_excluded': reported-positive,
+            'status': 'UNVERIFIED_ORIGINAL_SOURCE_CLAIMS_NOT_REGISTRY_OR_ASSIGNMENTS'}}
+        _SOURCE_BRAND_CACHE[key] = result
+        return result
+
+
+def source_brand_corroboration(row):
+    index = _source_brand_index(row)
+    original = index['by_id'].get(row['id'])
+    raw = row['fields']['raw_source']
+    if original is None or (original['source_id'], original['listing_name'], original['brand_name']) != (
+        row.get('source'), row['title'], raw.get('brand_name')):
+        raise ValueError('Frozen target differs from original source projection')
+    queries = {}
+    try:
+        organizations = json.loads(raw.get('organizations_json') or '[]')
+    except (json.JSONDecodeError, TypeError):
+        organizations = []
+    if isinstance(organizations, list):
+        for organization in organizations:
+            if isinstance(organization, dict) and _positive_source_brand(organization.get('name')):
+                name = organization['name']
+                queries.setdefault(_source_brand_key(name), []).append({
+                    'type': 'original_organization_name', 'name': name, 'role': organization.get('role')})
+    for key, claims in index['brands'].items():
+        for name in dict.fromkeys(c['source_reported_brand'] for c in claims):
+            if re.search(r'(?<!\w)'+re.escape(name.casefold())+r'(?!\w)', row['title'].casefold()):
+                queries.setdefault(key, []).append({'type': 'original_title_mention', 'name': name})
+                break
+    matches = []
+    for key, query in sorted(queries.items(), key=lambda item: (
+        not any(q['type'] == 'original_title_mention' for q in item[1]), item[0])):
+        eligible = [c for c in index['brands'].get(key, [])
+                    if c['observation_id'] != row['id'] and c['source_id'] != row.get('source')]
+        if eligible:
+            matches.append({'literal_name': eligible[0]['source_reported_brand'], 'queried_from': query,
+                            'eligible_other_source_claims': len(eligible), 'claims': eligible[:3]})
+        if len(matches) == 3:
+            break
+    return {'status': 'UNVERIFIED_SOURCE_CLAIMS_NOT_IDENTITY_ASSIGNMENT_OR_ALIASES',
+            'target_observation_excluded': True, 'same_source_excluded': True, 'matches': matches}
+
+
+
+SOURCE_IDENTIFIER_COLUMNS = ('observation_key', 'source_id', 'source_listing_id', 'source_variant_id',
+    'listing_level', 'brand_name', 'listing_name', 'variant_name', 'variant_options_json',
+    'identifiers_json', 'organizations_json')
+_SOURCE_IDENTIFIER_CACHE = {}
+_SOURCE_IDENTIFIER_LOCK = Lock()
+
+
+def _identifier_claims(record):
+    """Only exact selected Shopify variants or explicit Walmart standalone products."""
+    try:
+        identifiers = json.loads(record.get('identifiers_json') or '[]')
+        options = json.loads(record.get('variant_options_json') or '[]')
+    except (ValueError, TypeError):
+        return []
+    if (not isinstance(identifiers, list) or not isinstance(options, list)
+            or any(not isinstance(o, dict) or not isinstance(o.get('name'), str)
+                   or not isinstance(o.get('value'), str) for o in options)):
+        return []
+    claims = []
+    source = record.get('source_id')
+    for item in identifiers:
+        if not isinstance(item, dict):
+            continue
+        value, scheme = item.get('value'), item.get('scheme')
+        if not isinstance(scheme, str):
+            continue
+        if not isinstance(value, str) or not re.fullmatch(r'[0-9]{12,14}', value):
+            continue
+        if len(set(value)) == 1:
+            continue
+        if (sum(int(d)*(3 if i % 2 == 0 else 1) for i,d in enumerate(reversed(value[:-1])))
+                + int(value[-1])) % 10:
+            continue
+        if scheme not in ('barcode', 'upc', 'ean', 'gtin', 'gtin12', 'gtin13', 'gtin14'):
+            continue
+        if scheme == 'upc' and len(value) != 12 or scheme == 'ean' and len(value) != 13:
+            continue
+        if scheme.startswith('gtin') and scheme != 'gtin' and len(value) != int(scheme[4:]):
+            continue
+        proof = item.get('evidence') or {}
+        if not isinstance(proof, dict):
+            continue
+        grain = proof.get('input_grain') or {}
+        if not isinstance(grain, dict):
+            continue
+        if proof.get('transform') != 'copy_source_field' or not isinstance(source, str):
+            continue
+        scope = proof.get('input_scope')
+        if not isinstance(scope, str) or not scope.startswith(source+':'):
+            continue
+        selected_variant = (source.startswith('shop') and record.get('listing_level') == 'variant'
+            and isinstance(record.get('source_variant_id'), str)
+            and record['source_variant_id'].startswith('gid://shopify/ProductVariant/')
+            and item.get('level') == 'variant' and grain.get('id') == record['source_variant_id']
+            and proof.get('field') == 'barcode' and proof.get('input_table') == source+'.'+source+'_variants')
+        standalone = (source == 'walmart_us' and record.get('listing_level') == 'standalone'
+            and not record.get('source_variant_id') and not record.get('variant_name') and options == []
+            and item.get('level') == 'listing' and scheme != 'barcode'
+            and str(grain.get('source_product_id')) == str(record.get('source_listing_id'))
+            and bool(record.get('source_listing_id')) and proof.get('field') == 'gtin'
+            and proof.get('input_table') == 'walmart_us_listings.listings')
+        if selected_variant or standalone:
+            claims.append({'comparison_digits': value.zfill(14), 'literal_value': value, 'scheme': scheme,
+                'declared_global_type': scheme != 'barcode', 'level': item.get('level'),
+                'source_listing_id': record.get('source_listing_id'),
+                'source_variant_id': record.get('source_variant_id'), 'evidence': proof})
+    return claims
+
+
+def _identifier_peer_index(row):
+    verified = _source_brand_index(row)['provenance']
+    path = Path(verified['corpus']['path'])
+    stat = path.stat()
+    key = (str(path), verified['corpus']['sha256'], stat.st_size, stat.st_mtime_ns)
+    with _SOURCE_IDENTIFIER_LOCK:
+        if key in _SOURCE_IDENTIFIER_CACHE:
+            return _SOURCE_IDENTIFIER_CACHE[key]
+        projected = pq.ParquetFile(path).read(columns=list(SOURCE_IDENTIFIER_COLUMNS)).to_pylist()
+        if len(projected) != verified['source_rows'] or (path.stat().st_size, path.stat().st_mtime_ns) != (stat.st_size, stat.st_mtime_ns):
+            raise ValueError('Original identifier source changed during projection')
+        by_id, by_digits = {}, {}
+        for record in projected:
+            lid = str(record['observation_key'])
+            if lid in by_id:
+                raise ValueError('Duplicate original identifier source observation')
+            by_id[lid] = record
+            for claim in _identifier_claims(record):
+                by_digits.setdefault(claim['comparison_digits'], []).append((record, claim))
+        result = {'by_id': by_id, 'by_digits': by_digits, 'provenance': {
+            'corpus': verified['corpus'], 'source_rows': len(projected),
+            'projected_columns': list(SOURCE_IDENTIFIER_COLUMNS),
+            'status': 'UNVERIFIED_IDENTIFIER_CORROBORATION_NOT_IDENTITY_OR_ALIASES'}}
+        _SOURCE_IDENTIFIER_CACHE[key] = result
+        return result
+
+
+def _compatible_identifier_peer(target, peer):
+    own_title, peer_title = target.get('listing_name'), peer.get('listing_name')
+    if not isinstance(own_title, str) or not isinstance(peer_title, str):
+        return False
+    own_words = re.findall(r'[^\W_]+', own_title.casefold())
+    other_words = re.findall(r'[^\W_]+', peer_title.casefold())
+    # A literal three-word product phrase is required independently of the identifier.
+    phrases = {tuple(own_words[i:i+3]) for i in range(len(own_words)-2)
+               if all(not w.isdigit() for w in own_words[i:i+3])}
+    if not any(tuple(other_words[i:i+3]) in phrases for i in range(len(other_words)-2)):
+        return False
+    if not _positive_source_brand(peer.get('brand_name')):
+        return False
+    if _positive_source_brand(target.get('brand_name')) and (
+            _source_brand_key(target['brand_name']) != _source_brand_key(peer['brand_name'])):
+        return False
+    # Retain organization roles: a conflicting explicit manufacturer/brand cannot be bypassed.
+    try:
+        organizations = json.loads(target.get('organizations_json') or '[]')
+    except (ValueError, TypeError):
+        return False
+    if not isinstance(organizations, list):
+        return False
+    supporting_claim = (_positive_source_brand(target.get('brand_name'))
+        and _source_brand_key(target['brand_name']) == _source_brand_key(peer['brand_name']))
+    for organization in organizations:
+        if isinstance(organization, dict) and organization.get('role') in ('brand', 'manufacturer', 'maker'):
+            name = organization.get('name')
+            if _positive_source_brand(name) and _source_brand_key(name) != _source_brand_key(peer['brand_name']):
+                return False
+        if isinstance(organization, dict) and organization.get('role') == 'vendor':
+            proof = organization.get('evidence') or {}
+            if not isinstance(proof, dict):
+                continue
+            grain = proof.get('input_grain') or {}
+            if (isinstance(grain, dict) and grain.get('id') == target.get('source_listing_id')
+                    and proof.get('field') == 'vendor'
+                    and proof.get('input_table') == target['source_id']+'.'+target['source_id']+'_official_brand_site_listings'
+                    and isinstance(proof.get('input_scope'), str)
+                    and proof['input_scope'].startswith(target['source_id']+':')
+                    and _positive_source_brand(organization.get('name'))
+                    and _source_brand_key(organization['name']) == _source_brand_key(peer['brand_name'])):
+                supporting_claim = True
+    return supporting_claim
+
+
+def identifier_peer_evidence(row):
+    index = _identifier_peer_index(row)
+    target = index['by_id'].get(row['id'])
+    raw = row['fields']['raw_source']
+    if target is None or any(target.get(key) != raw.get(key) for key in SOURCE_IDENTIFIER_COLUMNS if key != 'observation_key'):
+        raise ValueError('Frozen identifier target differs from original source projection')
+    matches = {}
+    for own_claim in _identifier_claims(target):
+        for peer, peer_claim in index['by_digits'].get(own_claim['comparison_digits'], []):
+            lid = str(peer['observation_key'])
+            if lid == row['id'] or peer['source_id'] == target['source_id']:
+                continue
+            if not (own_claim['declared_global_type'] or peer_claim['declared_global_type']):
+                continue
+            if not _compatible_identifier_peer(target, peer):
+                continue
+            matches[lid] = {'observation_id': lid, 'source_id': peer['source_id'],
+                'source_listing_name': peer['listing_name'], 'source_reported_brand': peer['brand_name'],
+                'target_identifier': own_claim, 'peer_identifier': peer_claim,
+                'limitations': ['UNVERIFIED source claims, not identity equivalence or aliases',
+                    'Generic barcode is not an explicit GTIN declaration',
+                    'Titles and package quantities may differ; no variant-word transfer'],
+                'original_target_organizations_json': target.get('organizations_json'),
+                'package_quantity_literals': {
+                    'target': re.findall(r'\b\d+(?:\.\d+)?\s*(?:oz|ounces?|g|grams?|ml|kg|lb)\b', target['listing_name'], re.I),
+                    'peer': re.findall(r'\b\d+(?:\.\d+)?\s*(?:oz|ounces?|g|grams?|ml|kg|lb)\b', peer['listing_name'], re.I)}}
+    # Refuse an ambiguous identifier rather than selecting a preferred peer.
+    return next(iter(matches.values())) if len(matches) == 1 else None
+
+
 def evidence(row, include_source_urls=False, include_selected_image_alt=False, include_option_role_facts=False,
-             include_selected_coffee_form=False):
+             include_selected_coffee_form=False, include_brand_prose_designation=False, include_source_brand_corroboration=False, include_identifier_peer_evidence=False):
     if any(type(value) is not bool for value in (include_source_urls, include_selected_image_alt,
-                                                include_option_role_facts, include_selected_coffee_form)):
+                                                include_option_role_facts, include_selected_coffee_form, include_brand_prose_designation,
+                                                include_source_brand_corroboration, include_identifier_peer_evidence)):
         raise ValueError('Source evidence options must be booleans')
     raw = row["fields"]["raw_source"]
     result = {"listing_id": row["id"], "source": row["source"], "title": row["title"],
@@ -295,13 +609,26 @@ def evidence(row, include_source_urls=False, include_selected_image_alt=False, i
         candidate = selected_form_product_candidate(row)
         if candidate is not None:
             result['source_selected_form_product_candidate'] = candidate
+    if include_brand_prose_designation:
+        designation = brand_prose_designation(row)
+        if designation is not None:
+            result['source_brand_prose_designation'] = designation
+    if include_source_brand_corroboration:
+        result['source_brand_corroboration'] = json.dumps(source_brand_corroboration(row), ensure_ascii=False)
+    if include_identifier_peer_evidence:
+        peer = identifier_peer_evidence(row)
+        if peer:
+            result['source_identifier_peer_title'] = peer['source_listing_name']
+            result['source_identifier_peer_reported_brand'] = peer['source_reported_brand']
+            result['source_identifier_peer_provenance'] = json.dumps(peer, ensure_ascii=False)
     return result
 
 
 def source_profile(card):
     """Validate the explicitly selected source projection; old cards expose no URLs."""
     profile = card.get('source_profile', {})
-    keys = ('include_listing_url', 'include_selected_image_alt', 'include_option_role_facts', 'include_selected_coffee_form')
+    keys = ('include_listing_url', 'include_selected_image_alt', 'include_option_role_facts', 'include_selected_coffee_form',
+            'include_brand_prose_designation', 'include_source_brand_corroboration', 'include_identifier_peer_evidence')
     if not isinstance(profile, dict) or set(profile)-set(keys):
         raise ValueError('source_profile has an unknown source projection option')
     values = {key: profile.get(key, False) for key in keys}
@@ -315,10 +642,12 @@ def tokens(value):
 
 
 def materialize(answer, source, rules, include_source_urls=False, include_selected_image_alt=False, include_option_role_facts=False,
-                include_selected_coffee_form=False):
+                include_selected_coffee_form=False, include_brand_prose_designation=False, include_source_brand_corroboration=False, include_identifier_peer_evidence=False):
     permitted = evidence(source, include_source_urls=include_source_urls,
                          include_selected_image_alt=include_selected_image_alt, include_option_role_facts=include_option_role_facts,
-                         include_selected_coffee_form=include_selected_coffee_form)
+                         include_selected_coffee_form=include_selected_coffee_form, include_brand_prose_designation=include_brand_prose_designation,
+                         include_source_brand_corroboration=include_source_brand_corroboration,
+                         include_identifier_peer_evidence=include_identifier_peer_evidence)
     path, events, nodes = [], [], []
     expected = ["brand", "model", "variant"]
     if answer.action == "park" and answer.nodes:
@@ -327,13 +656,22 @@ def materialize(answer, source, rules, include_source_urls=False, include_select
         reason = None
         if i >= 3 or part.level != expected[i] or not part.name.strip():
             reason = "invalid_hierarchy"
-        supported, original_naming_supported = set(), set()
+        supported, original_naming_supported, description_supported = set(), set(), set()
         for quote in part.evidence:
             if quote.field == 'source_option_role_facts':
                 reason = 'derived_option_role_facts_not_naming_evidence'
                 continue
             if quote.field == 'source_selected_form_product_candidate':
                 reason = 'derived_form_product_candidate_not_naming_evidence'
+                continue
+            if quote.field == 'source_brand_prose_designation':
+                reason = 'derived_prose_designation_not_naming_evidence'
+                continue
+            if quote.field == 'source_identifier_peer_provenance':
+                reason = 'identifier_peer_provenance_not_naming_evidence'
+                continue
+            if quote.field == 'source_brand_corroboration':
+                reason = 'source_cohort_claims_not_original_naming_evidence'
                 continue
             value = permitted.get(quote.field)
             if not isinstance(value, str) or not quote.quote or quote.quote.casefold() not in value.casefold():
@@ -342,12 +680,23 @@ def materialize(answer, source, rules, include_source_urls=False, include_select
                 supported |= tokens(quote.quote)
                 if quote.field in ('title', 'variant_name', 'variant_options_json'):
                     original_naming_supported |= tokens(quote.quote)
+                if quote.field == 'description_text':
+                    description_supported |= tokens(quote.quote)
         if (not tokens(part.name) or not tokens(part.name) <= supported) and reason not in (
-            'derived_option_role_facts_not_naming_evidence', 'derived_form_product_candidate_not_naming_evidence'):
+            'derived_option_role_facts_not_naming_evidence', 'derived_form_product_candidate_not_naming_evidence',
+            'derived_prose_designation_not_naming_evidence', 'source_cohort_claims_not_original_naming_evidence',
+            'identifier_peer_provenance_not_naming_evidence'):
             reason = "ungrounded_name_tokens"
+        designation = permitted.get('source_brand_prose_designation')
+        if part.level == 'model' and designation and part.name.casefold() == designation.casefold():
+            if not tokens(designation) <= description_supported:
+                reason = 'prose_designation_requires_original_description_citation'
         if part.level == 'variant' and any(q.field == 'source_selected_variant_image_alt' for q in part.evidence):
             if not tokens(part.name) <= original_naming_supported:
                 reason = 'image_only_variant_identity'
+        if part.level == 'variant' and any(q.field.startswith('source_identifier_peer_') for q in part.evidence):
+            if not tokens(part.name) <= original_naming_supported:
+                reason = 'peer_only_variant_identity'
         if re.search(r"\b\d+(?:\.\d+)?\s*(?:oz|ounce|ounces|grams|kg|ml|lb|count|pack|ct)\b", part.name, re.I):
             reason = "size_or_count_identity"
         if reason:
@@ -457,25 +806,32 @@ def normalize_plan(listings, fixed_placements=None, routed_ids=None):
 
 
 def materialize_fixed(value, source, rules, include_source_urls=False, include_selected_image_alt=False, include_option_role_facts=False,
-                      include_selected_coffee_form=False):
+                      include_selected_coffee_form=False, include_brand_prose_designation=False, include_source_brand_corroboration=False, include_identifier_peer_evidence=False):
     """Re-ground deterministic free paths through the same node/rule checks as CLI proposals."""
     parts = []
     permitted = evidence(source, include_source_urls=include_source_urls,
                          include_selected_image_alt=include_selected_image_alt, include_option_role_facts=include_option_role_facts,
-                         include_selected_coffee_form=include_selected_coffee_form)
+                         include_selected_coffee_form=include_selected_coffee_form, include_brand_prose_designation=include_brand_prose_designation,
+                         include_source_brand_corroboration=include_source_brand_corroboration,
+                         include_identifier_peer_evidence=include_identifier_peer_evidence)
     if len(value['path']) > 3:
         raise ValueError('Free placement exceeds Food brand/model/variant hierarchy')
     for level, name in zip(('brand', 'model', 'variant'), value['path']):
         citations = [Citation(field=key, quote=text) for key, text in permitted.items()
                      if isinstance(text, str) and key not in ('listing_id', 'source_option_role_facts',
-                         'source_selected_form_product_candidate') and tokens(name) & tokens(text)]
+                         'source_selected_form_product_candidate', 'source_brand_prose_designation',
+                         'source_brand_corroboration', 'source_identifier_peer_provenance')
+                     and not (level == 'variant' and key.startswith('source_identifier_peer_'))
+                     and tokens(name) & tokens(text)]
         parts.append(Part(level=level, name=name, evidence=citations))
     answer = Proposal(listing_id=source['id'], action='new_variant' if len(parts) == 3 else 'new_product' if len(parts) == 2 else 'place',
                       nodes=parts, confidence=value.get('confidence') or 0,
                       reason=value.get('reason') or 'Source-only deterministic placement')
     path, nodes, findings = materialize(answer, source, rules, include_source_urls=include_source_urls,
                                       include_selected_image_alt=include_selected_image_alt, include_option_role_facts=include_option_role_facts,
-                                      include_selected_coffee_form=include_selected_coffee_form)
+                                      include_selected_coffee_form=include_selected_coffee_form, include_brand_prose_designation=include_brand_prose_designation,
+                                      include_source_brand_corroboration=include_source_brand_corroboration,
+                         include_identifier_peer_evidence=include_identifier_peer_evidence)
     if path != [s.strip() for s in value['path']]:
         raise ValueError(f"Deterministic free placement failed source grounding/rules for {source['id']}")
     return answer, path, nodes, findings
@@ -511,9 +867,15 @@ def execute(root, name, card=None, previous=None, *, fixed_placements=None, rout
     include_selected_image_alt = profile['include_selected_image_alt']
     include_option_role_facts = profile['include_option_role_facts']
     include_selected_coffee_form = profile['include_selected_coffee_form']
+    include_brand_prose_designation = profile['include_brand_prose_designation']
+    include_source_brand_corroboration = profile['include_source_brand_corroboration']
+    include_identifier_peer_evidence = profile['include_identifier_peer_evidence']
     evidence_options = {'include_source_urls': include_source_urls, 'include_selected_image_alt': include_selected_image_alt,
                         'include_option_role_facts': include_option_role_facts,
-                        'include_selected_coffee_form': include_selected_coffee_form}
+                        'include_selected_coffee_form': include_selected_coffee_form,
+                        'include_brand_prose_designation': include_brand_prose_designation,
+                        'include_source_brand_corroboration': include_source_brand_corroboration,
+                        'include_identifier_peer_evidence': include_identifier_peer_evidence}
     rules = rules_for("food", ("consumer_packaged",))
     fixed_results = {r['id']: materialize_fixed(fixed[r['id']], r, rules, **evidence_options)
                      for r in listings if r['id'] in fixed}
@@ -534,6 +896,8 @@ def execute(root, name, card=None, previous=None, *, fixed_placements=None, rout
                     routed_rows=len(routed), free_rows=len(fixed), routing_config=fingerprint(folder/'routing-config.json'),
                     tools_enabled=bool(placer_tools), tool_turn_limit=4 if placer_tools else 1,
                     source_profile=profile,
+                    identifier_peer_corpus=_identifier_peer_index(listings[0])['provenance'] if include_identifier_peer_evidence else None,
+                    source_brand_corpus=_source_brand_index(listings[0])['provenance'] if include_source_brand_corroboration else None,
                     selected_image_alt_provenance={'rows_with_selected_alt': sum(bool(a['selected']) for a in image_audits),
                         'selected_images': sum(len(a['selected']) for a in image_audits),
                         'rejected_counts': dict(image_rejections)},

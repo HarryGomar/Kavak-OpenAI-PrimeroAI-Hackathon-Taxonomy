@@ -29,7 +29,10 @@ def scored(folder, partition=None):
 
 
 def run(root, fallback, name, setup, *, source_urls_candidate=False, selected_image_alt_candidate=False,
-        option_role_facts_candidate=False, selected_coffee_form_candidate=False):
+        option_role_facts_candidate=False, selected_coffee_form_candidate=False, brand_prose_designation_candidate=False,
+        source_brand_corroboration_candidate=False, original_source_cohorts_candidate=False,
+        identifier_peer_evidence_candidate=False,
+        candidate_config_override=None):
     """One retained full system, component trials, and an actual integrated pipeline."""
     import shutil
     from domains.food import system_state
@@ -88,6 +91,12 @@ def run(root, fallback, name, setup, *, source_urls_candidate=False, selected_im
         candidate_profile['include_option_role_facts'] = True
     if selected_coffee_form_candidate:
         candidate_profile['include_selected_coffee_form'] = True
+    if brand_prose_designation_candidate:
+        candidate_profile['include_brand_prose_designation'] = True
+    if source_brand_corroboration_candidate:
+        candidate_profile['include_source_brand_corroboration'] = True
+    if identifier_peer_evidence_candidate:
+        candidate_profile['include_identifier_peer_evidence'] = True
     source_changed = candidate_profile != retained_profile
     source_only_card = card_path
     if source_changed:
@@ -108,18 +117,16 @@ def run(root, fallback, name, setup, *, source_urls_candidate=False, selected_im
                 candidate_config = trial/'candidate-config.yaml'
                 config_changed = True
         elif proposal['kind'] == 'agentic_rule':
+            from domains.food.placer_edits import build_candidate_card
+            import yaml
             payload = json.loads(proposal['payload_json'])
-            if not isinstance(payload.get('text'), str) or not payload['text'].strip():
-                raise ValueError('Placer instruction proposal requires concrete text')
             gold_names = {s['label'].casefold() for r in read(fallback/'feedback-diagnosis.json')
                           for s in r['gold_original'][0]['pedia_full_path'] if len(s['label']) >= 5}
-            if any(n in payload['text'].casefold() for n in gold_names):
-                raise ValueError('Specific gold name in proposed placer instruction')
-            card = read(card_path)
-            card.update(hypothesis=proposal['description'], change_id=proposal['id'],
-                        instruction=card['instruction']+'\nPLACER RULE CANDIDATE:\n'+payload['text'])
+            owner = yaml.safe_load(Path(__file__).with_name('pack.yaml').read_text(encoding='utf-8'))['conventions']
+            card, edit_receipt = build_candidate_card(read(card_path), proposal, gold_names, owner)
             candidate_card = out/'candidate-placer-card.json'
             write(candidate_card, card)
+            write(out/'placer-edit-receipt.json', edit_receipt)
             if payload.get('tool_report'):
                 report_path = Path(payload['tool_report'])
                 load_tool(report_path)  # qualification/source-hash check before candidate eligibility
@@ -128,7 +135,36 @@ def run(root, fallback, name, setup, *, source_urls_candidate=False, selected_im
         else:
             diagnostics = {'status': 'implementation_or_evidence_needed', 'proposal': proposal,
                            'reason': 'No invented registry, check, or policy capability', 'fresh_model_calls': 0}
+    if candidate_config_override is not None:
+        if config_changed:
+            raise ValueError('Explicit config and model config require separate component trials; refusing to silently overwrite either')
+        candidate_config = out/'explicit-config-candidate.yaml'
+        if not candidate_config.exists():
+            shutil.copyfile(candidate_config_override, candidate_config)
+        elif fingerprint(candidate_config)['sha256'] != fingerprint(Path(candidate_config_override))['sha256']:
+            raise ValueError('Explicit candidate config changed during this cycle')
+        config_changed = True
+        write(out/'explicit-config-proposal.json', {'author':'code_diagnosis',
+            'input':fingerprint(Path(candidate_config_override)), 'candidate':fingerprint(candidate_config),
+            'production_admission':False, 'retained_config_modified':False})
     proposal = primary_proposal
+    cohort_changed = False
+    cohort_only_config = None
+    full_config = candidate_config
+    if original_source_cohorts_candidate:
+        import yaml
+        retained_scope = yaml.safe_load(config.read_text(encoding='utf-8')).get('cohort_scope', 'selected') if config else None
+        cohort_changed = retained_scope != 'original_source'
+        if cohort_changed:
+            cohort_only_config = executable_changes.materialize_cohort_config(
+                out/'original-source-cohorts.yaml', base_config=config, cohort_scope='original_source')
+            full_config = (executable_changes.materialize_cohort_config(
+                out/'integrated-source-cohorts.yaml', base_config=candidate_config, cohort_scope='original_source')
+                if config_changed else cohort_only_config)
+            write(out/'cohort-proposal.json', {'author':'code_diagnosis',
+                'kind':'executable_source_cohort_scope', 'before':retained_scope,
+                'after':'original_source', 'scored_membership':'unchanged frozen sample',
+                'gold_registry_used':False, 'production_admission':False})
     integrated_card = candidate_card
     if source_changed:
         integrated_card = out/'integrated-placer-card.json'
@@ -181,12 +217,14 @@ def run(root, fallback, name, setup, *, source_urls_candidate=False, selected_im
             outcomes['source_extraction_only'] = evaluate_pipeline('source', config, source_only_card, tool_reports)
         if config_changed:
             outcomes['configuration_only'] = evaluate_pipeline('configuration', candidate_config, card_path, tool_reports)
+        if cohort_changed:
+            outcomes['cohort_only'] = evaluate_pipeline('cohort', cohort_only_config, card_path, tool_reports)
         if card_changed:
             # If this is the only pipeline change, this actual measurement IS the integrated arm.
-            label = 'integrated' if not config_changed and not source_changed else 'placer'
+            label = 'integrated' if not config_changed and not source_changed and not cohort_changed else 'placer'
             outcomes['placer_only'] = evaluate_pipeline(label, config, candidate_card, candidate_tools)
-        if config_changed or card_changed or source_changed:
-            outcomes['integrated'] = evaluate_pipeline('integrated', candidate_config, integrated_card, candidate_tools)
+        if config_changed or card_changed or source_changed or cohort_changed:
+            outcomes['integrated'] = evaluate_pipeline('integrated', full_config, integrated_card, candidate_tools)
         return outcomes
     validator_folder = root/(name+'-validator-candidate')
     def validator_comparison():
@@ -278,7 +316,17 @@ if __name__ == '__main__':
     ap.add_argument('--selected-image-alt-candidate', action='store_true', help='isolate source-provenance-matched selected image ALT evidence')
     ap.add_argument('--option-role-facts-candidate', action='store_true', help='isolate conservative source option label/value role facts; original citations required')
     ap.add_argument('--selected-coffee-form-candidate', action='store_true', help='test explicit source coffee-head/processing-form composition; original citations required')
+    ap.add_argument('--brand-prose-designation-candidate', action='store_true', help='test initial original-brand copular product designation; original description citations required')
+    ap.add_argument('--source-brand-corroboration-candidate', action='store_true', help='test bounded other-source original reported-brand claims; no identity assignments')
+    ap.add_argument('--identifier-peer-evidence-candidate', action='store_true', help='test unverified exact-grain identifier peer source quotes; no variant transfer')
+    ap.add_argument('--original-source-cohorts-candidate', action='store_true', help='train executable lattice on original source corpus; score the same frozen sample')
+    ap.add_argument('--candidate-config', type=Path, help='evaluate one explicitly qualified executable config without overwriting model-proposed config')
     a = ap.parse_args()
     run(a.root, a.fallback, a.name, a.setup, source_urls_candidate=a.source_urls_candidate,
         selected_image_alt_candidate=a.selected_image_alt_candidate, option_role_facts_candidate=a.option_role_facts_candidate,
-        selected_coffee_form_candidate=a.selected_coffee_form_candidate)
+        selected_coffee_form_candidate=a.selected_coffee_form_candidate,
+        brand_prose_designation_candidate=a.brand_prose_designation_candidate,
+        source_brand_corroboration_candidate=a.source_brand_corroboration_candidate,
+        original_source_cohorts_candidate=a.original_source_cohorts_candidate,
+        identifier_peer_evidence_candidate=a.identifier_peer_evidence_candidate,
+        candidate_config_override=a.candidate_config)

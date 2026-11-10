@@ -39,4 +39,37 @@ def packaging_only_identity(listing, node, tax):
     return 'Container-only identity discards a separately named original-title food product; source explicitly describes external peg/resealable packaging.'
 
 
-CHECKS = {'packaging_only_identity': (packaging_only_identity, 'abstain')}
+def source_flavour_omitted(listing, node, tax):
+    """Request source-evidence investigation when a literal original flavour is omitted.
+
+    This is not a wrong-path verdict or an instruction to create a variant: a
+    flavour may belong in the model, already be represented by an alias, or
+    conflict with the title. Title priority remains an agent evidence question.
+    Apply after routing/brand settlement as well as to product candidates.
+    """
+    if listing.domain != 'food' or node.domain != 'food' or not node.path:
+        return None
+    raw = listing.fields.get('raw_source')
+    value = raw.get('flavor_text') if isinstance(raw, dict) else None
+    if not isinstance(value, str) or not value.strip():
+        return None
+    value = value.strip()
+    if ('\n' in value or any(c in value for c in '<>{}[]') or any(c.isdigit() for c in value) or
+        ' '.join(value.casefold().split()) in {'default', 'default title', 'unspecified', 'unknown',
+                                             'n/a', 'none', 'null', 'not applicable', 'select flavor', 'choose flavor'}):
+        return None
+    flavour = set(tokens(value))
+    quantities = {'pack', 'packs', 'count', 'ct', 'oz', 'ounce', 'ounces', 'g', 'gram', 'grams',
+                  'kg', 'ml', 'l', 'lb', 'lbs', 'serving', 'servings'}
+    if not flavour or flavour & quantities:
+        return None
+    missing = flavour - set(tokens(' '.join(node.path)))
+    if not missing:
+        return None
+    return (f'Original flavour field {value!r} has literal words omitted from the proposed identity path; '
+            'request agent_evidence investigation. Do not force a variant, rename a product, or override '
+            'conflicting title evidence; aliases and source-field disagreement may explain the omission.')
+
+
+CHECKS = {'packaging_only_identity': (packaging_only_identity, 'abstain'),
+          'source_flavour_omitted': (source_flavour_omitted, 'abstain')}

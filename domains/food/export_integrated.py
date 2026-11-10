@@ -16,7 +16,7 @@ from taxo.codex_cli import fingerprint
 
 METRICS = ('rates_denominator', 'identity_path_exact', 'strict_full_path_exact',
            'brand_correct', 'abstentions_all_frozen', 'classes')
-COMPONENTS = {'source_extraction_only', 'configuration_only', 'placer_only', 'integrated'}
+COMPONENTS = {'source_extraction_only', 'configuration_only', 'cohort_only', 'placer_only', 'integrated'}
 KINDS = {'agentic_rule', 'vocab', 'route', 'code_rule', 'new_check', 'registry',
          'convention_question', 'no_change'}
 
@@ -41,7 +41,7 @@ def numeric_tree(value):
 
 def profile(card):
     value = read(card).get('source_profile') or {}
-    return {k: bool(value.get(k, False)) for k in ('include_listing_url', 'include_selected_image_alt', 'include_option_role_facts', 'include_selected_coffee_form')}
+    return {k: bool(value.get(k, False)) for k in ('include_listing_url', 'include_selected_image_alt', 'include_option_role_facts', 'include_selected_coffee_form', 'include_brand_prose_designation', 'include_source_brand_corroboration', 'include_identifier_peer_evidence')}
 
 
 def transport_stats(folder):
@@ -73,6 +73,12 @@ def export_loop(root, folder):
             'source_profile': profile(measured/'hypothesis.json'),
             'elapsed_seconds': manifest.get('elapsed_seconds'),
             'artifact': fingerprint(measured/'manifest.json')}
+        label = measured.name.removeprefix(folder.name+'-').removesuffix('-pipeline')
+        plan_path = folder/(label+'-source-plan')/'plan.json'
+        if plan_path.exists():
+            plan = read(plan_path)
+            if isinstance(plan.get('cohort'), dict):
+                comparisons[name]['executable_cohort'] = plan['cohort']
     observed, durations = {}, {}
     role_folders = {'validator_current': root/(folder.name+'-validator-current'),
                     'validator_candidate': root/(folder.name+'-validator-candidate'),
@@ -122,6 +128,35 @@ def export_loop(root, folder):
         'exact_request_reused_rows':report.get('exact_request_reused_rows',0),
         'offline_cached_fallback_answers_in_final_evaluations':report.get('offline_cached_fallback_answers_in_final_evaluations',0),
         'production_admission': False, 'artifact': fingerprint(report_path)}
+    tool_counts = Counter()
+    for path in role_folders['validator_candidate'].glob('batch-*/tool-transcript.json'):
+        for call in read(path):
+            name = call.get('request', {}).get('name', '')
+            if re.fullmatch(r'[A-Za-z_][A-Za-z_0-9]{0,80}', name):
+                tool_counts[name] += 1
+    entry['actual_candidate_validator_tool_calls'] = dict(tool_counts)
+    tool_trial = role_folders['proposer'].parent/'tool-trial/report.json'
+    if tool_trial.exists():
+        trial = read(tool_trial)
+        entry['validator_python_tool_trial'] = {k: trial.get(k) for k in
+            ('accepted', 'tool_name', 'source_sha256', 'semantic_probe_status', 'semantic_review_required')}
+        entry['validator_python_tool_trial']['artifact'] = fingerprint(tool_trial)
+    curations = []
+    for path in sorted(folder.glob('rule-curation-*/report.json')):
+        result = read(path)
+        if result.get('status') != 'diagnostic_rule_curation_completed':
+            continue
+        curations.append({'attempt':path.parent.name, 'independent_measurement':False,
+            'check':result['check'], 'counts':result['counts'],
+            'native_executed':result['native_curator']['executed'],
+            'native_admitted':result['native_curator']['admitted'],
+            'new_model_calls':result['new_model_calls'],
+            'production_admission':False, 'artifact':fingerprint(path)})
+    if curations:
+        latest = {result['check']: result['attempt'] for result in curations}
+        for result in curations:
+            result['superseded'] = result['attempt'] != latest[result['check']]
+        entry['qualified_rule_curation'] = curations
     if (folder/'artifact-index.json').exists():
         entry['artifact_index'] = fingerprint(folder/'artifact-index.json')
     if before_state_path.exists():

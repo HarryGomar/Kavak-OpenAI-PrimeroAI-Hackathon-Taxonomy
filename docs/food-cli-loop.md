@@ -23,6 +23,19 @@ measurement. Unsupported checks remain implementation proposals until code, decl
 positive/negative cases and actual evaluation exist. Candidate Python tools are tested
 in an isolated worker and made available only to the candidate arm.
 
+Placer proposals can append a general instruction or replace the complete instruction;
+both execute the actual placer and preserve source profiles and qualified tools. The
+optional `--original-source-cohorts-candidate` trains the executable lattice on the
+hash-verified original source corpus, without gold-derived brand registries, while
+scoring only the unchanged frozen sample. Broader training does not increase the
+scored denominator. Source-only brand corroboration supplies unverified original
+reported claims and never assigns an identity automatically.
+`--identifier-peer-evidence-candidate` adds bounded original-source peer quotes only
+after checksum, source-grain, organization, title-overlap and ambiguity checks. Generic
+barcodes and differing package quantities remain explicit limitations. Peer provenance
+cannot name nodes, and peer-only words cannot name the target variant. This optional
+context requires its own measured comparison; qualification alone is not improvement.
+
 For no-tool, single-row placer calls, an unchanged CLI request may reuse its prior raw
 structured answer only after exact prompt/schema/pin/executable and completion checks.
 Receipts identify the prior inference; the current grounding, rules and scorer run
@@ -66,6 +79,12 @@ vocabulary and question proposals. A check without actual fire/quiet qualificati
 and gold shadow counts cannot be admitted. Diagnosis runs within the broad proposer;
 there is no separate analyst call in this entry point. Older rounds without these
 postmeasurement stages remain identified by their original artifacts.
+For an explicitly qualified registered-check experiment, `curate_rule_trial` replays
+saved positive/negative qualification, verifies the implementation hash, derives
+feedback-only shadow counts, and calls the unchanged native curator in a separate
+diagnostic memory directory. Repeated curation attempts share the same measurement;
+their counts must not be added together. This diagnostic cannot override rejection
+of the measured full system or publish an active production rule.
 `--resume` preserves completed actual validation calls within the same interrupted
 cycle instead of repeating or replacing that stage with historical judgments.
 

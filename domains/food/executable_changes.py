@@ -72,13 +72,77 @@ def contract():
               'those replays are labeled diagnostics, are not final integrated measurements, and prove no realized call or dollar savings.')
     if stale not in propose.LANGUAGE:
         raise ValueError('Pinned port language changed; review the Food execution-contract adaptation')
-    return {'schema': copy.deepcopy(propose.SCHEMA), 'language': propose.LANGUAGE.replace(stale, actual),
+    cohort_language = ('\nCONFIGURATION COHORT SCOPE: Isolated executable YAML supports a top-level '
+        'cohort_scope=selected (default) or original_source. original_source counts source-only cohorts '
+        'from the hash-verified original corpus, using only observation_key/source_id/brand_name/listing_name '
+        'for nonselected observations. Only the selected observations are emitted and scored. '
+        'This is a top-level pipeline dataflow option, not a vocabulary settings key; it is preserved '
+        'when subsequent vocabulary/rule candidates are evaluated. No gold registry or extra scored labels are imported.')
+    return {'schema': copy.deepcopy(propose.SCHEMA), 'language': propose.LANGUAGE.replace(stale, actual)+cohort_language,
             'source': json.loads(Path(__file__).with_name('ported').joinpath('provenance.json').read_text(encoding='utf-8'))}
 
 
 def check_catalog():
     """A fresh view of checks actually registered in this private Food executor."""
     return dict(_check_proxy.CHECKS)
+
+
+def _cohort_scope(config):
+    scope = (config or {}).get('cohort_scope', 'selected')
+    if scope not in ('selected', 'original_source'):
+        raise ValueError('cohort_scope must be selected or original_source')
+    return scope
+
+
+def _cohort_source(selected, scope):
+    """Expand count context from the already hash-verified four-column index."""
+    if scope == 'selected':
+        return selected, {'cohort_scope': scope, 'source_rows': len(selected),
+                          'selected_output_rows': len(selected), 'scoring_target_rows': len(selected),
+                          'gold_reads': 0, 'nonselected_columns': []}
+    if scope != 'original_source':
+        raise ValueError('Unknown cohort scope')
+    index = paths._source_brand_index(selected[0])
+    rich = {r['id']: r for r in selected}
+    for row in selected:
+        original = index['by_id'].get(row['id'])
+        raw = row['fields']['raw_source']
+        if original is None or (original['source_id'], original['listing_name'], original['brand_name']) != (
+                row.get('source'), row['title'], raw.get('brand_name')) or row.get('brand') != original['brand_name']:
+            raise ValueError('Selected rich row differs from original four-column source')
+        if Path(row['fields']['source_path']).resolve() != Path(index['provenance']['corpus']['path']).resolve():
+            raise ValueError('Selected rows do not share the same original source corpus')
+        if row['fields']['source_manifest']['sha256']['listings'] != index['provenance']['corpus']['sha256']:
+            raise ValueError('Selected original source manifest checksum differs')
+    cohort = []
+    for lid, original in index['by_id'].items():
+        if lid in rich:
+            cohort.append(rich[lid])
+        else:
+            cohort.append({'id': lid, 'domain': 'food', 'title': original['listing_name'] or '',
+                           'source': original['source_id'], 'brand': original['brand_name'],
+                           'fields': {'raw_source': dict(original)}})
+    return cohort, {'cohort_scope': scope, 'source_rows': len(cohort),
+                    'selected_output_rows': len(selected), 'scoring_target_rows': len(selected),
+                    'gold_reads': 0, 'nonselected_columns': list(paths.SOURCE_BRAND_COLUMNS),
+                    'original_source': index['provenance'],
+                    'registry_authority': 'Unverified raw claims and citation-validated selected warm brand nodes; no gold registry'}
+
+
+def materialize_cohort_config(output, *, base_config=None, cohort_scope='original_source'):
+    """Write an isolated candidate config; never edit retained/shared defaults."""
+    output = Path(output)
+    if base_config is None:
+        config = {'vocab': yaml.safe_load((ROOT/'domains/food/vocab.yaml').read_text(encoding='utf-8')) or {},
+                  'rules': [asdict(r) for r in evaluator.load(ROOT/'rules/food', ROOT/'rules/global')]}
+    else:
+        config = copy.deepcopy(yaml.safe_load(Path(base_config).read_text(encoding='utf-8')))
+    config['cohort_scope'] = cohort_scope
+    _cohort_scope(config)
+    output.parent.mkdir(parents=True, exist_ok=True)
+    with output.open('x', encoding='utf-8') as stream:
+        stream.write('# Isolated source-cohort candidate; production_admission=false\n'+yaml.safe_dump(config, sort_keys=False))
+    return output
 
 
 def _normalise(proposal):
@@ -122,16 +186,18 @@ def _normalise(proposal):
     return base | {'patch': yaml.safe_dump(patch, sort_keys=False)}
 
 
-def _registry(source, baseline, rules):
+def _registry(source, baseline, rules, *, exclude_placeholders=False):
     names, origins = {}, []
     by_id = {r['id']: r for r in source}
     def add(name, origin):
+        if exclude_placeholders and not paths._positive_source_brand(name):
+            return
         key = '_'.join(vocab.tokens(name))
         if key:
             names.setdefault(key, name)
             origins.append({'registry_key': key, 'name': name, **origin})
     for row in source:
-        if row.get('brand'):
+        if row.get('brand') and (not exclude_placeholders or row.get('source')):
             add(row['brand'], {'kind': 'unverified_original_brand_field', 'source_id': row['id']})
     for node in paths.rows(baseline/'nodes.jsonl'):
         if node.get('level') != 'brand' or node.get('path') != [node.get('name')]:
@@ -149,16 +215,62 @@ def _registry(source, baseline, rules):
     return names, origins
 
 
-def _runtime(source, registry, doc, rules, cache, folder):
+def _final_free_rules(rules):
+    """Only the explicitly qualified singleton omission check has a final hook."""
+    result = []
+    for rule in rules:
+        if rule.status != 'active' or rule.stage != 'place':
+            continue
+        matches = [c for c in rule.when if isinstance(c, dict) and c.get('check') == 'source_flavour_omitted']
+        if not matches:
+            continue
+        if (len(rule.when) != 1 or set(matches[0])-{'check', 'params'} or
+            matches[0].get('params', {}) != {} or
+            not isinstance(rule.then, dict) or set(rule.then) != {'veto', 'route'} or
+            rule.then.get('veto') is not True or rule.then.get('route') not in propose.AGENT_ROUTES):
+            raise ValueError('Final source_flavour_omitted hook requires one exact check with empty params and veto/agent-route action')
+        result.append(rule)
+    return result
+
+
+def _free_decision(item, source, final_rules):
+    """One source-only final free/routed decision shared by both execution paths."""
+    unsupported_family = len(item.path) > 3 or (len(item.path) == 3 and '+variant' not in item.reason)
+    permitted = paths.evidence(source)
+    source_words = set().union(*(paths.tokens(v) for v in permitted.values() if isinstance(v, str)))
+    path_words = set().union(*(paths.tokens(n) for n in item.path))
+    ungrounded = bool(path_words-source_words)
+    needs_agent = item.route in propose.AGENT_ROUTES or not item.path or unsupported_family or ungrounded
+    route = item.route or ('agent_evidence' if needs_agent else 'deterministic')
+    reason = ('ungrounded_free_name' if ungrounded else
+              'unsupported_food_family_grouping' if unsupported_family else item.reason)
+    hook = None
+    if not needs_agent and final_rules:
+        node = Node(id='final-free-context', domain='food', name=item.path[-1], path=list(item.path),
+                    level=('brand', 'model', 'variant')[len(item.path)-1])
+        listing = Listing.model_validate(source)
+        for rule in final_rules:
+            finding = _run_check('source_flavour_omitted', listing, node, {}, 'abstain')
+            if finding is not None:
+                needs_agent, route, reason = True, 'agent_evidence', 'final_free_source_flavour_omitted'
+                hook = {'rule': rule.id, 'check': finding.check, 'detail': finding.detail}
+                break
+    return {'routed': needs_agent, 'route': route, 'reason': reason, 'final_free_hook': hook}
+
+
+def _runtime(source, registry, doc, rules, cache, folder, *, cohort=None, cohort_provenance=None):
     folder.mkdir()
     vpath = folder/'vocab.yaml'
     vpath.write_text('# Isolated development configuration; not production admission.\n'+yaml.safe_dump(doc, sort_keys=False), encoding='utf-8')
     names = parse.Brands(registry, tuple(doc.get('brand_drop_suffixes') or ()),
                         shop_brand=bool((doc.get('settings') or {}).get('shop_brand')))
+    context = source if cohort is None else cohort
+    selected_ids = {r['id'] for r in source}
     items = [pipeline.Item(id=r['id'], title=r['title'], source=r.get('source') or '',
                 brand_field=r.get('brand'), maker_field=r['fields']['raw_source'].get('manufacturer_name'),
-                url=r['fields']['raw_source'].get('url'), variant_field=r['fields']['raw_source'].get('variant_name')) for r in source]
-    source_by_id = {r['id']: r for r in source}
+                url=r['fields']['raw_source'].get('url'), variant_field=r['fields']['raw_source'].get('variant_name')) for r in context]
+    source_by_id = {r['id']: r for r in context}
+    final_rules = _final_free_rules(rules)
     context_token = _SOURCE_ROWS.set(source_by_id)
     try:
         stats = pipeline.run(items, names, vocab.load(vpath), rules)
@@ -167,29 +279,33 @@ def _runtime(source, registry, doc, rules, cache, folder):
     predictions, traces = [], []
     cached = routed = 0
     for item in items:
-        wants_agent = item.route in propose.AGENT_ROUTES
+        if item.id not in selected_ids:
+            continue
+        decision = _free_decision(item, source_by_id[item.id], final_rules)
+        wants_agent = decision['routed']
         routed += wants_agent
         if wants_agent:
             # Same already source-grounded fallback answer in both arms. This is
             # offline replay, not an actual fresh call or realized cost saving.
             pred = copy.deepcopy(cache[item.id])
-            pred.update(route=item.route, execution_status='cached_source_only_fallback',
+            pred.update(route=decision['route'], execution_status='cached_source_only_fallback',
                         by='cached_retained_placer')
             cached += 1
         else:
-            pred = {'id': item.id, 'path': list(item.path), 'route': item.route or 'deterministic',
+            pred = {'id': item.id, 'path': list(item.path), 'route': decision['route'],
                     'by': 'food_port_deterministic', 'node_id': None, 'confidence': None,
-                    'reason': item.reason, 'status': 'unadmitted_experiment', 'execution_status': 'offline_free_pipeline'}
+                    'reason': decision['reason'], 'status': 'unadmitted_experiment', 'execution_status': 'offline_free_pipeline'}
         predictions.append(pred)
         traces.append({'id': item.id, 'free_path': item.path, 'brand_how': item.brand_how,
-                       'step': item.step, 'reason': item.reason, 'rule': item.rule,
-                       'route': item.route, 'cluster': item.cluster, 'cluster_n': item.cluster_n,
+                       'step': item.step, 'reason': decision['reason'], 'rule': item.rule,
+                       'route': decision['route'], 'cluster': item.cluster, 'cluster_n': item.cluster_n,
+                       'final_free_hook': decision['final_free_hook'],
                        'shadow': item.shadow, 'cached_fallback': wants_agent})
     paths.dump_rows(folder/'placements.jsonl', predictions)
     paths.dump_rows(folder/'rule-events.jsonl', traces)
     return {'fresh_model_calls': 0, 'cached_fallback_rows': cached,
             'counterfactual_agent_routes': routed, 'source_rows': len(source), 'lattice': stats,
-            'counterfactual_agent_share': routed/len(source)}
+            'counterfactual_agent_share': routed/len(source), 'cohort': cohort_provenance or {'cohort_scope': 'selected', 'source_rows': len(source)}}
 
 
 def build_plan(root, fallback, config_path, output):
@@ -216,7 +332,14 @@ def build_plan(root, fallback, config_path, output):
     warm = paths.read(fallback/'manifest.json')
     if warm['status'] != 'completed' or warm['source']['sha256'] != protocol['source']['sha256']:
         raise ValueError('Warm brand memory must belong to this exact completed source run')
-    registry, origins = _registry(source, fallback, rules_for('food', ('consumer_packaged',)))
+    config = None if config_path is None else yaml.safe_load(Path(config_path).read_text(encoding='utf-8'))
+    if config is not None and (not isinstance(config, dict) or not isinstance(config.get('vocab'), dict)
+                               or not isinstance(config.get('rules'), list)):
+        raise ValueError('Candidate config requires vocabulary mapping and executable rules list')
+    scope = _cohort_scope(config)
+    cohort, cohort_provenance = _cohort_source(source, scope)
+    registry, origins = _registry(cohort, fallback, rules_for('food', ('consumer_packaged',)),
+                                  exclude_placeholders=scope == 'original_source')
     write(output/'source-only-registry.json', {'names': registry, 'provenance': origins,
           'authority': 'Unverified original fields and citation-validated brand nodes; no model placement answers or gold'})
     free, routed, trace, nodes = [], [], [], {}
@@ -226,10 +349,8 @@ def build_plan(root, fallback, config_path, output):
         stats = {}
     else:
         config_path = Path(config_path)
-        config = yaml.safe_load(config_path.read_text(encoding='utf-8'))
-        if not isinstance(config, dict) or not isinstance(config.get('vocab'), dict) or not isinstance(config.get('rules'), list):
-            raise ValueError('Candidate config requires vocabulary mapping and executable rules list')
         rules = [evaluator.Rule(**r) for r in config['rules']]
+        final_rules = _final_free_rules(rules)
         for rule in rules:
             if rule.stage not in propose.FACTS or rule.status not in ('active', 'shadow', 'proposal', 'retired'):
                 raise ValueError('Unsupported executable rule stage or status')
@@ -239,29 +360,23 @@ def build_plan(root, fallback, config_path, output):
                             shop_brand=bool((config['vocab'].get('settings') or {}).get('shop_brand')))
         items = [pipeline.Item(id=r['id'], title=r['title'], source=r.get('source') or '',
                     brand_field=r.get('brand'), maker_field=r['fields']['raw_source'].get('manufacturer_name'),
-                    url=r['fields']['raw_source'].get('url'), variant_field=r['fields']['raw_source'].get('variant_name')) for r in source]
-        source_by_id = {r['id']: r for r in source}
+                    url=r['fields']['raw_source'].get('url'), variant_field=r['fields']['raw_source'].get('variant_name')) for r in cohort]
+        source_by_id = {r['id']: r for r in cohort}
+        selected_ids = {r['id'] for r in source}
         token = _SOURCE_ROWS.set(source_by_id)
         try:
             stats = pipeline.run(items, names, vocab.load(vpath), rules)
         finally:
             _SOURCE_ROWS.reset(token)
         for item in items:
-            # The actual Food placer has brand/model/variant slots. An optional
-            # port family grouping needs actual resolution, not relabeling it as
-            # a variant to make the path fit.
-            unsupported_family = len(item.path) > 3 or (len(item.path) == 3 and '+variant' not in item.reason)
-            permitted = paths.evidence(source_by_id[item.id])
-            source_words = set().union(*(paths.tokens(v) for v in permitted.values() if isinstance(v, str)))
-            path_words = set().union(*(paths.tokens(n) for n in item.path))
-            ungrounded = bool(path_words-source_words)
-            needs_agent = item.route in propose.AGENT_ROUTES or not item.path or unsupported_family or ungrounded
-            route = item.route or ('agent_evidence' if needs_agent else 'deterministic')
-            reason = ('ungrounded_free_name' if ungrounded else
-                      'unsupported_food_family_grouping' if unsupported_family else item.reason)
+            if item.id not in selected_ids:
+                continue
+            decision = _free_decision(item, source_by_id[item.id], final_rules)
+            needs_agent, route, reason = decision['routed'], decision['route'], decision['reason']
             trace.append({'id': item.id, 'free_candidate_path': item.path, 'route': route,
                           'reason': reason, 'step': item.step, 'rule': item.rule,
-                          'cluster_n': item.cluster_n, 'routed': needs_agent})
+                          'cluster_n': item.cluster_n, 'routed': needs_agent,
+                          'final_free_hook': decision['final_free_hook']})
             if needs_agent:
                 routed.append(item.id)
                 continue
@@ -289,7 +404,7 @@ def build_plan(root, fallback, config_path, output):
             'config': fingerprint(Path(config_path)) if config_path is not None else None,
             'retained_route_all': config_path is None, 'fresh_model_calls': 0,
             'cached_fallback_answers_used': 0, 'gold_reads': 0, 'production_admission': False,
-            'adapter': fingerprint(Path(__file__))}
+            'adapter': fingerprint(Path(__file__)), 'cohort': cohort_provenance}
     write(output/'plan.json', plan)
     paths.dump_rows(output/'rule-events.jsonl', trace)
     return plan
@@ -319,28 +434,39 @@ def evaluate(proposal: dict, root: Path, baseline: Path, output: Path, *, base_c
     if len(cache) != len(source) or set(cache) != {r['id'] for r in source}:
         raise ValueError('Cached fallback/source membership mismatch')
     specs = rules_for('food', ('consumer_packaged',))
-    registry, origins = _registry(source, baseline, specs)
-    write(output/'source-only-registry.json', {'names': registry, 'provenance': origins,
-          'authority': 'unverified original fields and citation-revalidated model proposals; never gold'})
     vpath = ROOT/'domains/food/vocab.yaml'
     doc = yaml.safe_load(vpath.read_text(encoding='utf-8')) or {}
     rules = evaluator.load(ROOT/'rules/food', ROOT/'rules/global')
+    retained = {}
     if base_config is not None:
         retained = yaml.safe_load(Path(base_config).read_text(encoding='utf-8'))
         doc = retained['vocab']
         rules = [evaluator.Rule(**r) for r in retained['rules']]
-    config = {'vocab': doc, 'rules': [asdict(r) for r in rules]}
+    scope = _cohort_scope(retained)
+    cohort, cohort_provenance = _cohort_source(source, scope)
+    registry, origins = _registry(cohort, baseline, specs, exclude_placeholders=scope == 'original_source')
+    write(output/'source-only-registry.json', {'names': registry, 'provenance': origins,
+          'authority': 'unverified original fields and citation-revalidated model proposals; never gold'})
+    config = copy.deepcopy(retained) | {'vocab': doc, 'rules': [asdict(r) for r in rules], 'cohort_scope': scope}
     (output/'rollback.yaml').write_text(yaml.safe_dump(config, sort_keys=False), encoding='utf-8')
     write(output/'proposal.json', proposal)
     feedback = set(protocol['partition']['feedback_ids'])
     titles = {}
-    for row in source:
-        if row['id'] not in feedback:
+    spread_source = cohort if scope == 'original_source' else source
+    spread_brands = parse.Brands(registry)
+    considered = 0
+    for row in spread_source:
+        if scope == 'selected' and row['id'] not in feedback:
             continue
+        considered += 1
         # Support is source-only; never borrow the gold's brand assignment.
-        key = parse.Brands(registry).find(parse.parse(row['title']), row.get('brand'), None, row.get('source'))[0]
+        key = spread_brands.find(parse.parse(row['title']), row.get('brand'), None, row.get('source'))[0]
         if key:
             titles.setdefault(key, []).append(' '+' '.join(vocab.tokens(row['title']))+' ')
+    support_provenance = {'cohort_scope': scope, 'source_rows_considered': considered,
+                          'source_brand_groups': len(titles), 'gold_brand_assignments_used': False,
+                          'original_source': cohort_provenance.get('original_source')}
+    write(output/'proposal-support-provenance.json', support_provenance)
     bench = SimpleNamespace(d='food', spread=lambda phrase: sum(any(' '+phrase+' ' in title for title in ts)
                                                                for ts in titles.values()))
     runtime_proposal = proposal
@@ -351,7 +477,8 @@ def evaluate(proposal: dict, root: Path, baseline: Path, output: Path, *, base_c
         write(output/'implementation-proposal.json', {'status': 'implementation_needed', 'proposal': proposal,
               'requirements': ['Specify input facts and failure mechanism', 'Provide positive and negative cases before implementation',
                                'Run the registered check in shadow against authorized gold; no fabricated code']})
-        result = {'status': 'implementation_needed', 'reason': refusal, 'fresh_model_calls': 0, 'production_admission': False}
+        result = {'status': 'implementation_needed', 'reason': refusal, 'fresh_model_calls': 0, 'production_admission': False,
+                  'cohort': cohort_provenance, 'proposal_phrase_support': support_provenance}
         write(output/'report.json', result)
         return result
     try:
@@ -360,14 +487,15 @@ def evaluate(proposal: dict, root: Path, baseline: Path, output: Path, *, base_c
         candidate_doc, candidate_rules, applied = propose.apply(bench, normalised, doc, rules)
     except (propose.Refused, ValueError, TypeError) as error:
         result = {'status': 'refused', 'reason': str(error), 'fresh_model_calls': 0, 'production_admission': False,
+                  'cohort': cohort_provenance, 'proposal_phrase_support': support_provenance,
                   'missing_check_next_step': 'Submit kind=new_check with positive/negative cases' if 'unknown check' in str(error) else None}
         write(output/'report.json', result)
         return result
     (output/'candidate-config.yaml').write_text('# EXPERIMENTAL ONLY; production_admission=false\n'+
-        yaml.safe_dump({'vocab': candidate_doc, 'rules': [asdict(r) for r in candidate_rules]}, sort_keys=False), encoding='utf-8')
+        yaml.safe_dump(config | {'vocab': candidate_doc, 'rules': [asdict(r) for r in candidate_rules]}, sort_keys=False), encoding='utf-8')
     # Run both executable configurations before gold is opened by the scorer.
-    before = _runtime(source, registry, doc, rules, cache, output/'reference')
-    after = _runtime(source, registry, candidate_doc, candidate_rules, cache, output/'candidate')
+    before = _runtime(source, registry, doc, rules, cache, output/'reference', cohort=cohort, cohort_provenance=cohort_provenance)
+    after = _runtime(source, registry, candidate_doc, candidate_rules, cache, output/'candidate', cohort=cohort, cohort_provenance=cohort_provenance)
     before_metrics = paths.score(root, output/'reference', paths.rows(output/'reference/placements.jsonl'), baseline)
     after_metrics = paths.score(root, output/'candidate', paths.rows(output/'candidate/placements.jsonl'), output/'reference')
     retained_metrics = paths.read(baseline/'metrics.json')
@@ -389,6 +517,8 @@ def evaluate(proposal: dict, root: Path, baseline: Path, output: Path, *, base_c
         'runtime_brands': 'Citation-revalidated source-only warm-start memory plus original source brand fields',
         'actual_cost_claim': None, 'counterfactual_route_delta': after['counterfactual_agent_routes']-before['counterfactual_agent_routes'],
         'shared_defaults_mutated': False, 'rollback': fingerprint(output/'rollback.yaml'),
+        'cohort': cohort_provenance,
+        'proposal_phrase_support': support_provenance,
         'source': fingerprint(source_path), 'fallback': fingerprint(baseline/'placements.jsonl'),
         'adapter': fingerprint(Path(__file__)), 'local_checks': fingerprint(Path(food_checks.__file__)),
         'registry': fingerprint(output/'source-only-registry.json')}

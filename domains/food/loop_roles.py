@@ -51,15 +51,51 @@ def improver_cases(cases):
             [s['label'] for s in case['human_gold'] if s['level'] in ('brand', 'product', 'model', 'variant')]]
 
 
-def component_feedback_history(report):
+def component_feedback_history(report, feedback_ids):
     """Keep each measured arm and projection distinct without withheld outcomes."""
+    allowed = set(feedback_ids)
     result = {}
     for name, arm in report.get('component_and_integrated_comparisons', {}).items():
-        card = Path(arm['output'])/'hypothesis.json'
+        output = Path(arm['output'])
+        card = output/'hypothesis.json'
+        missing = []
+        for path in (card, output/'paired-deltas.json', output/'placements.jsonl', output/'manifest.json'):
+            if not path.exists():
+                missing.append(str(path))
+        examples = []
+        if all((output/filename).exists() for filename in ('paired-deltas.json', 'placements.jsonl', 'manifest.json')):
+            previous = read(output/'manifest.json').get('previous')
+            before_path = Path(previous)/'placements.jsonl' if previous else None
+            if before_path is None or not before_path.exists():
+                missing.append(str(before_path) if before_path else 'manifest.previous: missing actual reference')
+            else:
+                before = {p['id']: p for p in rows(before_path) if p['id'] in allowed}
+                after = {p['id']: p for p in rows(output/'placements.jsonl') if p['id'] in allowed}
+                for delta in read(output/'paired-deltas.json'):
+                    lid = delta.get('id')
+                    if lid not in allowed:
+                        continue
+                    b, a = delta.get('before') or {}, delta.get('after') or {}
+                    if (lid not in before or lid not in after or 'path' not in before[lid] or
+                        'path' not in after[lid] or 'class' not in b or 'class' not in a):
+                        missing.append(f'actual paired prediction/class fields for feedback ID {lid}')
+                        continue
+                    flags = {key: delta.get(key) for key in ('exact_gain', 'exact_regression', 'brand_gain', 'brand_regression')}
+                    if any(value is None for value in flags.values()):
+                        missing.append(f'paired gain/regression flags for feedback ID {lid}')
+                    if (before[lid]['path'] != after[lid]['path'] or b['class'] != a['class'] or
+                        flags['exact_gain'] or flags['exact_regression']):
+                        examples.append({'listing_id': lid, 'before_path': before[lid]['path'],
+                            'after_path': after[lid]['path'], 'before_class': b['class'], 'after_class': a['class'], **flags})
+                examples.sort(key=lambda e: (0 if e['exact_regression'] else 1 if e['exact_gain'] else
+                    2 if e['before_class'] != e['after_class'] else 3, e['listing_id']))
         result[name] = {'before_feedback': arm['before'].get('partitions', {}).get('feedback'),
                         'after_feedback': arm['after'].get('partitions', {}).get('feedback'),
-                        'source_profile': source_profile(read(card)),
-                        'keep_for_development': arm['keep_for_development']}
+                        'source_profile': source_profile(read(card)) if card.exists() else None,
+                        'keep_for_development': arm['keep_for_development'],
+                        'changed_feedback_examples': examples[:5], 'changed_feedback_count': len(examples),
+                        'examples_status': 'missing_artifacts_or_fields' if missing else 'measured_feedback_only',
+                        'missing_artifacts_or_fields': missing}
     return result
 
 
@@ -170,7 +206,7 @@ def execute(root, run_name, validator_path=None, *, executable=False, resume=Fal
                         if (old_roles/'pipeline-proposals.json').exists() else None,
                     'retained_system_version':old['version_after'],
                     'outcome':'system_version_advanced' if old['version_after'] > old['version_before'] else 'system_unchanged',
-                    'component_trials_feedback_only':component_feedback_history(old)})
+                    'component_trials_feedback_only':component_feedback_history(old, permitted)})
             vp = root/(previous.parent.name+'-validator-candidate/metrics.json')
             vc = root/(previous.parent.name+'-validator-current/metrics.json')
             if vp.exists() and vc.exists() and (old_roles/'improver-output.json').exists():
@@ -191,6 +227,9 @@ def execute(root, run_name, validator_path=None, *, executable=False, resume=Fal
                                   'new_check_policy': 'Only missing unregistered capabilities are record-only; implemented registered checks use code_rule',
                                   'external_web_or_sibling_retrieval': False,
                                   'source_only': True}}, ensure_ascii=False)
+    write(folder/'scoped-component-feedback-history.json', {'authorized_feedback_ids': sorted(permitted),
+          'trials': [{'trial': entry['trial'], 'components': entry['component_trials_feedback_only']}
+                     for entry in history if 'component_trials_feedback_only' in entry] if executable else []})
     def call(role, factory):
         if resume:
             recorded = folder/role
