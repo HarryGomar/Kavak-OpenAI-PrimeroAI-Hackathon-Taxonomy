@@ -109,8 +109,41 @@ def selected_image_alt_evidence(row):
     return {'selected': selected, 'rejected_counts': dict(rejected)}
 
 
-def evidence(row, include_source_urls=False, include_selected_image_alt=False):
-    if type(include_source_urls) is not bool or type(include_selected_image_alt) is not bool:
+def option_role_facts(row):
+    """Conservative label-derived hints, preserving original selected values without naming decisions."""
+    options = row['fields']['raw_source'].get('variant_options_json')
+    try:
+        options = json.loads(options) if isinstance(options, str) else options
+    except json.JSONDecodeError:
+        return []
+    if not isinstance(options, list):
+        return []
+    result = []
+    for index, option in enumerate(options):
+        if not isinstance(option, dict) or not all(isinstance(option.get(k), str) for k in ('name', 'value')):
+            continue
+        label, value = option['name'], option['value']
+        if not label.strip() or not value.strip():
+            continue
+        words = set(re.findall(r'[^\W_]+', label.casefold()))
+        roles = set()
+        if words & {'flavor', 'flavour', 'flavors', 'flavours', 'color', 'colour', 'colors', 'colours'}:
+            roles.add('flavour_colour')
+        if words & {'pack', 'packs', 'quantity', 'qty', 'count', 'servings'} or {'case', 'size'} <= words:
+            roles.add('quantity')
+        if re.findall(r'[^\W_]+', label.casefold()) == ['ground', 'or', 'whole', 'bean']:
+            roles.add('form')
+        if {'sour', 'level'} <= words:
+            roles.add('intensity')
+        result.append({'option_index': index, 'label': label, 'value': value,
+                       'role': next(iter(roles)) if len(roles) == 1 else 'unknown',
+                       'role_basis': 'label_only_hint_not_identity_or_canonical_name',
+                       'original_naming_field': 'variant_options_json'})
+    return result
+
+
+def evidence(row, include_source_urls=False, include_selected_image_alt=False, include_option_role_facts=False):
+    if any(type(value) is not bool for value in (include_source_urls, include_selected_image_alt, include_option_role_facts)):
         raise ValueError('Source evidence options must be booleans')
     raw = row["fields"]["raw_source"]
     result = {"listing_id": row["id"], "source": row["source"], "title": row["title"],
@@ -127,15 +160,19 @@ def evidence(row, include_source_urls=False, include_selected_image_alt=False):
         selected = selected_image_alt_evidence(row)['selected']
         if selected:
             result['source_selected_variant_image_alt'] = '\n'.join(dict.fromkeys(e['text'] for e in selected))
+    if include_option_role_facts:
+        facts = option_role_facts(row)
+        if facts:
+            result['source_option_role_facts'] = json.dumps(facts, ensure_ascii=False)
     return result
 
 
 def source_profile(card):
     """Validate the explicitly selected source projection; old cards expose no URLs."""
     profile = card.get('source_profile', {})
-    keys = ('include_listing_url', 'include_selected_image_alt')
+    keys = ('include_listing_url', 'include_selected_image_alt', 'include_option_role_facts')
     if not isinstance(profile, dict) or set(profile)-set(keys):
-        raise ValueError('source_profile accepts only include_listing_url/include_selected_image_alt')
+        raise ValueError('source_profile accepts only include_listing_url/include_selected_image_alt/include_option_role_facts')
     values = {key: profile.get(key, False) for key in keys}
     if any(type(value) is not bool for value in values.values()):
         raise ValueError('source_profile values must be booleans')
@@ -146,9 +183,9 @@ def tokens(value):
     return set(re.findall(r"[^\W_]+", value.casefold()))
 
 
-def materialize(answer, source, rules, include_source_urls=False, include_selected_image_alt=False):
+def materialize(answer, source, rules, include_source_urls=False, include_selected_image_alt=False, include_option_role_facts=False):
     permitted = evidence(source, include_source_urls=include_source_urls,
-                         include_selected_image_alt=include_selected_image_alt)
+                         include_selected_image_alt=include_selected_image_alt, include_option_role_facts=include_option_role_facts)
     path, events, nodes = [], [], []
     expected = ["brand", "model", "variant"]
     if answer.action == "park" and answer.nodes:
@@ -159,6 +196,9 @@ def materialize(answer, source, rules, include_source_urls=False, include_select
             reason = "invalid_hierarchy"
         supported, original_naming_supported = set(), set()
         for quote in part.evidence:
+            if quote.field == 'source_option_role_facts':
+                reason = 'derived_option_role_facts_not_naming_evidence'
+                continue
             value = permitted.get(quote.field)
             if not isinstance(value, str) or not quote.quote or quote.quote.casefold() not in value.casefold():
                 reason = "unsupported_quote"
@@ -166,7 +206,7 @@ def materialize(answer, source, rules, include_source_urls=False, include_select
                 supported |= tokens(quote.quote)
                 if quote.field in ('title', 'variant_name', 'variant_options_json'):
                     original_naming_supported |= tokens(quote.quote)
-        if not tokens(part.name) or not tokens(part.name) <= supported:
+        if (not tokens(part.name) or not tokens(part.name) <= supported) and reason != 'derived_option_role_facts_not_naming_evidence':
             reason = "ungrounded_name_tokens"
         if part.level == 'variant' and any(q.field == 'source_selected_variant_image_alt' for q in part.evidence):
             if not tokens(part.name) <= original_naming_supported:
@@ -279,22 +319,22 @@ def normalize_plan(listings, fixed_placements=None, routed_ids=None):
     return fixed, [r for r in listings if r['id'] in set(routed)]
 
 
-def materialize_fixed(value, source, rules, include_source_urls=False, include_selected_image_alt=False):
+def materialize_fixed(value, source, rules, include_source_urls=False, include_selected_image_alt=False, include_option_role_facts=False):
     """Re-ground deterministic free paths through the same node/rule checks as CLI proposals."""
     parts = []
     permitted = evidence(source, include_source_urls=include_source_urls,
-                         include_selected_image_alt=include_selected_image_alt)
+                         include_selected_image_alt=include_selected_image_alt, include_option_role_facts=include_option_role_facts)
     if len(value['path']) > 3:
         raise ValueError('Free placement exceeds Food brand/model/variant hierarchy')
     for level, name in zip(('brand', 'model', 'variant'), value['path']):
         citations = [Citation(field=key, quote=text) for key, text in permitted.items()
-                     if isinstance(text, str) and key != 'listing_id' and tokens(name) & tokens(text)]
+                     if isinstance(text, str) and key not in ('listing_id', 'source_option_role_facts') and tokens(name) & tokens(text)]
         parts.append(Part(level=level, name=name, evidence=citations))
     answer = Proposal(listing_id=source['id'], action='new_variant' if len(parts) == 3 else 'new_product' if len(parts) == 2 else 'place',
                       nodes=parts, confidence=value.get('confidence') or 0,
                       reason=value.get('reason') or 'Source-only deterministic placement')
     path, nodes, findings = materialize(answer, source, rules, include_source_urls=include_source_urls,
-                                      include_selected_image_alt=include_selected_image_alt)
+                                      include_selected_image_alt=include_selected_image_alt, include_option_role_facts=include_option_role_facts)
     if path != [s.strip() for s in value['path']]:
         raise ValueError(f"Deterministic free placement failed source grounding/rules for {source['id']}")
     return answer, path, nodes, findings
@@ -327,7 +367,9 @@ def execute(root, name, card=None, previous=None, *, fixed_placements=None, rout
     profile = source_profile(hypothesis)
     include_source_urls = profile['include_listing_url']
     include_selected_image_alt = profile['include_selected_image_alt']
-    evidence_options = {'include_source_urls': include_source_urls, 'include_selected_image_alt': include_selected_image_alt}
+    include_option_role_facts = profile['include_option_role_facts']
+    evidence_options = {'include_source_urls': include_source_urls, 'include_selected_image_alt': include_selected_image_alt,
+                        'include_option_role_facts': include_option_role_facts}
     rules = rules_for("food", ("consumer_packaged",))
     fixed_results = {r['id']: materialize_fixed(fixed[r['id']], r, rules, **evidence_options)
                      for r in listings if r['id'] in fixed}

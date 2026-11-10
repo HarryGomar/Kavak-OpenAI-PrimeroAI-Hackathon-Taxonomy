@@ -3,7 +3,7 @@
 The owner-selected Pedia-inspired baseline is the reference. The full Food adapter
 executes fresh blind validation, gold-backed feedback comparison, the existing proposer
 and improver factories, feedback analysis, controlled placement and checklist trials,
-canonical curator rejection/admission checks, and native distillation records.
+canonical gate diagnostics on development comparisons, and native distillation records.
 Every model role uses the pinned Codex command-line interface (CLI) transport.
 The earlier `continue_loop` command is a preliminary card trial, not the full harness.
 
@@ -50,8 +50,14 @@ The current validator is called anew in every cycle. An accepted checklist propo
 gets another actual blind call per batch; an unsupported proposal is explicitly rejected.
 The existing proposer/improver receive only the authorized feedback partition.
 Rule proposals with unsupported check parameters are refused before execution.
-Native curator and distiller code is reused unchanged from the repository. Their
-qualification and sealed conditions still apply; pending lessons do not become active.
+The unchanged canonical `taxo.gate.decide` runs as a development diagnostic; it does
+not make a sealed read. `taxo.distill.record` and `taxo.distill.lessons` record and
+process pending rounds without activating lessons. `curator.admit` applies only to
+qualified deterministic checks, and is explicitly skipped for instruction, extraction,
+vocabulary and question proposals. A check without actual fire/quiet qualification
+and gold shadow counts cannot be admitted. Diagnosis runs within the broad proposer;
+there is no separate analyst call in this entry point. Older rounds without these
+postmeasurement stages remain identified by their original artifacts.
 `--resume` preserves completed actual validation calls within the same interrupted
 cycle instead of repeating or replacing that stage with historical judgments.
 

@@ -28,7 +28,8 @@ def scored(folder, partition=None):
     return result
 
 
-def run(root, fallback, name, setup, *, source_urls_candidate=False, selected_image_alt_candidate=False):
+def run(root, fallback, name, setup, *, source_urls_candidate=False, selected_image_alt_candidate=False,
+        option_role_facts_candidate=False):
     """One retained full system, component trials, and an actual integrated pipeline."""
     import shutil
     from domains.food import system_state
@@ -36,6 +37,8 @@ def run(root, fallback, name, setup, *, source_urls_candidate=False, selected_im
     from domains.food.tool_trials import load_tool
     completed = root/name/'loop-report.json'
     if completed.exists() and read(completed)['status'] == 'completed_integrated_development_cycle':
+        from domains.food.curate_completed import execute as curate_completed
+        curate_completed(root, name)
         print(json.dumps({'status':'already_completed','report':str(completed)}))
         return
     state_path = root/'system-state/current.json'
@@ -81,6 +84,8 @@ def run(root, fallback, name, setup, *, source_urls_candidate=False, selected_im
         candidate_profile['include_listing_url'] = True
     if selected_image_alt_candidate:
         candidate_profile['include_selected_image_alt'] = True
+    if option_role_facts_candidate:
+        candidate_profile['include_option_role_facts'] = True
     source_changed = candidate_profile != retained_profile
     source_only_card = card_path
     if source_changed:
@@ -247,7 +252,9 @@ def run(root, fallback, name, setup, *, source_urls_candidate=False, selected_im
                     'validator_paired':validator.get('paired_all'),'calls':calls,'version':state['version'],
                     'production_admission':False,'artifact_index':fingerprint(out/'artifact-index.json')}},
                     lesson='food-integrated-system',kind='rule_shape')
-    write(out/'stage-status.json',{'status':'completed','stage':'retained_version_and_native_distillation'})
+    from domains.food.curate_completed import execute as curate_completed
+    curate_completed(root, name)
+    write(out/'stage-status.json',{'status':'completed','stage':'canonical_development_postmeasurement'})
     print(json.dumps({'status':report['status'],'calls':calls,'retained_exact':report['retained_exact'],
                       'version':state['version'],'output':str(out)}))
 
@@ -260,6 +267,7 @@ if __name__ == '__main__':
     ap.add_argument('--setup', type=Path, required=True)
     ap.add_argument('--source-urls-candidate', action='store_true', help='isolate original listing-URL exposure as a code candidate')
     ap.add_argument('--selected-image-alt-candidate', action='store_true', help='isolate source-provenance-matched selected image ALT evidence')
+    ap.add_argument('--option-role-facts-candidate', action='store_true', help='isolate conservative source option label/value role facts; original citations required')
     a = ap.parse_args()
     run(a.root, a.fallback, a.name, a.setup, source_urls_candidate=a.source_urls_candidate,
-        selected_image_alt_candidate=a.selected_image_alt_candidate)
+        selected_image_alt_candidate=a.selected_image_alt_candidate, option_role_facts_candidate=a.option_role_facts_candidate)
