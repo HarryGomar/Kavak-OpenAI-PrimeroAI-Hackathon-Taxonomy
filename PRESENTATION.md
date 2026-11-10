@@ -29,18 +29,30 @@ partly agent-built system. Against Harry's own labels the rules moved less: 47% 
 
 ## 2. A system improves only as far as its eval (60 s)
 
-**Show:** left, the system's own eval climbing round by round, 78% → 87%, and the human check done afterwards, 81% →
-84%. Right, three numbers: +9 points on its own eval; +3 when a person checked; 15 of 48 kept changes made it worse.
-Then: No ground truth? Improve the eval too.
+**Show, first click-through state:** only the orange test-evaluation line on the left, rising from about 78% to
+87% over four rounds. On the right: "1. During self-improvement" and "The test reports steady progress."
 
 **Say:**
-- Evals are what drive performance. In our last project a loop improved its own rules and climbed its own eval, an LLM
-  judge, from 78% to 87%. When we checked by hand afterwards, it had gone from 81% to 84%: a third of the gain. 15 of
-  the 48 changes it kept made our labels worse.
-- Where a task checks itself, like a loss or a test suite, that's enough. Karpathy's autoresearch can hill-climb on its
-  own.
-- Most useful tasks have no such check. So the eval itself needs a method to improve: what counts as right, and how we
-  check it. That's what this talk is about.
+- In Pedia, our earlier project, a loop proposed rule changes and used a large language model (LLM) judge to decide
+  which ones to keep. The loop kept improving the score that its evaluation rewarded.
+- Across six replay runs on the same 245 held-out listings, that score rose from about 78% to 87%.
+
+**Press Right once:** the human-reference line appears on the same graph. The right side changes to "2. Then a
+human checks" and "The human check confirms much less improvement."
+
+**Say:**
+- Then we compare the result with our human-labelled reference answers. Accuracy rose from about 81% to 84%:
+  a much smaller gain. There was some improvement; the human result was not flat.
+- The evaluation only partly captured the decisions we wanted the system to make. A higher score did not guarantee
+  equally useful progress toward the human goal.
+- That is why Taxo improves both the system and its evaluation. Human feedback helps us adjust what counts as
+  success and how we check it, so the evaluation better reflects the intended goal.
+
+**Press Right again:** continue to slide 3.
+
+**Backup, if asked about regressions:** the earlier loop accepted 48 rule changes; 15 reduced accuracy against the
+human labels. This counts changes, not listings. It is evidence from the Pedia replay, not a measured failure rate
+for Taxo.
 
 ## 3. Seemingly easy, deceptively hard: build product trees from messy listings (35 s)
 
