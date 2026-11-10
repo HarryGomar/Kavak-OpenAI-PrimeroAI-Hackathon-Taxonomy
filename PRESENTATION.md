@@ -121,16 +121,16 @@ food titles never name the brand. Each figure is about ±2 points. The results s
 **Show:** a grid. Three columns, Memory (what words mean), Operators (steps, in code) and Tools (checks that block a
 wrong placement), and three rows:
 - **Example**, what the part looks like: `vocab.yaml` (strip: perfume, cologne, …; concentration: edp, edt, …); for
-  operators, the lattice: count a name, Khamrah Qahwa ×2 → product, Khamrah ×3 → family; `veto-set-conflict.yaml`
+  operators, the lattice: count a name, Sauvage Elixir ×2 → product, Sauvage ×3 → family; `veto-set-conflict.yaml`
   (check: set_conflict, a gift set is never one product).
 - **Loop 1 changed**, marked like a diff: memory + strip: hair, travel, mist and − concentration: elixir; operators
   + rung: the brand's own store, + rung: the shop's URL, + settle: name in ≤ 3 listings; tools ✓ set_conflict kept on,
   × form_conflict dropped.
 - **Effect:** **+1.4** points, **+15.1** points, **−501** wrong placements.
 
-Under the grid, **the lattice, an operator**, drawn out: a brand's titles (Lattafa **Khamrah Qahwa** EDP 100ml;
-**Khamrah Qahwa** by Lattafa 3.4 oz; Lattafa **Khamrah** Eau de Parfum) → count each name (Khamrah Qahwa, in 2
-titles, a product; Khamrah, in 3 and shared, a family) → the tree Lattafa › Khamrah › Khamrah Qahwa, with no agent call.
+Under the grid, **the lattice, an operator**, drawn out: a brand's titles (Dior **Sauvage Elixir** 60ml;
+**Sauvage Elixir** by Dior 2 oz; Dior **Sauvage** Eau de Toilette) → count each name (Sauvage Elixir, in 2 titles, a
+product; Sauvage, in 3 and shared, a family) → the tree Dior › Sauvage › Sauvage Elixir, with no agent call.
 
 Last row, **How:** errors on gold → a proposer agent → one change to one part → kept only if sealed gold rises.
 
@@ -138,8 +138,8 @@ Last row, **How:** errors on gold → a proposer agent → one change to one par
 - Loop 1 doesn't touch the agent. It changes the rules, and the rules are three parts, each a file you can read.
 - Memory is what words mean. Loop 1 learned that hair, travel and mist are never part of a name, and that Elixir and
   Intense aren't concentrations. A point and a half.
-- Operators are the steps, in code. The lattice is one: it counts a name across a brand's titles; Khamrah Qahwa, in
-  two titles, is a product; Khamrah, in three and shared, is a family. Loop 1 added two rungs that find the brand, its
+- Operators are the steps, in code. The lattice is one: it counts a name across a brand's titles; Sauvage Elixir, in
+  two titles, is a product; Sauvage, in three and shared, is a family. Loop 1 added two rungs that find the brand, its
   own store and the shop's URL, and a step that settles a name seen in three listings or fewer as its own product, an
   idea from loop 2. Fifteen points.
 - Tools are checks that block a wrong placement: a gift set is never one product. The set check stays on; on food,
