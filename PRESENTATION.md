@@ -56,18 +56,19 @@ for Taxo.
 
 ## 3. Seemingly easy, deceptively hard: build product trees from messy listings (35 s)
 
-**Show:** two product trees, Oreo › Double Stuf › Golden and Lattafa › Khamrah › Khamrah and Khamrah Qahwa. Under each
-leaf hang two real-looking listings from different shops (Amazon, Walmart, lattafa.com, TikTok Shop), each with its
-photo and its title. The product name is bold inside the noise. Caption: different shops, different words, one product
+**Show:** two product trees, Oreo › Double Stuf › Golden and Dior › Sauvage › Sauvage and Sauvage Elixir. Under each
+leaf hang two real listings from different shops (Amazon, Walmart, dior.com, Sephora, Macy's), each with its photo
+and its title. The product name is bold inside the noise. Caption: different shops, different words, one product
 each.
 
 **Say:**
 - The task comes from our own work. To understand a market you connect its listings into product trees.
 - Every shop writes the same product differently. Amazon says Double Stuf Golden, Walmart says Golden Double Stuf;
-  TikTok writes it in capitals. Under the noise, these six listings are three products.
+  Macy's adds "Men's" and "Fragrance Collection", Sephora writes the brand in capitals. Under the noise, these six
+  listings are three products.
 - Until you know that, you can't add up a product's price, reviews or demand.
 - It looks trivial for a person and is hard for an agent. A size or a 12-pack is never a new product, but a flanker
-  like Khamrah Qahwa is.
+  like Sauvage Elixir is.
 
 ## 4. Gold: a person's labels, used to score everything (30 s)
 
@@ -297,7 +298,7 @@ after eval 1 (8, 10) are illustrative.*
   domain's lessons are tried on another's sealed gold. Green helps, orange hurts, the diagonal is each domain's own
   loop 1.
 - **Right, operators carry:** the lattice, learned on fragrance, is the same code in every domain; only the vocabulary
-  changes. Three rows, each a name seen in 2 titles and so a product: Fragrance, Khamrah Qahwa EDP 100ml; Food, Double
+  changes. Three rows, each a name seen in 2 titles and so a product: Fragrance, Sauvage Elixir 60ml; Food, Double
   Stuf Cookies; Footwear, Air Max 90 Size 10.
 - **Right, memory has to earn it:** fragrance's "a flanker is a new product" breaks food, where Golden is a variant.
   Food on fragrance's code and rules: 11.2% exact; the agent alone: 44.5%.
@@ -310,7 +311,7 @@ after eval 1 (8, 10) are illustrative.*
 - Operators carry. The lattice was learned on fragrance, but it is code: count a name across a brand's titles, and a
   name in two or more is a product. The same code places Double Stuf in food and Air Max 90 in footwear. Only the
   vocabulary changes.
-- Memory has to earn it. Fragrance learned that a flanker like Khamrah Qahwa is a new product; in food, a new Oreo
+- Memory has to earn it. Fragrance learned that a flanker like Sauvage Elixir is a new product; in food, a new Oreo
   flavour is a variant. On fragrance's rules, food starts at 11% exact, where the agent alone gets 45%.
 - So memory goes global only once two domains have kept it.
 
