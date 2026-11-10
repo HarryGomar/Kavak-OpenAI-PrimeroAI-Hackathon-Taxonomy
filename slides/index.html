@@ -1,7 +1,7 @@
 <!doctype html>
 <!--
   The pitch deck. One file, no build step. Open it in a browser (it needs internet for the fonts and product photos).
-  14 slides (PRESENTATION.md, slide by slide). A slide with pop-ups shows them one at a time on →, then closes them.
+  13 slides (PRESENTATION.md, slide by slide). A slide with pop-ups shows them one at a time on →, then closes them.
 
   Keys:  → Space  next   ← back   Home / End   F fullscreen   O or Esc overview   N speaker notes
   URL:   #5 opens the 5th page.  ?all turns off the fade (for screenshots).
@@ -270,12 +270,11 @@
   .w2-v { margin: 10px 0 40px; font: 500 34px var(--sans); color: var(--val); }
   .w2-f { margin: 0 0 22px; padding-top: 22px; border-top: 2px solid var(--line); font: 400 28px/1.4 var(--sans); color: var(--mute); }
   .w2-f b { font: 600 40px var(--disp); color: var(--ink); }
-  .slide.mk { justify-content: center; padding-bottom: 150px; }
-  .mk-g { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: 72px; margin-top: 28px; }
-  .mk-n { margin: 0; font: 600 96px/1 var(--disp); color: var(--ink); letter-spacing: -.03em; white-space: nowrap; }
-  .mk-t { margin: 18px 0 0; font: 400 27px/1.4 var(--sans); color: var(--mute); }
-  .mk-l { margin: 24px 0 0; padding-top: 36px; border-top: 2px solid var(--line); font: 500 32px/1.35 var(--sans); color: var(--ink2); }
   .mk-x { margin: 0; font: 400 24px var(--sans); color: var(--faint); }
+
+  /* ---------- last slide: spend on labeling ---------- */
+  .slide.sp .fill { margin-top: 56px; }
+  .slide.sp .mk-x { margin: 24px 0 70px; }
 
   /* ---------- HUD, overview, print ---------- */
   .progress { position: fixed; left: 0; bottom: 0; height: 3px; width: 0; background: var(--ink); z-index: 20; transition: width .3s var(--ease); }
@@ -406,28 +405,20 @@
     <div class="chart"><div class="plot"><svg class="ch" id="loop2"></svg></div></div>
     <div class="chart"><h3>Each new eval: loop 1 adds rules and climbs again</h3><div class="plot"><svg class="ch" id="figB"></svg></div><p class="ex">Errors it found, like short names seen once, became rule 6 in loop 1.</p></div>
   </div>
-  <aside class="notes">A small gold set doesn't cover everything, so loop 2 improves the eval itself. Going round the loop: each round, the validator labels a fresh sample of 40 listings, blind. That's silver. A person labels the same 40. That's gold. We compare them: how often silver matches gold tells us how good the validator is. From the differences, the improver writes a better card for the validator, and we go again on a new sample. The card is kept only if it matches the person more: v1 to v2 was kept, and its flags went from 79% right to 96%. Round by round the validator matched the person 75%, 82.5%, 85%, then 57.5% on round 4's sample. The new cards tried in rounds 2 and 4 matched no better, so they were dropped. What the differences show also goes to loop 1: short names seen only once became rule 6. On the graph: each eval gets a full loop 1 climb. Eval 1 is gold alone: loop 1 climbs from 52% to 69%. Loop 2 then builds eval 2: the validator's silver, and the flags a person settled as new gold. On it the solver scores lower, lowest on silver, and loop 1 climbs again. Eval 3 has more of both, labelled by a better validator, version 2, which matched gold 85% of the time against 82.5% for version 1. Each climb adds rules: five on eval 1, eight by eval 2, ten by eval 3. Each time the gap between silver and gold closes, and the loop runs until silver matches gold. We improve two things at once: the eval, and the solver underneath it.</aside>
+  <aside class="notes">A small gold set doesn't cover everything, so loop 2 improves the eval itself. Going round the loop: each round, the labeling agent labels a fresh sample of 40 listings, blind. That's silver. A person labels the same 40. That's gold. We compare them: how often silver matches gold tells us how good the labeling agent is. From the differences, the improver writes a better card for the labeling agent, and we go again on a new sample. The card is kept only if it matches the person more: v1 to v2 was kept, and its flags went from 79% right to 96%. Round by round the labeling agent matched the person 75%, 82.5%, 85%, then 57.5% on round 4's sample. The new cards tried in rounds 2 and 4 matched no better, so they were dropped. What the differences show also goes to loop 1: short names seen only once became rule 6. On the graph: each eval gets a full loop 1 climb. Eval 1 is gold alone: loop 1 climbs from 52% to 69%. Loop 2 then builds eval 2: the labeling agent's silver, and the flags a person settled as new gold. On it the solver scores lower, lowest on silver, and loop 1 climbs again. Eval 3 has more of both, labelled by a better labeling agent, version 2, which matched gold 85% of the time against 82.5% for version 1. Each climb adds rules: five on eval 1, eight by eval 2, ten by eval 3. Each time the gap between silver and gold closes, and the loop runs until silver matches gold. We improve two things at once: the eval, and the solver underneath it.</aside>
 </section>
 
-<!-- 6 · The labeling problem: billions spent; Taxo labels well enough, for far less -->
-<section class="slide mk" data-n="7">
-  <h2>Labeling is a billion-dollar problem.<br>Taxo labels well enough, for far less.</h2>
-  <div class="mk-g"><div><p class="mk-n">$14.3B</p><p class="mk-t">what Meta paid for 49% of Scale AI, a company that labels data to train LLMs</p></div><div><p class="mk-n">9× cheaper</p><p class="mk-t">to label 2 million listings: about $400 a pass with Taxo's rules first, about $3,800 with an agent on every listing</p></div><div><p class="mk-n">85%</p><p class="mk-t">right or shallower on held-out fragrance; an agent on every listing gets 89%</p></div></div>
-  <p class="mk-l">Every round, a random sample tells us how good the labels are, and the next round makes them better.</p>
+<!-- 6 · The labeling problem: what AI companies spend on labeling, and what Taxo costs -->
+<section class="slide sp" data-n="7">
+  <h2>AI companies spend billions on labeling.<br>Taxo labels 2 million listings for about $400.</h2>
+  <div class="fill"><svg class="ch" viewBox="0 0 1664 470" preserveAspectRatio="xMinYMin meet" style="font-family:var(--sans)"><text x="0.0" y="34" text-anchor="start" style="font:600 32px var(--disp);fill:#0B0D12">What AI companies pay for labeling</text><text x="0.0" y="124" text-anchor="start" style="font:400 24px var(--sans);fill:#5B6270">Meta, for 49% of Scale AI, June 2025</text><path d="M0 142h536.0a4 4 0 0 1 4 4v40a4 4 0 0 1 -4 4h-536.0z" fill="#5B6270"/><text x="558.0" y="182" text-anchor="start" style="font:600 40px var(--disp);fill:#0B0D12">$14.3B</text><text x="0.0" y="246" text-anchor="start" style="font:400 24px var(--sans);fill:#5B6270">Surge AI, revenue in 2024</text><path d="M0 264h33.8a4 4 0 0 1 4 4v40a4 4 0 0 1 -4 4h-33.8z" fill="#5B6270"/><text x="55.8" y="304" text-anchor="start" style="font:600 40px var(--disp);fill:#0B0D12">$1B+</text><text x="0.0" y="368" text-anchor="start" style="font:400 24px var(--sans);fill:#5B6270">Scale AI, revenue in 2024</text><path d="M0 386h28.9a4 4 0 0 1 4 4v40a4 4 0 0 1 -4 4h-28.9z" fill="#5B6270"/><text x="50.9" y="426" text-anchor="start" style="font:600 40px var(--disp);fill:#0B0D12">$870M</text><line x1="842" y1="0" x2="842" y2="470" stroke="#E3E6EB" stroke-width="2"/><text x="920.0" y="34" text-anchor="start" style="font:600 32px var(--disp);fill:#0B0D12">Labeling 2 million listings, one pass</text><text x="920.0" y="124" text-anchor="start" style="font:400 24px var(--sans);fill:#5B6270">An agent on every listing</text><path d="M920 142h516.0a4 4 0 0 1 4 4v40a4 4 0 0 1 -4 4h-516.0z" fill="#C3C8D0"/><text x="1458.0" y="182" text-anchor="start" style="font:600 40px var(--disp);fill:#0B0D12">$3,800</text><text x="920.0" y="246" text-anchor="start" style="font:400 24px var(--sans);fill:#5B6270">Taxo: rules first, the agent only on the rest</text><path d="M920 264h50.7a4 4 0 0 1 4 4v40a4 4 0 0 1 -4 4h-50.7z" fill="#0070C0"/><text x="992.7" y="304" text-anchor="start" style="font:600 40px var(--disp);fill:#0B0D12">$400</text><text x="920.0" y="418" text-anchor="start" style="font:600 64px var(--disp);fill:#0B0D12">9× cheaper</text><text x="920.0" y="460" text-anchor="start" style="font:400 24px var(--sans);fill:#5B6270">Rules place 89% of listings with no agent call.</text></svg></div>
   <p class="mk-x">Next: customer-feedback models, and other tasks with no ground truth.</p>
-  <p class="src">Scale AI: Meta's investment for 49%, reported June 2025. Cost: estimated at $3 per million tokens. Accuracy and tokens: 400 random sealed fragrance listings (exact: 75% vs 85%).</p>
-  <aside class="notes">Labeling is a huge problem. Training data for AI is labeled by people, and it costs billions: Meta paid 14.3 billion dollars for 49% of Scale AI, a company that labels data to train LLMs. We help label with good enough accuracy, much cheaper. For two million listings, an agent on every listing costs about 3,800 dollars a pass; with Taxo's rules first, about 400: nine times cheaper, because rules place 89% of fragrance listings with no agent call. And it's good enough: 85% right or shallower on held-out fragrance, where an agent on every listing gets 89%; exact match is 75% against 85%. Every round, a random sample tells us how good the labels are, and the next round makes them better. Next we want to take this to customer-feedback models and other tasks with no ground truth.</aside>
-</section>
-
-<!-- 7 · Backup, for questions -->
-<section class="slide" data-n="8">
-  <h2>Backup, for questions.</h2>
-  <ol class="bk"><li>A system improves only as far as its eval.</li><li>Gold: a person's labels, used to score everything.</li><li>What we want to improve: accuracy, cost and speed.</li><li>Two loops: rules ↔ silver, validator ↔ gold.</li><li>Loop 3: operators carry; memory has to earn it.</li><li>Taxo improves the system and its eval together.</li></ol>
-  <aside class="notes">The slides after this one are backup, for the questions.</aside>
+  <p class="src">Meta and Scale AI: June 2025. 2024 revenue: Scale AI (Bloomberg), Surge AI (Reuters). Taxo: tokens measured, at an assumed $3 per million.</p>
+  <aside class="notes">Labeling is where the money goes. AI companies spend billions on it: Meta paid 14.3 billion dollars for 49% of Scale AI, and in 2024 Surge AI took in over a billion dollars and Scale AI about 870 million. Taxo makes labeling cheap. To label two million listings, an agent on every listing costs about 3,800 dollars a pass. Taxo's rules place 89% of them with no agent call, so it costs about 400: nine times cheaper. Next we want to take this to customer-feedback models, and other tasks with no ground truth.</aside>
 </section>
 
 <!-- 2 · Evals drive performance -->
-<section class="slide s2-slide" data-n="9">
+<section class="slide s2-slide" data-n="8">
   <h2>A system improves only as far as its eval.</h2>
   <div class="fill" style="display:grid;grid-template-columns:1fr 600px;gap:90px;align-items:center">
     <div class="chart" style="height:100%"><div class="plot"><svg class="ch" id="evals"></svg></div></div>
@@ -449,7 +440,7 @@
 </section>
 
 <!-- 4 · Gold: a person's labels, used to score everything -->
-<section class="slide gold-s" data-n="10">
+<section class="slide gold-s" data-n="9">
   <div class="gold-b">
     <h2><span style="color:#B07F0C">Gold:</span> a person's labels, used to score everything.</h2>
     <table class="evt"><tr><th>Listing</th><th>Gold, from a person</th><th>Taxo placed it</th><th>Score</th></tr><tr><td class="li">DIOR Sauvage Eau de Toilette<small>Sephora</small></td><td><div class="mt g"><div style="--k:0">Dior</div><div style="--k:1">Sauvage</div><div style="--k:2"><i class="sq"></i><b>Sauvage</b></div></div></td><td><div class="mt t"><div style="--k:0">Dior</div><div style="--k:1">Sauvage</div><div style="--k:2"><i class="sq"></i><b>Sauvage</b></div></div></td><td class="vd"><div><i data-ic="check" data-s="26" data-c="#1E9E6E"></i><span>Exact</span></div></td></tr><tr><td class="li">Dior Sauvage Elixir Parfum Spray for Men, 2 oz<small>Amazon</small></td><td><div class="mt g"><div style="--k:0">Dior</div><div style="--k:1">Sauvage</div><div style="--k:2"><i class="sq"></i><b>Sauvage Elixir</b></div></div></td><td><div class="mt t"><div style="--k:0">Dior</div><div style="--k:1"><i class="sq"></i><b>Sauvage</b></div></div></td><td class="vd"><div><i data-ic="check" data-s="26" data-c="#A3A8B3"></i><span>Right, but stops higher</span></div></td></tr><tr><td class="li">Armaf Club De Nuit Intense Man Edt 105 Ml Original<small>Mercado Libre</small></td><td><div class="mt g"><div style="--k:0">Armaf</div><div style="--k:1">Club de Nuit</div><div style="--k:2"><i class="sq"></i><b>Intense Man</b></div></div></td><td><div class="mt t"><div style="--k:0">Armaf</div><div style="--k:1">Club de Nuit</div><div style="--k:2"><i class="sq"></i><b>Club de Nuit Woman</b></div></div></td><td class="vd"><div><i data-ic="cross" data-s="26" data-c="#D9622B"></i><span>Wrong product: harm</span></div></td></tr><tr><td class="li">Miss Dior Eau de Parfum<small>dior.com</small></td><td><div class="mt g"><div style="--k:0">Dior</div><div style="--k:1"><i class="sq"></i><b>Miss Dior</b></div></div></td><td><div class="mt t"><div style="--k:0">Dior</div><div style="--k:1"><i class="sq"></i><b>Miss Dior</b></div></div></td><td class="vd"><div><i data-ic="check" data-s="26" data-c="#1E9E6E"></i><span>Exact</span></div></td></tr></table>
@@ -460,7 +451,7 @@
 </section>
 
 <!-- 4 · What we want to improve: accuracy, cost, speed -->
-<section class="slide" data-n="11">
+<section class="slide" data-n="10">
   <h2>What we want to improve: accuracy, cost and speed.</h2>
   <div class="axes">
     <div><h3><i data-ic="target" data-s="44"></i>Accuracy</h3><p class="k">An agent on every listing</p><p class="v"><span class="ph" data-r="AO.f1">[f]</span></p>
@@ -477,15 +468,15 @@
   <aside class="notes">These are the three things we want to improve. Accuracy: an agent on every listing places 85% of fragrance listings exactly right, but it can't check its own work, as we just saw. Rules plus the agent get 75% today, at a ninth of the cost: closing that gap is what loops 1 and 2 are for. Loop 1 learns rules from a few labels, and loop 2 makes the check stricter. On food, a new domain, the agent gets 45% and rules plus the agent 20%: that's where loop 3 has to help. Cost: the agent uses about 630 tokens a listing. For two million listings that's about 1.3 billion tokens, around $3,800 a pass, and we pay it again on every refresh and in every domain. Rules place 89% of fragrance listings for free, so the bill falls to about $400. Speed: at a second a listing, one call at a time, that's about 570 hours. Rules take a millisecond a listing, and loop 3 lets each new domain start from the last one's lessons.</aside>
 </section>
 
-<!-- 5 · Architecture: the two loops as two rings, rules against silver, the validator against gold -->
-<section class="slide" data-n="12">
-  <h2>Two loops: rules ↔ <span style="color:#7C8390">silver</span>, validator ↔ <span style="color:#B07F0C">gold</span>.</h2>
+<!-- 5 · Architecture: the two loops as two rings, rules against silver, the labeling agent against gold -->
+<section class="slide" data-n="11">
+  <h2>Two loops: rules ↔ <span style="color:#7C8390">silver</span>, labeling agent ↔ <span style="color:#B07F0C">gold</span>.</h2>
   <div class="fill"><svg class="ch" id="arch2"></svg></div>
-  <aside class="notes">Two loops, joined by one arrow. Blue, loop 1: the rules, then the placer agent, place every listing, and we check them against silver. Where the rules are wrong, the proposer changes the rules' memory, operators and tools, the parts we just opened up, and round we go, until the rules agree with silver. Silver comes from the validator: that is the arrow in the middle. Orange, loop 2: the validator labels listings and is scored on gold, the few listings a person labelled. Where it labels unlike us, the improver agent edits its prompt and its questions, and the new validator replaces the old one. A better validator writes better silver, so loop 1 runs again against a better check. Round again, until silver agrees with gold.</aside>
+  <aside class="notes">Two loops, joined by one arrow. Blue, loop 1: the rules, then the placer agent, place every listing, and we check them against silver. Where the rules are wrong, the proposer changes the rules' memory, operators and tools, the parts we just opened up, and round we go, until the rules agree with silver. Silver comes from the labeling agent: that is the arrow in the middle. Orange, loop 2: the labeling agent labels listings and is scored on gold, the few listings a person labelled. Where it labels unlike us, the improver agent edits its prompt and its questions, and the new labeling agent replaces the old one. A better labeling agent writes better silver, so loop 1 runs again against a better check. Round again, until silver agrees with gold.</aside>
 </section>
 
 <!-- 10 · Loop 3: meta -->
-<section class="slide" data-n="13">
+<section class="slide" data-n="12">
   <h2><span style="color:var(--meta)">Loop 3:</span> operators carry; memory has to earn it.</h2>
   <p class="l3-flow"><span><i data-ic="branch" data-s="30" data-c="#1E9E6E"></i>Each domain on its own branch</span><span class="l3-ar">→</span><span><i data-ic="lesson" data-s="30" data-c="#1E9E6E"></i>Distil turns each kept change into a lesson</span><span class="l3-ar">→</span><span><i data-ic="gate" data-s="30" data-c="#1E9E6E"></i>Tried on the other domains' sealed gold</span></p>
   <div class="l3-main">
@@ -510,16 +501,16 @@
 </section>
 
 <!-- 12 · Close -->
-<section class="slide closing" data-n="14">
+<section class="slide closing" data-n="13">
   <h2>Taxo improves the system and its eval together.</h2>
   <p class="cl-s">With no ground truth, a system gets only as good as the eval it is measured on.</p>
   <div class="cl-l">
     <div class="cl-r"><b style="color:var(--ind)">Loop 1</b><p><strong>Better rules</strong><span>Deterministic rules, proposed from the errors on our labels. A gate keeps one only if held-out gold rises.</span></p><p class="cl-v"><strong>52% → 69%</strong><span>exact on sealed gold, agent calls down 63%</span></p></div>
-    <div class="cl-r"><b style="color:var(--val)">Loop 2</b><p><strong>A better eval</strong><span>A validator labels a sample, a person labels it too. The differences improve the validator.</span></p><p class="cl-v"><strong>79% → 96%</strong><span>of the validator's flags right</span></p></div>
+    <div class="cl-r"><b style="color:var(--val)">Loop 2</b><p><strong>A better eval</strong><span>A labeling agent labels a sample, a person labels it too. The differences improve the labeling agent.</span></p><p class="cl-v"><strong>79% → 96%</strong><span>of the labeling agent's flags right</span></p></div>
     <div class="cl-r"><b style="color:var(--meta)">Loop 3</b><p><strong>Lessons that carry</strong><span>What one domain keeps is tried on the others. Operators carry; memory goes global once two domains keep it.</span></p><p class="cl-v"><strong>−501</strong><span>wrong placements on food, from the shared set check</span></p></div>
   </div>
   <p class="cl-n">Next: customer-feedback models, and other tasks with no ground truth.</p>
-  <aside class="notes">Taxo improves the system and its eval together. With no ground truth, a system only gets as good as the eval it is measured on, so we improve both. Loop 1 makes better rules: deterministic rules are proposed from the errors on our labels, and a gate keeps one only if held-out gold rises. Exact match went from 52% to 69% on fragrance, and agent calls fell by almost two thirds. Loop 2 makes a better eval: a validator labels a sample, a person labels it too, and the differences improve the validator. Its flags went from 79% right to 96%. Loop 3 carries lessons: what one domain keeps is tried on the others. Operators, like the lattice, carry as code; memory goes global once two domains keep it. The shared set check alone keeps 501 wrong placements out of food. We think this carries to other tasks with no ground truth, like customer-feedback models.</aside>
+  <aside class="notes">Taxo improves the system and its eval together. With no ground truth, a system only gets as good as the eval it is measured on, so we improve both. Loop 1 makes better rules: deterministic rules are proposed from the errors on our labels, and a gate keeps one only if held-out gold rises. Exact match went from 52% to 69% on fragrance, and agent calls fell by almost two thirds. Loop 2 makes a better eval: a labeling agent labels a sample, a person labels it too, and the differences improve the labeling agent. Its flags went from 79% right to 96%. Loop 3 carries lessons: what one domain keeps is tried on the others. Operators, like the lattice, carry as code; memory goes global once two domains keep it. The shared set check alone keeps 501 wrong placements out of food. We think this carries to other tasks with no ground truth, like customer-feedback models.</aside>
 </section>
 
 </div></div>
@@ -560,7 +551,7 @@
       { label: '4', dropped: true },
       // [brand rung: catalog and shop URLs]
       { label: '5', f1: 0.660, agent: 0.181, better: 32, worse: 6, part: 'operator', say: ["The shop's URL", 'names the brand'] },
-      // [short single names get their own node], found by validator round V1
+      // [short single names get their own node], found by labeling agent round V1
       { label: '6', f1: 0.689, agent: 0.111, better: 93, worse: 33, part: 'operator', say: ['A one-word name', 'is its own product'], from: 'from loop 2' },
       // [concentration veto]: 69.1%, 8 better, 5 worse, not clear enough; [audience words]: 1 sealed row touched
       { label: '7', dropped: true }, { label: '8', dropped: true }] },
@@ -701,14 +692,14 @@
     put('evals', `0 0 ${w} ${h}`, s);
   })();
 
-  // ---------- 5 · the architecture, three variants. Real roles: placer, validator, person, proposer + gate, improver, distil ----------
+  // ---------- 5 · the architecture, three variants. Real roles: placer, labeling agent, person, proposer + gate, improver, distil ----------
   const AG = { gold: '#B07F0C', silv: '#7C8390' };
   const gold = t => `<tspan style="fill:${AG.gold};font-weight:600">${t}</tspan>`, silver = t => `<tspan style="fill:${AG.silv};font-weight:600">${t}</tspan>`;
   const DOMS = ['Fragrance', 'Food', 'Clothing', 'Footwear', 'Toys'];
 
   // the slide-5 picture. Fragrance on a light panel: the solver row in the middle, loop 1 above it, loop 2 below it.
   // Loop 3 runs down the right, outside the panel. The rules are drawn as their three parts, and each loop's arrow
-  // lands on what it changes: loop 1 on memory and operators, loop 2 on the validator and on silver + gold,
+  // lands on what it changes: loop 1 on memory and operators, loop 2 on the labeling agent and on silver + gold,
   // loop 3 on every domain's memory, tools and operators.
   (() => {
     let s = '';
@@ -729,7 +720,7 @@
     const SN = 94;                                          // the solver row's names sit lower, under the rules' parts
     const XL = 70, XR = 350, XP = 680, XE = 930;            // listings, rules, placer, eval (and the person, the proposer)
     const XM = XR - 124, XO = XR + 130;                     // memory and operators, either side of tools
-    const XV = 650, XI = 1210;                              // validator, improver
+    const XV = 650, XI = 1210;                              // labeling agent, improver
     const PX = 1372, X3 = 1528;                             // the panel's right edge; loop 3's column
 
     // fragrance: one domain, on a light panel
@@ -756,12 +747,12 @@
     s += Ar([[XR, YL1 + SB + 14], [XR, FY], [XM, FY], [XM, YS - 30]], C.ind) + Ar([[XR, FY], [XO, FY], [XO, YS - 30]], C.ind);
     s += Tx(XR + 16, FY - 14, 'memory, operators', { fs: 23, fw: 600, c: C.ind });
 
-    // loop 2, validation, a cycle: 1 the validator labels fresh listings, 2 a person settles its flags, 3 the improver
-    // makes a better validator, and round again. Out of it: more silver and gold, whose errors go on to loop 1
+    // loop 2, validation, a cycle: 1 the labeling agent labels fresh listings, 2 a person settles its flags, 3 the improver
+    // makes a better labeling agent, and round again. Out of it: more silver and gold, whose errors go on to loop 1
     s += Tx(0, YL2 + 70, 'Loop 2 · validation', { fs: 26, fw: 600, c: C.val });
-    s += node(XV, YL2, 'agent', C.val, 'Validator agent', 'labels fresh listings') + step(1, XV, YL2);
+    s += node(XV, YL2, 'agent', C.val, 'Labeling agent', 'labels fresh listings') + step(1, XV, YL2);
     s += node(XE, YL2, 'person', C.val, 'A person', 'settles only its flags') + step(2, XE, YL2);
-    s += node(XI, YL2, 'agent', C.val, 'Improver agent', 'makes a better validator') + step(3, XI, YL2);
+    s += node(XI, YL2, 'agent', C.val, 'Improver agent', 'makes a better labeling agent') + step(3, XI, YL2);
     s += Ar([[XL, YS + SN + 46], [XL, YL2], [XV - 38, YL2]], C.val) + Tx((XL + XV) / 2 + 20, YL2 - 14, 'fresh listings', { a: 'middle', fs: 23, c: C.val });
     s += Ar([[XV + 38, YL2], [XE - 36, YL2]], C.val) + Ar([[XE + 36, YL2], [XI - 38, YL2]], C.val);
     s += Ar([[XE, YL2 - 36], [XE, YS + SN + 46]], C.val) + Tx(XE + 16, YL2 - 66, `${silver('silver')} + ${gold('gold')} grow`, { fs: 23, c: C.val });
@@ -786,8 +777,8 @@
 
   // the slide-5 picture: the two loops as two rings. Loop 1 (blue, clockwise): rules -> silver -> rules wrong? ->
   // proposer -> rules; the proposer points at the three parts of the rules it edits (memory, operators, tools).
-  // Loop 2 (orange, counter-clockwise): validator -> scored on gold -> improver -> new validator -> validator; the
-  // improver points at the two parts of the validator it edits (prompt, questions). The validator writes silver.
+  // Loop 2 (orange, counter-clockwise): labeling agent -> scored on gold -> improver -> new labeling agent -> labeling agent; the
+  // improver points at the two parts of the labeling agent it edits (prompt, questions). The labeling agent writes silver.
   (() => {
     let s = '';
     const T = 170, B = 630, M = (T + B) / 2, R = 70;
@@ -825,18 +816,18 @@
     s += dot(A0, M, 'agent', C.ind) + lbl(A0 - 30, M - 148, 'Proposer', 'edits the rules\u2019', 'end');
     s += big(L, M + 8, 'Loop 1', 'until the rules', `agree with ${silver('silver')}`, C.ind);
 
-    // the validator writes silver
+    // the labeling agent writes silver
     s += Ar([[B0 - 88, M], [A1 + 90, M]], C.val, { w: 4 });
     s += Tx((A1 + B0) / 2, M - 14, 'writes', { a: 'middle', fs: 20, fw: 500, c: C.val });
 
     // loop 2
-    s += box(B0, C.val, 'Validator', 'labels listings', C.ink);
+    s += box(B0, C.val, 'Labeling', 'agent', C.ink);
     s += dot(Rc, B, 'eval', C.val) + lbl(Rc, B - 74, 'Scored on gold', 'where it labels unlike us');
     s += Ar([[Rc, 744], [Rc, B + 36]], AG.gold);
     s += Tx(Rc + 22, 716, 'Gold', { fs: 24, fw: 600, c: AG.gold }) + Tx(Rc + 84, 716, 'a person labels a few', { fs: 20, c: C.mute });
     s += part(B1, M - 40, 1, 'msg', 'Prompt', C.val) + part(B1, M + 50, 1, 'ask', 'Questions', C.val);
-    s += dot(B1, M, 'agent', C.val) + lbl(B1 + 30, M - 114, 'Improver', 'edits the validator\u2019s', 'start');
-    s += dot(Rc, T, 'agent', C.val) + lbl(Rc, T + 72, 'New validator', 'replaces the old one');
+    s += dot(B1, M, 'agent', C.val) + lbl(B1 + 30, M - 114, 'Improver', 'edits the labeling agent\u2019s', 'start');
+    s += dot(Rc, T, 'agent', C.val) + lbl(Rc, T + 72, 'New labeling agent', 'replaces the old one');
     s += big(Rc, M + 8, 'Loop 2', `until ${silver('silver')}`, `agrees with ${gold('gold')}`, C.val);
     put('arch2', '0 0 1664 749', s);
   })();
@@ -874,23 +865,23 @@
   // ---------- 10 · loop 2, drawn as a loop ----------
   const GOLD = '#E3AC2A', GOLD_T = '#B07F0C', SILV = '#C3C8D0', SILV_T = '#7C8390';
   (() => {
-    // the loop: validator labels a sample (silver) -> a person labels the same sample (gold) -> compare -> improve -> again
+    // the loop: labeling agent labels a sample (silver) -> a person labels the same sample (gold) -> compare -> improve -> again
     let s = '';
     const cx = 390, cy = 236, r = 122;
     const sv = t => `<tspan style="fill:${SILV_T};font-weight:600">${t}</tspan>`, gd = t => `<tspan style="fill:${GOLD_T};font-weight:600">${t}</tspan>`;
     [[-74, -16], [16, 74], [106, 164], [196, 254]].forEach(([p, q]) => { s += arc(cx, cy, r, p, q, C.val, 5); });
     [[cx, cy - r], [cx + r, cy], [cx, cy + r], [cx - r, cy]].forEach(([x, y]) => { s += `<circle cx="${x}" cy="${y}" r="10" fill="${C.val}"/>`; });
-    s += Nd(cx, cy - r - 62, 'A validator labels', [`40 fresh listings: ${sv('silver')}`], { fs: 30, sfs: 21 });
+    s += Nd(cx, cy - r - 62, 'A labeling agent labels', [`40 fresh listings: ${sv('silver')}`], { fs: 30, sfs: 21 });
     s += Nd(cx + r + 30, cy - 14, 'A person labels', [`the same 40: ${gd('gold')}`], { fs: 30, sfs: 21, a: 'start' });
     s += Nd(cx, cy + r + 50, 'Compare', [`how often ${sv('silver')} = ${gd('gold')}`], { fs: 30, sfs: 21 });
     s += Nd(cx - r - 30, cy - 14, 'Improve it', ['from the differences'], { fs: 30, sfs: 21, a: 'end' });
     s += Tx(cx, cy - 6, 'each round', { a: 'middle', fs: 20, c: C.mute }) + Tx(cx, cy + 24, 'a new sample', { a: 'middle', fs: 24, fw: 600, c: C.val });
 
-    // the KPIs: validator vs the person, per round of 40 (measured)
+    // the KPIs: labeling agent vs the person, per round of 40 (measured)
     const K = [['round 1', 0.75, '75%'], ['round 2', 0.825, '82.5%'], ['round 3', 0.85, '85%'], ['round 4', 0.575, '57.5%']];
     const T0 = 506, base = 712, H = 150, bw = 60, x0 = 112, step = 186;
     s += `<line x1="40" x2="760" y1="${T0 - 34}" y2="${T0 - 34}" stroke="${C.line}" stroke-width="2"/>`;
-    s += Tx(40, T0, `Validator ${sv('silver')} = person's ${gd('gold')}, each round`, { fs: 23, fw: 600, c: C.ink });
+    s += Tx(40, T0, `Labeling agent ${sv('silver')} = person's ${gd('gold')}, each round`, { fs: 23, fw: 600, c: C.ink });
     K.forEach(([lab, v, t], i) => {
       const x = x0 + i * step, h = H * v / 0.85;
       s += `<rect x="${x - bw / 2}" y="${base - h}" width="${bw}" height="${h}" rx="4" fill="${C.val}"/>`;
@@ -1022,12 +1013,12 @@
   })();
 
   // 9 · Figure B: one full loop 1 climb per eval. Eval 1 = sealed gold (measured, fragrance rounds start..r6).
-  //   Evals 2 and 3 add the validator's silver and the settled flags as gold; their climbs are estimates (marked est.).
+  //   Evals 2 and 3 add the labeling agent's silver and the settled flags as gold; their climbs are estimates (marked est.).
   (() => {
     const E = [
-      { name: 'Eval 1', sub: 'gold only', gold: [0.524, 0.528, 0.538, 0.651, 0.660, 0.689], rules: '5 rules', foot: ['2,233 gold', 'no silver', 'no validator'] },
-      { name: 'Eval 2', sub: '+ silver', est: true, gold: [0.66, 0.68, 0.695, 0.705], silver: [0.55, 0.58, 0.60, 0.62], rules: '8 rules', foot: ['+23 gold', '80 silver', 'validator v1'] },
-      { name: 'Eval 3', sub: 'more of both', est: true, gold: [0.69, 0.71, 0.725], silver: [0.64, 0.68, 0.71], rules: '10 rules', foot: ['+43 gold', '160 silver', 'validator v2'] } ];
+      { name: 'Eval 1', sub: 'gold only', gold: [0.524, 0.528, 0.538, 0.651, 0.660, 0.689], rules: '5 rules', foot: ['2,233 gold', 'no silver', 'no labeling agent'] },
+      { name: 'Eval 2', sub: '+ silver', est: true, gold: [0.66, 0.68, 0.695, 0.705], silver: [0.55, 0.58, 0.60, 0.62], rules: '8 rules', foot: ['+23 gold', '80 silver', 'labeling agent v1'] },
+      { name: 'Eval 3', sub: 'more of both', est: true, gold: [0.69, 0.71, 0.725], silver: [0.64, 0.68, 0.71], rules: '10 rules', foot: ['+43 gold', '160 silver', 'labeling agent v2'] } ];
     const lo = 0.48, hi = 0.76, T = 70, B = 400, y = v => B - (B - T) * (v - lo) / (hi - lo), st = 50, gap = 64;
     let s = '', x0 = 80;
     [0.5, 0.6, 0.7].forEach(t => { s += `<line x1="70" x2="890" y1="${y(t)}" y2="${y(t)}" stroke="${C.grid}" stroke-width="2"/>` + Tx(58, y(t) + 7, Math.round(t * 100) + '%', { a: 'end', fs: 19, c: C.faint }); });
